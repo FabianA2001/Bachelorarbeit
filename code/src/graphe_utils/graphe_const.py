@@ -11,3 +11,8 @@ GRAPHE_NAME = "Graphe"
 """Generate"""
 GEN_WIDTH = 10
 GEN_HEIGHT = 10
+
+
+""""Node"""
+DEFAULT_FILE_NAME = "current"
+PREFIX_INSTANCE = "instance/"
