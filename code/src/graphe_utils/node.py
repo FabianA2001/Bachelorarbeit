@@ -15,9 +15,10 @@ class Node:
         return f"Node({self.name}, {self.pos})"
 
 
-def save_Nodes_as_Json(Nodes: list[Node], filename: str = graphe_const.DEFAULT_FILE_NAME) -> None:
+def save_Nodes_as_Json(
+    Nodes: list[Node], filename: str = graphe_const.DEFAULT_FILE_NAME
+) -> None:
     """Speichert eine Liste von Knoten in einer JSON-Datei."""
-
     with open(f"{graphe_const.PREFIX_INSTANCE}{filename}.json", "w") as f:
         json.dump([node.__dict__ for node in Nodes], f, indent=4)
 
