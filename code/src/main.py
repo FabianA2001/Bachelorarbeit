@@ -1,15 +1,19 @@
 from graphe_utils.graphe import Graphe
-from graphe_utils.node import load_Nodes_from_Json
+from graphe_utils.node import Node
 
 
 def main():
     # nodes = generate.gen_nodes(50, 100, 100)
+    nodes = [
+        Node("1", (0, 0)),
+        Node("2", (0, 2)),
+        Node("3", (2, 0)),
+        Node("4", (2, 2)),
+    ]
     # save_Nodes_as_Json(nodes)
-    nodes = load_Nodes_from_Json()
+    # nodes = load_Nodes_from_Json()
     G = Graphe(nodes)
-    G.add_edge("48", "16")
-    G.add_edge("39", "44")
-    G.add_edge("1", "21")
+    G.add_all_possible_edges()
     G.show_and_save()
 
 
