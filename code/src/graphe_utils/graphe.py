@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from graphe_utils import graphe_const
 from graphe_utils.node import Node
 import shapely
+import itertools
 
 
 class Graphe:
@@ -36,7 +37,8 @@ class Graphe:
         degrees = nx.get_node_attributes(self.graph, "degree")
 
         # Labels mit Degree-Werten erstellen
-        labels = {node: f"{node}\n{degree}" for node, degree in degrees.items()}
+        labels = {node: f"{node}\n{degree}" for node,
+                  degree in degrees.items()}
 
         # Knotenfarben basierend auf dem Grad erstellen
         colors = [
@@ -79,6 +81,13 @@ class Graphe:
             node1,
             node2,
             line=shapely.geometry.LineString(
-                [self.graph.nodes[node1]["point"], self.graph.nodes[node2]["point"]]
+                [self.graph.nodes[node1]["point"],
+                    self.graph.nodes[node2]["point"]]
             ),
         )
+
+    def add_all_possible_edges(self) -> None:
+        """Fügt alle möglichen Kanten zwischen den Knoten hinzu."""
+        combinations = list(itertools.combinations(self.graph.nodes, 2))
+        for com in combinations:
+            self.add_edge(com[0], com[1])
