@@ -21,13 +21,35 @@ class Graphe:
         )
 
     # Kantenfarben basierend auf einer Bedingung erstellen (z. B. Länge der Kante)
-    def check_for_intersection(self, line: shapely.geometry.LineString) -> bool:
+    def check_for_intersection_with_all_edges(
+        self, line: shapely.geometry.LineString
+    ) -> bool:
+        def check_for_intersection_ececpt_corners(
+            line1: shapely.geometry.LineString, line2: shapely.geometry.LineString
+        ) -> bool:
+            intersection = line1.intersection(line2)
+            if intersection.is_empty:
+                return False
+            corner_points = (
+                line1.coords[0],
+                line1.coords[-1],
+                line2.coords[0],
+                line2.coords[-1],
+            )
+            # Überprüfen, ob der Schnittpunkt einer der Eckpunkte ist
+            if isinstance(intersection, shapely.geometry.Point):
+                return (intersection.x, intersection.y) not in corner_points
+            else:
+                return True
+
         """Überprüft, ob eine Linie mit einer anderen Linie im Graphen schneidet."""
         all_Linestrings_from_edges = [
             self.graph.edges[edge].get("line") for edge in self.graph.edges
         ]
         for other in all_Linestrings_from_edges:
-            if line.intersects(other) and line != other:
+            if line == other:
+                continue
+            if check_for_intersection_ececpt_corners(line, other):
                 return True
         return False
 
@@ -37,8 +59,7 @@ class Graphe:
         degrees = nx.get_node_attributes(self.graph, "degree")
 
         # Labels mit Degree-Werten erstellen
-        labels = {node: f"{node}\n{degree}" for node,
-                  degree in degrees.items()}
+        labels = {node: f"{node}\n{degree}" for node, degree in degrees.items()}
 
         # Knotenfarben basierend auf dem Grad erstellen
         colors = [
@@ -55,7 +76,9 @@ class Graphe:
         edge_colors = [
             graphe_const.EDGE_COLOR_TRUE
             # Beispielbedingung
-            if not self.check_for_intersection(self.graph.edges[edge].get("line"))
+            if not self.check_for_intersection_with_all_edges(
+                self.graph.edges[edge].get("line")
+            )
             else graphe_const.EDGE_COLOR_FALSE
             for edge in self.graph.edges
         ]
@@ -81,8 +104,7 @@ class Graphe:
             node1,
             node2,
             line=shapely.geometry.LineString(
-                [self.graph.nodes[node1]["point"],
-                    self.graph.nodes[node2]["point"]]
+                [self.graph.nodes[node1]["point"], self.graph.nodes[node2]["point"]]
             ),
         )
 
