@@ -55,8 +55,12 @@ class Graphe:
 
     def show_and_save(self) -> None:
         """Zeichnet den Graphen mit den festgelegten Positionen und Farben."""
-        pos = nx.get_node_attributes(self.graph, "pos")
-        degrees = nx.get_node_attributes(self.graph, "degree")
+        local_grphe = self.graph.copy()
+        for edge in local_grphe.edges:
+            if local_grphe.edges[edge].get("active") is False:
+                local_grphe.remove_edge(edge[0], edge[1])
+        pos = nx.get_node_attributes(local_grphe, "pos")
+        degrees = nx.get_node_attributes(local_grphe, "degree")
 
         # Labels mit Degree-Werten erstellen
         labels = {node: f"{node}\n{degree}" for node, degree in degrees.items()}
@@ -65,7 +69,7 @@ class Graphe:
         colors = [
             graphe_const.NODE_COLOR_TRUE
             if degree
-            == self.graph.degree(
+            == local_grphe.degree(
                 # type: ignore
                 node
             )
@@ -77,15 +81,15 @@ class Graphe:
             graphe_const.EDGE_COLOR_TRUE
             # Beispielbedingung
             if not self.check_for_intersection_with_all_edges(
-                self.graph.edges[edge].get("line")
+                local_grphe.edges[edge].get("line")
             )
             else graphe_const.EDGE_COLOR_FALSE
-            for edge in self.graph.edges
+            for edge in local_grphe.edges
         ]
 
         # Zeichne den Graphen
         nx.draw(
-            self.graph,
+            local_grphe,
             pos=pos,
             labels=labels,
             node_color=colors,
@@ -106,7 +110,18 @@ class Graphe:
             line=shapely.geometry.LineString(
                 [self.graph.nodes[node1]["point"], self.graph.nodes[node2]["point"]]
             ),
+            active=True,
         )
+
+    def active_edge(self, node1: str, node2: str) -> None:
+        """Aktiviert eine Kante zwischen zwei Knoten."""
+        assert (node1, node2) in self.graph.edges
+        self.graph.edges[node1, node2]["active"] = True
+
+    def deactivate_edge(self, node1: str, node2: str) -> None:
+        """Deaktiviert eine Kante zwischen zwei Knoten."""
+        assert (node1, node2) in self.graph.edges
+        self.graph.edges[node1, node2]["active"] = False
 
     def add_all_possible_edges(self) -> None:
         """Fügt alle möglichen Kanten zwischen den Knoten hinzu."""

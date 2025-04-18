@@ -14,6 +14,7 @@ def main():
     # nodes = load_Nodes_from_Json()
     G = Graphe(nodes)
     G.add_all_possible_edges()
+    G.deactivate_edge("1", "4")
     G.show_and_save()
 
 
