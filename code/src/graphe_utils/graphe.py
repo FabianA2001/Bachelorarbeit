@@ -22,29 +22,29 @@ class Graphe:
 
     # Kantenfarben basierend auf einer Bedingung erstellen (z. B. Länge der Kante)
     def check_for_intersection_with_all_edges(
-        self, line: shapely.geometry.LineString
+        self, line: shapely.geometry.LineString, local_grphe=None
     ) -> bool:
+        if local_grphe is None:
+            local_grphe = self.graph
+
         def check_for_intersection_ececpt_corners(
             line1: shapely.geometry.LineString, line2: shapely.geometry.LineString
         ) -> bool:
+            corner_points = [
+                local_grphe.nodes[node].get("point") for node in local_grphe.nodes
+            ]
             intersection = line1.intersection(line2)
             if intersection.is_empty:
                 return False
-            corner_points = (
-                line1.coords[0],
-                line1.coords[-1],
-                line2.coords[0],
-                line2.coords[-1],
-            )
             # Überprüfen, ob der Schnittpunkt einer der Eckpunkte ist
             if isinstance(intersection, shapely.geometry.Point):
-                return (intersection.x, intersection.y) not in corner_points
+                return intersection not in corner_points
             else:
                 return True
 
         """Überprüft, ob eine Linie mit einer anderen Linie im Graphen schneidet."""
         all_Linestrings_from_edges = [
-            self.graph.edges[edge].get("line") for edge in self.graph.edges
+            local_grphe.edges[edge].get("line") for edge in local_grphe.edges
         ]
         for other in all_Linestrings_from_edges:
             if line == other:
@@ -81,7 +81,7 @@ class Graphe:
             graphe_const.EDGE_COLOR_TRUE
             # Beispielbedingung
             if not self.check_for_intersection_with_all_edges(
-                local_grphe.edges[edge].get("line")
+                local_grphe.edges[edge].get("line"), local_grphe
             )
             else graphe_const.EDGE_COLOR_FALSE
             for edge in local_grphe.edges
