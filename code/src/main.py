@@ -1,5 +1,7 @@
 from graphe_utils.graphe import Graphe
 from graphe_utils.node import Node
+from solver.solver import Solver
+from solver.ortools import Ortools
 
 
 def main():
@@ -13,8 +15,8 @@ def main():
     # save_Nodes_as_Json(nodes)
     # nodes = load_Nodes_from_Json()
     G = Graphe(nodes)
-    G.add_all_possible_edges()
-    G.deactivate_edge("1", "4")
+    S: Solver = Ortools()
+    G = S.solve(G)
     G.show_and_save()
 
 

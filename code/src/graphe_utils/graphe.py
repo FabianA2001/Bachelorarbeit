@@ -13,6 +13,7 @@ class Graphe:
         self.name: str = graphe_const.GRAPHE_NAME
         for node in self.__positions:
             self.__add_node(node.name, node.pos, node.degree)
+        self.add_all_possible_edges()
 
     def __add_node(self, key: str, pos: tuple[int, int], degree: int) -> None:
         """Fügt einen Knoten zum Graphen hinzu."""
@@ -110,7 +111,7 @@ class Graphe:
             line=shapely.geometry.LineString(
                 [self.graph.nodes[node1]["point"], self.graph.nodes[node2]["point"]]
             ),
-            active=True,
+            active=False,
         )
 
     def active_edge(self, node1: str, node2: str) -> None:
@@ -128,3 +129,11 @@ class Graphe:
         combinations = list(itertools.combinations(self.graph.nodes, 2))
         for com in combinations:
             self.add_edge(com[0], com[1])
+
+    def get_all_edges(self) -> list[tuple[str, str]]:
+        """Gibt alle Kanten des Graphen zurück."""
+        return list(self.graph.edges)
+
+    def get_all_nodes(self) -> list[str]:
+        """Gibt alle Knoten des Graphen zurück."""
+        return list(self.graph.nodes)
