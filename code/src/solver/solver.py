@@ -7,8 +7,10 @@ class Solver(ABC):
     Abstract base class for all solvers.
     """
 
-    def solve(self, graphe: Graphe) -> Graphe:
+    def __init__(self, graphe: Graphe) -> None:
         self.graph: Graphe = graphe
+
+    def solve(self) -> Graphe:
         self.actual_solver()
         return self.graph
 

@@ -2,6 +2,7 @@ from graphe_utils.graphe import Graphe
 from graphe_utils.node import Node
 from solver.solver import Solver
 from solver.ortools import Ortools
+import logging
 
 
 def main():
@@ -15,10 +16,11 @@ def main():
     # save_Nodes_as_Json(nodes)
     # nodes = load_Nodes_from_Json()
     G = Graphe(nodes)
-    S: Solver = Ortools()
-    G = S.solve(G)
+    S: Solver = Ortools(G)
+    G = S.solve()
     G.show_and_save()
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     main()
