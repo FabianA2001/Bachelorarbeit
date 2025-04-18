@@ -22,7 +22,9 @@ class Graphe:
         )
 
     # Kantenfarben basierend auf einer Bedingung erstellen (z. B. Länge der Kante)
-    def check_for_intersection_with_all_edges(self, edge: tuple[str, str]) -> bool:
+    def check_for_intersection_with_all_edges(
+        self, edge: tuple[str, str], check_if_active: bool = True
+    ) -> bool:
         def check_for_intersection_ececpt_corners(
             line1: shapely.geometry.LineString, line2: shapely.geometry.LineString
         ) -> bool:
@@ -39,13 +41,13 @@ class Graphe:
                 return True
 
         """Überprüft, ob eine Linie mit einer anderen Linie im Graphen schneidet."""
-        if not self.graph.edges[edge].get("active"):
+        if not self.graph.edges[edge].get("active") and check_if_active:
             return False
         line = self.graph.edges[edge].get("line")
         all_Linestrings_from_edges = [
             self.graph.edges[edge].get("line")
             for edge in self.graph.edges
-            if self.graph.edges[edge].get("active")
+            if self.graph.edges[edge].get("active") or not check_if_active
         ]
         for other in all_Linestrings_from_edges:
             if line == other:
