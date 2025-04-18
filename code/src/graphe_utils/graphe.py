@@ -21,25 +21,26 @@ class Graphe:
             key, pos=pos, degree=degree, point=shapely.geometry.Point(pos)
         )
 
+    def check_for_intersection_ececpt_corners(
+        self, line1: shapely.geometry.LineString, line2: shapely.geometry.LineString
+    ) -> bool:
+        corner_points = [
+            self.graph.nodes[node].get("point") for node in self.graph.nodes
+        ]
+        intersection = line1.intersection(line2)
+        if intersection.is_empty:
+            return False
+        # Überprüfen, ob der Schnittpunkt einer der Eckpunkte ist
+        if isinstance(intersection, shapely.geometry.Point):
+            return intersection not in corner_points
+        else:
+            return True
+
     # Kantenfarben basierend auf einer Bedingung erstellen (z. B. Länge der Kante)
+
     def check_for_intersection_with_all_edges(
         self, edge: tuple[str, str], check_if_active: bool = True
     ) -> bool:
-        def check_for_intersection_ececpt_corners(
-            line1: shapely.geometry.LineString, line2: shapely.geometry.LineString
-        ) -> bool:
-            corner_points = [
-                self.graph.nodes[node].get("point") for node in self.graph.nodes
-            ]
-            intersection = line1.intersection(line2)
-            if intersection.is_empty:
-                return False
-            # Überprüfen, ob der Schnittpunkt einer der Eckpunkte ist
-            if isinstance(intersection, shapely.geometry.Point):
-                return intersection not in corner_points
-            else:
-                return True
-
         """Überprüft, ob eine Linie mit einer anderen Linie im Graphen schneidet."""
         if not self.graph.edges[edge].get("active") and check_if_active:
             return False
@@ -52,7 +53,7 @@ class Graphe:
         for other in all_Linestrings_from_edges:
             if line == other:
                 continue
-            if check_for_intersection_ececpt_corners(line, other):
+            if self.check_for_intersection_ececpt_corners(line, other):
                 return True
         return False
 
