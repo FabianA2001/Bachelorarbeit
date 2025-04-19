@@ -6,12 +6,15 @@ import itertools
 
 
 class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
-    def __init__(self):
+    def __init__(self, goal: int) -> None:
         cp_model.CpSolverSolutionCallback.__init__(self)
+        self.goal = goal
 
     def on_solution_callback(self):
-        # self.StopSearch()  # Stop after the first solution
-        logging.info(f"Anzahl Kanten bei dieser Lösung: {self.ObjectiveValue()}")
+        if self.ObjectiveValue() >= self.goal:
+            self.StopSearch()  # Stop after the first solution
+        # logging.info(
+        #     f"Anzahl Kanten bei dieser Lösung: {self.ObjectiveValue()}")
 
 
 class Ortools(Solver):
@@ -43,8 +46,10 @@ class Ortools(Solver):
         solver = cp_model.CpSolver()
         # solver.parameters.log_search_progress = True  # Enable logging
         logging.info("Start solving...")
-        # status = solver.Solve(self.model, FirstSolutionStop())
-        status = solver.Solve(self.model)
+        status = solver.Solve(
+            self.model, FirstSolutionStop(self.graph.number_edges_in_Triangulatoin)
+        )
+        # status = solver.Solve(self.model)
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
             for edge, var in zip(self.graph.get_all_edges(), self.vars):
                 if solver.BooleanValue(var):

@@ -17,6 +17,7 @@ class Graphe:
         self.point_to_node: dict[shapely.Point, str] = {
             attr["point"]: node for node, attr in self.graph.nodes(data=True)
         }
+        self.number_edges_in_Triangulatoin = self.__get_number_edges_triangulation()
 
     def __add_node(self, key: str, pos: tuple[int, int], degree: int) -> None:
         """Fügt einen Knoten zum Graphen hinzu."""
@@ -214,7 +215,7 @@ class Graphe:
                 self.get_node_from_point(point1), self.get_node_from_point(point2), True
             )
 
-    def get_number_of_edges_in_the_triangulation(self) -> int:
+    def __get_number_edges_triangulation(self) -> int:
         """Gibt die Anzahl der Kanten im Graphen zurück."""
         points = [attr["point"] for _, attr in self.graph.nodes(data=True)]
         cvonvex_hull = shapely.geometry.MultiPoint(points).convex_hull

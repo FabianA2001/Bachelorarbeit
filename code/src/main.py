@@ -25,7 +25,7 @@ def test_algos(runs, points):
 def main():
     logging.info("Start main function.")
     nodes = load_Nodes_from_Json()
-    # nodes = generate.gen_nodes(20, 100, 100)
+    nodes = generate.gen_nodes(30, 100, 100)
     save_Nodes_as_Json(nodes)
     graphe = Graphe(nodes)
 
@@ -35,7 +35,6 @@ def main():
     # from solver.possible import Possible
     # solver: Solver = Possible(graphe)
 
-    print(graphe.get_number_of_edges_in_the_triangulation())
     graphe = solver.solve()
     graphe.show_and_save()
     logging.info("End main function.")
