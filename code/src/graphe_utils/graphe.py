@@ -11,10 +11,12 @@ import logging
 class Graphe:
     def __init__(self, nodes: list[Node]) -> None:
         self.graph = nx.Graph()
-        self.__positions: list[Node] = nodes
         self.name: str = graphe_const.GRAPHE_NAME
-        for node in self.__positions:
+        for node in nodes:
             self.__add_node(node.name, node.pos, node.degree)
+        self.point_to_node: dict[shapely.Point, str] = {
+            attr["point"]: node for node, attr in self.graph.nodes(data=True)
+        }
 
     def __add_node(self, key: str, pos: tuple[int, int], degree: int) -> None:
         """Fügt einen Knoten zum Graphen hinzu."""
@@ -47,12 +49,22 @@ class Graphe:
     # Kantenfarben basierend auf einer Bedingung erstellen (z. B. Länge der Kante)
 
     def check_for_intersection_with_all_edges(
-        self, edge: tuple[str, str], check_if_active: bool = True
+        self,
+        edge: Union[tuple[str, str], shapely.LineString],
+        check_if_active: bool = True,
     ) -> bool:
         """Überprüft, ob eine Linie mit einer anderen Linie im Graphen schneidet."""
-        if not self.graph.edges[edge].get("active") and check_if_active:
-            return False
-        line = self.graph.edges[edge].get("line")
+        if isinstance(edge, tuple):
+            if check_if_active:
+                if not self.graph.edges[edge].get("active"):
+                    return False
+            line = self.graph.edges[edge].get("line")
+        elif isinstance(edge, shapely.LineString):
+            line = edge
+        else:
+            raise ValueError("Erwarte Tuple oder LineString")
+
+        # Überprüfen, ob die Linie mit einer anderen Linie im Graphen schneidet
         all_linestrings_from_edges = [
             self.graph.edges[edge].get("line")
             for edge in self.graph.edges
@@ -178,3 +190,11 @@ class Graphe:
     def get_all_nodes(self) -> list[str]:
         """Gibt alle Knoten des Graphen zurück."""
         return list(self.graph.nodes)
+
+    def get_node_from_point(self, point: shapely.Point) -> str:
+        """Gibt den Knoten zurück, der dem gegebenen Punkt am nächsten ist."""
+        if isinstance(point, shapely.Point):
+            raise ValueError("Erwarte einen Punkt.")
+        if point not in self.point_to_node:
+            raise ValueError(f"Point {point} not found in point_to_node.")
+        return self.point_to_node.get(point)

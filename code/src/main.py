@@ -1,7 +1,6 @@
 from graphe_utils.graphe import Graphe
 from graphe_utils import generate
 from solver.solver import Solver
-from solver.ortools import Ortools
 from graphe_utils.node import save_Nodes_as_Json, load_Nodes_from_Json
 import logging
 
@@ -9,16 +8,16 @@ import logging
 def main():
     logging.info("Start main function.")
     nodes = load_Nodes_from_Json()
-    nodes = generate.gen_nodes(20, 100, 100)
-    # nodes = [
-    #     Node("1", (0, 0)),
-    #     Node("2", (0, 2)),
-    #     Node("3", (2, 0)),
-    #     Node("4", (2, 2)),
-    # ]
+    nodes = generate.gen_nodes(5, 100, 100)
     save_Nodes_as_Json(nodes)
     graphe = Graphe(nodes)
-    solver: Solver = Ortools(graphe)
+
+    # from solver.ortools import Ortools
+    # solver: Solver = Ortools(graphe)
+    from solver.greedy import Greedy
+
+    solver: Solver = Greedy(graphe)
+
     graphe = solver.solve()
     graphe.show_and_save()
 
