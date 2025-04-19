@@ -85,6 +85,7 @@ class Graphe:
                 local_grphe.remove_edge(edge[0], edge[1])
 
         logging.info(f"aktive kanten: {sum(1 for _ in local_grphe.edges)}")
+        return
         pos = nx.get_node_attributes(local_grphe, "pos")
         degrees = nx.get_node_attributes(local_grphe, "degree")
 

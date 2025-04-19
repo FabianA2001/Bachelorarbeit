@@ -5,10 +5,27 @@ import logging
 from graphe_utils import generate
 
 
+def test_algos(runs, points):
+    for _ in range(runs):
+        nodes = generate.gen_nodes(points, 100, 100)
+        graphe = Graphe(nodes)
+        from solver.ortools import Ortools
+
+        solver: Solver = Ortools(graphe)
+        solver.solve()
+        graphe.show_and_save()
+        from solver.possible import Possible
+
+        solver: Solver = Possible(graphe)
+        solver.solve()
+        graphe.show_and_save()
+        print("---------------")
+
+
 def main():
     logging.info("Start main function.")
     nodes = load_Nodes_from_Json()
-    nodes = generate.gen_nodes(50, 100, 100)
+    nodes = generate.gen_nodes(20, 100, 100)
     save_Nodes_as_Json(nodes)
     graphe = Graphe(nodes)
 
@@ -20,6 +37,7 @@ def main():
 
     graphe = solver.solve()
     graphe.show_and_save()
+    logging.info("End main function.")
 
 
 if __name__ == "__main__":
@@ -28,5 +46,5 @@ if __name__ == "__main__":
         format="%(asctime)s - %(levelname)s - %(message)s",
         datefmt="%H:%M:%S",
     )
-    main()
-    logging.info("End main function.")
+    # main()
+    test_algos(10, 20)

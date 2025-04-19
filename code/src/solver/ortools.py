@@ -16,7 +16,6 @@ class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
 
 class Ortools(Solver):
     def __init__(self, graphe: Graphe) -> None:
-        logging.info("Ortools solver erstellt.")
         super().__init__(graphe)
         self.graph.add_all_possible_edges()
         self.model = cp_model.CpModel()
@@ -43,9 +42,8 @@ class Ortools(Solver):
         solver = cp_model.CpSolver()
         # solver.parameters.log_search_progress = True  # Enable logging
         logging.info("Start solving...")
-        status = solver.Solve(self.model, FirstSolutionStop())
-        # status = solver.Solve(self.model)
-        logging.info(f"Status: {solver.StatusName(status)}")
+        # status = solver.Solve(self.model, FirstSolutionStop())
+        status = solver.Solve(self.model)
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
             for edge, var in zip(self.graph.get_all_edges(), self.vars):
                 if solver.BooleanValue(var):
