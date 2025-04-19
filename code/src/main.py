@@ -2,11 +2,13 @@ from graphe_utils.graphe import Graphe
 from graphe_utils import generate
 from solver.solver import Solver
 from solver.ortools import Ortools
+from graphe_utils.node import save_Nodes_as_Json, load_Nodes_from_Json
 import logging
 
 
 def main():
     logging.info("Start main function.")
+    nodes = load_Nodes_from_Json()
     nodes = generate.gen_nodes(20, 100, 100)
     # nodes = [
     #     Node("1", (0, 0)),
@@ -14,12 +16,11 @@ def main():
     #     Node("3", (2, 0)),
     #     Node("4", (2, 2)),
     # ]
-    # save_Nodes_as_Json(nodes)
-    # nodes = load_Nodes_from_Json()
-    G = Graphe(nodes)
-    S: Solver = Ortools(G)
-    G = S.solve()
-    G.show_and_save()
+    save_Nodes_as_Json(nodes)
+    graphe = Graphe(nodes)
+    solver: Solver = Ortools(graphe)
+    graphe = solver.solve()
+    graphe.show_and_save()
 
 
 if __name__ == "__main__":
