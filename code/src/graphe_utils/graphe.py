@@ -5,6 +5,7 @@ from graphe_utils.node import Node
 import shapely
 import itertools
 from typing import Tuple, Union, Optional
+import logging
 
 
 class Graphe:
@@ -70,6 +71,8 @@ class Graphe:
         for edge in local_grphe.edges:
             if local_grphe.edges[edge].get("active") is False:
                 local_grphe.remove_edge(edge[0], edge[1])
+
+        logging.info(f"aktive kanten: {sum(1 for _ in local_grphe.edges)}")
         pos = nx.get_node_attributes(local_grphe, "pos")
         degrees = nx.get_node_attributes(local_grphe, "degree")
 
