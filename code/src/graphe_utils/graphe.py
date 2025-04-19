@@ -78,14 +78,20 @@ class Graphe:
                 return True
         return False
 
-    def show_and_save(self) -> None:
+    def show_and_save(self, show: bool = True, save: bool = True) -> None:
         """Zeichnet den Graphen mit den festgelegten Positionen und Farben."""
         local_grphe = self.graph.copy()
         for edge in local_grphe.edges:
             if local_grphe.edges[edge].get("active") is False:
                 local_grphe.remove_edge(edge[0], edge[1])
 
-        logging.info(f"aktive kanten: {sum(1 for _ in local_grphe.edges)}")
+        active_edges = len(local_grphe.edges)
+        logging.info(f"aktive kanten: {active_edges}")
+        assert active_edges == self.number_edges_in_Triangulatoin, (
+            f"Anzahl der Kanten in der Triangulation: {self.number_edges_in_Triangulatoin}, "
+            f"aktive Kanten: {active_edges}"
+        )
+
         pos = nx.get_node_attributes(local_grphe, "pos")
         degrees = nx.get_node_attributes(local_grphe, "degree")
 
@@ -113,6 +119,7 @@ class Graphe:
         ]
 
         # Zeichne den Graphen
+        plt.clf()
         nx.draw(
             local_grphe,
             pos=pos,
@@ -123,9 +130,11 @@ class Graphe:
             font_size=graphe_const.FONT_SIZE,
         )
         plt.title("Graph mit festen Koordinaten")
-        plt.savefig(f"{graphe_const.FIGURES_PREFIX}{self.name}.pdf")
-        logging.info("show Grphe")
-        plt.show()
+        if save:
+            plt.savefig(f"{graphe_const.FIGURES_PREFIX}{self.name}.pdf")
+        if show:
+            logging.info("show Grphe")
+            plt.show()
 
     def add_edge(self, node1: str, node2: str, value_active: bool = False) -> None:
         """Fügt eine Kante zwischen zwei Knoten hinzu."""
