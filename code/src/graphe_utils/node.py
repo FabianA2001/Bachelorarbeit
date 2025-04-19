@@ -1,5 +1,6 @@
 from graphe_utils import graphe_const
 import json
+import networkx as nx
 
 
 class Node:
@@ -15,7 +16,7 @@ class Node:
         return f"Node({self.name}, {self.pos})"
 
 
-def save_Nodes_as_Json(
+def save_nodes_as_json(
     Nodes: list[Node], filename: str = graphe_const.DEFAULT_FILE_NAME
 ) -> None:
     """Speichert eine Liste von Knoten in einer JSON-Datei."""
@@ -23,9 +24,27 @@ def save_Nodes_as_Json(
         json.dump([node.__dict__ for node in Nodes], f, indent=4)
 
 
-def load_Nodes_from_Json(filename: str = graphe_const.DEFAULT_FILE_NAME) -> list[Node]:
+def load_nodes_from_json(filename: str = graphe_const.DEFAULT_FILE_NAME) -> list[Node]:
     """Lädt eine Liste von Knoten aus einer JSON-Datei."""
     with open(f"{graphe_const.PREFIX_INSTANCE}{filename}.json", "r") as f:
         data = json.load(f)
         nodes = [Node(**node) for node in data]
     return nodes
+
+
+def save_graph_as_json(
+    graph: nx.Graph, filename: str = graphe_const.DEFAULT_FILE_NAME
+) -> None:
+    local_grphe = graph.copy()
+    for edge in local_grphe.edges:
+        if local_grphe.edges[edge].get("active") is False:
+            local_grphe.remove_edge(edge[0], edge[1])
+
+    nodes = []
+    for node in local_grphe.nodes:
+        nodes.append(
+            Node(
+                node, local_grphe.nodes[node]["pos"], len(list(local_grphe.edges(node)))
+            )
+        )
+    save_nodes_as_json(nodes, filename)

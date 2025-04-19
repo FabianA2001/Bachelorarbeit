@@ -1,6 +1,10 @@
 from graphe_utils.graphe import Graphe
 from solver.solver import Solver
-from graphe_utils.node import save_Nodes_as_Json, load_Nodes_from_Json
+from graphe_utils.node import (
+    save_nodes_as_json,
+    load_nodes_from_json,
+    save_graph_as_json,
+)
 import logging
 from graphe_utils import generate
 
@@ -24,9 +28,9 @@ def test_algos(runs, points):
 
 def main():
     logging.info("Start main function.")
-    nodes = load_Nodes_from_Json()
-    nodes = generate.gen_nodes(30, 100, 100)
-    save_Nodes_as_Json(nodes)
+    nodes = load_nodes_from_json()
+    # nodes = generate.gen_nodes(10, 100, 100)
+    save_nodes_as_json(nodes)
     graphe = Graphe(nodes)
 
     from solver.ortools import Ortools
@@ -36,6 +40,7 @@ def main():
     # solver: Solver = Possible(graphe)
 
     graphe = solver.solve()
+    save_graph_as_json(graphe.graph)
     graphe.show_and_save()
     logging.info("End main function.")
 
