@@ -17,6 +17,7 @@ class Ortools(Solver):
     def __init__(self, graphe: Graphe) -> None:
         logging.info("Ortools solver erstellt.")
         super().__init__(graphe)
+        self.graph.add_all_possible_edges()
         self.model = cp_model.CpModel()
         self.vars = [
             self.model.NewBoolVar(f"edge_{edge[0]}_{edge[1]}")
@@ -28,10 +29,10 @@ class Ortools(Solver):
 
     def constraint_intersection(self):
         combinations = list(itertools.combinations(range(len(self.vars)), 2))
+        all_edges = self.graph.get_all_edges()
         for index_1, index_2 in combinations:
             if self.graph.check_for_intersection_ececpt_corners(
-                self.graph.graph.edges[self.graph.get_all_edges()[index_1]].get("line"),
-                self.graph.graph.edges[self.graph.get_all_edges()[index_2]].get("line"),
+                all_edges[index_1], all_edges[index_2]
             ):
                 self.model.AddBoolOr(
                     [self.vars[index_1].Not(), self.vars[index_2].Not()]
@@ -47,6 +48,6 @@ class Ortools(Solver):
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
             for edge, var in zip(self.graph.get_all_edges(), self.vars):
                 if solver.BooleanValue(var):
-                    self.graph.active_edge(edge[0], edge[1])
+                    self.graph.active_edge(edge)
         else:
             logging.error("No solution found.")

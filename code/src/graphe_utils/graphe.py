@@ -4,16 +4,16 @@ from graphe_utils import graphe_const
 from graphe_utils.node import Node
 import shapely
 import itertools
+from typing import Tuple, Union, Optional
 
 
 class Graphe:
-    def __init__(self, positions: list[Node]) -> None:
+    def __init__(self, nodes: list[Node]) -> None:
         self.graph = nx.Graph()
-        self.__positions: list[Node] = positions
+        self.__positions: list[Node] = nodes
         self.name: str = graphe_const.GRAPHE_NAME
         for node in self.__positions:
             self.__add_node(node.name, node.pos, node.degree)
-        self.add_all_possible_edges()
 
     def __add_node(self, key: str, pos: tuple[int, int], degree: int) -> None:
         """Fügt einen Knoten zum Graphen hinzu."""
@@ -22,12 +22,19 @@ class Graphe:
         )
 
     def check_for_intersection_ececpt_corners(
-        self, line1: shapely.geometry.LineString, line2: shapely.geometry.LineString
+        self,
+        line1: shapely.geometry.LineString | tuple[str, str],
+        line2: shapely.geometry.LineString | tuple[str, str],
     ) -> bool:
+        if isinstance(line1, tuple):
+            line1 = self.graph.edges[line1].get("line")
+        if isinstance(line2, tuple):
+            line2 = self.graph.edges[line2].get("line")
+
         corner_points = [
             self.graph.nodes[node].get("point") for node in self.graph.nodes
         ]
-        intersection = line1.intersection(line2)
+        intersection = line1.intersection(line2)  # type: ignore
         if intersection.is_empty:
             return False
         # Überprüfen, ob der Schnittpunkt einer der Eckpunkte ist
@@ -45,12 +52,12 @@ class Graphe:
         if not self.graph.edges[edge].get("active") and check_if_active:
             return False
         line = self.graph.edges[edge].get("line")
-        all_Linestrings_from_edges = [
+        all_linestrings_from_edges = [
             self.graph.edges[edge].get("line")
             for edge in self.graph.edges
             if self.graph.edges[edge].get("active") or not check_if_active
         ]
-        for other in all_Linestrings_from_edges:
+        for other in all_linestrings_from_edges:
             if line == other:
                 continue
             if self.check_for_intersection_ececpt_corners(line, other):
@@ -103,7 +110,7 @@ class Graphe:
         plt.savefig(f"{graphe_const.FIGURES_PREFIX}{self.name}.pdf")
         plt.show()
 
-    def add_edge(self, node1: str, node2: str) -> None:
+    def add_edge(self, node1: str, node2: str, value_active: bool = False) -> None:
         """Fügt eine Kante zwischen zwei Knoten hinzu."""
         assert node1 in self.graph and node2 in self.graph
         self.graph.add_edge(
@@ -112,24 +119,54 @@ class Graphe:
             line=shapely.geometry.LineString(
                 [self.graph.nodes[node1]["point"], self.graph.nodes[node2]["point"]]
             ),
-            active=False,
+            active=value_active,
         )
 
-    def active_edge(self, node1: str, node2: str) -> None:
+    def active_edge(
+        self, node1: Union[str, Tuple[str, str]], node2: Optional[str] = None
+    ) -> None:
         """Aktiviert eine Kante zwischen zwei Knoten."""
+        if node2 is None:
+            if (
+                isinstance(node1, tuple)
+                and len(node1) == 2
+                and all(isinstance(x, str) for x in node1)
+            ):
+                node1, node2 = node1
+            else:
+                raise ValueError("Erwarte Tuple[str, str]")
+        else:
+            if not isinstance(node1, str) or not isinstance(node2, str):
+                raise ValueError("Beide Werte müssen Strings sein.")
+
         assert (node1, node2) in self.graph.edges
         self.graph.edges[node1, node2]["active"] = True
 
-    def deactivate_edge(self, node1: str, node2: str) -> None:
+    def deactivate_edge(
+        self, node1: Union[str, Tuple[str, str]], node2: Optional[str] = None
+    ) -> None:
         """Deaktiviert eine Kante zwischen zwei Knoten."""
+        if node2 is None:
+            if (
+                isinstance(node1, tuple)
+                and len(node1) == 2
+                and all(isinstance(x, str) for x in node1)
+            ):
+                node1, node2 = node1
+            else:
+                raise ValueError("Erwarte Tuple[str, str]")
+        else:
+            if not isinstance(node1, str) or not isinstance(node2, str):
+                raise ValueError("Beide Werte müssen Strings sein.")
+
         assert (node1, node2) in self.graph.edges
         self.graph.edges[node1, node2]["active"] = False
 
-    def add_all_possible_edges(self) -> None:
+    def add_all_possible_edges(self, default_for_active: bool = False) -> None:
         """Fügt alle möglichen Kanten zwischen den Knoten hinzu."""
         combinations = list(itertools.combinations(self.graph.nodes, 2))
         for com in combinations:
-            self.add_edge(com[0], com[1])
+            self.add_edge(com[0], com[1], default_for_active)
 
     def get_all_edges(self) -> list[tuple[str, str]]:
         """Gibt alle Kanten des Graphen zurück."""
