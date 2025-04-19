@@ -17,6 +17,7 @@ class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
 class Ortools(Solver):
     def __init__(self, graphe: Graphe) -> None:
         super().__init__(graphe)
+        self.name = "Ortools"
         self.graph.add_all_possible_edges()
         self.model = cp_model.CpModel()
         self.vars = [

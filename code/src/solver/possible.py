@@ -9,6 +9,7 @@ class Possible(Solver):
         super().__init__(graph)
         self.name = "Possible"
         self.points = [attr["point"] for _, attr in self.graph.graph.nodes(data=True)]
+        self.graph.add_convex_hull()
 
     def find_nearest_point(self, point: shapely.Point) -> shapely.Point:
         nearest_point = min(self.points, key=lambda p: point.distance(p))

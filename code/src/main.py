@@ -25,16 +25,17 @@ def test_algos(runs, points):
 def main():
     logging.info("Start main function.")
     nodes = load_Nodes_from_Json()
-    nodes = generate.gen_nodes(20, 100, 100)
+    # nodes = generate.gen_nodes(20, 100, 100)
     save_Nodes_as_Json(nodes)
     graphe = Graphe(nodes)
 
-    # from solver.ortools import Ortools
-    # solver: Solver = Ortools(graphe)
-    from solver.possible import Possible
+    from solver.ortools import Ortools
 
-    solver: Solver = Possible(graphe)
+    solver: Solver = Ortools(graphe)
+    # from solver.possible import Possible
+    # solver: Solver = Possible(graphe)
 
+    print(graphe.get_number_of_edges_in_the_triangulation())
     graphe = solver.solve()
     graphe.show_and_save()
     logging.info("End main function.")
@@ -46,5 +47,5 @@ if __name__ == "__main__":
         format="%(asctime)s - %(levelname)s - %(message)s",
         datefmt="%H:%M:%S",
     )
-    # main()
-    test_algos(10, 20)
+    main()
+    # test_algos(10, 20)

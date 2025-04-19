@@ -85,7 +85,6 @@ class Graphe:
                 local_grphe.remove_edge(edge[0], edge[1])
 
         logging.info(f"aktive kanten: {sum(1 for _ in local_grphe.edges)}")
-        return
         pos = nx.get_node_attributes(local_grphe, "pos")
         degrees = nx.get_node_attributes(local_grphe, "degree")
 
@@ -214,3 +213,15 @@ class Graphe:
             self.add_edge(
                 self.get_node_from_point(point1), self.get_node_from_point(point2), True
             )
+
+    def get_number_of_edges_in_the_triangulation(self) -> int:
+        """Gibt die Anzahl der Kanten im Graphen zurück."""
+        points = [attr["point"] for _, attr in self.graph.nodes(data=True)]
+        cvonvex_hull = shapely.geometry.MultiPoint(points).convex_hull
+        if not isinstance(cvonvex_hull, shapely.geometry.Polygon):
+            raise ValueError("Convex hull is not a polygon.")
+        coords = [1 for _ in cvonvex_hull.exterior.coords]
+        k = len(coords) - 1
+        n = len(self.get_all_nodes())
+        # Aus Computational Geometry - Algorithms and Applications Seite 192
+        return 3 * n - 3 - k

@@ -14,6 +14,7 @@ class Solver(ABC):
 
     def solve(self) -> Graphe:
         logging.info(f"{self.name} started.")
+        self.graph.name = self.name
         self.actual_solver()
         logging.info(f"{self.name} completed.")
         return self.graph
