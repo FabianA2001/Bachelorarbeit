@@ -2,6 +2,7 @@ from graphe_utils.graphe import Graphe
 from solver.solver import Solver
 import shapely
 import itertools
+import logging
 
 
 class Possible(Solver):
@@ -23,3 +24,4 @@ class Possible(Solver):
                     self.graph.get_node_from_point(point2),
                     True,
                 )
+        logging.info("Possible Algo completed.")

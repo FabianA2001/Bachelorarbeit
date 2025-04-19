@@ -3,7 +3,7 @@ import json
 
 
 class Node:
-    def __init__(self, name: str, pos: tuple[int, int], degree: int = 0) -> None:
+    def __init__(self, name: str, pos: tuple[int, int], degree: int = -1) -> None:
         self.name = name
         self.pos = pos
         self.degree = degree

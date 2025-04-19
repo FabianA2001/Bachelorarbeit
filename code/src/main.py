@@ -2,12 +2,13 @@ from graphe_utils.graphe import Graphe
 from solver.solver import Solver
 from graphe_utils.node import save_Nodes_as_Json, load_Nodes_from_Json
 import logging
+from graphe_utils import generate
 
 
 def main():
     logging.info("Start main function.")
     nodes = load_Nodes_from_Json()
-    # nodes = generate.gen_nodes(50, 100, 100)
+    nodes = generate.gen_nodes(50, 100, 100)
     save_Nodes_as_Json(nodes)
     graphe = Graphe(nodes)
 
@@ -28,3 +29,4 @@ if __name__ == "__main__":
         datefmt="%H:%M:%S",
     )
     main()
+    logging.info("End main function.")

@@ -123,6 +123,7 @@ class Graphe:
         )
         plt.title("Graph mit festen Koordinaten")
         plt.savefig(f"{graphe_const.FIGURES_PREFIX}{self.name}.pdf")
+        logging.info("show Grphe")
         plt.show()
 
     def add_edge(self, node1: str, node2: str, value_active: bool = False) -> None:
