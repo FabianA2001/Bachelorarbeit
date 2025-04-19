@@ -193,8 +193,22 @@ class Graphe:
 
     def get_node_from_point(self, point: shapely.Point) -> str:
         """Gibt den Knoten zurück, der dem gegebenen Punkt am nächsten ist."""
-        if isinstance(point, shapely.Point):
-            raise ValueError("Erwarte einen Punkt.")
+        if not isinstance(point, shapely.Point):
+            raise ValueError(f"Erwarte einen Punkt., aber erhalte {type(point)}")
         if point not in self.point_to_node:
             raise ValueError(f"Point {point} not found in point_to_node.")
-        return self.point_to_node.get(point)
+        node = self.point_to_node.get(point)
+        assert node is not None, f"Node for point {point} not found."
+        return node
+
+    def add_convex_hull(self) -> None:
+        """Fügt den konvexen Rumpf der Punkte als Kante hinzu."""
+        points = [attr["point"] for _, attr in self.graph.nodes(data=True)]
+        cvonvex_hull = shapely.geometry.MultiPoint(points).convex_hull
+        if not isinstance(cvonvex_hull, shapely.geometry.Polygon):
+            raise ValueError("Convex hull is not a polygon.")
+        coords = list(shapely.Point(node) for node in cvonvex_hull.exterior.coords)
+        for point1, point2 in zip(coords[:-1], coords[1:]):
+            self.add_edge(
+                self.get_node_from_point(point1), self.get_node_from_point(point2), True
+            )

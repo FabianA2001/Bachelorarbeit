@@ -1,5 +1,4 @@
 from graphe_utils.graphe import Graphe
-from graphe_utils import generate
 from solver.solver import Solver
 from graphe_utils.node import save_Nodes_as_Json, load_Nodes_from_Json
 import logging
@@ -8,15 +7,15 @@ import logging
 def main():
     logging.info("Start main function.")
     nodes = load_Nodes_from_Json()
-    nodes = generate.gen_nodes(5, 100, 100)
+    # nodes = generate.gen_nodes(50, 100, 100)
     save_Nodes_as_Json(nodes)
     graphe = Graphe(nodes)
 
     # from solver.ortools import Ortools
     # solver: Solver = Ortools(graphe)
-    from solver.greedy import Greedy
+    from solver.possible import Possible
 
-    solver: Solver = Greedy(graphe)
+    solver: Solver = Possible(graphe)
 
     graphe = solver.solve()
     graphe.show_and_save()
