@@ -2,10 +2,12 @@ from graphe_utils.graphe import Graphe
 from solver.solver import Solver
 import shapely
 import itertools
+import logging
 
 
 class Possible(Solver):
     def __init__(self, graph: Graphe) -> None:
+        logging.warning("Possible hat einen Bug das zu wenig Kanten hinzugefügt werden")
         super().__init__(graph)
         self.name = "Possible"
         self.points = [attr["point"] for _, attr in self.graph.graph.nodes(data=True)]
