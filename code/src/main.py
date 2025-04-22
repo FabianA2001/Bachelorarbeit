@@ -8,6 +8,7 @@ from graphe_utils.node import (
 import logging
 from graphe_utils import generate
 from solver.delaunay import Delaunay
+from graphe_utils.node import Node
 
 
 def test_algos(runs, points):
@@ -32,15 +33,28 @@ def test_algos(runs, points):
     logging.info("End test_algos function.")
 
 
+def coustom_points() -> list[Node]:
+    nodes = [
+        Node("A", (0, 0)),
+        Node("B", (0, 1)),
+        Node("C", (1, 0)),
+        Node("D", (1, 1)),
+    ]
+    return nodes
+
+
 def main():
     logging.info("Start main function.")
     # nodes = load_nodes_from_json()
-    nodes = generate.gen_nodes(20, 100, 100)
+    nodes = generate.gen_nodes(10, 100, 100)
     save_nodes_as_json(nodes)
+    # nodes = coustom_points()
     graphe = Graphe(nodes)
     solver = Delaunay(graphe)
     solver.solve()
+    print(*graphe.get_all_triangles(), sep="\n")
     graphe.show_and_save()
+
     logging.info("End main function.")
 
 

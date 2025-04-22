@@ -6,6 +6,7 @@ import shapely
 import itertools
 from typing import Tuple, Union, Optional
 import logging
+import itertools
 
 
 class Graphe:
@@ -239,3 +240,20 @@ class Graphe:
         n = len(self.get_all_nodes_name())
         # Aus Computational Geometry - Algorithms and Applications Seite 192
         return 3 * n - 3 - k
+
+    def get_triangels_for_node(self, node: str) -> list[str]:
+        """Gibt die Dreiecke des Graphen zurück."""
+        triangles = []
+        neighbors = set(self.graph[node])
+        for u, v in itertools.combinations(neighbors, 2):
+            if self.graph.has_edge(u, v):
+                triangles.append(tuple(sorted([node, u, v])))
+        return triangles
+
+    def get_all_triangles(self) -> list[tuple[str, str, str]]:
+        """Gibt alle Dreiecke des Graphen zurück."""
+        triangles = set()
+        for node in self.get_all_nodes_name():
+            for tri in self.get_triangels_for_node(node):
+                triangles.add(tri)
+        return list(triangles)
