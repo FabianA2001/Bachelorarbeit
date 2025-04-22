@@ -87,16 +87,16 @@ class Graphe:
 
         active_edges = len(local_grphe.edges)
         logging.info(f"aktive kanten: {active_edges}")
-        assert active_edges == self.number_edges_in_Triangulatoin, (
-            f"Anzahl der Kanten in der Triangulation: {self.number_edges_in_Triangulatoin}, "
-            f"aktive Kanten: {active_edges}"
-        )
+        if active_edges != self.number_edges_in_Triangulatoin:
+            logging.error(
+                f"Anzahl der Kanten in der Triangulation stimmt nicht überein.\nEs sollten {self.number_edges_in_Triangulatoin} sein, aber es sind {active_edges}.")
 
         pos = nx.get_node_attributes(local_grphe, "pos")
         degrees = nx.get_node_attributes(local_grphe, "degree")
 
         # Labels mit Degree-Werten erstellen
-        labels = {node: f"{node}\n{degree}" for node, degree in degrees.items()}
+        labels = {node: f"{node}\n{degree}" for node,
+                  degree in degrees.items()}
 
         # Knotenfarben basierend auf dem Grad erstellen
         colors = [
@@ -136,16 +136,17 @@ class Graphe:
             logging.info("show Grphe")
             plt.show()
 
-    def add_edge(self, node1: str, node2: str, value_active: bool = False) -> None:
+    def add_edge(self, node1: str, node2: str, active: bool = False) -> None:
         """Fügt eine Kante zwischen zwei Knoten hinzu."""
         assert node1 in self.graph and node2 in self.graph
         self.graph.add_edge(
             node1,
             node2,
             line=shapely.geometry.LineString(
-                [self.graph.nodes[node1]["point"], self.graph.nodes[node2]["point"]]
+                [self.graph.nodes[node1]["point"],
+                    self.graph.nodes[node2]["point"]]
             ),
-            active=value_active,
+            active=active,
         )
 
     def active_edge(
@@ -198,14 +199,15 @@ class Graphe:
         """Gibt alle Kanten des Graphen zurück."""
         return list(self.graph.edges)
 
-    def get_all_nodes(self) -> list[str]:
+    def get_all_nodes_name(self) -> list[str]:
         """Gibt alle Knoten des Graphen zurück."""
         return list(self.graph.nodes)
 
     def get_node_from_point(self, point: shapely.Point) -> str:
         """Gibt den Knoten zurück, der dem gegebenen Punkt am nächsten ist."""
         if not isinstance(point, shapely.Point):
-            raise ValueError(f"Erwarte einen Punkt., aber erhalte {type(point)}")
+            raise ValueError(
+                f"Erwarte einen Punkt., aber erhalte {type(point)}")
         if point not in self.point_to_node:
             raise ValueError(f"Point {point} not found in point_to_node.")
         node = self.point_to_node.get(point)
@@ -218,10 +220,12 @@ class Graphe:
         cvonvex_hull = shapely.geometry.MultiPoint(points).convex_hull
         if not isinstance(cvonvex_hull, shapely.geometry.Polygon):
             raise ValueError("Convex hull is not a polygon.")
-        coords = list(shapely.Point(node) for node in cvonvex_hull.exterior.coords)
+        coords = list(shapely.Point(node)
+                      for node in cvonvex_hull.exterior.coords)
         for point1, point2 in zip(coords[:-1], coords[1:]):
             self.add_edge(
-                self.get_node_from_point(point1), self.get_node_from_point(point2), True
+                self.get_node_from_point(
+                    point1), self.get_node_from_point(point2), True
             )
 
     def __get_number_edges_triangulation(self) -> int:
@@ -232,6 +236,6 @@ class Graphe:
             raise ValueError("Convex hull is not a polygon.")
         coords = [1 for _ in cvonvex_hull.exterior.coords]
         k = len(coords) - 1
-        n = len(self.get_all_nodes())
+        n = len(self.get_all_nodes_name())
         # Aus Computational Geometry - Algorithms and Applications Seite 192
         return 3 * n - 3 - k

@@ -36,10 +36,11 @@ class Ortools(Solver):
         combinations = list(itertools.combinations(all_edges, 2))
         for edge_1, edge_2 in combinations:
             if self.graph.check_for_intersection_ececpt_corners(edge_1, edge_2):
-                self.model.AddBoolOr([self.vars[edge_1].Not(), self.vars[edge_2].Not()])
+                self.model.AddBoolOr(
+                    [self.vars[edge_1].Not(), self.vars[edge_2].Not()])
 
     def constraint_degree(self):
-        for node in self.graph.get_all_nodes():
+        for node in self.graph.get_all_nodes_name():
             degree = self.graph.graph.nodes[node]["degree"]
             summ = 0
             for edge in self.graph.graph.edges(node):
@@ -49,12 +50,13 @@ class Ortools(Solver):
                     summ += self.vars[(edge[1], edge[0])]
             self.model.Add(summ == degree)
 
-    def actual_solver(self):
+    def _actual_solver(self):
         solver = cp_model.CpSolver()
         # solver.parameters.log_search_progress = True  # Enable logging
         logging.info("Start solving...")
         status = solver.Solve(
-            self.model, FirstSolutionStop(self.graph.number_edges_in_Triangulatoin)
+            self.model, FirstSolutionStop(
+                self.graph.number_edges_in_Triangulatoin)
         )
         # status = solver.Solve(self.model)
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:

@@ -7,17 +7,19 @@ import logging
 
 class Possible(Solver):
     def __init__(self, graph: Graphe) -> None:
-        logging.warning("Possible hat einen Bug das zu wenig Kanten hinzugefügt werden")
+        logging.warning(
+            "Possible hat einen Bug das zu wenig Kanten hinzugefügt werden")
         super().__init__(graph)
         self.name = "Possible"
-        self.points = [attr["point"] for _, attr in self.graph.graph.nodes(data=True)]
+        self.points = [attr["point"]
+                       for _, attr in self.graph.graph.nodes(data=True)]
         self.graph.add_convex_hull()
 
     def find_nearest_point(self, point: shapely.Point) -> shapely.Point:
         nearest_point = min(self.points, key=lambda p: point.distance(p))
         return nearest_point
 
-    def actual_solver(self):
+    def _actual_solver(self):
         combinations = itertools.combinations(self.points, 2)
         for point1, point2 in combinations:
             line = shapely.LineString([point1, point2])

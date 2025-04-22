@@ -7,28 +7,11 @@ from graphe_utils.node import (
 )
 import logging
 from graphe_utils import generate
+from solver.delaunay import Delaunay
 
 
 def test_algos(runs, points):
-    for _ in range(runs):
-        nodes = generate.gen_nodes(points, 100, 100)
-        graphe = Graphe(nodes)
-        from solver.ortools import Ortools
-
-        solver: Solver = Ortools(graphe)
-        solver.solve()
-        graphe.show_and_save()
-        from solver.possible import Possible
-
-        solver: Solver = Possible(graphe)
-        solver.solve()
-        graphe.show_and_save()
-        print("---------------")
-
-
-def main():
-    logging.info("Start main function.")
-    # nodes = load_nodes_from_json()
+    logging.info("Start test_algos function.")
     nodes = generate.gen_nodes(40, 100, 100)
     save_nodes_as_json(nodes)
     graphe = Graphe(nodes)
@@ -46,6 +29,18 @@ def main():
     solver2: Solver = Ortools(graphe2)
     graphe2 = solver2.solve()
     graphe2.show_and_save()
+    logging.info("End test_algos function.")
+
+
+def main():
+    logging.info("Start main function.")
+    # nodes = load_nodes_from_json()
+    nodes = generate.gen_nodes(20, 100, 100)
+    save_nodes_as_json(nodes)
+    graphe = Graphe(nodes)
+    solver = Delaunay(graphe)
+    solver.solve()
+    graphe.show_and_save()
     logging.info("End main function.")
 
 
