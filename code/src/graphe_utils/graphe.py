@@ -287,10 +287,15 @@ class Graphe:
         for node in triangle2:
             if edge[0] != node and edge[1] != node:
                 b = node
-        # if self.check_for_intersection_with_all_edges((a, b)):
-        #     return False
-        self.remove_edge(edge)
+
         self.add_edge(a, b, True)
+        self.deactivate_edge(edge)
+        if self.check_for_intersection_with_all_edges((a, b), True):
+            self.remove_edge((a, b))
+            self.active_edge(edge)
+            logging.warning(f"({a},{b}) würde mit einer anderen Kante schneiden.")
+            return False
+        self.remove_edge(edge)
         return True
 
     def is_edge_in_graphe(self, edge: tuple[str, str]) -> tuple[str, str]:
