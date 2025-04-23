@@ -13,22 +13,20 @@ from graphe_utils.node import Node
 
 def test_algos(runs, points):
     logging.info("Start test_algos function.")
-    nodes = generate.gen_nodes(40, 100, 100)
+    nodes = generate.gen_nodes(30, 100, 100)
     save_nodes_as_json(nodes)
     graphe = Graphe(nodes)
-    from solver.possible import Possible
 
-    solver: Solver = Possible(graphe)
+    solver: Solver = Delaunay(graphe)
     graphe = solver.solve()
     graphe.show_and_save(show=False)
     save_graph_as_json(graphe.graph)
 
     nodes2 = load_nodes_from_json()
     graphe2 = Graphe(nodes2)
-    from solver.ortools import Ortools
 
-    solver2: Solver = Ortools(graphe2)
-    graphe2 = solver2.solve()
+    # solver2: Solver = Ortools(graphe2)
+    # graphe2 = solver2.solve()
     graphe2.show_and_save()
     logging.info("End test_algos function.")
 
@@ -45,14 +43,14 @@ def coustom_points() -> list[Node]:
 
 def main():
     logging.info("Start main function.")
-    # nodes = load_nodes_from_json()
-    nodes = generate.gen_nodes(10, 100, 100)
+    nodes = load_nodes_from_json()
+    # nodes = generate.gen_nodes(10, 100, 100)
     save_nodes_as_json(nodes)
     # nodes = coustom_points()
     graphe = Graphe(nodes)
     solver = Delaunay(graphe)
     solver.solve()
-    print(*graphe.get_all_triangles(), sep="\n")
+    graphe.flip_edge(("9", "5"))
     graphe.show_and_save()
 
     logging.info("End main function.")

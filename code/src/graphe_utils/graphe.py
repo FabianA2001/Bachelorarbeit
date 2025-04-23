@@ -6,7 +6,6 @@ import shapely
 import itertools
 from typing import Tuple, Union, Optional
 import logging
-import itertools
 
 
 class Graphe:
@@ -90,14 +89,14 @@ class Graphe:
         logging.info(f"aktive kanten: {active_edges}")
         if active_edges != self.number_edges_in_Triangulatoin:
             logging.error(
-                f"Anzahl der Kanten in der Triangulation stimmt nicht überein.\nEs sollten {self.number_edges_in_Triangulatoin} sein, aber es sind {active_edges}.")
+                f"Anzahl der Kanten in der Triangulation stimmt nicht überein.\nEs sollten {self.number_edges_in_Triangulatoin} sein, aber es sind {active_edges}."
+            )
 
         pos = nx.get_node_attributes(local_grphe, "pos")
         degrees = nx.get_node_attributes(local_grphe, "degree")
 
         # Labels mit Degree-Werten erstellen
-        labels = {node: f"{node}\n{degree}" for node,
-                  degree in degrees.items()}
+        labels = {node: f"{node}\n{degree}" for node, degree in degrees.items()}
 
         # Knotenfarben basierend auf dem Grad erstellen
         colors = [
@@ -144,11 +143,19 @@ class Graphe:
             node1,
             node2,
             line=shapely.geometry.LineString(
-                [self.graph.nodes[node1]["point"],
-                    self.graph.nodes[node2]["point"]]
+                [self.graph.nodes[node1]["point"], self.graph.nodes[node2]["point"]]
             ),
             active=active,
         )
+
+    def remove_edge(self, edge: tuple[str, str]) -> None:
+        """Entfernt eine Kante zwischen zwei Knoten."""
+        node1, node2 = edge
+        assert node1 in self.graph and node2 in self.graph
+        if (node1, node2) in self.graph.edges:
+            self.graph.remove_edge(node1, node2)
+        else:
+            raise ValueError(f"Edge ({node1}, {node2}) not found in graph.")
 
     def active_edge(
         self, node1: Union[str, Tuple[str, str]], node2: Optional[str] = None
@@ -207,8 +214,7 @@ class Graphe:
     def get_node_from_point(self, point: shapely.Point) -> str:
         """Gibt den Knoten zurück, der dem gegebenen Punkt am nächsten ist."""
         if not isinstance(point, shapely.Point):
-            raise ValueError(
-                f"Erwarte einen Punkt., aber erhalte {type(point)}")
+            raise ValueError(f"Erwarte einen Punkt., aber erhalte {type(point)}")
         if point not in self.point_to_node:
             raise ValueError(f"Point {point} not found in point_to_node.")
         node = self.point_to_node.get(point)
@@ -221,12 +227,10 @@ class Graphe:
         cvonvex_hull = shapely.geometry.MultiPoint(points).convex_hull
         if not isinstance(cvonvex_hull, shapely.geometry.Polygon):
             raise ValueError("Convex hull is not a polygon.")
-        coords = list(shapely.Point(node)
-                      for node in cvonvex_hull.exterior.coords)
+        coords = list(shapely.Point(node) for node in cvonvex_hull.exterior.coords)
         for point1, point2 in zip(coords[:-1], coords[1:]):
             self.add_edge(
-                self.get_node_from_point(
-                    point1), self.get_node_from_point(point2), True
+                self.get_node_from_point(point1), self.get_node_from_point(point2), True
             )
 
     def __get_number_edges_triangulation(self) -> int:
@@ -250,6 +254,17 @@ class Graphe:
                 triangles.append(tuple(sorted([node, u, v])))
         return triangles
 
+    def get_triangles_for_edge(self, edge: tuple[str, str]) -> list[str]:
+        """Gibt die Dreiecke des Graphen zurück."""
+        triangles = []
+        node1, node2 = edge
+        neighbors1 = set(self.graph[node1])
+        neighbors2 = set(self.graph[node2])
+        for u in neighbors1.intersection(neighbors2):
+            if self.graph.has_edge(node1, u) and self.graph.has_edge(node2, u):
+                triangles.append(tuple(sorted([node1, node2, u])))
+        return triangles
+
     def get_all_triangles(self) -> list[tuple[str, str, str]]:
         """Gibt alle Dreiecke des Graphen zurück."""
         triangles = set()
@@ -257,3 +272,31 @@ class Graphe:
             for tri in self.get_triangels_for_node(node):
                 triangles.add(tri)
         return list(triangles)
+
+    def flip_edge(self, edge: tuple[str, str]) -> bool:
+        """Flippt eine Kante im Graphen."""
+        edge = self.is_edge_in_graphe(edge)
+        triangles = self.get_triangles_for_edge(edge)
+        if len(triangles) <= 1:
+            return False
+        assert len(triangles) == 2, f"Edge {edge} is not a diagonal."
+        triangle1, triangle2 = triangles
+        for node in triangle1:
+            if edge[0] != node and edge[1] != node:
+                a = node
+        for node in triangle2:
+            if edge[0] != node and edge[1] != node:
+                b = node
+        # if self.check_for_intersection_with_all_edges((a, b)):
+        #     return False
+        self.remove_edge(edge)
+        self.add_edge(a, b, True)
+        return True
+
+    def is_edge_in_graphe(self, edge: tuple[str, str]) -> tuple[str, str]:
+        """Überprüft, ob eine Kante im Graphen vorhanden ist."""
+        if edge not in self.graph.edges:
+            edge = (edge[1], edge[0])
+        if edge not in self.graph.edges:
+            raise ValueError(f"Edge {edge} not found in graph.")
+        return edge
