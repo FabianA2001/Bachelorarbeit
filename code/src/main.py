@@ -9,6 +9,7 @@ import logging
 from graphe_utils import generate
 from solver.delaunay import Delaunay
 from graphe_utils.node import Node
+import random
 
 
 def test_algos(runs, points):
@@ -50,8 +51,14 @@ def main():
     graphe = Graphe(nodes)
     solver = Delaunay(graphe)
     solver.solve()
-    graphe.flip_edge(("9", "5"))
-    graphe.show_and_save()
+    graphe.show_and_save(show=False)
+    for i in range(100):
+        print(f"Run {i}")
+        edges = graphe.get_all_edges()
+        edge = random.choice(edges)
+        graphe.flip_edge(edge)
+        graphe.name = "Flipped_" + str(i)
+        graphe.show_and_save(show=False)
 
     logging.info("End main function.")
 

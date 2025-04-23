@@ -221,17 +221,23 @@ class Graphe:
         assert node is not None, f"Node for point {point} not found."
         return node
 
-    def add_convex_hull(self) -> None:
-        """Fügt den konvexen Rumpf der Punkte als Kante hinzu."""
+    def get_hull_edges(self) -> list[tuple[str, str]]:
         points = [attr["point"] for _, attr in self.graph.nodes(data=True)]
         cvonvex_hull = shapely.geometry.MultiPoint(points).convex_hull
         if not isinstance(cvonvex_hull, shapely.geometry.Polygon):
             raise ValueError("Convex hull is not a polygon.")
         coords = list(shapely.Point(node) for node in cvonvex_hull.exterior.coords)
+        edges = []
         for point1, point2 in zip(coords[:-1], coords[1:]):
-            self.add_edge(
-                self.get_node_from_point(point1), self.get_node_from_point(point2), True
+            edges.append(
+                (self.get_node_from_point(point1), self.get_node_from_point(point2))
             )
+        return edges
+
+    def add_convex_hull(self) -> None:
+        """Fügt den konvexen Rumpf der Punkte als Kante hinzu."""
+        for edge in self.get_hull_edges():
+            self.add_edge(edge[0], edge[1], True)
 
     def __get_number_edges_triangulation(self) -> int:
         """Gibt die Anzahl der Kanten im Graphen zurück."""
@@ -254,7 +260,9 @@ class Graphe:
                 triangles.append(tuple(sorted([node, u, v])))
         return triangles
 
-    def get_triangles_for_edge(self, edge: tuple[str, str]) -> list[str]:
+    def get_triangles_for_edge(
+        self, edge: tuple[str, str]
+    ) -> list[tuple[str, str, str]]:
         """Gibt die Dreiecke des Graphen zurück."""
         triangles = []
         node1, node2 = edge
@@ -274,12 +282,37 @@ class Graphe:
         return list(triangles)
 
     def flip_edge(self, edge: tuple[str, str]) -> bool:
+        def reduze_to_two_tri(
+            triangles: list[tuple[str, str, str]],
+        ) -> list[tuple[str, str, str]]:
+            """Reduziert die Liste der Dreiecke auf zwei."""
+            logging.warning("starte While Schleife")
+            while len(triangles) > 2:
+                points = [
+                    self.graph.nodes[node].get("point")
+                    for node in self.get_all_nodes_name()
+                ]
+                for tri in triangles:
+                    tri_points = [self.graph.nodes[node].get("point") for node in tri]
+                    poly = shapely.geometry.Polygon(tri_points)
+                    if not poly.is_valid:
+                        raise ValueError(f"Polygon {poly} is not valid.\n{tri_points}")
+                    if not poly.intersection(
+                        shapely.geometry.MultiPoint(points)
+                    ).is_empty:
+                        triangles.remove(tri)
+            return triangles
+
         """Flippt eine Kante im Graphen."""
         edge = self.is_edge_in_graphe(edge)
         triangles = self.get_triangles_for_edge(edge)
         if len(triangles) <= 1:
             return False
-        assert len(triangles) == 2, f"Edge {edge} is not a diagonal."
+
+        if len(triangles) > 2:
+            triangles = reduze_to_two_tri(triangles)
+        assert len(triangles) == 2, f"Edge {edge} is not a diagonal.\n{triangles}"
+
         triangle1, triangle2 = triangles
         for node in triangle1:
             if edge[0] != node and edge[1] != node:
@@ -287,14 +320,20 @@ class Graphe:
         for node in triangle2:
             if edge[0] != node and edge[1] != node:
                 b = node
+        edges = self.get_all_edges()
+        if (a, b) in edges or (b, a) in edges:
+            return False
 
         self.add_edge(a, b, True)
         self.deactivate_edge(edge)
         if self.check_for_intersection_with_all_edges((a, b), True):
             self.remove_edge((a, b))
             self.active_edge(edge)
-            logging.warning(f"({a},{b}) würde mit einer anderen Kante schneiden.")
+            # logging.warning(
+            #     f"({a},{b}) würde mit einer anderen Kante schneiden.")
             return False
+        # logging.info(
+        #     f"({a},{b}) wurde erfolgreich hinzugefügt und ({edge[0]},{edge[1]}) entfernt.")
         self.remove_edge(edge)
         return True
 
