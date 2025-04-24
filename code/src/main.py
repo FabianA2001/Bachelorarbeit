@@ -45,7 +45,7 @@ def coustom_points() -> list[Node]:
 def main():
     logging.info("Start main function.")
     nodes = load_nodes_from_json()
-    # nodes = generate.gen_nodes(10, 100, 100)
+    nodes = generate.gen_nodes(200, 1000, 1000)
     save_nodes_as_json(nodes)
     # nodes = coustom_points()
     graphe = Graphe(nodes)
@@ -54,11 +54,13 @@ def main():
     graphe.show_and_save(show=False)
     for i in range(100):
         print(f"Run {i}")
-        edges = graphe.get_all_edges()
-        edge = random.choice(edges)
-        graphe.flip_edge(edge)
-        graphe.name = "Flipped_" + str(i)
-        graphe.show_and_save(show=False)
+        while True:
+            edges = graphe.get_all_edges()
+            edge = random.choice(edges)
+            if graphe.flip_edge(edge):
+                break
+    graphe.name = "Flipped_"
+    graphe.show_and_save(show=False)
 
     logging.info("End main function.")
 

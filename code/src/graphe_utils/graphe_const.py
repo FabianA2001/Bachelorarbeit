@@ -1,8 +1,8 @@
 """Graphe"""
 
 FIGURES_PREFIX = "figures/"
-NODE_SIZE = 450
-FONT_SIZE = 8
+NODE_SIZE = 200
+FONT_SIZE = 6
 NODE_COLOR_TRUE = "green"
 NODE_COLOR_FALSE = "red"
 EDGE_COLOR_TRUE = "green"

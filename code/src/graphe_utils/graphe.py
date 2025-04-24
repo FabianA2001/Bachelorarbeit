@@ -80,6 +80,7 @@ class Graphe:
 
     def show_and_save(self, show: bool = True, save: bool = True) -> None:
         """Zeichnet den Graphen mit den festgelegten Positionen und Farben."""
+        logging.info("starte show_and_save")
         local_grphe = self.graph.copy()
         for edge in local_grphe.edges:
             if local_grphe.edges[edge].get("active") is False:
@@ -135,6 +136,7 @@ class Graphe:
         if show:
             logging.info("show Grphe")
             plt.show()
+        logging.info("ende show_and_save")
 
     def add_edge(self, node1: str, node2: str, active: bool = False) -> None:
         """Fügt eine Kante zwischen zwei Knoten hinzu."""
@@ -286,21 +288,26 @@ class Graphe:
             triangles: list[tuple[str, str, str]],
         ) -> list[tuple[str, str, str]]:
             """Reduziert die Liste der Dreiecke auf zwei."""
+            nodes = set()
+            for tri in triangles:
+                for node in tri:
+                    if node != edge[0] and node != edge[1]:
+                        nodes.add(node)
+            points = [self.graph.nodes[node].get("point") for node in nodes]
+
             logging.warning("starte While Schleife")
             while len(triangles) > 2:
-                points = [
-                    self.graph.nodes[node].get("point")
-                    for node in self.get_all_nodes_name()
-                ]
                 for tri in triangles:
                     tri_points = [self.graph.nodes[node].get("point") for node in tri]
                     poly = shapely.geometry.Polygon(tri_points)
                     if not poly.is_valid:
                         raise ValueError(f"Polygon {poly} is not valid.\n{tri_points}")
-                    if not poly.intersection(
-                        shapely.geometry.MultiPoint(points)
-                    ).is_empty:
-                        triangles.remove(tri)
+                    for node, point in zip(nodes, points):
+                        if node in tri:
+                            continue
+                        if poly.contains(point):
+                            triangles.remove(tri)
+                            break
             return triangles
 
         """Flippt eine Kante im Graphen."""
