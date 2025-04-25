@@ -1,4 +1,4 @@
-from graphe_utils.graph_wrapper import Graph_Wrapper
+from graph_utils.graph_wrapper import Graph_Wrapper
 from solver.solver import Solver
 import shapely
 import itertools
@@ -7,7 +7,7 @@ import logging
 
 class Possible(Solver):
     def __init__(self, graph: Graph_Wrapper) -> None:
-        logging.warning("Possible hat einen Bug das zu wenig Kanten hinzugefügt werden")
+        logging.warning("Possible hat ein Bug das zu wenig Kanten hinzugefügt werden")
         super().__init__(graph)
         self.name = "Possible"
         self.points = [attr["point"] for _, attr in self.graph.nodes(data=True)]

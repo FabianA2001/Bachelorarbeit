@@ -1,6 +1,6 @@
 from solver.solver import Solver
 from ortools.sat.python import cp_model
-from graphe_utils.graph_wrapper import Graph_Wrapper
+from graph_utils.graph_wrapper import Graph_Wrapper
 import logging
 import itertools
 
@@ -18,8 +18,8 @@ class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
 
 
 class Ortools(Solver):
-    def __init__(self, graphe: Graph_Wrapper) -> None:
-        super().__init__(graphe)
+    def __init__(self, graph: Graph_Wrapper) -> None:
+        super().__init__(graph)
         self.name = "Ortools"
         self.graph.add_all_possible_edges()
         self.model = cp_model.CpModel()
@@ -35,7 +35,7 @@ class Ortools(Solver):
         all_edges = self.graph.get_all_edges()
         combinations = list(itertools.combinations(all_edges, 2))
         for edge_1, edge_2 in combinations:
-            if self.graph.check_for_intersection_ececpt_corners(edge_1, edge_2):
+            if self.graph.check_for_intersection_except_corners(edge_1, edge_2):
                 self.model.AddBoolOr([self.vars[edge_1].Not(), self.vars[edge_2].Not()])
 
     def constraint_degree(self):
@@ -54,7 +54,7 @@ class Ortools(Solver):
         # solver.parameters.log_search_progress = True  # Enable logging
         logging.info("Start solving...")
         status = solver.Solve(
-            self.model, FirstSolutionStop(self.graph.number_edges_in_Triangulatoin)
+            self.model, FirstSolutionStop(self.graph.number_edges_in_Triangulation)
         )
         # status = solver.Solve(self.model)
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:

@@ -11,9 +11,9 @@ class Delaunay(Solver):
         # Implement Delaunay triangulation algorithm here
         nodes_name = self.graph.get_all_nodes_name()
         nodes_as_pos = [self.graph.nodes[name].get("pos") for name in nodes_name]
-        tris = ScipyDelaunay(nodes_as_pos)
+        triangles = ScipyDelaunay(nodes_as_pos)
 
-        for tri in tris.simplices:
+        for tri in triangles.simplices:
             self.graph.add_edge(nodes_name[tri[0]], nodes_name[tri[1]], active=True)
             self.graph.add_edge(nodes_name[tri[1]], nodes_name[tri[2]], active=True)
             self.graph.add_edge(nodes_name[tri[2]], nodes_name[tri[0]], active=True)

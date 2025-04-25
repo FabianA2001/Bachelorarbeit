@@ -1,7 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-from graphe_utils import graphe_const
-from graphe_utils.node import Node
+from graph_utils import graph_const
+from graph_utils.node import Node
 import shapely
 import itertools
 from typing import Tuple, Union, Optional
@@ -11,13 +11,13 @@ import logging
 class Graph_Wrapper(nx.Graph):
     def __init__(self, nodes: list[Node]) -> None:
         super().__init__()
-        self.graph_name: str = graphe_const.GRAPHE_NAME
+        self.graph_name: str = graph_const.GRAPH_NAME
         for node in nodes:
             self.add_node(node.name, node.pos, node.degree)
         self.point_to_node: dict[shapely.Point, str] = {
             attr["point"]: node for node, attr in self.nodes(data=True)
         }
-        self.number_edges_in_Triangulatoin = self.__get_number_edges_triangulation()
+        self.number_edges_in_Triangulation = self.__get_number_edges_triangulation()
 
     def copy(self) -> nx.Graph:
         return nx.Graph(self)
@@ -27,7 +27,7 @@ class Graph_Wrapper(nx.Graph):
         assert isinstance(pos, tuple), f"Erwarte Tuple, aber erhalte {type(pos)}"
         super().add_node(key, pos=pos, degree=degree, point=shapely.geometry.Point(pos))
 
-    def check_for_intersection_ececpt_corners(
+    def check_for_intersection_except_corners(
         self,
         line1: shapely.geometry.LineString | tuple[str, str],
         line2: shapely.geometry.LineString | tuple[str, str],
@@ -74,67 +74,67 @@ class Graph_Wrapper(nx.Graph):
         for other in all_linestrings_from_edges:
             if line == other:
                 continue
-            if self.check_for_intersection_ececpt_corners(line, other):
+            if self.check_for_intersection_except_corners(line, other):
                 return True
         return False
 
     def show_and_save(self, show: bool = True, save: bool = True) -> None:
         """Zeichnet den Graphen mit den festgelegten Positionen und Farben."""
         logging.info("starte show_and_save")
-        local_grphe = self.copy()
-        for edge in local_grphe.edges:
-            if local_grphe.edges[edge].get("active") is False:
-                local_grphe.remove_edge(edge[0], edge[1])
+        local_graph = self.copy()
+        for edge in local_graph.edges:
+            if local_graph.edges[edge].get("active") is False:
+                local_graph.remove_edge(edge[0], edge[1])
 
-        active_edges = len(local_grphe.edges)
+        active_edges = len(local_graph.edges)
         logging.info(f"aktive kanten: {active_edges}")
-        if active_edges != self.number_edges_in_Triangulatoin:
+        if active_edges != self.number_edges_in_Triangulation:
             logging.error(
-                f"Anzahl der Kanten in der Triangulation stimmt nicht überein.\nEs sollten {self.number_edges_in_Triangulatoin} sein, aber es sind {active_edges}."
+                f"Anzahl der Kanten in der Triangulation stimmt nicht überein.\nEs sollten {self.number_edges_in_Triangulation} sein, aber es sind {active_edges}."
             )
 
-        pos = nx.get_node_attributes(local_grphe, "pos")
-        degrees = nx.get_node_attributes(local_grphe, "degree")
+        pos = nx.get_node_attributes(local_graph, "pos")
+        degrees = nx.get_node_attributes(local_graph, "degree")
 
         # Labels mit Degree-Werten erstellen
         labels = {node: f"{node}\n{degree}" for node, degree in degrees.items()}
 
         # Knotenfarben basierend auf dem Grad erstellen
         colors = [
-            graphe_const.NODE_COLOR_TRUE
+            graph_const.NODE_COLOR_TRUE
             if degree
-            == local_grphe.degree(
+            == local_graph.degree(
                 # type: ignore
                 node
             )
-            else graphe_const.NODE_COLOR_FALSE
+            else graph_const.NODE_COLOR_FALSE
             for node, degree in degrees.items()
         ]
 
         edge_colors = [
-            graphe_const.EDGE_COLOR_TRUE
+            graph_const.EDGE_COLOR_TRUE
             # Beispielbedingung
             if not self.check_for_intersection_with_all_edges(edge)
-            else graphe_const.EDGE_COLOR_FALSE
-            for edge in local_grphe.edges
+            else graph_const.EDGE_COLOR_FALSE
+            for edge in local_graph.edges
         ]
 
         # Zeichne den Graphen
         plt.clf()
         nx.draw(
-            local_grphe,
+            local_graph,
             pos=pos,
             labels=labels,
             node_color=colors,
             edge_color=edge_colors,  # Kantenfarben hier festlegen
-            node_size=graphe_const.NODE_SIZE,
-            font_size=graphe_const.FONT_SIZE,
+            node_size=graph_const.NODE_SIZE,
+            font_size=graph_const.FONT_SIZE,
         )
         plt.title("Graph mit festen Koordinaten")
         if save:
-            plt.savefig(f"{graphe_const.FIGURES_PREFIX}{self.graph_name}.pdf")
+            plt.savefig(f"{graph_const.FIGURES_PREFIX}{self.graph_name}.pdf")
         if show:
-            logging.info("show Grphe")
+            logging.info("show Graph")
             plt.show()
         logging.info("ende show_and_save")
 
@@ -225,10 +225,10 @@ class Graph_Wrapper(nx.Graph):
 
     def get_hull_edges(self) -> list[tuple[str, str]]:
         points = [attr["point"] for _, attr in self.nodes(data=True)]
-        cvonvex_hull = shapely.geometry.MultiPoint(points).convex_hull
-        if not isinstance(cvonvex_hull, shapely.geometry.Polygon):
+        convex_hull = shapely.geometry.MultiPoint(points).convex_hull
+        if not isinstance(convex_hull, shapely.geometry.Polygon):
             raise ValueError("Convex hull is not a polygon.")
-        coords = list(shapely.Point(node) for node in cvonvex_hull.exterior.coords)
+        coords = list(shapely.Point(node) for node in convex_hull.exterior.coords)
         edges = []
         for point1, point2 in zip(coords[:-1], coords[1:]):
             edges.append(
@@ -244,16 +244,16 @@ class Graph_Wrapper(nx.Graph):
     def __get_number_edges_triangulation(self) -> int:
         """Gibt die Anzahl der Kanten im Graphen zurück."""
         points = [attr["point"] for _, attr in self.nodes(data=True)]
-        cvonvex_hull = shapely.geometry.MultiPoint(points).convex_hull
-        if not isinstance(cvonvex_hull, shapely.geometry.Polygon):
+        convex_hull = shapely.geometry.MultiPoint(points).convex_hull
+        if not isinstance(convex_hull, shapely.geometry.Polygon):
             raise ValueError("Convex hull is not a polygon.")
-        coords = [1 for _ in cvonvex_hull.exterior.coords]
+        coords = [1 for _ in convex_hull.exterior.coords]
         k = len(coords) - 1
         n = len(self.get_all_nodes_name())
         # Aus Computational Geometry - Algorithms and Applications Seite 192
         return 3 * n - 3 - k
 
-    def get_triangels_for_node(self, node: str) -> list[str]:
+    def get_triangles_for_node(self, node: str) -> list[str]:
         """Gibt die Dreiecke des Graphen zurück."""
         triangles = []
         neighbors = set(self[node])
@@ -279,12 +279,12 @@ class Graph_Wrapper(nx.Graph):
         """Gibt alle Dreiecke des Graphen zurück."""
         triangles = set()
         for node in self.get_all_nodes_name():
-            for tri in self.get_triangels_for_node(node):
+            for tri in self.get_triangles_for_node(node):
                 triangles.add(tri)
         return list(triangles)
 
     def flip_edge(self, edge: tuple[str, str]) -> bool:
-        def reduze_to_two_tri(
+        def reduce_to_two_tri(
             triangles: list[tuple[str, str, str]],
         ) -> list[tuple[str, str, str]]:
             """Reduziert die Liste der Dreiecke auf zwei."""
@@ -311,13 +311,13 @@ class Graph_Wrapper(nx.Graph):
             return triangles
 
         """Flippt eine Kante im Graphen."""
-        edge = self.is_edge_in_graphe(edge)
+        edge = self.is_edge_in_graph(edge)
         triangles = self.get_triangles_for_edge(edge)
         if len(triangles) <= 1:
             return False
 
         if len(triangles) > 2:
-            triangles = reduze_to_two_tri(triangles)
+            triangles = reduce_to_two_tri(triangles)
         assert len(triangles) == 2, f"Edge {edge} is not a diagonal.\n{triangles}"
 
         triangle1, triangle2 = triangles
@@ -344,7 +344,7 @@ class Graph_Wrapper(nx.Graph):
         self.remove_edge(edge)
         return True
 
-    def is_edge_in_graphe(self, edge: tuple[str, str]) -> tuple[str, str]:
+    def is_edge_in_graph(self, edge: tuple[str, str]) -> tuple[str, str]:
         """Überprüft, ob eine Kante im Graphen vorhanden ist."""
         if edge not in self.edges:
             edge = (edge[1], edge[0])

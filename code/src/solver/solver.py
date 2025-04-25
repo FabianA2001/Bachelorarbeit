@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from graphe_utils.graph_wrapper import Graph_Wrapper
+from graph_utils.graph_wrapper import Graph_Wrapper
 import logging
 
 

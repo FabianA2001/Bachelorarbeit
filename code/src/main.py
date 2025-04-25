@@ -1,14 +1,14 @@
-from graphe_utils.graph_wrapper import Graph_Wrapper
+from graph_utils.graph_wrapper import Graph_Wrapper
 from solver.solver import Solver
-from graphe_utils.node import (
+from graph_utils.node import (
     save_nodes_as_json,
     load_nodes_from_json,
     save_graph_as_json,
 )
 import logging
-from graphe_utils import generate
+from graph_utils import generate
 from solver.delaunay import Delaunay
-from graphe_utils.node import Node
+from graph_utils.node import Node
 import random
 
 
@@ -16,23 +16,23 @@ def test_algos(runs, points):
     logging.info("Start test_algos function.")
     nodes = generate.gen_nodes(30, 100, 100)
     save_nodes_as_json(nodes)
-    graphe = Graph_Wrapper(nodes)
+    graph = Graph_Wrapper(nodes)
 
-    solver: Solver = Delaunay(graphe)
-    graphe = solver.solve()
-    graphe.show_and_save(show=False)
-    save_graph_as_json(graphe.graph)
+    solver: Solver = Delaunay(graph)
+    graph = solver.solve()
+    graph.show_and_save(show=False)
+    save_graph_as_json(graph.graph)
 
     nodes2 = load_nodes_from_json()
-    graphe2 = Graph_Wrapper(nodes2)
+    graph2 = Graph_Wrapper(nodes2)
 
-    # solver2: Solver = Ortools(graphe2)
-    # graphe2 = solver2.solve()
-    graphe2.show_and_save()
+    # solver2: Solver = Ortools(graph2)
+    # graph2 = solver2.solve()
+    graph2.show_and_save()
     logging.info("End test_algos function.")
 
 
-def coustom_points() -> list[Node]:
+def custom_points() -> list[Node]:
     nodes = [
         Node("A", (0, 0)),
         Node("B", (0, 1)),
@@ -43,46 +43,46 @@ def coustom_points() -> list[Node]:
 
 
 def random_Flips():
-    logging.info("Start main function.")
     nodes = load_nodes_from_json()
     nodes = generate.gen_nodes(200, 1000, 1000)
     save_nodes_as_json(nodes)
-    # nodes = coustom_points()
-    graphe = Graph_Wrapper(nodes)
-    solver = Delaunay(graphe)
+    # nodes = custom_points()
+    graph = Graph_Wrapper(nodes)
+    solver = Delaunay(graph)
     solver.solve()
-    graphe.show_and_save(show=False)
+    graph.show_and_save(show=False)
     for i in range(10):
         print(f"Run {i}")
         while True:
-            edges = graphe.get_all_edges()
+            edges = graph.get_all_edges()
             edge = random.choice(edges)
-            if graphe.flip_edge(edge):
+            if graph.flip_edge(edge):
                 break
-    graphe.graph_name = "Flipped_"
-    graphe.show_and_save(show=False)
+    graph.graph_name = "Flipped_"
+    graph.show_and_save(show=False)
 
-    logging.info("End main function.")
+
+def current_test():
+    # nodes = load_nodes_from_json()
+    nodes = generate.gen_nodes(10, 200, 200)
+    save_nodes_as_json(nodes)
+    graph = Graph_Wrapper(nodes)
+    print(graph.copy())
 
 
 def main():
     logging.info("Start main function.")
-
-    # nodes = load_nodes_from_json()
-    nodes = generate.gen_nodes(10, 200, 200)
-    save_nodes_as_json(nodes)
-    # nodes = coustom_points()
-    graphe = Graph_Wrapper(nodes)
-    print(graphe.copy())
-    logging.info("End main function.")
-
-
-if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(message)s",
         datefmt="%H:%M:%S",
     )
-    # main()
-    random_Flips()
+
+    # random_Flips()
     # test_algos(10, 20)
+    current_test()
+    logging.info("End main function.")
+
+
+if __name__ == "__main__":
+    main()

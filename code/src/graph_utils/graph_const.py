@@ -1,4 +1,4 @@
-"""Graphe"""
+"""Graph"""
 
 FIGURES_PREFIX = "figures/"
 NODE_SIZE = 200
@@ -7,7 +7,7 @@ NODE_COLOR_TRUE = "green"
 NODE_COLOR_FALSE = "red"
 EDGE_COLOR_TRUE = "green"
 EDGE_COLOR_FALSE = "red"
-GRAPHE_NAME = "Graphe"
+GRAPH_NAME = "Graph"
 
 
 """Generate"""
