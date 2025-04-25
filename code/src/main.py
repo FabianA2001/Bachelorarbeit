@@ -73,18 +73,17 @@ def current_test():
 
 
 def main():
-    # logging.info("Start main function.")
-    # logging.basicConfig(
-    #     level=logging.INFO,
-    #     format="%(asctime)s - %(levelname)s - %(message)s",
-    #     datefmt="%H:%M:%S",
-    # )
+    logging.info("Start main function.")
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        datefmt="%H:%M:%S",
+    )
 
-    # # random_Flips()
-    # # test_algos(10, 20)
-    # current_test()
-    # logging.info("End main function.")
-    return 5
+    # random_Flips()
+    # test_algos(10, 20)
+    current_test()
+    logging.info("End main function.")
 
 
 if __name__ == "__main__":
