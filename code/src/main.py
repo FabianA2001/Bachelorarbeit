@@ -1,4 +1,4 @@
-from graphe_utils.graphe import Graphe
+from graphe_utils.graph_wrapper import Graph_Wrapper
 from solver.solver import Solver
 from graphe_utils.node import (
     save_nodes_as_json,
@@ -16,7 +16,7 @@ def test_algos(runs, points):
     logging.info("Start test_algos function.")
     nodes = generate.gen_nodes(30, 100, 100)
     save_nodes_as_json(nodes)
-    graphe = Graphe(nodes)
+    graphe = Graph_Wrapper(nodes)
 
     solver: Solver = Delaunay(graphe)
     graphe = solver.solve()
@@ -24,7 +24,7 @@ def test_algos(runs, points):
     save_graph_as_json(graphe.graph)
 
     nodes2 = load_nodes_from_json()
-    graphe2 = Graphe(nodes2)
+    graphe2 = Graph_Wrapper(nodes2)
 
     # solver2: Solver = Ortools(graphe2)
     # graphe2 = solver2.solve()
@@ -42,26 +42,38 @@ def coustom_points() -> list[Node]:
     return nodes
 
 
-def main():
+def random_Flips():
     logging.info("Start main function.")
     nodes = load_nodes_from_json()
     nodes = generate.gen_nodes(200, 1000, 1000)
     save_nodes_as_json(nodes)
     # nodes = coustom_points()
-    graphe = Graphe(nodes)
+    graphe = Graph_Wrapper(nodes)
     solver = Delaunay(graphe)
     solver.solve()
     graphe.show_and_save(show=False)
-    for i in range(100):
+    for i in range(10):
         print(f"Run {i}")
         while True:
             edges = graphe.get_all_edges()
             edge = random.choice(edges)
             if graphe.flip_edge(edge):
                 break
-    graphe.name = "Flipped_"
+    graphe.graph_name = "Flipped_"
     graphe.show_and_save(show=False)
 
+    logging.info("End main function.")
+
+
+def main():
+    logging.info("Start main function.")
+
+    # nodes = load_nodes_from_json()
+    nodes = generate.gen_nodes(10, 200, 200)
+    save_nodes_as_json(nodes)
+    # nodes = coustom_points()
+    graphe = Graph_Wrapper(nodes)
+    print(graphe.copy())
     logging.info("End main function.")
 
 
@@ -71,5 +83,6 @@ if __name__ == "__main__":
         format="%(asctime)s - %(levelname)s - %(message)s",
         datefmt="%H:%M:%S",
     )
-    main()
+    # main()
+    random_Flips()
     # test_algos(10, 20)

@@ -8,22 +8,24 @@ from typing import Tuple, Union, Optional
 import logging
 
 
-class Graphe:
+class Graph_Wrapper(nx.Graph):
     def __init__(self, nodes: list[Node]) -> None:
-        self.graph = nx.Graph()
-        self.name: str = graphe_const.GRAPHE_NAME
+        super().__init__()
+        self.graph_name: str = graphe_const.GRAPHE_NAME
         for node in nodes:
-            self.__add_node(node.name, node.pos, node.degree)
+            self.add_node(node.name, node.pos, node.degree)
         self.point_to_node: dict[shapely.Point, str] = {
-            attr["point"]: node for node, attr in self.graph.nodes(data=True)
+            attr["point"]: node for node, attr in self.nodes(data=True)
         }
         self.number_edges_in_Triangulatoin = self.__get_number_edges_triangulation()
 
-    def __add_node(self, key: str, pos: tuple[int, int], degree: int) -> None:
+    def copy(self) -> nx.Graph:
+        return nx.Graph(self)
+
+    def add_node(self, key: str, pos: tuple[int, int], degree: int) -> None:
         """Fügt einen Knoten zum Graphen hinzu."""
-        self.graph.add_node(
-            key, pos=pos, degree=degree, point=shapely.geometry.Point(pos)
-        )
+        assert isinstance(pos, tuple), f"Erwarte Tuple, aber erhalte {type(pos)}"
+        super().add_node(key, pos=pos, degree=degree, point=shapely.geometry.Point(pos))
 
     def check_for_intersection_ececpt_corners(
         self,
@@ -31,13 +33,11 @@ class Graphe:
         line2: shapely.geometry.LineString | tuple[str, str],
     ) -> bool:
         if isinstance(line1, tuple):
-            line1 = self.graph.edges[line1].get("line")
+            line1 = self.edges[line1].get("line")
         if isinstance(line2, tuple):
-            line2 = self.graph.edges[line2].get("line")
+            line2 = self.edges[line2].get("line")
 
-        corner_points = [
-            self.graph.nodes[node].get("point") for node in self.graph.nodes
-        ]
+        corner_points = [self.nodes[node].get("point") for node in self.nodes]
         intersection = line1.intersection(line2)  # type: ignore
         if intersection.is_empty:
             return False
@@ -57,9 +57,9 @@ class Graphe:
         """Überprüft, ob eine Linie mit einer anderen Linie im Graphen schneidet."""
         if isinstance(edge, tuple):
             if check_if_active:
-                if not self.graph.edges[edge].get("active"):
+                if not self.edges[edge].get("active"):
                     return False
-            line = self.graph.edges[edge].get("line")
+            line = self.edges[edge].get("line")
         elif isinstance(edge, shapely.LineString):
             line = edge
         else:
@@ -67,9 +67,9 @@ class Graphe:
 
         # Überprüfen, ob die Linie mit einer anderen Linie im Graphen schneidet
         all_linestrings_from_edges = [
-            self.graph.edges[edge].get("line")
-            for edge in self.graph.edges
-            if self.graph.edges[edge].get("active") or not check_if_active
+            self.edges[edge].get("line")
+            for edge in self.edges
+            if self.edges[edge].get("active") or not check_if_active
         ]
         for other in all_linestrings_from_edges:
             if line == other:
@@ -81,7 +81,7 @@ class Graphe:
     def show_and_save(self, show: bool = True, save: bool = True) -> None:
         """Zeichnet den Graphen mit den festgelegten Positionen und Farben."""
         logging.info("starte show_and_save")
-        local_grphe = self.graph.copy()
+        local_grphe = self.copy()
         for edge in local_grphe.edges:
             if local_grphe.edges[edge].get("active") is False:
                 local_grphe.remove_edge(edge[0], edge[1])
@@ -132,7 +132,7 @@ class Graphe:
         )
         plt.title("Graph mit festen Koordinaten")
         if save:
-            plt.savefig(f"{graphe_const.FIGURES_PREFIX}{self.name}.pdf")
+            plt.savefig(f"{graphe_const.FIGURES_PREFIX}{self.graph_name}.pdf")
         if show:
             logging.info("show Grphe")
             plt.show()
@@ -140,12 +140,12 @@ class Graphe:
 
     def add_edge(self, node1: str, node2: str, active: bool = False) -> None:
         """Fügt eine Kante zwischen zwei Knoten hinzu."""
-        assert node1 in self.graph and node2 in self.graph
-        self.graph.add_edge(
+        assert node1 in self and node2 in self
+        super().add_edge(
             node1,
             node2,
             line=shapely.geometry.LineString(
-                [self.graph.nodes[node1]["point"], self.graph.nodes[node2]["point"]]
+                [self.nodes[node1]["point"], self.nodes[node2]["point"]]
             ),
             active=active,
         )
@@ -153,9 +153,9 @@ class Graphe:
     def remove_edge(self, edge: tuple[str, str]) -> None:
         """Entfernt eine Kante zwischen zwei Knoten."""
         node1, node2 = edge
-        assert node1 in self.graph and node2 in self.graph
-        if (node1, node2) in self.graph.edges:
-            self.graph.remove_edge(node1, node2)
+        assert node1 in self and node2 in self
+        if (node1, node2) in self.edges:
+            super().remove_edge(node1, node2)
         else:
             raise ValueError(f"Edge ({node1}, {node2}) not found in graph.")
 
@@ -176,8 +176,8 @@ class Graphe:
             if not isinstance(node1, str) or not isinstance(node2, str):
                 raise ValueError("Beide Werte müssen Strings sein.")
 
-        assert (node1, node2) in self.graph.edges
-        self.graph.edges[node1, node2]["active"] = True
+        assert (node1, node2) in self.edges
+        self.edges[node1, node2]["active"] = True
 
     def deactivate_edge(
         self, node1: Union[str, Tuple[str, str]], node2: Optional[str] = None
@@ -196,22 +196,22 @@ class Graphe:
             if not isinstance(node1, str) or not isinstance(node2, str):
                 raise ValueError("Beide Werte müssen Strings sein.")
 
-        assert (node1, node2) in self.graph.edges
-        self.graph.edges[node1, node2]["active"] = False
+        assert (node1, node2) in self.edges
+        self.edges[node1, node2]["active"] = False
 
     def add_all_possible_edges(self, default_for_active: bool = False) -> None:
         """Fügt alle möglichen Kanten zwischen den Knoten hinzu."""
-        combinations = list(itertools.combinations(self.graph.nodes, 2))
+        combinations = list(itertools.combinations(self.nodes, 2))
         for com in combinations:
             self.add_edge(com[0], com[1], default_for_active)
 
     def get_all_edges(self) -> list[tuple[str, str]]:
         """Gibt alle Kanten des Graphen zurück."""
-        return list(self.graph.edges)
+        return list(self.edges)
 
     def get_all_nodes_name(self) -> list[str]:
         """Gibt alle Knoten des Graphen zurück."""
-        return list(self.graph.nodes)
+        return list(self.nodes)
 
     def get_node_from_point(self, point: shapely.Point) -> str:
         """Gibt den Knoten zurück, der dem gegebenen Punkt am nächsten ist."""
@@ -224,7 +224,7 @@ class Graphe:
         return node
 
     def get_hull_edges(self) -> list[tuple[str, str]]:
-        points = [attr["point"] for _, attr in self.graph.nodes(data=True)]
+        points = [attr["point"] for _, attr in self.nodes(data=True)]
         cvonvex_hull = shapely.geometry.MultiPoint(points).convex_hull
         if not isinstance(cvonvex_hull, shapely.geometry.Polygon):
             raise ValueError("Convex hull is not a polygon.")
@@ -243,7 +243,7 @@ class Graphe:
 
     def __get_number_edges_triangulation(self) -> int:
         """Gibt die Anzahl der Kanten im Graphen zurück."""
-        points = [attr["point"] for _, attr in self.graph.nodes(data=True)]
+        points = [attr["point"] for _, attr in self.nodes(data=True)]
         cvonvex_hull = shapely.geometry.MultiPoint(points).convex_hull
         if not isinstance(cvonvex_hull, shapely.geometry.Polygon):
             raise ValueError("Convex hull is not a polygon.")
@@ -256,9 +256,9 @@ class Graphe:
     def get_triangels_for_node(self, node: str) -> list[str]:
         """Gibt die Dreiecke des Graphen zurück."""
         triangles = []
-        neighbors = set(self.graph[node])
+        neighbors = set(self[node])
         for u, v in itertools.combinations(neighbors, 2):
-            if self.graph.has_edge(u, v):
+            if self.has_edge(u, v):
                 triangles.append(tuple(sorted([node, u, v])))
         return triangles
 
@@ -268,10 +268,10 @@ class Graphe:
         """Gibt die Dreiecke des Graphen zurück."""
         triangles = []
         node1, node2 = edge
-        neighbors1 = set(self.graph[node1])
-        neighbors2 = set(self.graph[node2])
+        neighbors1 = set(self[node1])
+        neighbors2 = set(self[node2])
         for u in neighbors1.intersection(neighbors2):
-            if self.graph.has_edge(node1, u) and self.graph.has_edge(node2, u):
+            if self.has_edge(node1, u) and self.has_edge(node2, u):
                 triangles.append(tuple(sorted([node1, node2, u])))
         return triangles
 
@@ -293,12 +293,12 @@ class Graphe:
                 for node in tri:
                     if node != edge[0] and node != edge[1]:
                         nodes.add(node)
-            points = [self.graph.nodes[node].get("point") for node in nodes]
+            points = [self.nodes[node].get("point") for node in nodes]
 
             logging.warning("starte While Schleife")
             while len(triangles) > 2:
                 for tri in triangles:
-                    tri_points = [self.graph.nodes[node].get("point") for node in tri]
+                    tri_points = [self.nodes[node].get("point") for node in tri]
                     poly = shapely.geometry.Polygon(tri_points)
                     if not poly.is_valid:
                         raise ValueError(f"Polygon {poly} is not valid.\n{tri_points}")
@@ -346,8 +346,8 @@ class Graphe:
 
     def is_edge_in_graphe(self, edge: tuple[str, str]) -> tuple[str, str]:
         """Überprüft, ob eine Kante im Graphen vorhanden ist."""
-        if edge not in self.graph.edges:
+        if edge not in self.edges:
             edge = (edge[1], edge[0])
-        if edge not in self.graph.edges:
+        if edge not in self.edges:
             raise ValueError(f"Edge {edge} not found in graph.")
         return edge
