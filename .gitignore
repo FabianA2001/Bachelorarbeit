@@ -3,6 +3,9 @@
 *png
 *json
 
+**/.degree-constrained-triangulation/
+**/degree_constrained_triangulation.egg-info
+
 
 
 ## Core latex/pdflatex auxiliary files:

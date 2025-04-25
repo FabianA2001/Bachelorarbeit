@@ -67,21 +67,24 @@ def current_test():
     nodes = generate.gen_nodes(10, 200, 200)
     save_nodes_as_json(nodes)
     graph = Graph_Wrapper(nodes)
-    print(graph.copy())
+    solver = Delaunay(graph)
+    graph = solver.solve()
+    graph.show_and_save()
 
 
 def main():
-    logging.info("Start main function.")
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-        datefmt="%H:%M:%S",
-    )
+    # logging.info("Start main function.")
+    # logging.basicConfig(
+    #     level=logging.INFO,
+    #     format="%(asctime)s - %(levelname)s - %(message)s",
+    #     datefmt="%H:%M:%S",
+    # )
 
-    # random_Flips()
-    # test_algos(10, 20)
-    current_test()
-    logging.info("End main function.")
+    # # random_Flips()
+    # # test_algos(10, 20)
+    # current_test()
+    # logging.info("End main function.")
+    return 5
 
 
 if __name__ == "__main__":

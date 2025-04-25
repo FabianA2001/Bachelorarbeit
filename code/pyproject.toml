@@ -1,0 +1,30 @@
+[project]
+name = "degree-constrained-triangulation"
+version = "0.1.0"
+description = "A project for the bachelor thesis."
+authors = [
+    { name = "Fabian Alich", email = "f.alich@tu-bs.de" }
+]
+dependencies = [
+    "matplotlib",
+    "networkx",
+    "ortools",
+    "shapely",
+    "scipy",
+]
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "pytest",
+]
+
+
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+    "-v",
+]
+testpaths = [
+    "tests",
+]
