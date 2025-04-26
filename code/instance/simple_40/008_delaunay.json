@@ -1,0 +1,202 @@
+[
+  {
+    "name": "0",
+    "pos": [10, 3],
+    "degree": 3
+  },
+  {
+    "name": "1",
+    "pos": [9, 0],
+    "degree": 3
+  },
+  {
+    "name": "2",
+    "pos": [9, 3],
+    "degree": 6
+  },
+  {
+    "name": "3",
+    "pos": [0, 8],
+    "degree": 4
+  },
+  {
+    "name": "4",
+    "pos": [0, 1],
+    "degree": 3
+  },
+  {
+    "name": "5",
+    "pos": [5, 1],
+    "degree": 5
+  },
+  {
+    "name": "6",
+    "pos": [4, 10],
+    "degree": 3
+  },
+  {
+    "name": "7",
+    "pos": [6, 2],
+    "degree": 5
+  },
+  {
+    "name": "8",
+    "pos": [5, 5],
+    "degree": 6
+  },
+  {
+    "name": "9",
+    "pos": [10, 10],
+    "degree": 4
+  },
+  {
+    "name": "10",
+    "pos": [0, 3],
+    "degree": 5
+  },
+  {
+    "name": "11",
+    "pos": [8, 6],
+    "degree": 5
+  },
+  {
+    "name": "12",
+    "pos": [8, 4],
+    "degree": 5
+  },
+  {
+    "name": "13",
+    "pos": [4, 5],
+    "degree": 5
+  },
+  {
+    "name": "14",
+    "pos": [1, 4],
+    "degree": 6
+  },
+  {
+    "name": "15",
+    "pos": [5, 9],
+    "degree": 5
+  },
+  {
+    "name": "16",
+    "pos": [8, 5],
+    "degree": 6
+  },
+  {
+    "name": "17",
+    "pos": [2, 10],
+    "degree": 5
+  },
+  {
+    "name": "18",
+    "pos": [7, 0],
+    "degree": 7
+  },
+  {
+    "name": "19",
+    "pos": [2, 4],
+    "degree": 6
+  },
+  {
+    "name": "20",
+    "pos": [0, 4],
+    "degree": 3
+  },
+  {
+    "name": "21",
+    "pos": [2, 8],
+    "degree": 5
+  },
+  {
+    "name": "22",
+    "pos": [3, 8],
+    "degree": 6
+  },
+  {
+    "name": "23",
+    "pos": [7, 3],
+    "degree": 6
+  },
+  {
+    "name": "24",
+    "pos": [4, 9],
+    "degree": 6
+  },
+  {
+    "name": "25",
+    "pos": [5, 10],
+    "degree": 5
+  },
+  {
+    "name": "26",
+    "pos": [7, 5],
+    "degree": 7
+  },
+  {
+    "name": "27",
+    "pos": [3, 1],
+    "degree": 7
+  },
+  {
+    "name": "28",
+    "pos": [9, 6],
+    "degree": 5
+  },
+  {
+    "name": "29",
+    "pos": [5, 2],
+    "degree": 5
+  },
+  {
+    "name": "30",
+    "pos": [4, 2],
+    "degree": 5
+  },
+  {
+    "name": "31",
+    "pos": [6, 4],
+    "degree": 6
+  },
+  {
+    "name": "32",
+    "pos": [4, 8],
+    "degree": 6
+  },
+  {
+    "name": "33",
+    "pos": [10, 4],
+    "degree": 5
+  },
+  {
+    "name": "34",
+    "pos": [3, 5],
+    "degree": 6
+  },
+  {
+    "name": "35",
+    "pos": [0, 0],
+    "degree": 3
+  },
+  {
+    "name": "36",
+    "pos": [7, 7],
+    "degree": 6
+  },
+  {
+    "name": "37",
+    "pos": [8, 8],
+    "degree": 6
+  },
+  {
+    "name": "38",
+    "pos": [10, 5],
+    "degree": 4
+  },
+  {
+    "name": "39",
+    "pos": [4, 3],
+    "degree": 7
+  }
+]

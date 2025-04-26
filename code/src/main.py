@@ -72,6 +72,15 @@ def current_test():
     graph.show_and_save()
 
 
+def generate_instances():
+    gen = generate.Generate_Delaunay_Flips(
+        "simple_100",
+        number_nodes=100,
+        number_instances=10,
+    )
+    gen.generate()
+
+
 def main():
     logging.basicConfig(
         level=logging.INFO,
@@ -79,16 +88,8 @@ def main():
         datefmt="%H:%M:%S",
     )
     logging.info("Start main function.")
-    gen = generate.Generate_Delaunay(
-        "simple_40",
-        number_nodes=40,
-        number_instances=10,
-    )
-    gen.generate()
-    # random_Flips()
-    # test_algos(10, 20)
-    # current_test()
-
+    generate_instances()
+    # print(*run_test.get_instances()["simple_40"], sep="\n")
     logging.info("End main function.")
 
 

@@ -1,8 +1,7 @@
 **/__pycache__/
 *pdf
 *png
-*json
-
+.vscode/
 **/.degree-constrained-triangulation/
 **/degree_constrained_triangulation.egg-info
 

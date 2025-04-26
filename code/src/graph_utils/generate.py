@@ -47,11 +47,12 @@ class Generate_Instance(ABC):
         for i in range(self.number_instances):
             nodes = gen_nodes(self.number_nodes, self.width, self.height)
             graph = Graph_Wrapper(nodes)
-            graph = self.generate_instance(graph)
-            save_graph_as_json(graph, f"{self.name}/{self.lokal_name}_{i}")
+            graph = self._generate_instance(graph)
+            number = str(i).zfill(3)
+            save_graph_as_json(graph, f"{self.name}/{number}_{self.lokal_name}")
 
     @abstractmethod
-    def generate_instance(self, graph: Graph_Wrapper) -> Graph_Wrapper: ...
+    def _generate_instance(self, graph: Graph_Wrapper) -> Graph_Wrapper: ...
 
 
 class Generate_Delaunay_Flips(Generate_Instance):
@@ -68,7 +69,7 @@ class Generate_Delaunay_Flips(Generate_Instance):
         self.lokal_name = "delaunay_flips"
         self.number_flips = number_flips
 
-    def generate_instance(self, graph: Graph_Wrapper) -> Graph_Wrapper:
+    def _generate_instance(self, graph: Graph_Wrapper) -> Graph_Wrapper:
         solver = Delaunay(graph)
         solver.solve()
         for _ in range(self.number_flips):
@@ -92,7 +93,7 @@ class Generate_Delaunay(Generate_Instance):
         super().__init__(name, number_nodes, number_instances, width, height)
         self.lokal_name = "delaunay"
 
-    def generate_instance(self, graph: Graph_Wrapper) -> Graph_Wrapper:
+    def _generate_instance(self, graph: Graph_Wrapper) -> Graph_Wrapper:
         solver = Delaunay(graph)
         solver.solve()
         return graph
