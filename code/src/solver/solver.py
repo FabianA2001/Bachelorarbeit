@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from graph_utils.graph_wrapper import Graph_Wrapper
 import logging
+from typing import Optional
 
 
 class Solver(ABC):
@@ -8,16 +9,18 @@ class Solver(ABC):
     Abstract base class for all solvers.
     """
 
-    def __init__(self, graph: Graph_Wrapper) -> None:
+    def __init__(self, graph: Optional[Graph_Wrapper] = None) -> None:
         self.name = "Solver"
-        self.graph: Graph_Wrapper = graph
+        self.graph: Optional[Graph_Wrapper] = graph
 
-    def solve(self) -> Graph_Wrapper:
+    def solve(self, timeout: int = -1) -> bool:
+        if self.graph is None:
+            raise ValueError("Graph is not set. Please set the graph before solving.")
         logging.info(f"{self.name} started.")
         self.graph.graph_name = self.name
         self._actual_solver()
         logging.info(f"{self.name} completed.")
-        return self.graph
+        return True
 
     @abstractmethod
     def _actual_solver(self): ...

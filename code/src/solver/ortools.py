@@ -3,6 +3,7 @@ from ortools.sat.python import cp_model
 from graph_utils.graph_wrapper import Graph_Wrapper
 import logging
 import itertools
+from typing import Optional
 
 
 class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
@@ -18,20 +19,14 @@ class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
 
 
 class Ortools(Solver):
-    def __init__(self, graph: Graph_Wrapper) -> None:
+    def __init__(self, graph: Optional[Graph_Wrapper] = None) -> None:
         super().__init__(graph)
         self.name = "Ortools"
-        self.graph.add_all_possible_edges()
         self.model = cp_model.CpModel()
-        self.vars = {
-            edge: self.model.NewBoolVar(f"edge_{edge[0]}_{edge[1]}")
-            for edge in self.graph.get_all_edges()
-        }
-        self.model.Maximize(sum(list(self.vars.values())))
-        self.constraint_intersection()
-        self.constraint_degree()
 
     def constraint_intersection(self):
+        if self.graph is None:
+            raise ValueError("Graph is not set. Please set the graph before solving.")
         all_edges = self.graph.get_all_edges()
         combinations = list(itertools.combinations(all_edges, 2))
         for edge_1, edge_2 in combinations:
@@ -39,6 +34,8 @@ class Ortools(Solver):
                 self.model.AddBoolOr([self.vars[edge_1].Not(), self.vars[edge_2].Not()])
 
     def constraint_degree(self):
+        if self.graph is None:
+            raise ValueError("Graph is not set. Please set the graph before solving.")
         for node in self.graph.get_all_nodes_name():
             degree = self.graph.nodes[node]["degree"]
             summ = 0
@@ -50,6 +47,17 @@ class Ortools(Solver):
             self.model.Add(summ == degree)
 
     def _actual_solver(self):
+        if self.graph is None:
+            raise ValueError("Graph is not set. Please set the graph before solving.")
+        self.graph.add_all_possible_edges()
+        self.vars = {
+            edge: self.model.NewBoolVar(f"edge_{edge[0]}_{edge[1]}")
+            for edge in self.graph.get_all_edges()
+        }
+        self.model.Maximize(sum(list(self.vars.values())))
+        self.constraint_intersection()
+        self.constraint_degree()
+
         solver = cp_model.CpSolver()
         # solver.parameters.log_search_progress = True  # Enable logging
         logging.info("Start solving...")

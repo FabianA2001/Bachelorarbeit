@@ -1,0 +1,52 @@
+[
+  {
+    "name": "0",
+    "pos": [9, 10],
+    "degree": 4
+  },
+  {
+    "name": "1",
+    "pos": [5, 5],
+    "degree": 7
+  },
+  {
+    "name": "2",
+    "pos": [3, 0],
+    "degree": 4
+  },
+  {
+    "name": "3",
+    "pos": [10, 6],
+    "degree": 3
+  },
+  {
+    "name": "4",
+    "pos": [3, 10],
+    "degree": 3
+  },
+  {
+    "name": "5",
+    "pos": [8, 1],
+    "degree": 4
+  },
+  {
+    "name": "6",
+    "pos": [0, 4],
+    "degree": 3
+  },
+  {
+    "name": "7",
+    "pos": [2, 10],
+    "degree": 3
+  },
+  {
+    "name": "8",
+    "pos": [9, 5],
+    "degree": 5
+  },
+  {
+    "name": "9",
+    "pos": [6, 2],
+    "degree": 4
+  }
+]

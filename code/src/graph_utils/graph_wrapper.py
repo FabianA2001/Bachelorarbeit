@@ -24,7 +24,7 @@ class Graph_Wrapper(nx.Graph):
 
     def add_node(self, key: str, pos: tuple[int, int], degree: int) -> None:
         """Fügt einen Knoten zum Graphen hinzu."""
-        assert isinstance(pos, tuple), f"Erwarte Tuple, aber erhalte {type(pos)}"
+        assert isinstance(pos, tuple), f"Erwarte Tuple, aber erhalte {type(pos)}, {pos}"
         super().add_node(key, pos=pos, degree=degree, point=shapely.geometry.Point(pos))
 
     def check_for_intersection_except_corners(

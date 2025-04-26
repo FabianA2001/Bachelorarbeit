@@ -10,6 +10,7 @@ from graph_utils import generate
 from solver.delaunay import Delaunay
 from graph_utils.node import Node
 import random
+from graph_utils import run_instance
 
 
 def test_algos(runs, points):
@@ -19,7 +20,7 @@ def test_algos(runs, points):
     graph = Graph_Wrapper(nodes)
 
     solver: Solver = Delaunay(graph)
-    graph = solver.solve()
+    solver.solve()
     graph.show_and_save(show=False)
     save_graph_as_json(graph.graph)
 
@@ -62,20 +63,18 @@ def random_Flips():
     graph.show_and_save(show=False)
 
 
-def current_test():
-    # nodes = load_nodes_from_json()
-    nodes = generate.gen_nodes(10, 200, 200)
-    save_nodes_as_json(nodes)
-    graph = Graph_Wrapper(nodes)
-    solver = Delaunay(graph)
-    graph = solver.solve()
-    graph.show_and_save()
+def run_test():
+    logging.info("Start run_test function.")
+    run_instance.run_solver_on_instance(
+        Delaunay(), "simple_20", algo_suffix_name="second"
+    )
+    logging.info("End run_test function.")
 
 
 def generate_instances():
-    gen = generate.Generate_Delaunay_Flips(
-        "simple_100",
-        number_nodes=100,
+    gen = generate.Generate_Delaunay(
+        "simple_20",
+        number_nodes=20,
         number_instances=10,
     )
     gen.generate()
@@ -88,8 +87,9 @@ def main():
         datefmt="%H:%M:%S",
     )
     logging.info("Start main function.")
-    generate_instances()
-    # print(*run_test.get_instances()["simple_40"], sep="\n")
+    # run_test()
+    # generate_instances()
+    run_instance.show_results("simple_20.json")
     logging.info("End main function.")
 
 

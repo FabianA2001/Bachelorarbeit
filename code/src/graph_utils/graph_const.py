@@ -18,3 +18,8 @@ GEN_HEIGHT = 10
 """"Node"""
 DEFAULT_FILE_NAME = "current"
 PREFIX_INSTANCE = "instance/"
+DEFAULT_FILE_PATH = f"{PREFIX_INSTANCE}{DEFAULT_FILE_NAME}.json"
+
+
+"""Result"""
+RESULTS_DIR = "results/"

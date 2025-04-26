@@ -7,7 +7,7 @@ import os
 class Node:
     def __init__(self, name: str, pos: tuple[int, int], degree: int = -1) -> None:
         self.name = name
-        self.pos = pos
+        self.pos: tuple[int, int] = pos
         self.degree = degree
 
     def __str__(self) -> str:
@@ -36,11 +36,14 @@ def save_nodes_as_json(
         json.dump([node.__dict__ for node in Nodes], f, indent=4)
 
 
-def load_nodes_from_json(filename: str = graph_const.DEFAULT_FILE_NAME) -> list[Node]:
+def load_nodes_from_json(filename: str = graph_const.DEFAULT_FILE_PATH) -> list[Node]:
     """Lädt eine Liste von Knoten aus einer JSON-Datei."""
-    with open(f"{graph_const.PREFIX_INSTANCE}{filename}.json", "r") as f:
+    with open(filename, "r") as f:
         data = json.load(f)
-        nodes = [Node(**node) for node in data]
+        nodes = [
+            Node(node["name"], tuple(node["pos"]), node.get("degree", -1))
+            for node in data
+        ]
     return nodes
 
 

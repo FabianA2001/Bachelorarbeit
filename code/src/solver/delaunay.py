@@ -1,13 +1,17 @@
 from solver.solver import Solver
 from scipy.spatial import Delaunay as ScipyDelaunay
+from time import sleep
 
 
 class Delaunay(Solver):
-    def __init__(self, graph) -> None:
+    def __init__(self, graph=None) -> None:
         super().__init__(graph)
         self.name = "Delaunay"
 
     def _actual_solver(self):
+        sleep(0.1)  # Simulate some processing time
+        if self.graph is None:
+            raise ValueError("Graph is not set. Please set the graph before solving.")
         # Implement Delaunay triangulation algorithm here
         nodes_name = self.graph.get_all_nodes_name()
         nodes_as_pos = [self.graph.nodes[name].get("pos") for name in nodes_name]
