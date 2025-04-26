@@ -49,3 +49,57 @@ def test_check_for_intersection_except_corners():
     graph.add_edge("B", "C")
     assert graph.check_for_intersection_except_corners(("A", "D"), ("B", "C"))
     assert not graph.check_for_intersection_except_corners(("A", "D"), ("A", "B"))
+
+
+def test_add_all_possible_edges():
+    # Test the add_all_possible_edges function
+    nodes = [
+        Node("A", (0, 0)),
+        Node("B", (0, 1)),
+        Node("C", (1, 0)),
+        Node("D", (1, 1)),
+    ]
+    graph = Graph_Wrapper(nodes)
+    graph.add_all_possible_edges()
+    assert len(graph.get_all_edges()) == 6
+    all_edges = graph.get_all_edges()
+    assert ("A", "B") in all_edges
+    assert ("A", "C") in all_edges
+    assert ("A", "D") in all_edges
+    assert ("B", "C") in all_edges
+    assert ("B", "D") in all_edges
+    assert ("C", "D") in all_edges
+
+
+def test_get_triangles_for_node():
+    # Test the get_triangles_for_node function
+    nodes = [
+        Node("A", (0, 0)),
+        Node("B", (0, 1)),
+        Node("C", (1, 0)),
+        Node("D", (1, 1)),
+    ]
+    graph = Graph_Wrapper(nodes)
+    graph.add_convex_hull()
+    graph.add_edge("A", "D")
+    triangles = graph.get_triangles_for_node("A")
+    assert len(triangles) == 2
+    assert ("A", "B", "D") in triangles
+    assert ("A", "C", "D") in triangles
+
+
+def test_get_triangles_for_edge():
+    # Test the get_triangles_for_node function
+    nodes = [
+        Node("A", (0, 0)),
+        Node("B", (0, 1)),
+        Node("C", (1, 0)),
+        Node("D", (1, 1)),
+    ]
+    graph = Graph_Wrapper(nodes)
+    graph.add_convex_hull()
+    graph.add_edge("A", "D")
+    triangles = graph.get_triangles_for_edge(("A", "D"))
+    assert len(triangles) == 2
+    assert ("A", "B", "D") in triangles
+    assert ("A", "C", "D") in triangles
