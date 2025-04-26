@@ -1,6 +1,7 @@
 from graph_utils import graph_const
 import json
 import networkx as nx
+import os
 
 
 class Node:
@@ -19,8 +20,19 @@ class Node:
 def save_nodes_as_json(
     Nodes: list[Node], filename: str = graph_const.DEFAULT_FILE_NAME
 ) -> None:
+    path = f"{graph_const.PREFIX_INSTANCE}{filename}.json"
     """Speichert eine Liste von Knoten in einer JSON-Datei."""
-    with open(f"{graph_const.PREFIX_INSTANCE}{filename}.json", "w") as f:
+    # Erstelle den Ordner, falls er nicht existiert
+    path_list = path.split("/")
+    pre_path = ""
+    # print(path_list)
+    for directory in path_list[:-1]:
+        if not os.path.exists(pre_path + directory):
+            os.makedirs(pre_path + directory)
+        pre_path += f"{directory}/"
+
+    # Speichere die Knoten in der JSON-Datei
+    with open(path, "w") as f:
         json.dump([node.__dict__ for node in Nodes], f, indent=4)
 
 

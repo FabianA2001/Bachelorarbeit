@@ -295,8 +295,12 @@ class Graph_Wrapper(nx.Graph):
                         nodes.add(node)
             points = [self.nodes[node].get("point") for node in nodes]
 
-            logging.warning("starte While Schleife")
+            # logging.warning("starte While Schleife")
+            counter = 0
             while len(triangles) > 2:
+                counter += 1
+                if counter > 500:
+                    raise ValueError("Zu viele Iterationen in reduce_to_two_tri.")
                 for tri in triangles:
                     tri_points = [self.nodes[node].get("point") for node in tri]
                     poly = shapely.geometry.Polygon(tri_points)

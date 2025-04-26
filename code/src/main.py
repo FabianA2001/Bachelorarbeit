@@ -73,16 +73,22 @@ def current_test():
 
 
 def main():
-    logging.info("Start main function.")
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(message)s",
         datefmt="%H:%M:%S",
     )
-
+    logging.info("Start main function.")
+    gen = generate.Generate_Delaunay(
+        "simple_40",
+        number_nodes=40,
+        number_instances=10,
+    )
+    gen.generate()
     # random_Flips()
     # test_algos(10, 20)
-    current_test()
+    # current_test()
+
     logging.info("End main function.")
 
 
