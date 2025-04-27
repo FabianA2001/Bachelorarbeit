@@ -8,6 +8,7 @@ from graph_utils.node import (
 import logging
 from graph_utils import generate
 from solver.delaunay import Delaunay
+from solver.ortools import Ortools
 from graph_utils.node import Node
 import random
 from graph_utils import run_instance
@@ -63,10 +64,10 @@ def random_Flips():
     graph.show_and_save(show=False)
 
 
-def run_test():
+def run_algo():
     logging.info("Start run_test function.")
     run_instance.run_solver_on_instance(
-        Delaunay(), "simple_20", algo_suffix_name="second"
+        Ortools(), "simple_20", algo_suffix_name="second"
     )
     logging.info("End run_test function.")
 
@@ -87,7 +88,7 @@ def main():
         datefmt="%H:%M:%S",
     )
     logging.info("Start main function.")
-    # run_test()
+    # run_algo()
     # generate_instances()
     run_instance.show_results("simple_20.json")
     logging.info("End main function.")

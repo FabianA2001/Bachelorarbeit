@@ -1,170 +1,54 @@
 {
-  "Ortools": {
-    "002_delaunay": {
-      "time": 1.51,
-      "success": true
-    },
-    "006_delaunay": {
-      "time": 1.48,
-      "success": false
-    },
-    "001_delaunay": {
-      "time": 1.62,
-      "success": true
-    },
-    "005_delaunay": {
-      "time": 1.55,
-      "success": true
-    },
-    "008_delaunay": {
-      "time": 1.65,
-      "success": true
-    },
-    "009_delaunay": {
-      "time": 1.51,
-      "success": true
-    },
-    "004_delaunay": {
-      "time": 1.65,
-      "success": true
-    },
-    "000_delaunay": {
-      "time": 1.57,
-      "success": true
-    },
-    "007_delaunay": {
-      "time": 1.68,
-      "success": true
-    },
-    "003_delaunay": {
-      "time": 1.7,
-      "success": true
-    }
-  },
   "Ortools_second": {
     "002_delaunay": {
       "time": 1.5,
-      "success": true
+      "correct": true,
+      "triangulation": []
     },
     "006_delaunay": {
       "time": 1.46,
-      "success": true
+      "correct": true,
+      "triangulation": []
     },
     "001_delaunay": {
-      "time": 1.64,
-      "success": true
+      "time": 1.58,
+      "correct": true,
+      "triangulation": []
     },
     "005_delaunay": {
-      "time": 1.54,
-      "success": true
+      "time": 1.59,
+      "correct": true,
+      "triangulation": []
     },
     "008_delaunay": {
       "time": 1.55,
-      "success": true
+      "correct": true,
+      "triangulation": []
     },
     "009_delaunay": {
-      "time": 1.56,
-      "success": true
+      "time": 1.5,
+      "correct": true,
+      "triangulation": []
     },
     "004_delaunay": {
-      "time": 1.58,
-      "success": true
+      "time": 1.57,
+      "correct": true,
+      "triangulation": []
     },
     "000_delaunay": {
-      "time": 1.52,
-      "success": true
+      "time": 1.6,
+      "correct": true,
+      "triangulation": []
     },
     "007_delaunay": {
-      "time": 1.71,
-      "success": true
+      "time": 1.75,
+      "correct": true,
+      "triangulation": []
     },
     "003_delaunay": {
       "time": 1.69,
-      "success": true
-    }
-  },
-  "Delaunay_second": {
-    "002_delaunay": {
-      "time": 0.11,
-      "success": true
-    },
-    "006_delaunay": {
-      "time": 0.1,
-      "success": true
-    },
-    "001_delaunay": {
-      "time": 0.11,
-      "success": true
-    },
-    "005_delaunay": {
-      "time": 0.1,
-      "success": true
-    },
-    "008_delaunay": {
-      "time": 0.11,
-      "success": true
-    },
-    "009_delaunay": {
-      "time": 0.11,
-      "success": true
-    },
-    "004_delaunay": {
-      "time": 0.11,
-      "success": true
-    },
-    "000_delaunay": {
-      "time": 0.11,
-      "success": true
-    },
-    "007_delaunay": {
-      "time": 0.11,
-      "success": true
-    },
-    "003_delaunay": {
-      "time": 0.11,
-      "success": true
-    }
-  },
-  "Delaunay": {
-    "002_delaunay": {
-      "time": 0.11,
-      "success": true
-    },
-    "006_delaunay": {
-      "time": 0.11,
-      "success": true
-    },
-    "001_delaunay": {
-      "time": 0.11,
-      "success": true
-    },
-    "005_delaunay": {
-      "time": 0.1,
-      "success": true
-    },
-    "008_delaunay": {
-      "time": 0.11,
-      "success": true
-    },
-    "009_delaunay": {
-      "time": 0.11,
-      "success": true
-    },
-    "004_delaunay": {
-      "time": 0.11,
-      "success": true
-    },
-    "000_delaunay": {
-      "time": 0.11,
-      "success": true
-    },
-    "007_delaunay": {
-      "time": 0.11,
-      "success": true
-    },
-    "003_delaunay": {
-      "time": 0.11,
-      "success": true
+      "correct": true,
+      "triangulation": []
     }
   }
 }

@@ -35,7 +35,8 @@ def save_result(
     algorithm_name: str,
     instance_file_name: str,
     time: float,
-    success: bool = True,
+    correct: bool = True,
+    triangulation: list[tuple[str, str]] = [],
 ):
     filename = f"{instance_name}.json"
     path = os.path.join(RESULTS_DIR, filename)
@@ -51,7 +52,13 @@ def save_result(
     if algorithm_name not in data:
         data[algorithm_name] = {}
 
-    new_entries = {instance_file_name: {"time": time, "success": success}}
+    new_entries = {
+        instance_file_name: {
+            "time": time,
+            "correct": correct,
+            "triangulation": triangulation,
+        }
+    }
 
     # Aktualisiere nur diesen Algo
     data[algorithm_name].update(new_entries)
@@ -70,7 +77,7 @@ def run_solver_on_instance(
         graph = Graph_Wrapper(nodes)
         solver.graph = graph
         starttime = time.time()
-        success = solver.solve(timeout)
+        correct = solver.solve(timeout)
         duration = time.time() - starttime
         duration = round(duration, 2)
         solver_name = (
@@ -78,7 +85,7 @@ def run_solver_on_instance(
             if algo_suffix_name != ""
             else solver.name
         )
-        save_result(instance_name, solver_name, file_name, duration, success)
+        save_result(instance_name, solver_name, file_name, duration, correct)
 
 
 def show_results(
@@ -91,7 +98,7 @@ def show_results(
     rows = []
     for algo_name, problems in data.items():
         for problem_name, info in problems.items():
-            time = info["time"] if info["success"] else graph_const.FAIL_VALUE
+            time = info["time"] if info["correct"] else graph_const.FAIL_VALUE
             rows.append(
                 {
                     "Algorithm": algo_name,
