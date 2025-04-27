@@ -81,9 +81,6 @@ def run_solver_on_instance(
         save_result(instance_name, solver_name, file_name, duration, success)
 
 
-# TODO FAIL darstellen
-
-
 def show_results(
     instance_name: str,
 ):
@@ -94,12 +91,12 @@ def show_results(
     rows = []
     for algo_name, problems in data.items():
         for problem_name, info in problems.items():
+            time = info["time"] if info["success"] else graph_const.FAIL_VALUE
             rows.append(
                 {
                     "Algorithm": algo_name,
                     "Problem": problem_name,
-                    "Time": info["time"],
-                    "Success": info["success"],
+                    "Time": time,
                 }
             )
 
@@ -115,7 +112,9 @@ def show_results(
         palette="muted",
     )
 
-    plt.title("Vergleich der Laufzeiten (Time) je Problem")
+    plt.title(
+        f"Vergleich der Laufzeiten (Time) für {instance_name.replace(".json", "")} je Problem"
+    )
     plt.xticks(rotation=45)
     plt.grid(True, axis="y", linestyle="--", alpha=0.7)
     plt.tight_layout()

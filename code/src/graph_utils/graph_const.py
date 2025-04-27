@@ -23,3 +23,4 @@ DEFAULT_FILE_PATH = f"{PREFIX_INSTANCE}{DEFAULT_FILE_NAME}.json"
 
 """Result"""
 RESULTS_DIR = "results/"
+FAIL_VALUE = -0.5
