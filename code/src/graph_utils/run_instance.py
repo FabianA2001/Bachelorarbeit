@@ -85,7 +85,14 @@ def run_solver_on_instance(
             if algo_suffix_name != ""
             else solver.name
         )
-        save_result(instance_name, solver_name, file_name, duration, correct)
+        save_result(
+            instance_name,
+            solver_name,
+            file_name,
+            duration,
+            correct,
+            graph.get_all_edges(True),
+        )
 
 
 def show_results(
@@ -126,3 +133,20 @@ def show_results(
     plt.grid(True, axis="y", linestyle="--", alpha=0.7)
     plt.tight_layout()
     plt.show()
+
+
+def show_triangulation_from_result(
+    instance_name: str,
+    algorithm_name: str,
+    instance_file_name: str,
+):
+    nodes = load_nodes_from_json(
+        os.path.join(graph_const.PREFIX_INSTANCE, instance_name, instance_file_name)
+    )
+    with open(os.path.join(graph_const.RESULTS_DIR, f"{instance_name}.json"), "r") as f:
+        data = json.load(f)
+    triangulation = data[algorithm_name][instance_file_name]["triangulation"]
+    graph = Graph_Wrapper(nodes)
+    for edge in triangulation:
+        graph.add_edge(edge[0], edge[1], active=True)
+    graph.show_and_save(show=True, save=True)

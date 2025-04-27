@@ -38,7 +38,7 @@ def save_nodes_as_json(
 
 def load_nodes_from_json(filename: str = graph_const.DEFAULT_FILE_PATH) -> list[Node]:
     """Lädt eine Liste von Knoten aus einer JSON-Datei."""
-    with open(filename, "r") as f:
+    with open(f"{filename}.json", "r") as f:
         data = json.load(f)
         nodes = [
             Node(node["name"], tuple(node["pos"]), node.get("degree", -1))

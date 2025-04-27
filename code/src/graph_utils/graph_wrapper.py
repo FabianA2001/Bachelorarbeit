@@ -138,7 +138,7 @@ class Graph_Wrapper(nx.Graph):
             plt.show()
         logging.info("ende show_and_save")
 
-    def add_edge(self, node1: str, node2: str, active: bool = False) -> None:
+    def add_edge(self, node1: str, node2: str, active: bool = True) -> None:
         """Fügt eine Kante zwischen zwei Knoten hinzu."""
         assert node1 in self and node2 in self
         super().add_edge(
@@ -205,9 +205,13 @@ class Graph_Wrapper(nx.Graph):
         for com in combinations:
             self.add_edge(com[0], com[1], default_for_active)
 
-    def get_all_edges(self) -> list[tuple[str, str]]:
+    def get_all_edges(self, test_active: bool = False) -> list[tuple[str, str]]:
         """Gibt alle Kanten des Graphen zurück."""
-        return list(self.edges)
+        all_edges = list(self.edges)
+        if not test_active:
+            return all_edges
+        else:
+            return [edge for edge in all_edges if self.edges[edge].get("active")]
 
     def get_all_nodes_name(self) -> list[str]:
         """Gibt alle Knoten des Graphen zurück."""
