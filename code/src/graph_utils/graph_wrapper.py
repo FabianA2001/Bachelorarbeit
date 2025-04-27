@@ -6,6 +6,7 @@ import shapely
 import itertools
 from typing import Tuple, Union, Optional
 import logging
+import math
 
 
 class Graph_Wrapper(nx.Graph):
@@ -227,16 +228,45 @@ class Graph_Wrapper(nx.Graph):
         assert node is not None, f"Node for point {point} not found."
         return node
 
-    def get_hull_edges(self) -> list[tuple[str, str]]:
+    def get_hull_points(self) -> list[shapely.Point]:
         points = [attr["point"] for _, attr in self.nodes(data=True)]
         convex_hull = shapely.geometry.MultiPoint(points).convex_hull
         if not isinstance(convex_hull, shapely.geometry.Polygon):
             raise ValueError("Convex hull is not a polygon.")
-        coords = list(shapely.Point(node) for node in convex_hull.exterior.coords)
+        outer_points = convex_hull.exterior.intersection(
+            shapely.geometry.MultiPoint(points)
+        )
+        if not isinstance(outer_points, shapely.geometry.MultiPoint):
+            raise ValueError("Intersection is not a MultiPoint.")
+        return [node for node in outer_points.geoms]
+
+    def get_hull_nodes(self) -> list[str]:
+        return [self.get_node_from_point(node) for node in self.get_hull_points()]
+
+    def get_hull_edges(self) -> list[tuple[str, str]]:
+        def sorted_nodes(nodes: list[shapely.Point]) -> list[shapely.Point]:
+            """Sortiert die Punkte im Uhrzeigersinn."""
+            # Berechne den Schwerpunkt (Centroid) der Punkte
+            center = shapely.geometry.MultiPoint(nodes).centroid
+
+            # Berechne den Winkel jedes Punktes relativ zum Schwerpunkt
+            def angle_from_center(point: shapely.Point) -> float:
+                dx = point.x - center.x
+                dy = point.y - center.y
+                return math.atan2(dy, dx)  # Winkel in Bogenmaß
+
+            # Sortiere die Punkte basierend auf den Winkeln im Uhrzeigersinn
+            return sorted(nodes, key=angle_from_center, reverse=True)
+
+        nodes = self.get_hull_points()
+        nodes = sorted_nodes(nodes)
         edges = []
-        for point1, point2 in zip(coords[:-1], coords[1:]):
+        for i in range(len(nodes)):
             edges.append(
-                (self.get_node_from_point(point1), self.get_node_from_point(point2))
+                (
+                    self.get_node_from_point(nodes[i]),
+                    self.get_node_from_point(nodes[(i + 1) % len(nodes)]),
+                )
             )
         return edges
 
@@ -247,12 +277,7 @@ class Graph_Wrapper(nx.Graph):
 
     def __get_number_edges_triangulation(self) -> int:
         """Gibt die Anzahl der Kanten im Graphen zurück."""
-        points = [attr["point"] for _, attr in self.nodes(data=True)]
-        convex_hull = shapely.geometry.MultiPoint(points).convex_hull
-        if not isinstance(convex_hull, shapely.geometry.Polygon):
-            raise ValueError("Convex hull is not a polygon.")
-        coords = [1 for _ in convex_hull.exterior.coords]
-        k = len(coords) - 1
+        k = len(self.get_hull_edges())
         n = len(self.get_all_nodes_name())
         # Aus Computational Geometry - Algorithms and Applications Seite 192
         return 3 * n - 3 - k

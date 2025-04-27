@@ -103,3 +103,53 @@ def test_get_triangles_for_edge():
     assert len(triangles) == 2
     assert ("A", "B", "D") in triangles
     assert ("A", "C", "D") in triangles
+
+
+def test_get_hull_nodes():
+    # Test the get_hull_nodes function
+    nodes = [
+        Node("0", (5, 10)),
+        Node("1", (2, 6)),
+        Node("2", (6, 5)),
+        Node("3", (9, 3)),
+        Node("4", (0, 10)),
+        Node("5", (9, 5)),
+        Node("6", (1, 2)),
+        Node("7", (8, 6)),
+        Node("8", (2, 3)),
+        Node("9", (2, 10)),
+    ]
+    graph = Graph_Wrapper(nodes)
+    hull = graph.get_hull_nodes()
+    assert "4" in hull
+    assert "9" in hull
+    assert "0" in hull
+    assert "5" in hull
+    assert "3" in hull
+    assert "6" in hull
+    assert len(hull) == 6
+
+
+def test_get_hull_edges():
+    # Test the get_hull_edges function
+    nodes = [
+        Node("0", (5, 10)),
+        Node("1", (2, 6)),
+        Node("2", (6, 5)),
+        Node("3", (9, 3)),
+        Node("4", (0, 10)),
+        Node("5", (9, 5)),
+        Node("6", (1, 2)),
+        Node("7", (8, 6)),
+        Node("8", (2, 3)),
+        Node("9", (2, 10)),
+    ]
+    graph = Graph_Wrapper(nodes)
+    hull = graph.get_hull_edges()
+    assert ("4", "9") in hull
+    assert ("9", "0") in hull
+    assert ("0", "5") in hull
+    assert ("5", "3") in hull
+    assert ("3", "6") in hull
+    assert ("6", "4") in hull
+    assert len(hull) == 6

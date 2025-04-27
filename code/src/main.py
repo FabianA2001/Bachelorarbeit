@@ -65,7 +65,9 @@ def random_Flips():
 
 def run_algo():
     logging.info("Start run_test function.")
-
+    nodes = load_nodes_from_json("instance/simple_10/000_delaunay")
+    for node in nodes:
+        print(f'Node("{node.name}", {node.pos}),')
     logging.info("End run_test function.")
 
 
@@ -95,6 +97,7 @@ def main():
         "Ortools",
         "000_delaunay",
     )
+    # run_algo()
     logging.info("End main function.")
 
 
