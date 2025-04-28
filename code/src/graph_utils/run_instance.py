@@ -134,9 +134,7 @@ def show_results(
         palette="muted",
     )
 
-    plt.title(
-        f"Vergleich der Laufzeiten (Time) für {instance_name.replace(".json", "")} je Problem"
-    )
+    plt.title(f"Vergleich der Laufzeiten (Time) für {instance_name} je Problem")
     plt.xticks(rotation=45)
     plt.grid(True, axis="y", linestyle="--", alpha=0.7)
     plt.tight_layout()

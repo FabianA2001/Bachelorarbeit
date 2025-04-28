@@ -1,7 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 from graph_utils import graph_const
-from graph_utils.node import Node
+from graph_utils.node import Node, save_graph_as_json
 import shapely
 import itertools
 from typing import Tuple, Union, Optional
@@ -93,6 +93,7 @@ class Graph_Wrapper(nx.Graph):
             logging.error(
                 f"Anzahl der Kanten in der Triangulation stimmt nicht überein.\nEs sollten {self.number_edges_in_Triangulation} sein, aber es sind {active_edges}."
             )
+            save_graph_as_json(self, self.graph_name)
 
         pos = nx.get_node_attributes(local_graph, "pos")
         degrees = nx.get_node_attributes(local_graph, "degree")

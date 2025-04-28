@@ -5,13 +5,13 @@ from graph_utils.node import (
     load_nodes_from_json,
     save_graph_as_json,
 )
+from graph_utils import node
 import logging
 from graph_utils import generate
 from solver.delaunay import Delaunay
 from graph_utils.node import Node
-import random
 from solver.ortools import Ortools
-from graph_utils import run_instance
+from solver.possible import Possible
 
 
 def test_algo(points):
@@ -44,31 +44,28 @@ def custom_points() -> list[Node]:
     return nodes
 
 
-def random_Flips():
-    nodes = load_nodes_from_json()
-    nodes = generate.gen_nodes(200, 1000, 1000)
-    save_nodes_as_json(nodes)
-    # nodes = custom_points()
-    graph = Graph_Wrapper(nodes)
-    solver = Delaunay(graph)
-    solver.solve()
-    graph.show_and_save(show=False)
-    for i in range(10):
-        print(f"Run {i}")
-        while True:
-            edges = graph.get_all_edges()
-            edge = random.choice(edges)
-            if graph.flip_edge(edge):
-                break
-    graph.graph_name = "Flipped_"
-    graph.show_and_save(show=False)
-
-
-def run_algo():
+def try_find_error_in_possible():
     logging.info("Start run_test function.")
-    nodes = load_nodes_from_json("instance/simple_10/000_delaunay")
-    for node in nodes:
-        print(f'Node("{node.name}", {node.pos}),')
+    # for _ in range(30):
+    #     nodes = generate.gen_nodes(20, 100, 100)
+    #     graph = Graph_Wrapper(nodes)
+    #     solver: Solver = Possible(graph)
+    #     solver.solve()
+    #     graph.show_and_save(show=False, save=False)
+
+    nodes = node.load_nodes_from_json("instance/Possible")
+    graph = Graph_Wrapper(nodes)
+    graph.add_all_possible_edges(False)
+    solver: Solver = Possible(graph)
+    solver.solve()
+    for edge in graph.get_all_edges():
+        if graph.edges[edge]["active"] is True:
+            continue
+        graph.active_edge(edge)
+        if not graph.check_for_intersection_with_all_edges(edge, True):
+            print(f"Edge {edge} is possible")
+        graph.deactivate_edge(edge)
+    graph.show_and_save()
     logging.info("End run_test function.")
 
 
@@ -89,13 +86,13 @@ def main():
     #     number_flips=10,
     # )
     # gen.generate()
-    run_instance.show_results("simple_20")
+    # run_instance.show_results("simple_20")
     # run_instance.show_triangulation_from_result(
     #     "simple_10",
     #     "Ortools",
     #     "000_delaunay",
     # )
-    # run_algo()
+    try_find_error_in_possible()
     # test_algo(20)
     logging.info("End main function.")
 
