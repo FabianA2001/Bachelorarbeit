@@ -11,6 +11,7 @@ from solver.delaunay import Delaunay
 from graph_utils.node import Node
 import random
 from solver.ortools import Ortools
+from graph_utils import run_instance
 
 
 def test_algo(points):
@@ -88,7 +89,7 @@ def main():
     #     number_flips=10,
     # )
     # gen.generate()
-    # run_instance.show_results("simple_20")
+    run_instance.show_results("simple_20")
     # run_instance.show_triangulation_from_result(
     #     "simple_10",
     #     "Ortools",

@@ -79,10 +79,13 @@ def run_solver_on_instance(
     instance = instance[instance_name]
     for file_name, file_path in instance.items():
         nodes = load_nodes_from_json(file_path)
+        with open(f"{file_path}.json", "r") as f:
+            possible = json.load(f)["possible"]
         graph = Graph_Wrapper(nodes)
         solver.graph = graph
         starttime = time.time()
-        correct = solver.solve(timeout)
+        success = solver.solve(timeout)
+        correct = possible == success
         duration = time.time() - starttime
         duration = round(duration, 2)
         solver_name = (

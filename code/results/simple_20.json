@@ -1,7 +1,7 @@
 {
   "Ortools": {
     "003_delaunay_flips": {
-      "time": 1.42,
+      "time": 1.39,
       "correct": true,
       "triangulation": [
         ["0", "8"],
@@ -56,7 +56,7 @@
       ]
     },
     "002_delaunay_flips": {
-      "time": 1.43,
+      "time": 1.4,
       "correct": true,
       "triangulation": [
         ["0", "1"],
@@ -113,7 +113,7 @@
       ]
     },
     "001_delaunay_flips": {
-      "time": 1.44,
+      "time": 1.41,
       "correct": true,
       "triangulation": [
         ["0", "7"],
@@ -169,8 +169,8 @@
       ]
     },
     "000_delaunay_flips": {
-      "time": 1.51,
-      "correct": true,
+      "time": 1.49,
+      "correct": false,
       "triangulation": [
         ["0", "12"],
         ["0", "13"],
@@ -221,7 +221,7 @@
       ]
     },
     "006_delaunay_flips": {
-      "time": 1.47,
+      "time": 1.46,
       "correct": true,
       "triangulation": [
         ["0", "6"],
@@ -276,7 +276,7 @@
       ]
     },
     "007_delaunay_flips": {
-      "time": 1.59,
+      "time": 1.56,
       "correct": true,
       "triangulation": [
         ["0", "1"],
@@ -329,7 +329,7 @@
       ]
     },
     "004_delaunay_flips": {
-      "time": 1.5,
+      "time": 1.47,
       "correct": true,
       "triangulation": [
         ["0", "1"],
@@ -384,7 +384,7 @@
       ]
     },
     "005_delaunay_flips": {
-      "time": 1.54,
+      "time": 1.53,
       "correct": true,
       "triangulation": [
         ["0", "5"],
@@ -438,7 +438,7 @@
       ]
     },
     "008_delaunay_flips": {
-      "time": 1.56,
+      "time": 1.51,
       "correct": true,
       "triangulation": [
         ["0", "1"],
@@ -494,7 +494,7 @@
       ]
     },
     "009_delaunay_flips": {
-      "time": 1.5,
+      "time": 1.48,
       "correct": true,
       "triangulation": [
         ["0", "3"],
