@@ -5,6 +5,8 @@ from graph_utils.graph_wrapper import Graph_Wrapper
 from solver.delaunay import Delaunay
 from random import choice
 from abc import ABC, abstractmethod
+from typing import Optional
+import json
 
 
 def gen_nodes(
@@ -47,12 +49,21 @@ class Generate_Instance(ABC):
         for i in range(self.number_instances):
             nodes = gen_nodes(self.number_nodes, self.width, self.height)
             graph = Graph_Wrapper(nodes)
-            graph = self._generate_instance(graph)
+            graph, possible = self._generate_instance(graph)
             number = str(i).zfill(3)
             save_graph_as_json(graph, f"{self.name}/{number}_{self.lokal_name}")
+            if possible is not None:
+                path = f"{graph_const.PREFIX_INSTANCE}{self.name}/{number}_{self.lokal_name}.json"
+                with open(path, "r") as f:
+                    data = json.load(f)
+                data["possible"] = possible
+                with open(path, "w") as f:
+                    json.dump(data, f, indent=4)
 
     @abstractmethod
-    def _generate_instance(self, graph: Graph_Wrapper) -> Graph_Wrapper: ...
+    def _generate_instance(
+        self, graph: Graph_Wrapper
+    ) -> tuple[Graph_Wrapper, Optional[bool]]: ...
 
 
 class Generate_Delaunay_Flips(Generate_Instance):
@@ -69,7 +80,9 @@ class Generate_Delaunay_Flips(Generate_Instance):
         self.lokal_name = "delaunay_flips"
         self.number_flips = number_flips
 
-    def _generate_instance(self, graph: Graph_Wrapper) -> Graph_Wrapper:
+    def _generate_instance(
+        self, graph: Graph_Wrapper
+    ) -> tuple[Graph_Wrapper, Optional[bool]]:
         solver = Delaunay(graph)
         solver.solve()
         for _ in range(self.number_flips):
@@ -78,7 +91,7 @@ class Generate_Delaunay_Flips(Generate_Instance):
                 edge = choice(edges)
                 if graph.flip_edge(edge):
                     break
-        return graph
+        return (graph, True)
 
 
 class Generate_Delaunay(Generate_Instance):
@@ -93,7 +106,9 @@ class Generate_Delaunay(Generate_Instance):
         super().__init__(name, number_nodes, number_instances, width, height)
         self.lokal_name = "delaunay"
 
-    def _generate_instance(self, graph: Graph_Wrapper) -> Graph_Wrapper:
+    def _generate_instance(
+        self, graph: Graph_Wrapper
+    ) -> tuple[Graph_Wrapper, Optional[bool]]:
         solver = Delaunay(graph)
         solver.solve()
-        return graph
+        return (graph, True)

@@ -33,13 +33,15 @@ def save_nodes_as_json(
 
     # Speichere die Knoten in der JSON-Datei
     with open(path, "w") as f:
-        json.dump([node.__dict__ for node in Nodes], f, indent=4)
+        data = {}
+        data["nodes"] = [node.__dict__ for node in Nodes]
+        json.dump(data, f, indent=4)
 
 
 def load_nodes_from_json(filename: str = graph_const.DEFAULT_FILE_PATH) -> list[Node]:
     """Lädt eine Liste von Knoten aus einer JSON-Datei."""
     with open(f"{filename}.json", "r") as f:
-        data = json.load(f)
+        data = json.load(f)["nodes"]
         nodes = [
             Node(node["name"], tuple(node["pos"]), node.get("degree", -1))
             for node in data

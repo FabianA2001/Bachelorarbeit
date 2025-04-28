@@ -10,25 +10,25 @@ from graph_utils import generate
 from solver.delaunay import Delaunay
 from graph_utils.node import Node
 import random
-from graph_utils import run_instance
+from solver.ortools import Ortools
 
 
-def test_algos(runs, points):
+def test_algo(points):
     logging.info("Start test_algos function.")
-    nodes = generate.gen_nodes(30, 100, 100)
+    nodes = generate.gen_nodes(points, 100, 100)
     save_nodes_as_json(nodes)
     graph = Graph_Wrapper(nodes)
 
     solver: Solver = Delaunay(graph)
     solver.solve()
     graph.show_and_save(show=False)
-    save_graph_as_json(graph.graph)
+    save_graph_as_json(graph)
 
     nodes2 = load_nodes_from_json()
     graph2 = Graph_Wrapper(nodes2)
 
-    # solver2: Solver = Ortools(graph2)
-    # graph2 = solver2.solve()
+    solver2: Solver = Ortools(graph2)
+    solver2.solve()
     graph2.show_and_save()
     logging.info("End test_algos function.")
 
@@ -71,15 +71,6 @@ def run_algo():
     logging.info("End run_test function.")
 
 
-def generate_instances():
-    gen = generate.Generate_Delaunay(
-        "simple_20",
-        number_nodes=20,
-        number_instances=10,
-    )
-    gen.generate()
-
-
 def main():
     logging.basicConfig(
         level=logging.INFO,
@@ -88,16 +79,23 @@ def main():
     )
     logging.info("Start main function.")
     # run_instance.run_solver_on_instance(
-    #     Ortools(), "simple_10"
+    #     Ortools(), "simple_20"
     # )
-    # generate_instances()
-    # run_instance.show_results("simple_10")
-    run_instance.show_triangulation_from_result(
-        "simple_10",
-        "Ortools",
-        "000_delaunay",
-    )
+    # gen = generate.Generate_Delaunay_Flips(
+    #     "simple_20",
+    #     number_nodes=20,
+    #     number_instances=10,
+    #     number_flips=10,
+    # )
+    # gen.generate()
+    # run_instance.show_results("simple_20")
+    # run_instance.show_triangulation_from_result(
+    #     "simple_10",
+    #     "Ortools",
+    #     "000_delaunay",
+    # )
     # run_algo()
+    # test_algo(20)
     logging.info("End main function.")
 
 

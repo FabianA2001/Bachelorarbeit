@@ -23,7 +23,7 @@ def get_instances() -> dict[str, dict[str, str]]:
     for inst_name in inst_names:
         inst_dir = os.path.join(instances_dir, inst_name)
         instances[inst_name] = {
-            file.replace(".json", ""): os.path.join(inst_dir, file)
+            file.replace(".json", ""): os.path.join(inst_dir, file.replace(".json", ""))
             for file in os.listdir(inst_dir)
             if file.endswith(".json")
         }
@@ -71,7 +71,12 @@ def save_result(
 def run_solver_on_instance(
     solver: Solver, instance_name: str, timeout: int = -1, algo_suffix_name: str = ""
 ):
-    instance = get_instances()[instance_name]
+    instance = get_instances()
+    if instance_name not in instance.keys():
+        raise ValueError(
+            f"Instance {instance_name} not found in {graph_const.PREFIX_INSTANCE}"
+        )
+    instance = instance[instance_name]
     for file_name, file_path in instance.items():
         nodes = load_nodes_from_json(file_path)
         graph = Graph_Wrapper(nodes)
@@ -98,7 +103,7 @@ def run_solver_on_instance(
 def show_results(
     instance_name: str,
 ):
-    with open(os.path.join(graph_const.RESULTS_DIR, instance_name), "r") as f:
+    with open(f"{os.path.join(graph_const.RESULTS_DIR, instance_name)}.json", "r") as f:
         data = json.load(f)
 
     # In ein DataFrame umwandeln
