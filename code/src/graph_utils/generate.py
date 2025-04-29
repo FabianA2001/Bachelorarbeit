@@ -1,7 +1,7 @@
 from random import randint
-from graph_utils.node import Node, save_graph_as_json
+from graph_utils.node import Node
 from graph_utils import graph_const
-from graph_utils.graph_wrapper import Graph_Wrapper
+from graph_utils.graph_wrapper import Graph_Wrapper, save_graph_as_json
 from solver.delaunay import Delaunay
 from random import choice
 from abc import ABC, abstractmethod

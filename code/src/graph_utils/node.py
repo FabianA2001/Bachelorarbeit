@@ -1,6 +1,5 @@
 from graph_utils import graph_const
 import json
-import networkx as nx
 import os
 
 
@@ -47,21 +46,3 @@ def load_nodes_from_json(filename: str = graph_const.DEFAULT_FILE_PATH) -> list[
             for node in data
         ]
     return nodes
-
-
-def save_graph_as_json(
-    graph: nx.Graph, filename: str = graph_const.DEFAULT_FILE_NAME
-) -> None:
-    local_graph = graph.copy()
-    for edge in local_graph.edges:
-        if local_graph.edges[edge].get("active") is False:
-            local_graph.remove_edge(edge[0], edge[1])
-
-    nodes = []
-    for node in local_graph.nodes:
-        nodes.append(
-            Node(
-                node, local_graph.nodes[node]["pos"], len(list(local_graph.edges(node)))
-            )
-        )
-    save_nodes_as_json(nodes, filename)

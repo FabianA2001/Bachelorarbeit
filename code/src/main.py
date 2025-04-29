@@ -1,9 +1,8 @@
-from graph_utils.graph_wrapper import Graph_Wrapper
+from graph_utils.graph_wrapper import Graph_Wrapper, save_graph_as_json
 from solver.solver import Solver
 from graph_utils.node import (
     save_nodes_as_json,
     load_nodes_from_json,
-    save_graph_as_json,
 )
 from graph_utils import node
 import logging
@@ -12,7 +11,6 @@ from solver.delaunay import Delaunay
 from graph_utils.node import Node
 from solver.ortools import Ortools
 from solver.possible import Possible
-from graph_utils import run_instance
 
 
 def test_algo(points):
@@ -100,7 +98,7 @@ def setup_logging():
 def main():
     setup_logging()
     logging.info("Start main function.")
-    run_instance.run_solver_on_instance(Ortools(), "simple_20")
+    # run_instance.run_solver_on_instance(Ortools(), "simple_20")
     # gen = generate.Generate_Delaunay_Flips(
     #     "simple_20",
     #     number_nodes=20,
@@ -110,12 +108,19 @@ def main():
     # gen.generate()
     # run_instance.show_results("simple_20")
     # run_instance.show_triangulation_from_result(
-    #     "simple_10",
+    #     "simple_20",
     #     "Ortools",
-    #     "000_delaunay",
+    #     "000_delaunay_flips",
     # )
     # try_find_error_in_possible()
     # test_algo(20)
+    nodes = load_nodes_from_json("instance/simple_20/000_delaunay_flips")
+    graph = Graph_Wrapper(nodes)
+    solver = Ortools(graph)
+    solver.solve()
+    # graph.show_and_save()
+    print(graph.check_if_triangulation_with_degree_constraint())
+    graph.show_and_save()
     logging.info("End main function.")
 
 

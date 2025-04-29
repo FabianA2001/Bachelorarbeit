@@ -1,7 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 from graph_utils import graph_const
-from graph_utils.node import Node, save_graph_as_json
+from graph_utils.node import Node, save_nodes_as_json
 import shapely
 import itertools
 from typing import Tuple, Union, Optional
@@ -12,6 +12,7 @@ import math
 class Graph_Wrapper(nx.Graph):
     def __init__(self, nodes: list[Node]) -> None:
         super().__init__()
+        self.given_nodes = nodes
         self.graph_name: str = graph_const.GRAPH_NAME
         for node in nodes:
             self.add_node(node.name, node.pos, node.degree)
@@ -20,8 +21,21 @@ class Graph_Wrapper(nx.Graph):
         }
         self.number_edges_in_Triangulation = self.__get_number_edges_triangulation()
 
-    def copy(self) -> nx.Graph:
-        return nx.Graph(self)
+    def copy(self) -> "Graph_Wrapper":
+        graph = Graph_Wrapper(self.given_nodes)
+        for edge in self.get_all_edges():
+            graph.add_edge(edge[0], edge[1], self.edges[edge].get("active"))
+        return graph
+
+    def get_aktive_graph(self) -> "Graph_Wrapper":
+        local_graph = self.copy()
+        for edge in local_graph.edges:
+            if local_graph.edges[edge].get("active") is False:
+                local_graph.remove_edge(edge)
+        return local_graph
+
+    def degree(self, node):
+        return super().degree(node)  # type:ignore
 
     def add_node(self, key: str, pos: tuple[int, int], degree: int) -> None:
         """Fügt einen Knoten zum Graphen hinzu."""
@@ -82,16 +96,12 @@ class Graph_Wrapper(nx.Graph):
     def show_and_save(self, show: bool = True, save: bool = True) -> None:
         """Zeichnet den Graphen mit den festgelegten Positionen und Farben."""
         logging.info("starte show_and_save")
-        local_graph = self.copy()
-        for edge in local_graph.edges:
-            if local_graph.edges[edge].get("active") is False:
-                local_graph.remove_edge(edge[0], edge[1])
-
-        active_edges = len(local_graph.edges)
-        logging.info(f"aktive kanten: {active_edges}")
-        if active_edges != self.number_edges_in_Triangulation:
+        local_graph = self.get_aktive_graph()
+        num_active_edges = len(local_graph.edges)
+        # logging.info(f"aktive kanten: {num_active_edges}")
+        if num_active_edges != self.number_edges_in_Triangulation:
             logging.error(
-                f"Anzahl der Kanten in der Triangulation stimmt nicht überein.\nEs sollten {self.number_edges_in_Triangulation} sein, aber es sind {active_edges}."
+                f"Anzahl der Kanten in der Triangulation stimmt nicht überein.\nEs sollten {self.number_edges_in_Triangulation} sein, aber es sind {num_active_edges}."
             )
             save_graph_as_json(self, self.graph_name)
 
@@ -385,3 +395,28 @@ class Graph_Wrapper(nx.Graph):
         if edge not in self.edges:
             raise ValueError(f"Edge {edge} not found in graph.")
         return edge
+
+    def check_if_triangulation_with_degree_constraint(self) -> bool:
+        """Überprüft, ob der Graph eine Triangulation ist."""
+        lokal_graph = self.get_aktive_graph()
+        edges = lokal_graph.get_all_edges()
+        if len(edges) != self.number_edges_in_Triangulation:
+            return False
+        for edge in edges:
+            if self.check_for_intersection_with_all_edges(edge):
+                return False
+        for node in self.get_all_nodes_name():
+            if lokal_graph.nodes[node].get("degree") != self.degree(node):
+                return False
+        return True
+
+
+def save_graph_as_json(
+    graph: Graph_Wrapper, filename: str = graph_const.DEFAULT_FILE_NAME
+) -> None:
+    local_graph = graph.get_aktive_graph()
+
+    nodes = []
+    for node in local_graph.nodes:
+        nodes.append(Node(node, local_graph.nodes[node]["pos"], graph.degree(node)))
+    save_nodes_as_json(nodes, filename)
