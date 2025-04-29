@@ -1,7 +1,7 @@
 {
   "Ortools": {
     "003_delaunay_flips": {
-      "time": 1.39,
+      "time": 1.43,
       "correct": true,
       "triangulation": [
         ["0", "8"],
@@ -113,7 +113,7 @@
       ]
     },
     "001_delaunay_flips": {
-      "time": 1.41,
+      "time": 1.42,
       "correct": true,
       "triangulation": [
         ["0", "7"],
@@ -221,7 +221,7 @@
       ]
     },
     "006_delaunay_flips": {
-      "time": 1.46,
+      "time": 1.48,
       "correct": true,
       "triangulation": [
         ["0", "6"],
@@ -276,7 +276,7 @@
       ]
     },
     "007_delaunay_flips": {
-      "time": 1.56,
+      "time": 1.57,
       "correct": true,
       "triangulation": [
         ["0", "1"],
@@ -329,7 +329,7 @@
       ]
     },
     "004_delaunay_flips": {
-      "time": 1.47,
+      "time": 1.48,
       "correct": true,
       "triangulation": [
         ["0", "1"],
@@ -494,7 +494,7 @@
       ]
     },
     "009_delaunay_flips": {
-      "time": 1.48,
+      "time": 1.47,
       "correct": true,
       "triangulation": [
         ["0", "3"],

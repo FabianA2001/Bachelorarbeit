@@ -9,6 +9,7 @@ import time
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
+import logging
 
 
 def get_instances() -> dict[str, dict[str, str]]:
@@ -86,6 +87,10 @@ def run_solver_on_instance(
         starttime = time.time()
         success = solver.solve(timeout)
         correct = possible == success
+        if success and not possible:
+            logging.error(
+                f"{instance_name} - {solver.name} - {file_name}_{algo_suffix_name} should not be possible, but triangulation was found."
+            )
         duration = time.time() - starttime
         duration = round(duration, 2)
         solver_name = (

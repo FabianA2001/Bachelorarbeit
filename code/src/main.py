@@ -12,6 +12,7 @@ from solver.delaunay import Delaunay
 from graph_utils.node import Node
 from solver.ortools import Ortools
 from solver.possible import Possible
+from graph_utils import run_instance
 
 
 def test_algo(points):
@@ -69,16 +70,37 @@ def try_find_error_in_possible():
     logging.info("End run_test function.")
 
 
+def setup_logging():
+    # Basis-Logger konfigurieren (falls mehrfach aufgerufen, keine Duplikate)
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+
+    # Entferne ggf. alte Handler (wichtig bei mehrfachen Konfigurationen)
+    if logger.hasHandlers():
+        logger.handlers.clear()
+
+    # Console Handler – nur INFO
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+
+    # File Handler – nur ERROR und höher
+    file_handler = logging.FileHandler("error.log", mode="w")
+    file_handler.setLevel(logging.ERROR)
+
+    # Einheitliches Format
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    console_handler.setFormatter(formatter)
+    file_handler.setFormatter(formatter)
+
+    # Handler hinzufügen
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+
+
 def main():
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-        datefmt="%H:%M:%S",
-    )
+    setup_logging()
     logging.info("Start main function.")
-    # run_instance.run_solver_on_instance(
-    #     Ortools(), "simple_20"
-    # )
+    run_instance.run_solver_on_instance(Ortools(), "simple_20")
     # gen = generate.Generate_Delaunay_Flips(
     #     "simple_20",
     #     number_nodes=20,
@@ -92,7 +114,7 @@ def main():
     #     "Ortools",
     #     "000_delaunay",
     # )
-    try_find_error_in_possible()
+    # try_find_error_in_possible()
     # test_algo(20)
     logging.info("End main function.")
 
