@@ -153,3 +153,26 @@ def test_get_hull_edges():
     assert ("3", "6") in hull
     assert ("6", "4") in hull
     assert len(hull) == 6
+
+
+def test_check_if_triangulation_with_degree_constraint():
+    nodes = [
+        Node("A", (0, 0), 3),
+        Node("B", (0, 1), 2),
+        Node("C", (1, 0), 2),
+        Node("D", (1, 1), 3),
+    ]
+    graph = Graph_Wrapper(nodes)
+    assert not graph.check_if_triangulation_with_degree_constraint()
+    graph.add_edge("A", "B")
+    graph.add_edge("A", "C")
+    graph.add_edge("D", "B")
+    graph.add_edge("D", "C")
+    assert not graph.check_if_triangulation_with_degree_constraint()
+    graph.add_edge("A", "D")
+    graph.add_edge("B", "C")
+    assert not graph.check_if_triangulation_with_degree_constraint()
+    graph.deactivate_edge("B", "C")
+    assert graph.check_if_triangulation_with_degree_constraint()
+    graph.remove_edge(("B", "D"))
+    assert not graph.check_if_triangulation_with_degree_constraint()
