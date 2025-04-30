@@ -406,7 +406,7 @@ class Graph_Wrapper(nx.Graph):
             if self.check_for_intersection_with_all_edges(edge):
                 return False
         for node in self.get_all_nodes_name():
-            if lokal_graph.nodes[node].get("degree") != self.degree(node):
+            if lokal_graph.nodes[node].get("degree") != lokal_graph.degree(node):
                 return False
         return True
 
