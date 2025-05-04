@@ -79,34 +79,37 @@ Das Grundproblem ist hier das die höhendaten nur an bestimmten Punkten bekannt 
 \end{itemize}
 
 \subsection{Flips in Triangulations}
-Flips sind Möglichkeiten um Kanten in einer Triangulation zu Tauschen.
-Da wie in ~\cite{Delaunay_Triangulation} genannt Triangulation für die gleiche Knotenmenge immer die gleiche anzahl an Kanten haben, können Kanten nicht hinzugefügt oder entfernt werden um den Grad Konstraint zu erfüllen.
-Oder anders gesagt müssen wir für jede entfernt Kante eine andere Kante hinzufügen.
-Eine besondere Art dieser Verschiebung von Kanten sind Flips.
-Von Hurtado et.al. ~\cite{Flipping_edges_in_triangulations} wurde rausgefunden das jede Triangulation mindestens \[\frac{n-4}{2}\] viele flipbare Kanten hat.
-Wobei n die Anzahl der Knoten ist.
-Laut dem Paper \emph{Flips in planar graphs}~\cite{Flips_in_planar_graphs} lässt sich hierbei jede mögliche Triangulation in jede beliebige andere Triangulation umformen in dem die benötigten Flips durchgeführt werden.
-Das bedeutet sollte es möglich sein eine \emph{Degree constrained Triangulation} zu erzeugen, ist es theoretisch möglich diese mit Flips zu erzeugen.
+Flips sind Möglichkeiten, um Kanten in einer Triangulation auszutauschen.
+Da Triangulationen für die gleiche Knotenmenge, wie in~\cite{Delaunay_Triangulation} erwähnt, stets die gleiche Anzahl an Kanten besitzen, können keine Kanten hinzugefügt oder entfernt werden, um den Grad einer Triangulation zu verändern.
+Daraus folgt, dass für jede entfernte Kante eine andere Kante eingefügt werden muss.
+Eine besondere Art dieser Umstrukturierung von Kanten sind sogenannte Flips.
+Hurtado et al.~\cite{Flipping_edges_in_triangulations} zeigten, dass jede Triangulation mindestens
+\[\frac{n-4}{2}\]
+flipbare Kanten besitzt, wobei \( n \) die Anzahl der Knoten bezeichnet.
+Laut dem Paper \emph{Flips in planar graphs}~\cite{Flips_in_planar_graphs} lässt sich jede mögliche Triangulation in jede beliebige andere Triangulation überführen, indem die notwendigen Flips durchgeführt werden.
+Daraus folgt, dass, wenn eine \emph{degree-constrained triangulation} möglich ist, diese mit den nötigen Flips konstruiert werden kann.
 
-Eine weitere Art der Flips sind k-Flips.
-Diese sind eine Weitere Möglichkeit wie Kanten verschoben werden können.
-Diese Funktionieren so das k viele Kanten entfernt werden und wieder eingefügt werden.
-Dementsprechend sind \emph{normale} Flips 1-Flips.
-Sie bieten den Vorteil das mehr veränderung auf einmal möglich ist.
+Eine weitere Art von Flips sind sogenannte \( k \)-Flips.
+Diese stellen eine zusätzliche Möglichkeit dar, Kanten innerhalb einer Triangulation zu verschieben.
+Dabei werden \( k \) Kanten entfernt und durch \( k \) neue Kanten ersetzt.
+Normale Flips entsprechen somit \( 1 \)-Flips.
+Der Vorteil von \( k \)-Flips liegt darin, dass mit einem Schritt größere strukturelle Veränderungen möglich sind.
 
-\textbf{Absatz für Flips mit Binary Trees hinzufügen wenn ich sie nutze}
+\textbf{Absatz für Flips mit Binärbäumen hinzufügen, falls verwendet.}
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=\linewidth]{drei_flips.png}
-  \caption{\emph{Examples of edge move, edge rotation, and edge slide} aus ~\cite[p.~70]{Flips_in_planar_graphs}}
+  \caption{\emph{Examples of edge move, edge rotation, and edge slide} aus~\cite[p.~70]{Flips_in_planar_graphs}}
   \label{fig:drei_flips}
 \end{figure}
 
-Drei Beispielhafte Flips sind in Bild~\ref{fig:drei_flips} zu sehen.
-Zum einem der \emph{edge move} dieser ist das einfache löschen und wieder hinzufügen einer Kante.
-Etwas weiter eingeschränkt ist die \emph{edge rotation}, hier muss ein Knoten der Kante gleich bleiben. Wir dürfen also nur an einem Knoten drehen.
-Die dritte Variante heißt \emph{edge slide} und schärnkt die \emph{edge rotation} noch weiter ein. Es darf als veränderte Knoten nur ein Knoten gewählt werden welcher ein Nachbar von dem Orginal Knoten war.
+Drei beispielhafte Flips sind in Abbildung~\ref{fig:drei_flips} dargestellt.
+Zum einen der \emph{edge move}, hierbei handelt es sich um das einfache Entfernen und anschließende Einfügen einer Kante.
+Etwas stärker eingeschränkt ist die \emph{edge rotation}, bei der ein Endpunkt der Kante unverändert bleibt.
+Die Rotation erfolgt also nur um einen Knoten.
+Die dritte Variante, der \emph{edge slide}, schränkt die \emph{edge rotation} weiter ein.
+Hier darf der veränderte Knoten nur ein Nachbar des ursprünglichen Knotens sein.
 
 \subsection{degree constrained minimum spanning tree}
 das sind viele infos
