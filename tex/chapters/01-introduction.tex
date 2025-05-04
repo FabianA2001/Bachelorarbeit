@@ -55,8 +55,22 @@ Try to use existing abbreviations from related work if possible.
 Das ist meine Übersicht zur Related work
 
 \subsection{Delaunay Triangulations}
+Als Grundlage für den Algorithms können Delaunay Triangulation betrachtet werden.
+Diese Liefern eine Triangulation welche möglichst Gleichschenklige Dreiecke nutzt.
+In dem Buch von de Berg et.al.~\cite{Delaunay_Triangulation} wird diese Variante der Triangulation genauer betrachtet.
+In diesem Fall wird mit den Delaunay Triangulation das Problem gelöst, das höhendaten in einem zwei Dimensionalen Raum dargestellt werden.
+
+Triangulation eignen sich aufgrund ihres Aufbaues gut um Höhendaten im zwei Dimensionalen Raum darzustellen (siehe Bild ~\ref{fig:terrain}).
+Hier kann genutzt werden das Dreiecke verschiedene Innenwinkel und Kantenlängen haben können.
+\begin{figure}[tb]
+	\caption{\emph{A perspective view of a terrain} aus ~\cite[p.~183]{Delaunay_Triangulation}}
+	\centering
+	\label{fig:terrain}
+\includegraphics[scale=0.2]{Delauney_Tarrain.png}
+\end{figure}
+Das Grundproblem ist hier das die höhendaten nur an bestimmten Punkten bekannt sind und somit die Restlichen Höhendaten erraten werden müssen.
+
 \begin{itemize}
-	\item Höhen daten in 2d Darstellen
 	\item für die darstellung Höhen raten
 	\item Gleichschenklich sieht am besten aus
 	\item ziel minimalen Winkel maximieren
@@ -65,6 +79,34 @@ Das ist meine Übersicht zur Related work
 \end{itemize}
 
 \subsection{Flips in Triangulations}
+Flips sind Möglichkeiten um Kanten in einer Triangulation zu Tauschen.
+Da wie in ~\cite{Delaunay_Triangulation} genannt Triangulation für die gleiche Knotenmenge immer die gleiche anzahl an Kanten haben, können Kanten nicht hinzugefügt oder entfernt werden um den Grad Konstraint zu erfüllen.
+Oder anders gesagt müssen wir für jede entfernt Kante eine andere Kante hinzufügen.
+Eine besondere Art dieser Verschiebung von Kanten sind Flips.
+Von Hurtado et.al. ~\cite{Flipping_edges_in_triangulations} wurde rausgefunden das jede Triangulation mindestens \[\frac{n-4}{2}\] viele flipbare Kanten hat.
+Wobei n die Anzahl der Knoten ist.
+Laut dem Paper \emph{Flips in planar graphs}~\cite{Flips_in_planar_graphs} lässt sich hierbei jede mögliche Triangulation in jede beliebige andere Triangulation umformen in dem die benötigten Flips durchgeführt werden.
+Das bedeutet sollte es möglich sein eine \emph{Degree constrained Triangulation} zu erzeugen, ist es theoretisch möglich diese mit Flips zu erzeugen.
+
+Eine weitere Art der Flips sind k-Flips.
+Diese sind eine Weitere Möglichkeit wie Kanten verschoben werden können.
+Diese Funktionieren so das k viele Kanten entfernt werden und wieder eingefügt werden.
+Dementsprechend sind \emph{normale} Flips 1-Flips.
+Sie bieten den Vorteil das mehr veränderung auf einmal möglich ist.
+
+\textbf{Absatz für Flips mit Binary Trees hinzufügen wenn ich sie nutze}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\linewidth]{drei_flips.png}
+  \caption{\emph{Examples of edge move, edge rotation, and edge slide} aus ~\cite[p.~70]{Flips_in_planar_graphs}}
+  \label{fig:drei_flips}
+\end{figure}
+
+Drei Beispielhafte Flips sind in Bild~\ref{fig:drei_flips} zu sehen.
+Zum einem der \emph{edge move} dieser ist das einfache löschen und wieder hinzufügen einer Kante.
+Etwas weiter eingeschränkt ist die \emph{edge rotation}, hier muss ein Knoten der Kante gleich bleiben. Wir dürfen also nur an einem Knoten drehen.
+Die dritte Variante heißt \emph{edge slide} und schärnkt die \emph{edge rotation} noch weiter ein. Es darf als veränderte Knoten nur ein Knoten gewählt werden welcher ein Nachbar von dem Orginal Knoten war.
 
 \subsection{degree constrained minimum spanning tree}
 das sind viele infos
