@@ -60,7 +60,7 @@ Diese Liefern eine Triangulation welche möglichst Gleichschenklige Dreiecke nut
 In dem Buch von de Berg et.al.~\cite{Delaunay_Triangulation} wird diese Variante der Triangulation genauer betrachtet.
 In diesem Fall wird mit den Delaunay Triangulation das Problem gelöst, das höhendaten in einem zwei Dimensionalen Raum dargestellt werden.
 
-Triangulation eignen sich aufgrund ihres Aufbaues gut um Höhendaten im zwei Dimensionalen Raum darzustellen (siehe Bild ~\ref{fig:terrain}).
+Triangulation eignen sich aufgrund ihres Aufbaues gut um Höhendaten im zwei Dimensionalen Raum darzustellen (siehe~\cref{fig:terrain}).
 Hier kann genutzt werden das Dreiecke verschiedene Innenwinkel und Kantenlängen haben können.
 \begin{figure}[tb]
 	\caption{\emph{A perspective view of a terrain} aus ~\cite[p.~183]{Delaunay_Triangulation}}
@@ -104,7 +104,7 @@ Der Vorteil von \( k \)-Flips liegt darin, dass mit einem Schritt größere stru
   \label{fig:drei_flips}
 \end{figure}
 
-Drei beispielhafte Flips sind in Abbildung~\ref{fig:drei_flips} dargestellt.
+Drei beispielhafte Flips sind in~\cref{fig:drei_flips} dargestellt.
 Zum einen der \emph{edge move}, hierbei handelt es sich um das einfache Entfernen und anschließende Einfügen einer Kante.
 Etwas stärker eingeschränkt ist die \emph{edge rotation}, bei der ein Endpunkt der Kante unverändert bleibt.
 Die Rotation erfolgt also nur um einen Knoten.
@@ -112,11 +112,66 @@ Die dritte Variante, der \emph{edge slide}, schränkt die \emph{edge rotation} w
 Hier darf der veränderte Knoten nur ein Nachbar des ursprünglichen Knotens sein.
 
 \subsection{degree constrained minimum spanning tree}
-das sind viele infos
+Eine Grad regulierung gibt es auch beim minimum spanning tree.
+Hier hat jede Kante hat ein Vorgegebenes Gewicht welches bei dem spanning tree minimiert werden soll.
+Das besondere am \emph{degree constrained} ist das ein minimum spanning tree erzeugt werden soll, welcher an jedem Knoten einen maximalen Grad von \( d \) hat.
+Wobei \( d \) Global für das Problem vorgegeben wird.
 
-zum beispiel das brand and bound genutzt wird
+Es wurden verschiedene Ansätze von Joshua Knowles und David Corne~\cite{A_new_evolutionary_approach_to_the_degree-constrained_minimum_spanning_tree_problem} vorgestellt, welche das Problem lösen sollen.
+Der erste Ansatz ignoriert den minimum Aspekt des Problems zu Anfang.
+Es werden Kanten hinzugefügt welche die Grad Begrenzung nicht verletzen.
+Und im laufe wird dann Probiert die Kanten zu minimieren.
 
+Der minimale spanning Tree ohne Grad Begrenzung kann in polynomieler Zeit gelöst werden.
+Der nächste Ansatz erzeugt zuerst einen minimalen spanning Tree welcher die Grad Begrenzung ignoriert.
+Wenn eine Lösung gefunden wurde, wird den Kanten ein neues Gewicht zugeteilt.
+Dieses neue Gewicht wird mit folgender Formel berechnet.
+\[
+newweight = weight + fault * max * \frac{(weight - min)}{max - min}
+\]
+Wobei \(newweight\) das neue Gewicht ist,
+\(weight\) das aktuelle Gewicht.
+Die Varibale \(fault\) hat den Wert \(\{0,1,2\}\), abhänig davon wie viele Knoten an der Kante grade die Grad begrenzung verletzen.
+Und die Variablen \(min\)/\(max\) das kleinste/größe Gewicht aller Kanten.
+Danach wird wieder ein minimaler spanning Tree gebildet wobei durch das neue Gewicht jetzt Kanten bevorzugt werden welche keinen Grad verletzen.
+Diese beiden Schritt können so lange wiederholt werden bis eine Valide Lösung gefunden wurde oder eine Maximale Iteration erreicht wurd.
+Das Problem bei diesem Ansatz ist das Lösungen falsch als \emph{nicht Möglich} Bewertet wurden, auf grund der Maximalen Iteration.
 
+Ein weiter Ansatz wurde \emph{hillclimbing} genannt.
+Dieser Löst das degree constrained minimum spanning tree Problem nicht, wird aber zur neuen Knoten suche in einem anderen Algortihmus genutzt. In diesem Ansatz werden lokal neue Knoten gesucht die bessere Ergebnise liefern. Das könnte man für Degree constrained Triangulation anwenden um neue Kanten zu finden.
+Dieser Ansatz erzeugt keine eigene Lösung sondern verbessert eine Vorhandene.
+Es wird ein Zufälliger Knoten in einer Lösung ausgewählt.
+Danach werden weitere mögliche Knoten gesucht welche in der nähe des Orginal Knotens sind.
+Bei diesen wird dann geschaut ob sie gleich oder bessere Ergebnise Liefern.
+Sollte das der Fall sein wird der Knoten ausgetauscht, sonst wird der gefundene Knoten ignoriert.
+Dieser Anatz soll lokal gute Ergebnise Liefern, aber durch seine \emph{greed} verhalten global keine Verbesserungen bringen.
+Eine möglich Verbesserung für das Lokale Problem ist \emph{multistart hillclimbing}.
+Hier wird nur ein Punkt in der nähe ausgetestet.
+Sollte dieser nicht gleich oder besser sein, wird ein neuer Zufälliger Punkt ausgewählt.
+
+Dieser Ansatz wird \emph{simulated annealing} genannt.
+Auch hier werden wieder nur neue Knoten gesucht und vorhandene Lösungen verbessert.
+Der Ansatz will das Problem mit der Globalen Verbesserung lösen in dem er anfangs sehr viele Veränderung erlaubt und zum ende immer genauere Verbesserungen liefert.
+Auch hier wird wieder ein Random Knoten ausgewählt und weitere mögliche Knoten in der Nähe gesucht.
+Bei diesem Ansatz werden aber neue Knoten nach folgender Formel übernommen.
+\[
+p\{\textrm{accept }j\} = \left\{
+	\begin{array}{ll}
+	1 & \textrm{if } f(j) \leq f(i) \\
+	\exp{(\frac{f(i) - f(j)}{c})} & \, \textrm{sonst} \\
+	\end{array}
+	\right.
+\]
+wo \(p\{\textrm{accept }j\}\) die Warscheinlichkeit ist das ein Knoten übernommen wird.
+Die aktuelle Lösung ist \(i\) und die mögliche neue Lösung ist \(j\).
+Die Funktion \(f\) gibt hierbei die Kosten für die Lösung an.
+Der Parameter \(c\) ist Anfangs sehr hoch gesetzt und wird mit der Zeit dekrementiert.
+Das Verändern von c bewirkt die gewünschte Veränderungsrate.
+Der Ansatz endet wenn ein Finales \(c_f\) erreicht wurde, also \(c = c_f\).
+
+Der letze Ansatz wird nur am Ende erwähnt und beschreibt das normale Verfahren für einen evolutionsalgorithmus.
+Hierbei werden verschiedene Lösungen erstellt und bewertet.
+Die besten Lösungen werden ausgewählt und aus diesen Lösungen werden durch mutation neue Lösungen erstellt.
 
 \section{Overview}
 If needed, write down where to find everything.
