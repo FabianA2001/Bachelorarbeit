@@ -94,16 +94,12 @@ Diese stellen eine zusätzliche Möglichkeit dar, Kanten innerhalb einer Triangu
 Dabei werden \( k \) Kanten entfernt und durch \( k \) neue Kanten ersetzt.
 Normale Flips entsprechen somit \( 1 \)-Flips.
 Der Vorteil von \( k \)-Flips liegt darin, dass mit einem Schritt größere strukturelle Veränderungen möglich sind.
-
-\textbf{Absatz für Flips mit Binärbäumen hinzufügen, falls verwendet.}
-
 \begin{figure}[ht]
   \centering
   \includegraphics[width=\linewidth]{drei_flips.png}
   \caption{\emph{Examples of edge move, edge rotation, and edge slide} aus~\cite[p.~70]{Flips_in_planar_graphs}}
   \label{fig:drei_flips}
 \end{figure}
-
 Drei beispielhafte Flips sind in~\cref{fig:drei_flips} dargestellt.
 Zum einen der \emph{edge move}, hierbei handelt es sich um das einfache Entfernen und anschließende Einfügen einer Kante.
 Etwas stärker eingeschränkt ist die \emph{edge rotation}, bei der ein Endpunkt der Kante unverändert bleibt.
@@ -112,48 +108,49 @@ Die dritte Variante, der \emph{edge slide}, schränkt die \emph{edge rotation} w
 Hier darf der veränderte Knoten nur ein Nachbar des ursprünglichen Knotens sein.
 
 \subsection{degree constrained minimum spanning tree}
-Eine Grad regulierung gibt es auch beim minimum spanning tree.
-Hier hat jede Kante hat ein Vorgegebenes Gewicht welches bei dem spanning tree minimiert werden soll.
-Das besondere am \emph{degree constrained} ist das ein minimum spanning tree erzeugt werden soll, welcher an jedem Knoten einen maximalen Grad von \( d \) hat.
-Wobei \( d \) Global für das Problem vorgegeben wird.
+Eine Gradregulierung gibt es auch beim Minimum Spanning Tree.
+Hier hat jede Kante ein vorgegebenes Gewicht welches im Spanning Tree minimiert werden soll.
+Das Besondere am \emph{degree constrained} ist dass ein Minimum Spanning Tree erzeugt werden soll welcher an jedem Knoten einen maximalen Grad von \( d \) hat.
+Dabei wird \( d \) global für das Problem vorgegeben.
 
-Es wurden verschiedene Ansätze von Joshua Knowles und David Corne~\cite{A_new_evolutionary_approach_to_the_degree-constrained_minimum_spanning_tree_problem} vorgestellt, welche das Problem lösen sollen.
-Der erste Ansatz ignoriert den minimum Aspekt des Problems zu Anfang.
-Es werden Kanten hinzugefügt welche die Grad Begrenzung nicht verletzen.
-Und im laufe wird dann Probiert die Kanten zu minimieren.
+Es wurden verschiedene Ansätze von Joshua Knowles und David Corne~\cite{A_new_evolutionary_approach_to_the_degree-constrained_minimum_spanning_tree_problem} vorgestellt welche das Problem lösen sollen.
+Der erste Ansatz ignoriert zu Beginn den Aspekt der Minimalität des Problems.
+Es werden Kanten hinzugefügt welche die Gradbegrenzung nicht verletzen.
+Im weiteren Verlauf wird versucht die Anzahl der Kanten zu minimieren.
 
-Der minimale spanning Tree ohne Grad Begrenzung kann in polynomieler Zeit gelöst werden.
-Der nächste Ansatz erzeugt zuerst einen minimalen spanning Tree welcher die Grad Begrenzung ignoriert.
-Wenn eine Lösung gefunden wurde, wird den Kanten ein neues Gewicht zugeteilt.
-Dieses neue Gewicht wird mit folgender Formel berechnet.
+Der minimale spanning Tree ohne Gradbegrenzung kann in polynomialer Zeit gelöst werden.
+Der nächste Ansatz erzeugt zuerst einen minimalen spanning Tree welcher die Gradbegrenzung ignoriert.
+Wenn eine Lösung gefunden wurde, werden den Kanten neue Gewichte zugeteilt.
+Dieses neue Gewicht wird mit folgender Formel berechnet
 \[
-newweight = weight + fault * max * \frac{(weight - min)}{max - min}
+newweight = weight + fault \cdot max \cdot \frac{(weight - min)}{(max - min)}
 \]
-Wobei \(newweight\) das neue Gewicht ist,
-\(weight\) das aktuelle Gewicht.
-Die Varibale \(fault\) hat den Wert \(\{0,1,2\}\), abhänig davon wie viele Knoten an der Kante grade die Grad begrenzung verletzen.
-Und die Variablen \(min\)/\(max\) das kleinste/größe Gewicht aller Kanten.
-Danach wird wieder ein minimaler spanning Tree gebildet wobei durch das neue Gewicht jetzt Kanten bevorzugt werden welche keinen Grad verletzen.
-Diese beiden Schritt können so lange wiederholt werden bis eine Valide Lösung gefunden wurde oder eine Maximale Iteration erreicht wurd.
-Das Problem bei diesem Ansatz ist das Lösungen falsch als \emph{nicht Möglich} Bewertet wurden, auf grund der Maximalen Iteration.
+Wobei \(newweight\) das neue Gewicht ist und \(weight\) das aktuelle Gewicht.
+Die Variable \(fault\) hat den Wert \(\{0,1,2\}\) abhängig davon wie viele Knoten an der Kante gerade die Gradbegrenzung verletzen.
+Die Variablen \(min\) und \(max\) bezeichnen das kleinste beziehungsweise größte Gewicht aller Kanten.
+Danach wird erneut ein minimaler spanning Tree gebildet wobei durch das neue Gewicht nun Kanten bevorzugt werden welche keine Gradverletzung verursachen.
+Diese beiden Schritte können so lange wiederholt werden bis eine valide Lösung gefunden wurde oder eine maximale Anzahl an Iterationen erreicht wurde.
+Das Problem bei diesem Ansatz ist dass Lösungen fälschlicherweise als \emph{nicht möglich} bewertet wurden aufgrund der maximalen Iterationen.
 
-Ein weiter Ansatz wurde \emph{hillclimbing} genannt.
-Dieser Löst das degree constrained minimum spanning tree Problem nicht, wird aber zur neuen Knoten suche in einem anderen Algortihmus genutzt. In diesem Ansatz werden lokal neue Knoten gesucht die bessere Ergebnise liefern. Das könnte man für Degree constrained Triangulation anwenden um neue Kanten zu finden.
-Dieser Ansatz erzeugt keine eigene Lösung sondern verbessert eine Vorhandene.
-Es wird ein Zufälliger Knoten in einer Lösung ausgewählt.
-Danach werden weitere mögliche Knoten gesucht welche in der nähe des Orginal Knotens sind.
-Bei diesen wird dann geschaut ob sie gleich oder bessere Ergebnise Liefern.
-Sollte das der Fall sein wird der Knoten ausgetauscht, sonst wird der gefundene Knoten ignoriert.
-Dieser Anatz soll lokal gute Ergebnise Liefern, aber durch seine \emph{greed} verhalten global keine Verbesserungen bringen.
-Eine möglich Verbesserung für das Lokale Problem ist \emph{multistart hillclimbing}.
-Hier wird nur ein Punkt in der nähe ausgetestet.
-Sollte dieser nicht gleich oder besser sein, wird ein neuer Zufälliger Punkt ausgewählt.
+Ein weiterer Ansatz wird als \emph{Hillclimbing} bezeichnet.
+Dieser löst das Problem des degree-constrained minimum spanning tree nicht, wird jedoch zur Suche nach neuen Knoten in einem anderen Algorithmus verwendet.
+In diesem Ansatz werden lokal neue Knoten gesucht, die bessere Ergebnisse liefern.
+Dies könnte auf die Degree-constrained Triangulation angewendet werden, um neue Kanten zu finden.
+Der Ansatz erzeugt keine eigene Lösung, sondern verbessert eine bestehende.
+Zunächst wird ein zufälliger Knoten aus einer Lösung ausgewählt.
+Danach werden weitere mögliche Knoten in der Nähe des ursprünglichen Knotens gesucht.
+Bei diesen Knoten wird überprüft, ob sie gleich gute oder bessere Ergebnisse liefern.
+Falls dies der Fall ist, wird der Knoten ausgetauscht, andernfalls wird der gefundene Knoten ignoriert.
+Dieser Ansatz soll lokal gute Ergebnisse liefern, bringt jedoch aufgrund seines \emph{greedy}-Verhaltens keine globalen Verbesserungen.
+Eine mögliche Verbesserung des lokalen Problems stellt \emph{multistart hillclimbing} dar.
+Bei diesem Verfahren wird nur ein Punkt in der Nähe getestet.
+Ist dieser nicht gleich oder besser, wird ein neuer zufälliger Punkt ausgewählt.
 
 Dieser Ansatz wird \emph{simulated annealing} genannt.
-Auch hier werden wieder nur neue Knoten gesucht und vorhandene Lösungen verbessert.
-Der Ansatz will das Problem mit der Globalen Verbesserung lösen in dem er anfangs sehr viele Veränderung erlaubt und zum ende immer genauere Verbesserungen liefert.
-Auch hier wird wieder ein Random Knoten ausgewählt und weitere mögliche Knoten in der Nähe gesucht.
-Bei diesem Ansatz werden aber neue Knoten nach folgender Formel übernommen.
+Auch hier werden nur neue Knoten gesucht und bestehende Lösungen verbessert.
+Das Ziel des Ansatzes ist es, das Problem mit einer globalen Verbesserung zu lösen, indem zu Beginn viele Veränderungen zugelassen werden und im Verlauf immer genauere Verbesserungen erfolgen.
+Auch hier wird ein zufälliger Knoten ausgewählt und es werden weitere mögliche Knoten in der Nähe gesucht.
+Bei diesem Ansatz werden jedoch neue Knoten gemäß der folgenden Formel übernommen:
 \[
 p\{\textrm{accept }j\} = \left\{
 	\begin{array}{ll}
@@ -162,16 +159,26 @@ p\{\textrm{accept }j\} = \left\{
 	\end{array}
 	\right.
 \]
-wo \(p\{\textrm{accept }j\}\) die Warscheinlichkeit ist das ein Knoten übernommen wird.
+Dabei ist \( p\{\textrm{accept }j\} \) die Wahrscheinlichkeit, dass ein Knoten übernommen wird.
 Die aktuelle Lösung ist \(i\) und die mögliche neue Lösung ist \(j\).
-Die Funktion \(f\) gibt hierbei die Kosten für die Lösung an.
-Der Parameter \(c\) ist Anfangs sehr hoch gesetzt und wird mit der Zeit dekrementiert.
-Das Verändern von c bewirkt die gewünschte Veränderungsrate.
-Der Ansatz endet wenn ein Finales \(c_f\) erreicht wurde, also \(c = c_f\).
+Die Funktion \(f\) gibt hierbei die Kosten der Lösung an.
+Der Parameter \(c\) wird zu Beginn sehr hoch gesetzt und mit der Zeit verringert.
+Die Veränderung von \(c\) bewirkt die gewünschte Änderungsrate.
+Der Ansatz endet, wenn ein finales \(c_f\) erreicht wird, also wenn \(c = c_f\).
 
-Der letze Ansatz wird nur am Ende erwähnt und beschreibt das normale Verfahren für einen evolutionsalgorithmus.
-Hierbei werden verschiedene Lösungen erstellt und bewertet.
-Die besten Lösungen werden ausgewählt und aus diesen Lösungen werden durch mutation neue Lösungen erstellt.
+Der letzte Ansatz wird erst am Ende vorgestellt und beschreibt das übliche Verfahren eines Evolutionsalgorithmus.
+Dabei werden verschiedene Lösungen erzeugt und bewertet.
+Die besten Lösungen werden ausgewählt und auf Basis dieser Lösungen werden durch Mutation neue Lösungen generiert.
+
+In dem Paper von Krishnamoorthy et.al. ~\cite{Comparison_of_Algorithms_for_the_Degree_Constrained_Minimum_Spanning_Tree} werden Evolutionsalgorithmen noch mal genauer betrachtet.
+Zum einem wir die Art der Coodierung betrachtet.
+Es ist sinvoll eine Art der Coodierung zu wählen mit der nur Definitions technisch richtige spanning Trees dargestellt werden können.
+Sonst kann es passieren das von den erstellten Lösungen viele nicht genutzt werden können und somit nicht relevant sind.
+Wenn eine passende Coodierung gewählt wurde, können dann nur noch der Grad und das Gewicht betrachtet werden.
+
+Seite 595
+
+\newpage
 
 \section{Overview}
 If needed, write down where to find everything.
