@@ -55,13 +55,14 @@ Try to use existing abbreviations from related work if possible.
 Das ist meine Übersicht zur Related work
 
 \subsection{Delaunay Triangulations}
+%TODO überarbeiten
 Als Grundlage für den Algorithms können Delaunay Triangulation betrachtet werden.
-Diese Liefern eine Triangulation welche möglichst Gleichschenklige Dreiecke nutzt.
+Diese Liefern eine Triangulation welche möglichst Gleichschenklige und Gleichwinklige Dreiecke nutzt~\cite{Properties_of_the_Delaunay_triangulation}.
+Dies kann erreicht werden in dem der minimale Winkel maximiert wird.
 In dem Buch von de Berg et.al.~\cite{Delaunay_Triangulation} wird diese Variante der Triangulation genauer betrachtet.
-In diesem Fall wird mit den Delaunay Triangulation das Problem gelöst, das höhendaten in einem zwei Dimensionalen Raum dargestellt werden.
-
+% In diesem Fall wird mit den Delaunay Triangulation das Problem gelöst, das höhendaten in einem zwei Dimensionalen Raum dargestellt werden.
 Triangulation eignen sich aufgrund ihres Aufbaues gut um Höhendaten im zwei Dimensionalen Raum darzustellen (siehe~\cref{fig:terrain}).
-Hier kann genutzt werden das Dreiecke verschiedene Innenwinkel und Kantenlängen haben können.
+Hier kann genutzt werden das Dreiecke verschiedene Innenwinkel und Kantenlängen besitzen.
 \begin{figure}[tb]
 	\caption{\emph{A perspective view of a terrain} aus ~\cite[p.~183]{Delaunay_Triangulation}}
 	\centering
@@ -69,14 +70,20 @@ Hier kann genutzt werden das Dreiecke verschiedene Innenwinkel und Kantenlängen
 \includegraphics[scale=0.2]{Delauney_Tarrain.png}
 \end{figure}
 Das Grundproblem ist hier das die höhendaten nur an bestimmten Punkten bekannt sind und somit die Restlichen Höhendaten erraten werden müssen.
+Das kann durch die Delaunay Triangulation gut erreicht werden, da die Dreiecke durch ihre Gleichschenkliche Eigenschaft optisch gut die fehlenden Höhendaten ergänzen können.
+Es wird auch genannt das die Anzahl der Kanten immer
+\[
+3 \cdot n - 3 -k
+\]
+und die Anzahl der Dreiecke
+\[
+2 \cdot n - 2 -k
+\]
+immer beträgt.
+Wobei \(n\) die Anzahl der Knoten und \(k\) die Anzahl der Knoten auf der Konvexen Hülle darstellt.
+% Grob gesagt können Delaunay Triangulation durch \emph{Voronoi Diagramm} erzeugt werden oder in dem zufällig Kanten hinzugefügt werden und danach \emph{Legalisiert} werden.
 
-\begin{itemize}
-	\item für die darstellung Höhen raten
-	\item Gleichschenklich sieht am besten aus
-	\item ziel minimalen Winkel maximieren
-	\item Formel für Kanten und Dreiecke bekommen
-	\item drei Algos
-\end{itemize}
+%TODO ende überarbeiten
 
 \subsection{Flips in Triangulations}
 Flips sind Möglichkeiten, um Kanten in einer Triangulation auszutauschen.
@@ -176,8 +183,36 @@ Es ist sinvoll eine Art der Coodierung zu wählen mit der nur Definitions techni
 Sonst kann es passieren das von den erstellten Lösungen viele nicht genutzt werden können und somit nicht relevant sind.
 Wenn eine passende Coodierung gewählt wurde, können dann nur noch der Grad und das Gewicht betrachtet werden.
 
-Seite 595
+%TODO überarbeiten
+Eine Möglichkeit wie Mutationen stattfinden können ist die \emph{Crossover} Methode.
+Hier gibt es zwei \emph{Eltern} Lösungen \(P_1\) und \(P_2\).
+Von diesen werden
+\[
+2 \cdot (n-2)
+\]
+verschiedene \emph{Kinder} erzeugt.
+Da es \( n-1\) viele Veränderungs Möglichkeiten gibt.
+Danach werden die \emph{Kinder} bewertet und sortiert.
+Das beste Kind welches \(P_1\) ähnelt wird ausgewählt.
+Sollte dieses \emph{Kind} nun besser sein als \(P_1\), ersetzt es \(P_1\).
+Für \(P_2\) wird nach dem gleichen Verfahren ein \emph{Kind} ausgewählt.
 
+Eine Weitere Möglichkeit ist die \emph{Breeding} Methode.
+Hier gibt es einen Pool aus Lösungen.
+Zufällig werden Paare gebildet, welche jeweils zwei \emph{Kinder} haben.
+Von diesen \emph{Kindern} ersetzt das bessere \emph{Kind} das schlechtere \emph{Elternteil}.
+Die Größe des Pools kann so angepasst werden, das alle möglichen Veränderungen auch verändert werden.
+
+Beide Methode sollen im Durchschnitt alle \(10\) Generation die beste Lösung mit allen anderen Lösungen verglichen haben.
+
+Als mögliche Iterationsanzahl wird die Formel
+\[
+\frac{50 \cdot n}{\bar{b}}
+\]
+genannt.
+Wobei \(\bar{b}\) die Durchschnittliche Grad Bedingung ist.
+Mit dieser Formel bekommen große Instanzen mehr Iterationen, aber leichtere Instanzen (höherer Grad) werden schneller Bearbeitet.
+%TODO ende überarbeiten
 \newpage
 
 \section{Overview}
