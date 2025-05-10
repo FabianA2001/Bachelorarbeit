@@ -52,42 +52,52 @@ Try to use existing abbreviations from related work if possible.
 % ... graph $G$ is \emph{complete} over \textbf{complete} if \ldots.
 % \end{verbatim}
 
-Das ist meine Übersicht zur Related work
+In diesem Abschnitt werden verschiedene wissenschaftliche Arbeiten aus diesem Themenbereich betrachtet.  
+Dies dient dazu, einen Überblick über den aktuellen Entwicklungsstand zu erhalten.  
+Wir betrachten dazu drei verschiedene Bereiche.  
+Der erste Bereich behandelt die \emph{Delaunay Triangulation}.  
+Diese zählt zu den bekanntesten Triangulationen und bietet einen grundlegenden Einblick in das Thema Triangulation.  
+Der zweite Bereich umfasst \emph{Flips in Triangulations}  
+Hier wird untersucht, wie sich Triangulation durch lokale änderungen gezielt modifizieren lassen 
+Der dritte und letzte Bereich befasst sich mit dem Problem des \emph{degree constrained minimum spanning tree}  
+Dabei werden insbesondere Ansätze zur Einhaltung von Gradbeschränkungen betrachtet.
+
 
 \subsection{Delaunay Triangulations}
-%TODO überarbeiten
-Als Grundlage für den Algorithms können Delaunay Triangulation betrachtet werden.
-Diese Liefern eine Triangulation welche möglichst Gleichschenklige und Gleichwinklige Dreiecke nutzt~\cite{Properties_of_the_Delaunay_triangulation}.
-Dies kann erreicht werden in dem der minimale Winkel maximiert wird.
-In dem Buch von de Berg et.al.~\cite{Delaunay_Triangulation} wird diese Variante der Triangulation genauer betrachtet.
-% In diesem Fall wird mit den Delaunay Triangulation das Problem gelöst, das höhendaten in einem zwei Dimensionalen Raum dargestellt werden.
-Triangulation eignen sich aufgrund ihres Aufbaues gut um Höhendaten im zwei Dimensionalen Raum darzustellen (siehe~\cref{fig:terrain}).
-Hier kann genutzt werden das Dreiecke verschiedene Innenwinkel und Kantenlängen besitzen.
+Als Grundlage für den Algorithmus kann die Delaunay-Triangulation betrachtet werden.
+Diese liefert eine Triangulation, die möglichst gleichschenklige und gleichwinklige Dreiecke verwendet~\cite{Properties_of_the_Delaunay_triangulation}.
+Dies wird erreicht, indem der minimale Winkel maximiert wird.
+Im Buch von de Berg et al.~\cite{Delaunay_Triangulation} wird diese Variante der Triangulation ausführlich behandelt.
+
+Triangulationen eignen sich aufgrund ihres Aufbaus gut, um Höhendaten im zweidimensionalen Raum darzustellen (siehe~\cref{fig:terrain}).
+Dabei kann ausgenutzt werden, dass Dreiecke unterschiedliche Innenwinkel und Kantenlängen besitzen.
+
 \begin{figure}[tb]
-	\caption{\emph{A perspective view of a terrain} aus ~\cite[p.~183]{Delaunay_Triangulation}}
+	\caption{\emph{A perspective view of a terrain} aus~\cite[p.~183]{Delaunay_Triangulation}}
 	\centering
 	\label{fig:terrain}
-\includegraphics[scale=0.2]{Delauney_Tarrain.png}
+	\includegraphics[scale=0.2]{Delauney_Tarrain.png}
 \end{figure}
-Das Grundproblem ist hier das die höhendaten nur an bestimmten Punkten bekannt sind und somit die Restlichen Höhendaten erraten werden müssen.
-Das kann durch die Delaunay Triangulation gut erreicht werden, da die Dreiecke durch ihre Gleichschenkliche Eigenschaft optisch gut die fehlenden Höhendaten ergänzen können.
-Es wird auch genannt das die Anzahl der Kanten immer
+Das Grundproblem besteht darin, dass die Höhendaten nur an bestimmten Punkten bekannt sind und die restlichen Werte daher geschätzt werden müssen.
+Dies kann durch die Delaunay-Triangulation gut gelöst werden, da die Dreiecke aufgrund ihrer gleichschenkligen Eigenschaft visuell geeignet sind, die fehlenden Daten zu ergänzen.
+
+Es wird außerdem angegeben, dass die Anzahl der Kanten in einer Triangulation immer
 \[
-3 \cdot n - 3 -k
+3 \cdot n - 3 - k
 \]
 und die Anzahl der Dreiecke
 \[
-2 \cdot n - 2 -k
+2 \cdot n - 2 - k
 \]
-immer beträgt.
-Wobei \(n\) die Anzahl der Knoten und \(k\) die Anzahl der Knoten auf der Konvexen Hülle darstellt.
-% Grob gesagt können Delaunay Triangulation durch \emph{Voronoi Diagramm} erzeugt werden oder in dem zufällig Kanten hinzugefügt werden und danach \emph{Legalisiert} werden.
+beträgt, wobei \(n\) die Anzahl der Knoten und \(k\) die Anzahl der Knoten auf der konvexen Hülle darstellt.
 
-%TODO ende überarbeiten
+% Grob gesagt können Delaunay Triangulation durch \emph{Voronoi Diagramm} erzeugt werden oder in dem zufällig Kanten hinzugefügt werden und danach \emph{Legalisiert} werden.
 
 \subsection{Flips in Triangulations}
 Flips sind Möglichkeiten, um Kanten in einer Triangulation auszutauschen.
-Da Triangulationen für die gleiche Knotenmenge, wie in~\cite{Delaunay_Triangulation} erwähnt, stets die gleiche Anzahl an Kanten besitzen, können keine Kanten hinzugefügt oder entfernt werden, um den Grad einer Triangulation zu verändern.
+% Da Triangulationen für die gleiche Knotenmenge, wie in~\cite{Delaunay_Triangulation} erwähnt, stets die gleiche Anzahl an Kanten besitzen
+Wie oben erwähnt, müssen Triangulation eine feste Anzahl an Kanten beseitzen~\cite{Delaunay_Triangulation}.
+Dementsprechend können keine Kanten hinzugefügt oder entfernt werden, um den Grad einer Triangulation zu verändern.
 Daraus folgt, dass für jede entfernte Kante eine andere Kante eingefügt werden muss.
 Eine besondere Art dieser Umstrukturierung von Kanten sind sogenannte Flips.
 Hurtado et al.~\cite{Flipping_edges_in_triangulations} zeigten, dass jede Triangulation mindestens
@@ -95,6 +105,7 @@ Hurtado et al.~\cite{Flipping_edges_in_triangulations} zeigten, dass jede Triang
 flipbare Kanten besitzt, wobei \( n \) die Anzahl der Knoten bezeichnet.
 Laut dem Paper \emph{Flips in planar graphs}~\cite{Flips_in_planar_graphs} lässt sich jede mögliche Triangulation in jede beliebige andere Triangulation überführen, indem die notwendigen Flips durchgeführt werden.
 Daraus folgt, dass, wenn eine \emph{degree-constrained triangulation} möglich ist, diese mit den nötigen Flips konstruiert werden kann.
+\textbf{Sollte ich das später machen, hier die Sektion nennen}
 
 Eine weitere Art von Flips sind sogenannte \( k \)-Flips.
 Diese stellen eine zusätzliche Möglichkeit dar, Kanten innerhalb einer Triangulation zu verschieben.
@@ -107,6 +118,7 @@ Der Vorteil von \( k \)-Flips liegt darin, dass mit einem Schritt größere stru
   \caption{\emph{Examples of edge move, edge rotation, and edge slide} aus~\cite[p.~70]{Flips_in_planar_graphs}}
   \label{fig:drei_flips}
 \end{figure}
+
 Drei beispielhafte Flips sind in~\cref{fig:drei_flips} dargestellt.
 Zum einen der \emph{edge move}, hierbei handelt es sich um das einfache Entfernen und anschließende Einfügen einer Kante.
 Etwas stärker eingeschränkt ist die \emph{edge rotation}, bei der ein Endpunkt der Kante unverändert bleibt.
@@ -125,10 +137,10 @@ Der erste Ansatz ignoriert zu Beginn den Aspekt der Minimalität des Problems.
 Es werden Kanten hinzugefügt welche die Gradbegrenzung nicht verletzen.
 Im weiteren Verlauf wird versucht die Anzahl der Kanten zu minimieren.
 
-Der minimale spanning Tree ohne Gradbegrenzung kann in polynomialer Zeit gelöst werden.
-Der nächste Ansatz erzeugt zuerst einen minimalen spanning Tree welcher die Gradbegrenzung ignoriert.
+Ein anderer Ansatz nutzt aus, dass der minimale spanning Tree ohne Gradbegrenzung in polynomialer Zeit gelöst werden kann.
+Dieser Ansatz erzeugt zuerst einen minimalen spanning Tree welcher die Gradbegrenzung ignoriert.
 Wenn eine Lösung gefunden wurde, werden den Kanten neue Gewichte zugeteilt.
-Dieses neue Gewicht wird mit folgender Formel berechnet
+Diese neuen Gewichte werden mit folgender Formel berechnet
 \[
 newweight = weight + fault \cdot max \cdot \frac{(weight - min)}{(max - min)}
 \]
@@ -137,7 +149,7 @@ Die Variable \(fault\) hat den Wert \(\{0,1,2\}\) abhängig davon wie viele Knot
 Die Variablen \(min\) und \(max\) bezeichnen das kleinste beziehungsweise größte Gewicht aller Kanten.
 Danach wird erneut ein minimaler spanning Tree gebildet wobei durch das neue Gewicht nun Kanten bevorzugt werden welche keine Gradverletzung verursachen.
 Diese beiden Schritte können so lange wiederholt werden bis eine valide Lösung gefunden wurde oder eine maximale Anzahl an Iterationen erreicht wurde.
-Das Problem bei diesem Ansatz ist dass Lösungen fälschlicherweise als \emph{nicht möglich} bewertet wurden aufgrund der maximalen Iterationen.
+Das Problem bei diesem Ansatz ist dass Lösungen fälschlicherweise als \emph{nicht möglich} bewertet werden können aufgrund der maximalen Iterationen.
 
 Ein weiterer Ansatz wird als \emph{Hillclimbing} bezeichnet.
 Dieser löst das Problem des degree-constrained minimum spanning tree nicht, wird jedoch zur Suche nach neuen Knoten in einem anderen Algorithmus verwendet.
@@ -149,12 +161,12 @@ Danach werden weitere mögliche Knoten in der Nähe des ursprünglichen Knotens 
 Bei diesen Knoten wird überprüft, ob sie gleich gute oder bessere Ergebnisse liefern.
 Falls dies der Fall ist, wird der Knoten ausgetauscht, andernfalls wird der gefundene Knoten ignoriert.
 Dieser Ansatz soll lokal gute Ergebnisse liefern, bringt jedoch aufgrund seines \emph{greedy}-Verhaltens keine globalen Verbesserungen.
-Eine mögliche Verbesserung des lokalen Problems stellt \emph{multistart hillclimbing} dar.
+Eine mögliche Verbesserung der lokalen Problematik stellt \emph{multistart hillclimbing} dar.
 Bei diesem Verfahren wird nur ein Punkt in der Nähe getestet.
 Ist dieser nicht gleich oder besser, wird ein neuer zufälliger Punkt ausgewählt.
 
-Dieser Ansatz wird \emph{simulated annealing} genannt.
-Auch hier werden nur neue Knoten gesucht und bestehende Lösungen verbessert.
+Der nächste Ansatz wird \emph{simulated annealing} genannt.
+Auch hier werden nur neue Knoten gesucht um bestehende Lösungen zu verbessern.
 Das Ziel des Ansatzes ist es, das Problem mit einer globalen Verbesserung zu lösen, indem zu Beginn viele Veränderungen zugelassen werden und im Verlauf immer genauere Verbesserungen erfolgen.
 Auch hier wird ein zufälliger Knoten ausgewählt und es werden weitere mögliche Knoten in der Nähe gesucht.
 Bei diesem Ansatz werden jedoch neue Knoten gemäß der folgenden Formel übernommen:
@@ -184,34 +196,33 @@ Sonst kann es passieren das von den erstellten Lösungen viele nicht genutzt wer
 Wenn eine passende Coodierung gewählt wurde, können dann nur noch der Grad und das Gewicht betrachtet werden.
 
 %TODO überarbeiten
-Eine Möglichkeit wie Mutationen stattfinden können ist die \emph{Crossover} Methode.
-Hier gibt es zwei \emph{Eltern} Lösungen \(P_1\) und \(P_2\).
-Von diesen werden
+Eine Möglichkeit, wie Mutationen stattfinden können, ist die \emph{Crossover} Methode.  
+Dabei existieren zwei \emph{Eltern} Lösungen \(P_1\) und \(P_2\).  
+Aus diesen werden  
 \[
-2 \cdot (n-2)
-\]
-verschiedene \emph{Kinder} erzeugt.
-Da es \( n-1\) viele Veränderungs Möglichkeiten gibt.
-Danach werden die \emph{Kinder} bewertet und sortiert.
-Das beste Kind welches \(P_1\) ähnelt wird ausgewählt.
-Sollte dieses \emph{Kind} nun besser sein als \(P_1\), ersetzt es \(P_1\).
-Für \(P_2\) wird nach dem gleichen Verfahren ein \emph{Kind} ausgewählt.
+2 \cdot (n - 2)
+\]  
+verschiedene \emph{Kinder} erzeugt, da es \(n - 1\) Veränderungsmöglichkeiten gibt.  
+Anschließend werden die \emph{Kinder} bewertet und sortiert.  
+Das beste \emph{Kind}, das \(P_1\) am ähnlichsten ist, wird ausgewählt.  
+Ist dieses \emph{Kind} besser als \(P_1\), ersetzt es \(P_1\).  
+Für \(P_2\) wird ein \emph{Kind} nach dem gleichen Verfahren ausgewählt.
 
-Eine Weitere Möglichkeit ist die \emph{Breeding} Methode.
-Hier gibt es einen Pool aus Lösungen.
-Zufällig werden Paare gebildet, welche jeweils zwei \emph{Kinder} haben.
-Von diesen \emph{Kindern} ersetzt das bessere \emph{Kind} das schlechtere \emph{Elternteil}.
-Die Größe des Pools kann so angepasst werden, das alle möglichen Veränderungen auch verändert werden.
+Eine weitere Möglichkeit ist die \emph{Breeding} Methode.  
+Dabei existiert ein Pool aus Lösungen.  
+Zufällig werden Paare gebildet, die jeweils zwei \emph{Kinder} erzeugen.  
+Von diesen \emph{Kindern} ersetzt das bessere \emph{Kind} das schlechtere \emph{Elternteil}.  
+Die Größe des Pools kann so angepasst werden, dass alle möglichen Veränderungen berücksichtigt werden.
 
-Beide Methode sollen im Durchschnitt alle \(10\) Generation die beste Lösung mit allen anderen Lösungen verglichen haben.
+Beide Methoden sollen im Durchschnitt alle \(10\) Generationen die beste Lösung mit allen anderen Lösungen verglichen haben.
 
-Als mögliche Iterationsanzahl wird die Formel
+Als mögliche Iterationsanzahl wird folgende Formel verwendet:  
 \[
 \frac{50 \cdot n}{\bar{b}}
-\]
-genannt.
-Wobei \(\bar{b}\) die Durchschnittliche Grad Bedingung ist.
-Mit dieser Formel bekommen große Instanzen mehr Iterationen, aber leichtere Instanzen (höherer Grad) werden schneller Bearbeitet.
+\]  
+Dabei bezeichnet \(\bar{b}\) die durchschnittliche Gradbedingung.  
+Diese Formel sorgt dafür, dass große Instanzen mehr Iterationen erhalten, während leichtere Instanzen (mit höherem Grad) schneller bearbeitet werden.
+
 %TODO ende überarbeiten
 \newpage
 
