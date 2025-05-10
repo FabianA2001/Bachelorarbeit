@@ -5,7 +5,7 @@
 .vscode/
 **/.degree-constrained-triangulation/
 **/degree_constrained_triangulation.egg-info
-
+!TEX/figures/*
 
 
 ## Core latex/pdflatex auxiliary files:
