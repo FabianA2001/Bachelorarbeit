@@ -12,6 +12,8 @@
 \usepackage{algorithm}
 \usepackage{float}
 \usepackage{cleveref}
+\usepackage{microtype}
+
 
 % allows you to skip the `figures/` part of paths in your \includegraphics
 \graphicspath{{./figures/}}%
@@ -42,8 +44,9 @@
 \crefname{section}{Section}{Sections}
 \crefname{definition}{Definition}{Definitions}
 
-\begin{document}
 
+\begin{document}
+\overfullrule=40pt
 	\frontmatter
 
 	%----- TITLE PAGE -----
