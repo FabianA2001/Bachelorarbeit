@@ -1,23 +1,14 @@
 #!/bin/bash
 
 # Quell- und Zielordner definieren
-QUELLE="../682487b555c0d63c84fc8118"
-ZIEL="tex"
+QUELLE="/Users/fabian/uni/Bachelorarbeit/682487b555c0d63c84fc8118"
+ZIEL="/Users/fabian/uni/Bachelorarbeit/bachelorarbeit-fabian-alich/tex"
 
-cd $QUELLE
-git pull
-cd ..
+git -c $QUELLE pull
 
-# .tex-Dateien rekursiv mit Ordnerstruktur kopieren
-rsync -av \
-  --include='*/' \
-  --include='*.tex' \
-  --include='*.png' \
-  --include='*.jpg' \
-  --include='*.pdf' \
-  --include='*.bib' \
-  --exclude='*' \
-  --exclude='thesis.pdf' \
-  "$QUELLE"/ "$ZIEL"
+cp "$QUELLE/thesis.tex" $ZIEL
+cp "$QUELLE/chapters"/*.tex "$ZIEL/chapters"
+cp "$QUELLE/figures"/* "$ZIEL/figures"
+cp "$QUELLE/bibliography.bib" "$ZIEL/bibliography.bib"
 
 echo "Alle .tex-Dateien wurden von $QUELLE nach $ZIEL kopiert."

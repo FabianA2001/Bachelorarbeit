@@ -57,9 +57,9 @@ Dies dient dazu, einen Überblick über den aktuellen Entwicklungsstand zu erhal
 Wir betrachten dazu drei verschiedene Bereiche.
 Der erste Bereich behandelt die \emph{Delaunay Triangulation}.
 Diese zählt zu den bekanntesten Triangulationen und bietet einen grundlegenden Einblick in das Thema Triangulation.
-Der zweite Bereich umfasst \emph{Flips in Triangulations}
-Hier wird untersucht, wie sich Triangulation durch lokale änderungen gezielt modifizieren lassen
-Der dritte und letzte Bereich befasst sich mit dem Problem des \emph{degree constrained minimum spanning tree}
+Der zweite Bereich umfasst \emph{Flips in Triangulations}.
+Hier wird untersucht, wie sich Triangulation durch lokale Änderungen gezielt modifizieren lassen.
+Der dritte und letzte Bereich befasst sich mit dem Problem des \emph{degree constrained minimum spanning tree}.
 Dabei werden insbesondere Ansätze zur Einhaltung von Grad Beschränkungen betrachtet.
 
 
@@ -96,7 +96,7 @@ beträgt, wobei \(n\) die Anzahl der Knoten und \(k\) die Anzahl der Knoten auf 
 \subsection{Flips in Triangulations}
 Flips sind Möglichkeiten, um Kanten in einer Triangulation auszutauschen.
 % Da Triangulationen für die gleiche Knotenmenge, wie in~\cite{Delaunay_Triangulation} erwähnt, stets die gleiche Anzahl an Kanten besitzen
-Wie oben erwähnt, müssen Triangulation eine feste Anzahl an Kanten beseitzen~\cite{Delaunay_Triangulation}.
+Wie oben erwähnt, müssen Triangulation eine feste Anzahl an Kanten besitzen~\cite{Delaunay_Triangulation}.
 Dementsprechend können keine Kanten hinzugefügt oder entfernt werden, um den Grad einer Triangulation zu verändern.
 Daraus folgt, dass für jede entfernte Kante eine andere Kante eingefügt werden muss.
 Eine besondere Art dieser Umstrukturierung von Kanten sind sogenannte Flips.
@@ -127,29 +127,29 @@ Die dritte Variante, der \emph{edge slide}, schränkt die \emph{edge rotation} w
 Hier darf der veränderte Knoten nur ein Nachbar des ursprünglichen Knotens sein.
 
 \subsection{degree constrained minimum spanning tree}
-Eine Grad Beschränkung gibt es auch beim Minimum Spanning Tree.
-Hier hat jede Kante ein vorgegebenes Gewicht welches im Spanning Tree minimiert werden soll.
-Das Besondere am \emph{degree constrained minimum spanning tree} ist dass ein Minimum Spanning Tree erzeugt werden soll welcher an jedem Knoten einen maximalen Grad von \( d \) hat.
+Eine Gradbeschränkung gibt es auch beim Minimum Spanning Tree.
+Hier hat jede Kante ein vorgegebenes Gewicht, welches im Spanning Tree minimiert werden soll.
+Das Besondere am \emph{degree constrained minimum spanning tree} ist, dass ein Minimum Spanning Tree erzeugt werden soll, welcher an jedem Knoten einen maximalen Grad von \( d \) hat.
 Dabei wird \( d \) global für das Problem vorgegeben.
 
-Es wurden verschiedene Ansätze von Joshua Knowles und David Corne~\cite{A_new_evolutionary_approach_to_the_degree-constrained_minimum_spanning_tree_problem} vorgestellt welche das Problem lösen sollen.
+Es wurden verschiedene Ansätze von Joshua Knowles und David Corne~\cite{A_new_evolutionary_approach_to_the_degree-constrained_minimum_spanning_tree_problem} vorgestellt, welche das Problem lösen sollen.
 Der erste Ansatz ignoriert zu Beginn den Aspekt der Minimalität des Problems.
-Es werden Kanten hinzugefügt welche die Grad Beschränkung nicht verletzen.
-Im weiteren Verlauf wird versucht die Anzahl der Kanten zu minimieren.
+Es werden Kanten hinzugefügt, welche die Gradbeschränkung nicht verletzen.
+Im weiteren Verlauf wird versucht, die Anzahl der Kanten zu minimieren.
 
 Ein anderer Ansatz nutzt aus, dass der minimale Spannbaum ohne Grad Beschränkung in polynomialer Zeit gelöst werden kann.
-Dieser Ansatz erzeugt zuerst einen minimalen Spannbaum welcher die Grad Beschränkung ignoriert.
+Dieser Ansatz erzeugt zuerst einen minimalen Spannbaum, welcher die Gradbeschränkung ignoriert.
 Wenn eine Lösung gefunden wurde, werden den Kanten neue Gewichte zugeteilt.
-Diese neuen Gewichte werden mit folgender Formel berechnet
+Diese neuen Gewichte werden mit folgender Formel berechnet,
 \[
 newweight = weight + fault \cdot max \cdot \frac{(weight - min)}{(max - min)}
 \]
-Wobei \(newweight\) das neue Gewicht ist und \(weight\) das aktuelle Gewicht.
-Die Variable \(fault\) hat den Wert \(\{0,1,2\}\) abhängig davon wie viele Knoten an der Kante gerade die Grad Beschränkung verletzen.
+wobei \(newweight\) das neue Gewicht ist und \(weight\) das aktuelle Gewicht.
+Die Variable \(fault\) hat den Wert, \(\{0,1,2\}\) abhängig davon, wie viele Knoten an der Kante gerade die Gradbeschränkung verletzen.
 Die Variablen \(min\) und \(max\) bezeichnen das kleinste beziehungsweise größte Gewicht aller Kanten.
-Danach wird erneut ein minimaler Spannbaum gebildet wobei durch das neue Gewicht nun Kanten bevorzugt werden welche keine Grad Beschränkung verletzen.
-Diese beiden Schritte können so lange wiederholt werden bis eine valide Lösung gefunden wurde oder eine maximale Anzahl an Iterationen erreicht wurde.
-Das Problem bei diesem Ansatz ist dass Lösungen fälschlicherweise als \emph{nicht möglich} bewertet werden können aufgrund der maximalen Iterationen.
+Danach wird erneut ein minimaler Spannbaum gebildet, wobei durch das neue Gewicht nun Kanten bevorzugt werden, welche keine Gradbeschränkung verletzen.
+Diese beiden Schritte können so lange wiederholt werden, bis eine valide Lösung gefunden wurde oder eine maximale Anzahl an Iterationen erreicht wurde.
+Das Problem bei diesem Ansatz ist, dass Lösungen fälschlicherweise als \emph{nicht möglich} bewertet werden können aufgrund der maximalen Iterationen.
 
 Ein weiterer Ansatz wird als \emph{Hillclimbing} bezeichnet.
 Dieser löst das Problem des \emph{degree constrained minimum spanning tree} nicht, wird jedoch zur Suche nach neuen Knoten in einem anderen Algorithmus verwendet.
@@ -166,7 +166,7 @@ Bei diesem Verfahren wird nur ein Punkt in der Nähe getestet.
 Ist dieser nicht gleich oder besser, wird ein neuer zufälliger Punkt ausgewählt.
 
 Der nächste Ansatz wird \emph{simulated annealing} genannt.
-Auch hier werden nur neue Knoten gesucht um bestehende Lösungen zu verbessern.
+Auch hier werden nur neue Knoten gesucht, um bestehende Lösungen zu verbessern.
 Das Ziel des Ansatzes ist es, das Problem mit einer globalen Verbesserung zu lösen, indem zu Beginn viele Veränderungen zugelassen werden und im Verlauf immer genauere Verbesserungen erfolgen.
 Auch hier wird ein zufälliger Knoten ausgewählt und es werden weitere mögliche Knoten in der Nähe gesucht.
 Bei diesem Ansatz werden jedoch neue Knoten gemäß der folgenden Formel übernommen:
@@ -190,12 +190,11 @@ Dabei werden verschiedene Lösungen erzeugt und bewertet.
 Die besten Lösungen werden ausgewählt und auf Basis dieser Lösungen werden durch Mutation neue Lösungen generiert.
 
 In dem Paper von Krishnamoorthy et.al. ~\cite{Comparison_of_Algorithms_for_the_Degree_Constrained_Minimum_Spanning_Tree} werden Evolutionsalgorithmen noch mal genauer betrachtet.
-Zum einem wir die Art der Coodierung betrachtet.
-Es ist sinvoll eine Art der Coodierung zu wählen mit der nur Definitions technisch richtige spanning Trees dargestellt werden können.
-Sonst kann es passieren das von den erstellten Lösungen viele nicht genutzt werden können und somit nicht relevant sind.
-Wenn eine passende Coodierung gewählt wurde, können dann nur noch der Grad und das Gewicht betrachtet werden.
+Der erst Schritt ist es eine Codierung zu wählen, welche nur \emph{richtige} Spannbäume darstellen kann.
+Sonst kann es passieren, dass von den erstellten Lösungen viele nicht genutzt werden können und somit nicht relevant sind.
+Wenn eine passende Codierung gewählt wurde, können dann nur noch der Grad und das Gewicht betrachtet werden.
 
-Eine Möglichkeit wie Mutationen stattfinden können ist die \emph{Crossover} Methode.
+Eine Möglichkeit wie Mutationen stattfinden können, ist die \emph{Crossover} Methode.
 Dabei existieren zwei \emph{Eltern} Lösungen \(P_1\) und \(P_2\). Aus diesen werden
 \[
 2 \cdot (n - 2)
@@ -213,12 +212,12 @@ Von diesen \emph{Kindern} ersetzt das bessere \emph{Kind} das schlechtere \emph{
 Die Größe des Pools kann so angepasst werden, dass alle möglichen Veränderungen berücksichtigt werden.
 
 Beide Methoden sollen im Durchschnitt alle \(10\) Generationen die beste Lösung mit allen anderen Lösungen verglichen haben.
-Als mögliche Iterationsanzahl wird folgende Formel verwendet
+Als mögliche Iterationsanzahl wird folgende Formel verwendet,
 \[
 \frac{50 \cdot n}{\bar{b}}
 \]
-Dabei bezeichnet \(\bar{b}\) die durchschnittliche Grad Beschränkung.
-Diese Formel sorgt dafür, dass große Instanzen mehr Iterationen erhalten während leichtere Instanzen (mit höherem Grad) schneller bearbeitet werden.
+dabei bezeichnet \(\bar{b}\) die durchschnittliche Gradbeschränkung.
+Diese Formel sorgt dafür, dass große Instanzen mehr Iterationen erhalten, während leichtere Instanzen (mit höherem Grad) schneller bearbeitet werden.
 \newpage
 
 \section{Overview}
