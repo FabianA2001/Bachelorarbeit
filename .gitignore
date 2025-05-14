@@ -7,6 +7,8 @@
 **/degree_constrained_triangulation.egg-info
 !TEX/figures/*
 
+.DS_Store
+
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
