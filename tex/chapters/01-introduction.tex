@@ -69,7 +69,7 @@ Diese liefert eine Triangulation, die möglichst gleichschenklige und gleichwink
 Dies wird erreicht, indem der minimale Winkel maximiert wird.
 Im Buch von de Berg et al.~\cite{Delaunay_Triangulation} wird diese Variante der Triangulation ausführlich behandelt.
 
-Triangulationen eignen sich aufgrund ihres Aufbaus gut, um Höhendaten im zweidimensionalen Raum darzustellen (siehe~\cref{fig:terrain}).
+Triangulationen eignen sich durch ihre Struktur besonders gut zur Darstellung von Höhendaten im zweidimensionalen Raum (siehe~\cref{fig:terrain}).
 Dabei kann ausgenutzt werden, dass Dreiecke unterschiedliche Innenwinkel und Kantenlängen besitzen.
 
 \begin{figure}[tb]
@@ -81,15 +81,24 @@ Dabei kann ausgenutzt werden, dass Dreiecke unterschiedliche Innenwinkel und Kan
 Das Grundproblem besteht darin, dass die Höhendaten nur an bestimmten Punkten bekannt sind und die restlichen Werte daher geschätzt werden müssen.
 Dies kann durch die Delaunay-Triangulation gut gelöst werden, da die Dreiecke aufgrund ihrer gleichschenkligen Eigenschaft visuell geeignet sind, die fehlenden Daten zu ergänzen.
 
-Es wird außerdem angegeben, dass die Anzahl der Kanten in einer Triangulation immer
+% Es wird außerdem angegeben, dass die Anzahl der Kanten in einer Triangulation immer
+% \[
+% 3 \cdot n - 3 - k
+% \]
+% und die Anzahl der Dreiecke
+% \[
+% 2 \cdot n - 2 - k
+% \]
+% beträgt, wobei \(n\) die Anzahl der Knoten und \(k\) die Anzahl der Knoten auf der konvexen Hülle darstellt.
+Es werden auch Formel für die Anzahl der Kanten und Dreiecke in einer Triangulation angegeben.
+Für eine Punktemenge mit \(n\) Punkten und \(k\) Punkten auf der konvexen Hülle gilt:
 \[
-3 \cdot n - 3 - k
+\text{Anzahl Kanten: } 3 n - 3 - k
 \]
-und die Anzahl der Dreiecke
 \[
-2 \cdot n - 2 - k
+\text{Anzahl Dreiecke: }2 n - 2 - k
 \]
-beträgt, wobei \(n\) die Anzahl der Knoten und \(k\) die Anzahl der Knoten auf der konvexen Hülle darstellt.
+
 
 % Grob gesagt können Delaunay Triangulation durch \emph{Voronoi Diagramm} erzeugt werden oder in dem zufällig Kanten hinzugefügt werden und danach \emph{Legalisiert} werden.
 
@@ -103,8 +112,9 @@ Eine besondere Art dieser Umstrukturierung von Kanten sind sogenannte Flips.
 Hurtado et al.~\cite{Flipping_edges_in_triangulations} zeigten, dass jede Triangulation mindestens
 \[\frac{n-4}{2}\]
 flipbare Kanten besitzt, wobei \( n \) die Anzahl der Knoten bezeichnet.
-Laut dem Paper \emph{Flips in planar graphs}~\cite{Flips_in_planar_graphs} lässt sich jede mögliche Triangulation in jede beliebige andere Triangulation überführen, indem die notwendigen Flips durchgeführt werden.
+Laut der wissenschaftliche Arbeit \emph{Flips in planar graphs}~\cite{Flips_in_planar_graphs} lässt sich jede mögliche Triangulation in jede beliebige andere Triangulation überführen, indem die notwendigen Flips durchgeführt werden.
 Daraus folgt, dass, wenn eine \emph{degree-constrained triangulation} möglich ist, diese mit den nötigen Flips konstruiert werden kann.
+
 \textbf{Sollte ich das später machen, hier die Sektion nennen}
 
 Eine weitere Art von Flips sind sogenannte \( k \)-Flips.
@@ -142,9 +152,9 @@ Dieser Ansatz erzeugt zuerst einen minimalen Spannbaum, welcher die Gradbeschrä
 Wenn eine Lösung gefunden wurde, werden den Kanten neue Gewichte zugeteilt.
 Diese neuen Gewichte werden mit folgender Formel berechnet,
 \[
-newweight = weight + fault \cdot max \cdot \frac{(weight - min)}{(max - min)}
+weight + fault \cdot max \cdot \frac{(weight - min)}{(max - min)}
 \]
-wobei \(newweight\) das neue Gewicht ist und \(weight\) das aktuelle Gewicht.
+wobei \(weight\) das aktuelle Gewicht der Kante ist.
 Die Variable \(fault\) hat den Wert, \(\{0,1,2\}\) abhängig davon, wie viele Knoten an der Kante gerade die Gradbeschränkung verletzen.
 Die Variablen \(min\) und \(max\) bezeichnen das kleinste beziehungsweise größte Gewicht aller Kanten.
 Danach wird erneut ein minimaler Spannbaum gebildet, wobei durch das neue Gewicht nun Kanten bevorzugt werden, welche keine Gradbeschränkung verletzen.
@@ -189,7 +199,7 @@ Der letzte Ansatz wird erst am Ende vorgestellt und beschreibt das übliche Verf
 Dabei werden verschiedene Lösungen erzeugt und bewertet.
 Die besten Lösungen werden ausgewählt und auf Basis dieser Lösungen werden durch Mutation neue Lösungen generiert.
 
-In dem Paper von Krishnamoorthy et.al. ~\cite{Comparison_of_Algorithms_for_the_Degree_Constrained_Minimum_Spanning_Tree} werden Evolutionsalgorithmen noch mal genauer betrachtet.
+Krishnamoorthy et.al. ~\cite{Comparison_of_Algorithms_for_the_Degree_Constrained_Minimum_Spanning_Tree} hat Evolutionsalgorithmen noch mal genauer betrachtet.
 Der erst Schritt ist es eine Codierung zu wählen, welche nur \emph{richtige} Spannbäume darstellen kann.
 Sonst kann es passieren, dass von den erstellten Lösungen viele nicht genutzt werden können und somit nicht relevant sind.
 Wenn eine passende Codierung gewählt wurde, können dann nur noch der Grad und das Gewicht betrachtet werden.
