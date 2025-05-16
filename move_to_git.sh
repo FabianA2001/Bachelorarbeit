@@ -4,7 +4,7 @@
 QUELLE="/Users/fabian/uni/Bachelorarbeit/682487b555c0d63c84fc8118"
 ZIEL="/Users/fabian/uni/Bachelorarbeit/bachelorarbeit-fabian-alich/tex"
 
-git -c $QUELLE pull
+git -C "$QUELLE/." pull
 
 cp "$QUELLE/thesis.tex" $ZIEL
 cp "$QUELLE/chapters"/*.tex "$ZIEL/chapters"
