@@ -14,7 +14,7 @@ class Solver(ABC):
         self.graph: Optional[Graph_Wrapper] = graph
 
     def solve(self, timeout: int = -1) -> bool:
-        if self.graph is None:
+        if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
         logging.info(f"{self.name} started.")
         self.graph.graph_name = self.name

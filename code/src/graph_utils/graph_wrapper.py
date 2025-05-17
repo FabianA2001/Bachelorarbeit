@@ -64,7 +64,7 @@ class Graph_Wrapper(nx.Graph):
 
     # Kantenfarben basierend auf einer Bedingung erstellen (z. B. Länge der Kante)
 
-    def check_for_intersection_with_all_edges(
+    def check_for_intersection_with_all_edges_and_nodes(
         self,
         edge: Union[tuple[str, str], shapely.LineString],
         check_if_active: bool = True,
@@ -80,6 +80,16 @@ class Graph_Wrapper(nx.Graph):
         else:
             raise ValueError("Erwarte Tuple oder LineString")
 
+        points = [self.nodes[node].get("point") for node in self.nodes]
+        multipoint = shapely.geometry.MultiPoint(points)
+        intersection = multipoint.intersection(line)
+        if not isinstance(intersection, shapely.geometry.MultiPoint):
+            raise ValueError(
+                f"Intersection is not a MultiPoint, but {type(intersection)}"
+            )
+        if len(intersection.geoms) > 2:
+            return True
+
         # Überprüfen, ob die Linie mit einer anderen Linie im Graphen schneidet
         all_linestrings_from_edges = [
             self.edges[edge].get("line")
@@ -91,6 +101,7 @@ class Graph_Wrapper(nx.Graph):
                 continue
             if self.check_for_intersection_except_corners(line, other):
                 return True
+
         return False
 
     def show_and_save(self, show: bool = True, save: bool = True) -> None:
@@ -99,11 +110,12 @@ class Graph_Wrapper(nx.Graph):
         local_graph = self.get_aktive_graph()
         num_active_edges = len(local_graph.edges)
         # logging.info(f"aktive kanten: {num_active_edges}")
+        print(local_graph.edges)
         if num_active_edges != self.number_edges_in_Triangulation:
             logging.error(
                 f"Anzahl der Kanten in der Triangulation stimmt nicht überein.\nEs sollten {self.number_edges_in_Triangulation} sein, aber es sind {num_active_edges}."
             )
-            save_graph_as_json(self, self.graph_name)
+            save_graph_as_json(self, self.graph_name + "_error")
 
         pos = nx.get_node_attributes(local_graph, "pos")
         degrees = nx.get_node_attributes(local_graph, "degree")
@@ -126,7 +138,7 @@ class Graph_Wrapper(nx.Graph):
         edge_colors = [
             graph_const.EDGE_COLOR_TRUE
             # Beispielbedingung
-            if not self.check_for_intersection_with_all_edges(edge)
+            if not self.check_for_intersection_with_all_edges_and_nodes(edge)
             else graph_const.EDGE_COLOR_FALSE
             for edge in local_graph.edges
         ]
@@ -377,7 +389,7 @@ class Graph_Wrapper(nx.Graph):
 
         self.add_edge(a, b, True)
         self.deactivate_edge(edge)
-        if self.check_for_intersection_with_all_edges((a, b), True):
+        if self.check_for_intersection_with_all_edges_and_nodes((a, b), True):
             self.remove_edge((a, b))
             self.active_edge(edge)
             # logging.warning(
@@ -403,7 +415,7 @@ class Graph_Wrapper(nx.Graph):
         if len(edges) != self.number_edges_in_Triangulation:
             return False
         for edge in edges:
-            if self.check_for_intersection_with_all_edges(edge):
+            if self.check_for_intersection_with_all_edges_and_nodes(edge):
                 return False
         for node in self.get_all_nodes_name():
             if lokal_graph.nodes[node].get("degree") != lokal_graph.degree(node):

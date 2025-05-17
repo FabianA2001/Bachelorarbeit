@@ -61,7 +61,7 @@ def try_find_error_in_possible():
         if graph.edges[edge]["active"] is True:
             continue
         graph.active_edge(edge)
-        if not graph.check_for_intersection_with_all_edges(edge, True):
+        if not graph.check_for_intersection_with_all_edges_and_nodes(edge, True):
             print(f"Edge {edge} is possible")
         graph.deactivate_edge(edge)
     graph.show_and_save()
@@ -98,32 +98,25 @@ def setup_logging():
 def main():
     setup_logging()
     logging.info("Start main function.")
-    # run_instance.run_solver_on_instance(Ortools(), "simple_20")
-    # gen = generate.Generate_Delaunay_Flips(
-    #     "simple_20",
-    #     number_nodes=20,
-    #     number_instances=10,
-    #     number_flips=10,
-    # )
-    # gen.generate()
-    # run_instance.show_results("simple_20")
-    # run_instance.show_triangulation_from_result(
-    #     "simple_20",
-    #     "Ortools",
-    #     "000_delaunay_flips",
-    # )
-    # try_find_error_in_possible()
-    # test_algo(20)
-    nodes = load_nodes_from_json("instance/simple_20/000_delaunay_flips")
-    graph = Graph_Wrapper(nodes)
-    solver = Ortools(graph)
-    solver.solve()
-    # graph.show_and_save()
-    print(graph.check_if_triangulation_with_degree_constraint())
-    graph.show_and_save()
+    for _ in range(100):
+        nodes = generate.gen_nodes(20, 100, 100)
+        graph = Graph_Wrapper(nodes)
+        solver: Solver = Possible(graph)
+        solver.solve()
+        graph.show_and_save(show=False, save=False)
+    # nodes = node.load_nodes_from_json("instance/Possible_error")
+    # graph1 = Graph_Wrapper(nodes)
+    # solver = Possible(graph1)
+    # solver.solve()
+    # # print(graph1.get_all_edges())
+    # graph1.show_and_save(save=False)
+    # # graph2 = Graph_Wrapper(nodes)
+    # # solver2 = Delaunay(graph2)
+    # # solver2.solve()
+    # # graph2.show_and_save(show=False)
     logging.info("End main function.")
 
 
 if __name__ == "__main__":
     main()
-    #test für commit
+    # test für commit
