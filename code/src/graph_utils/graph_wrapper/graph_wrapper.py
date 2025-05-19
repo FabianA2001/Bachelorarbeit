@@ -1,13 +1,7 @@
-import networkx as nx
-import matplotlib.pyplot as plt
 from graph_utils import graph_const
-from graph_utils.node import Node, save_nodes_as_json
+from graph_utils.node import Node
 import shapely
-import itertools
 from typing import Tuple, Union, Optional
-import logging
-import math
-import random
 from graph_utils.graph_wrapper.data import Data
 from graph_utils.graph_wrapper.data_raw import Data_Raw
 from graph_utils.graph_wrapper import check
@@ -17,7 +11,7 @@ from graph_utils.graph_wrapper.operation import move_node
 from graph_utils.graph_wrapper.file_system import save_graph_as_json
 
 
-class Graph_Wrapper():
+class Graph_Wrapper:
     def __init__(self, nodes: list[Node]) -> None:
         self.data = Data(nodes)
         self._name = graph_const.DEFAULT_NAME
@@ -42,9 +36,7 @@ class Graph_Wrapper():
         line1: shapely.geometry.LineString | tuple[str, str],
         line2: shapely.geometry.LineString | tuple[str, str],
     ) -> bool:
-        return check.check_for_intersection_except_corners(
-            self.data, line1, line2
-        )
+        return check.check_for_intersection_except_corners(self.data, line1, line2)
 
     def check_for_intersection_with_all_edges_and_nodes(
         self,

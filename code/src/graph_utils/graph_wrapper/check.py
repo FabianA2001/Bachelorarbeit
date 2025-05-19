@@ -1,13 +1,5 @@
-import networkx as nx
-import matplotlib.pyplot as plt
-from graph_utils import graph_const
-from graph_utils.node import Node, save_nodes_as_json
 import shapely
-import itertools
-from typing import Tuple, Union, Optional
-import logging
-import math
-import random
+from typing import Union
 from graph_utils.graph_wrapper.data import Data
 
 
@@ -52,9 +44,7 @@ def check_for_intersection_with_all_edges_and_nodes(
     multipoint = shapely.geometry.MultiPoint(points)
     intersection = multipoint.intersection(line)
     if not isinstance(intersection, shapely.geometry.MultiPoint):
-        raise ValueError(
-            f"Intersection is not a MultiPoint, but {type(intersection)}"
-        )
+        raise ValueError(f"Intersection is not a MultiPoint, but {type(intersection)}")
     if len(intersection.geoms) > 2:
         return True
 

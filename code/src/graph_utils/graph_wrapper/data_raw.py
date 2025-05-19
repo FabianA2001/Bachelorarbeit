@@ -1,13 +1,9 @@
 import networkx as nx
-import matplotlib.pyplot as plt
 from graph_utils import graph_const
-from graph_utils.node import Node, save_nodes_as_json
+from graph_utils.node import Node
 import shapely
 import itertools
 from typing import Tuple, Union, Optional
-import logging
-import math
-import random
 
 
 class Data_Raw(nx.Graph):
@@ -22,8 +18,7 @@ class Data_Raw(nx.Graph):
 
     def add_node(self, key: str, pos: tuple[int, int], degree: int) -> None:
         """Fügt einen Knoten zum Graphen hinzu."""
-        assert isinstance(
-            pos, tuple), f"Erwarte Tuple, aber erhalte {type(pos)}, {pos}"
+        assert isinstance(pos, tuple), f"Erwarte Tuple, aber erhalte {type(pos)}, {pos}"
         super().add_node(key, pos=pos, degree=degree, point=shapely.geometry.Point(pos))
 
     def get_all_nodes_name(self) -> list[str]:
@@ -33,8 +28,7 @@ class Data_Raw(nx.Graph):
     def get_node_from_point(self, point: shapely.Point) -> str:
         """Gibt den Knoten zurück, der einen bestimmten Punkt repräsentiert."""
         if not isinstance(point, shapely.Point):
-            raise ValueError(
-                f"Erwarte einen Punkt., aber erhalte {type(point)}")
+            raise ValueError(f"Erwarte einen Punkt., aber erhalte {type(point)}")
         if point not in self.point_to_node:
             raise ValueError(f"Point {point} not found in point_to_node.")
         node = self.point_to_node.get(point)
@@ -136,8 +130,7 @@ class Data_Raw(nx.Graph):
 
         nodes = []
         for node in local_graph.nodes:
-            nodes.append(
-                Node(node, local_graph.nodes[node]["pos"], self.degree(node)))
+            nodes.append(Node(node, local_graph.nodes[node]["pos"], self.degree(node)))
 
         return nodes
 

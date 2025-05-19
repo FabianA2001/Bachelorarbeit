@@ -1,19 +1,15 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 from graph_utils import graph_const
-from graph_utils.node import Node, save_nodes_as_json
-import shapely
-import itertools
-from typing import Tuple, Union, Optional
 import logging
-import math
-import random
 from graph_utils.graph_wrapper.data import Data
 from graph_utils.graph_wrapper.file_system import save_graph_as_json
 from graph_utils.graph_wrapper import check
 
 
-def show_and_save(data: Data, number_edges_in_Triangulation: int, show: bool = True, save: bool = True) -> None:
+def show_and_save(
+    data: Data, number_edges_in_Triangulation: int, show: bool = True, save: bool = True
+) -> None:
     """Zeichnet den Graphen mit den festgelegten Positionen und Farben."""
     logging.info("starte show_and_save")
     local_graph = data.get_aktive_graph()
@@ -29,8 +25,7 @@ def show_and_save(data: Data, number_edges_in_Triangulation: int, show: bool = T
     degrees = nx.get_node_attributes(local_graph, "degree")
 
     # Labels mit Degree-Werten erstellen
-    labels = {node: f"{node}\n{degree}" for node,
-              degree in degrees.items()}
+    labels = {node: f"{node}\n{degree}" for node, degree in degrees.items()}
 
     # Knotenfarben basierend auf dem Grad erstellen
     colors = [

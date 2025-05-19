@@ -1,13 +1,5 @@
-import networkx as nx
-import matplotlib.pyplot as plt
 from graph_utils import graph_const
-from graph_utils.node import Node, save_nodes_as_json
-import shapely
-import itertools
-from typing import Tuple, Union, Optional
-import logging
-import math
-import random
+from graph_utils.node import save_nodes_as_json
 from graph_utils.graph_wrapper.data import Data
 
 
