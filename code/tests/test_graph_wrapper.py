@@ -1,4 +1,4 @@
-from graph_utils.graph_wrapper import Graph_Wrapper
+from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from graph_utils.node import Node
 
 
@@ -48,7 +48,8 @@ def test_check_for_intersection_except_corners():
     graph.add_edge("A", "D")
     graph.add_edge("B", "C")
     assert graph.check_for_intersection_except_corners(("A", "D"), ("B", "C"))
-    assert not graph.check_for_intersection_except_corners(("A", "D"), ("A", "B"))
+    assert not graph.check_for_intersection_except_corners(
+        ("A", "D"), ("A", "B"))
 
 
 def test_add_all_possible_edges():

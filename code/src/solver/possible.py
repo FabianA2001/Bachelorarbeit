@@ -1,4 +1,4 @@
-from graph_utils.graph_wrapper import Graph_Wrapper
+from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from solver.solver import Solver
 import shapely
 import itertools
@@ -15,9 +15,11 @@ class Possible(Solver):
 
     def _actual_solver(self):
         if not isinstance(self.graph, Graph_Wrapper):
-            raise ValueError("Graph is not set. Please set the graph before solving.")
+            raise ValueError(
+                "Graph is not set. Please set the graph before solving.")
 
-        self.points = [attr["point"] for _, attr in self.graph.nodes(data=True)]
+        self.points = [attr["point"]
+                       for _, attr in self.graph.data.nodes(data=True)]
         self.graph.add_convex_hull()
 
         combinations = itertools.combinations(self.points, 2)

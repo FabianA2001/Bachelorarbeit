@@ -1,4 +1,4 @@
-from graph_utils.graph_wrapper import Graph_Wrapper, save_graph_as_json
+from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from solver.solver import Solver
 from graph_utils.node import (
     save_nodes_as_json,
@@ -11,6 +11,7 @@ from solver.delaunay import Delaunay
 from graph_utils.node import Node
 from solver.ortools import Ortools
 from solver.possible import Possible
+from graph_utils import run_instance
 
 
 def test_algo(points):
@@ -22,7 +23,7 @@ def test_algo(points):
     solver: Solver = Delaunay(graph)
     solver.solve()
     graph.show_and_save(show=False)
-    save_graph_as_json(graph)
+    graph.save_graph_as_json()
 
     nodes2 = load_nodes_from_json()
     graph2 = Graph_Wrapper(nodes2)
@@ -41,31 +42,6 @@ def custom_points() -> list[Node]:
         Node("D", (1, 1)),
     ]
     return nodes
-
-
-def try_find_error_in_possible():
-    logging.info("Start run_test function.")
-    # for _ in range(30):
-    #     nodes = generate.gen_nodes(20, 100, 100)
-    #     graph = Graph_Wrapper(nodes)
-    #     solver: Solver = Possible(graph)
-    #     solver.solve()
-    #     graph.show_and_save(show=False, save=False)
-
-    nodes = node.load_nodes_from_json("instance/Possible")
-    graph = Graph_Wrapper(nodes)
-    graph.add_all_possible_edges(False)
-    solver: Solver = Possible(graph)
-    solver.solve()
-    for edge in graph.get_all_edges():
-        if graph.edges[edge]["active"] is True:
-            continue
-        graph.active_edge(edge)
-        if not graph.check_for_intersection_with_all_edges_and_nodes(edge, True):
-            print(f"Edge {edge} is possible")
-        graph.deactivate_edge(edge)
-    graph.show_and_save()
-    logging.info("End run_test function.")
 
 
 def setup_logging():
@@ -95,9 +71,7 @@ def setup_logging():
     logger.addHandler(file_handler)
 
 
-def main():
-    setup_logging()
-    logging.info("Start main function.")
+def move():
     nodes = generate.gen_nodes(20, 100, 100)
     graph = Graph_Wrapper(nodes)
     solver = Delaunay(graph)
@@ -107,10 +81,37 @@ def main():
     graph.name = "Delaunay"
     nodes2 = graph.get_aktive_graph_nodes()
     graph2 = Graph_Wrapper(nodes2)
-    graph2.move_node(distance=20)
+    graph2.move_node()
     solver2 = Ortools(graph2)
     solver2.solve()
     graph2.show_and_save(show=False)
+
+
+def run_instance_lokal():
+    inst = "simple_40"
+    run_instance.run_solver_on_instance(
+        solver=Delaunay(),
+        instance_name=inst,
+    )
+    run_instance.show_results(inst)
+
+
+def create_instance():
+    generate.Generate_Delaunay_Flips(
+        name="simple_40",
+        number_nodes=40,
+        number_instances=10,
+        number_flips=50,
+    ).generate()
+
+
+def main():
+    setup_logging()
+    logging.info("Start main function.")
+    # run_instance_lokal()
+    run_instance.show_triangulation_from_result(
+        "simple_40", "Delaunay", "005_delaunay_flips")
+    # create_instance()
     logging.info("End main function.")
 
 

@@ -3,7 +3,7 @@ from graph_utils import graph_const
 from solver.solver import Solver
 from graph_utils.graph_const import RESULTS_DIR
 import json
-from graph_utils.graph_wrapper import Graph_Wrapper
+from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from graph_utils.node import load_nodes_from_json
 import time
 import seaborn as sns
@@ -139,7 +139,8 @@ def show_results(
         palette="muted",
     )
 
-    plt.title(f"Vergleich der Laufzeiten (Time) für {instance_name} je Problem")
+    plt.title(
+        f"Vergleich der Laufzeiten (Time) für {instance_name} je Problem")
     plt.xticks(rotation=45)
     plt.grid(True, axis="y", linestyle="--", alpha=0.7)
     plt.tight_layout()
@@ -152,7 +153,8 @@ def show_triangulation_from_result(
     instance_file_name: str,
 ):
     nodes = load_nodes_from_json(
-        os.path.join(graph_const.PREFIX_INSTANCE, instance_name, instance_file_name)
+        os.path.join(graph_const.PREFIX_INSTANCE,
+                     instance_name, instance_file_name)
     )
     with open(os.path.join(graph_const.RESULTS_DIR, f"{instance_name}.json"), "r") as f:
         data = json.load(f)

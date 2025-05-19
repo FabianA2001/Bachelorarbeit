@@ -1,5 +1,5 @@
 """Graph"""
-
+DEFAULT_NAME = "Graph"
 FIGURES_PREFIX = "figures/"
 NODE_SIZE = 200
 FONT_SIZE = 6

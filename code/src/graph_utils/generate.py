@@ -1,7 +1,7 @@
 from random import randint
 from graph_utils.node import Node
 from graph_utils import graph_const
-from graph_utils.graph_wrapper import Graph_Wrapper, save_graph_as_json
+from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper, save_graph_as_json
 from solver.delaunay import Delaunay
 from random import choice
 from abc import ABC, abstractmethod
@@ -51,7 +51,7 @@ class Generate_Instance(ABC):
             graph = Graph_Wrapper(nodes)
             graph, possible = self._generate_instance(graph)
             number = str(i).zfill(3)
-            save_graph_as_json(graph, f"{self.name}/{number}_{self.lokal_name}")
+            graph.save_graph_as_json(f"{self.name}/{number}_{self.lokal_name}")
             if possible is not None:
                 path = f"{graph_const.PREFIX_INSTANCE}{self.name}/{number}_{self.lokal_name}.json"
                 with open(path, "r") as f:

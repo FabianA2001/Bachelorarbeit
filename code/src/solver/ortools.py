@@ -1,6 +1,6 @@
 from solver.solver import Solver
 from ortools.sat.python import cp_model
-from graph_utils.graph_wrapper import Graph_Wrapper
+from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
 import itertools
 from typing import Optional
@@ -26,20 +26,23 @@ class Ortools(Solver):
 
     def constraint_intersection(self):
         if self.graph is None:
-            raise ValueError("Graph is not set. Please set the graph before solving.")
+            raise ValueError(
+                "Graph is not set. Please set the graph before solving.")
         all_edges = self.graph.get_all_edges()
         combinations = list(itertools.combinations(all_edges, 2))
         for edge_1, edge_2 in combinations:
             if self.graph.check_for_intersection_except_corners(edge_1, edge_2):
-                self.model.AddBoolOr([self.vars[edge_1].Not(), self.vars[edge_2].Not()])
+                self.model.AddBoolOr(
+                    [self.vars[edge_1].Not(), self.vars[edge_2].Not()])
 
     def constraint_degree(self):
         if self.graph is None:
-            raise ValueError("Graph is not set. Please set the graph before solving.")
+            raise ValueError(
+                "Graph is not set. Please set the graph before solving.")
         for node in self.graph.get_all_nodes_name():
-            degree = self.graph.nodes[node]["degree"]
+            degree = self.graph.data.nodes[node]["degree"]
             summ = 0
-            for edge in self.graph.edges(node):
+            for edge in self.graph.data.edges(node):
                 if edge in self.vars:
                     summ += self.vars[edge]
                 else:
@@ -48,7 +51,8 @@ class Ortools(Solver):
 
     def _actual_solver(self):
         if self.graph is None:
-            raise ValueError("Graph is not set. Please set the graph before solving.")
+            raise ValueError(
+                "Graph is not set. Please set the graph before solving.")
         self.graph.add_all_possible_edges()
         self.vars = {
             edge: self.model.NewBoolVar(f"edge_{edge[0]}_{edge[1]}")
@@ -62,7 +66,8 @@ class Ortools(Solver):
         # solver.parameters.log_search_progress = True  # Enable logging
         logging.info("Start solving...")
         status = solver.Solve(
-            self.model, FirstSolutionStop(self.graph.number_edges_in_Triangulation)
+            self.model, FirstSolutionStop(
+                self.graph.get_number_edges_in_Triangulation())
         )
         # status = solver.Solve(self.model)
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
