@@ -17,7 +17,7 @@ class Solver(ABC):
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
         logging.info(f"{self.name} started.")
-        self.graph.graph_name = self.name
+        self.graph.name = self.name
         self._actual_solver()
         logging.info(f"{self.name} completed.")
         return True

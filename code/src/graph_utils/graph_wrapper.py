@@ -7,13 +7,13 @@ import itertools
 from typing import Tuple, Union, Optional
 import logging
 import math
+import random
 
 
 class Graph_Wrapper(nx.Graph):
     def __init__(self, nodes: list[Node]) -> None:
         super().__init__()
-        self.given_nodes = nodes
-        self.graph_name: str = graph_const.GRAPH_NAME
+        self.name: str = graph_const.GRAPH_NAME
         for node in nodes:
             self.add_node(node.name, node.pos, node.degree)
         self.point_to_node: dict[shapely.Point, str] = {
@@ -22,7 +22,12 @@ class Graph_Wrapper(nx.Graph):
         self.number_edges_in_Triangulation = self.__get_number_edges_triangulation()
 
     def copy(self) -> "Graph_Wrapper":
-        graph = Graph_Wrapper(self.given_nodes)
+        nodes = []
+        for node in self.get_all_nodes_name():
+            nodes.append(
+                Node(node, self.nodes[node]["pos"], self.nodes[node]["degree"])
+            )
+        graph = Graph_Wrapper(nodes)
         for edge in self.get_all_edges():
             graph.add_edge(edge[0], edge[1], self.edges[edge].get("active"))
         return graph
@@ -110,12 +115,11 @@ class Graph_Wrapper(nx.Graph):
         local_graph = self.get_aktive_graph()
         num_active_edges = len(local_graph.edges)
         # logging.info(f"aktive kanten: {num_active_edges}")
-        print(local_graph.edges)
         if num_active_edges != self.number_edges_in_Triangulation:
             logging.error(
                 f"Anzahl der Kanten in der Triangulation stimmt nicht überein.\nEs sollten {self.number_edges_in_Triangulation} sein, aber es sind {num_active_edges}."
             )
-            save_graph_as_json(self, self.graph_name + "_error")
+            save_graph_as_json(self, self.name + "_error")
 
         pos = nx.get_node_attributes(local_graph, "pos")
         degrees = nx.get_node_attributes(local_graph, "degree")
@@ -156,7 +160,7 @@ class Graph_Wrapper(nx.Graph):
         )
         plt.title("Graph mit festen Koordinaten")
         if save:
-            plt.savefig(f"{graph_const.FIGURES_PREFIX}{self.graph_name}.pdf")
+            plt.savefig(f"{graph_const.FIGURES_PREFIX}{self.name}.pdf")
         if show:
             logging.info("show Graph")
             plt.show()
@@ -400,6 +404,38 @@ class Graph_Wrapper(nx.Graph):
         self.remove_edge(edge)
         return True
 
+    def move_node_global(self, node: str = "") -> bool:
+        MULTIPLIER_MAX = 1.2
+        MULTIPLIER_MIN = 0.8
+        if node == "":
+            node = self.get_all_nodes_name()[random.randint(0, len(self.nodes) - 1)]
+        points = [attr["point"] for _, attr in self.nodes(data=True)]
+        min_x, min_y, max_y, max_x = 0, 0, 0, 0
+        for point in points:
+            if point.x < min_x:
+                min_x = point.x
+            if point.y < min_y:
+                min_y = point.y
+            if point.x > max_x:
+                max_x = point.x
+            if point.y > max_y:
+                max_y = point.y
+        multipoint = shapely.geometry.MultiPoint(points)
+        for _ in range(100):
+            x = random.randint(int(min_x * MULTIPLIER_MIN), int(max_x * MULTIPLIER_MAX))
+            y = random.randint(int(min_y * MULTIPLIER_MIN), int(max_y * MULTIPLIER_MAX))
+            point = shapely.geometry.Point(x, y)
+            if multipoint.intersects(point):
+                continue
+            logging.info(
+                f"Bewege Knoten {node} von {self.nodes[node]['point']} nach {point}"
+            )
+            self.nodes[node]["point"] = point
+            self.nodes[node]["pos"] = (x, y)
+            return True
+
+        return False
+
     def is_edge_in_graph(self, edge: tuple[str, str]) -> tuple[str, str]:
         """Überprüft, ob eine Kante im Graphen vorhanden ist."""
         if edge not in self.edges:
@@ -422,13 +458,17 @@ class Graph_Wrapper(nx.Graph):
                 return False
         return True
 
+    def get_aktive_graph_nodes(self) -> list[Node]:
+        local_graph = self.get_aktive_graph()
+
+        nodes = []
+        for node in local_graph.nodes:
+            nodes.append(Node(node, local_graph.nodes[node]["pos"], self.degree(node)))
+
+        return nodes
+
 
 def save_graph_as_json(
     graph: Graph_Wrapper, filename: str = graph_const.DEFAULT_FILE_NAME
 ) -> None:
-    local_graph = graph.get_aktive_graph()
-
-    nodes = []
-    for node in local_graph.nodes:
-        nodes.append(Node(node, local_graph.nodes[node]["pos"], graph.degree(node)))
-    save_nodes_as_json(nodes, filename)
+    save_nodes_as_json(graph.get_aktive_graph_nodes(), filename)
