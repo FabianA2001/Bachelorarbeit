@@ -10,6 +10,10 @@ import math
 import random
 
 
+class No_Solution_Error(Exception):
+    pass
+
+
 class Graph_Wrapper(nx.Graph):
     def __init__(self, nodes: list[Node]) -> None:
         super().__init__()
@@ -44,7 +48,8 @@ class Graph_Wrapper(nx.Graph):
 
     def add_node(self, key: str, pos: tuple[int, int], degree: int) -> None:
         """Fügt einen Knoten zum Graphen hinzu."""
-        assert isinstance(pos, tuple), f"Erwarte Tuple, aber erhalte {type(pos)}, {pos}"
+        assert isinstance(
+            pos, tuple), f"Erwarte Tuple, aber erhalte {type(pos)}, {pos}"
         super().add_node(key, pos=pos, degree=degree, point=shapely.geometry.Point(pos))
 
     def check_for_intersection_except_corners(
@@ -125,7 +130,8 @@ class Graph_Wrapper(nx.Graph):
         degrees = nx.get_node_attributes(local_graph, "degree")
 
         # Labels mit Degree-Werten erstellen
-        labels = {node: f"{node}\n{degree}" for node, degree in degrees.items()}
+        labels = {node: f"{node}\n{degree}" for node,
+                  degree in degrees.items()}
 
         # Knotenfarben basierend auf dem Grad erstellen
         colors = [
@@ -248,7 +254,8 @@ class Graph_Wrapper(nx.Graph):
     def get_node_from_point(self, point: shapely.Point) -> str:
         """Gibt den Knoten zurück, der dem gegebenen Punkt am nächsten ist."""
         if not isinstance(point, shapely.Point):
-            raise ValueError(f"Erwarte einen Punkt., aber erhalte {type(point)}")
+            raise ValueError(
+                f"Erwarte einen Punkt., aber erhalte {type(point)}")
         if point not in self.point_to_node:
             raise ValueError(f"Point {point} not found in point_to_node.")
         node = self.point_to_node.get(point)
@@ -356,12 +363,15 @@ class Graph_Wrapper(nx.Graph):
             while len(triangles) > 2:
                 counter += 1
                 if counter > 500:
-                    raise ValueError("Zu viele Iterationen in reduce_to_two_tri.")
+                    raise ValueError(
+                        "Zu viele Iterationen in reduce_to_two_tri.")
                 for tri in triangles:
-                    tri_points = [self.nodes[node].get("point") for node in tri]
+                    tri_points = [self.nodes[node].get(
+                        "point") for node in tri]
                     poly = shapely.geometry.Polygon(tri_points)
                     if not poly.is_valid:
-                        raise ValueError(f"Polygon {poly} is not valid.\n{tri_points}")
+                        raise ValueError(
+                            f"Polygon {poly} is not valid.\n{tri_points}")
                     for node, point in zip(nodes, points):
                         if node in tri:
                             continue
@@ -378,7 +388,8 @@ class Graph_Wrapper(nx.Graph):
 
         if len(triangles) > 2:
             triangles = reduce_to_two_tri(triangles)
-        assert len(triangles) == 2, f"Edge {edge} is not a diagonal.\n{triangles}"
+        assert len(
+            triangles) == 2, f"Edge {edge} is not a diagonal.\n{triangles}"
 
         triangle1, triangle2 = triangles
         for node in triangle1:
@@ -404,37 +415,72 @@ class Graph_Wrapper(nx.Graph):
         self.remove_edge(edge)
         return True
 
-    def move_node_global(self, node: str = "") -> bool:
-        MULTIPLIER_MAX = 1.2
-        MULTIPLIER_MIN = 0.8
-        if node == "":
-            node = self.get_all_nodes_name()[random.randint(0, len(self.nodes) - 1)]
-        points = [attr["point"] for _, attr in self.nodes(data=True)]
-        min_x, min_y, max_y, max_x = 0, 0, 0, 0
-        for point in points:
-            if point.x < min_x:
-                min_x = point.x
-            if point.y < min_y:
-                min_y = point.y
-            if point.x > max_x:
-                max_x = point.x
-            if point.y > max_y:
-                max_y = point.y
-        multipoint = shapely.geometry.MultiPoint(points)
-        for _ in range(100):
-            x = random.randint(int(min_x * MULTIPLIER_MIN), int(max_x * MULTIPLIER_MAX))
-            y = random.randint(int(min_y * MULTIPLIER_MIN), int(max_y * MULTIPLIER_MAX))
-            point = shapely.geometry.Point(x, y)
-            if multipoint.intersects(point):
-                continue
-            logging.info(
-                f"Bewege Knoten {node} von {self.nodes[node]['point']} nach {point}"
-            )
-            self.nodes[node]["point"] = point
-            self.nodes[node]["pos"] = (x, y)
-            return True
+    def move_node(self, node: str = "", distance: int = -1) -> bool:
+        # if distance == -1: Global bewegen
+        def global_move() -> tuple[shapely.Point, tuple[int, int]]:
+            MULTIPLIER_MAX = 1.2
+            MULTIPLIER_MIN = 0.8
+            min_x, min_y, max_y, max_x = 0, 0, 0, 0
+            for point in points:
+                if point.x < min_x:
+                    min_x = point.x
+                if point.y < min_y:
+                    min_y = point.y
+                if point.x > max_x:
+                    max_x = point.x
+                if point.y > max_y:
+                    max_y = point.y
+            for _ in range(100):
+                x = random.randint(
+                    int(min_x * MULTIPLIER_MIN), int(max_x * MULTIPLIER_MAX)
+                )
+                y = random.randint(
+                    int(min_y * MULTIPLIER_MIN), int(max_y * MULTIPLIER_MAX)
+                )
+                if x < 0 or y < 0:
+                    continue
+                point = shapely.geometry.Point(x, y)
+                if multipoint.intersects(point):
+                    continue
+                return point, (x, y)
+            raise No_Solution_Error
 
-        return False
+        if node == "":
+            node = self.get_all_nodes_name(
+            )[random.randint(0, len(self.nodes) - 1)]
+        points = [attr["point"] for _, attr in self.nodes(data=True)]
+        multipoint = shapely.geometry.MultiPoint(points)
+
+        def lokal_move(distance: int) -> tuple[shapely.Point, tuple[int, int]]:
+            pre_x, pre_y = self.nodes[node]["pos"]
+            for _ in range(100):
+                x = random.randint(pre_x - distance, pre_x + distance)
+                y = random.randint(pre_y - distance, pre_y + distance)
+                if x < 0 or y < 0:
+                    continue
+                point = shapely.geometry.Point(x, y)
+                if multipoint.intersects(point):
+                    continue
+                return point, (x, y)
+            raise No_Solution_Error
+
+        try:
+            if distance == -1:
+                point, pos = global_move()
+            else:
+                point, pos = lokal_move(distance)
+        except No_Solution_Error:
+            logging.error(
+                f"Bewege Knoten {node} nicht, da keine Lösung gefunden werden konnte."
+            )
+            return False
+
+        logging.info(
+            f"Bewege Knoten {node} von {self.nodes[node]['point']} nach {point}"
+        )
+        self.nodes[node]["point"] = point
+        self.nodes[node]["pos"] = pos
+        return True
 
     def is_edge_in_graph(self, edge: tuple[str, str]) -> tuple[str, str]:
         """Überprüft, ob eine Kante im Graphen vorhanden ist."""
@@ -463,7 +509,8 @@ class Graph_Wrapper(nx.Graph):
 
         nodes = []
         for node in local_graph.nodes:
-            nodes.append(Node(node, local_graph.nodes[node]["pos"], self.degree(node)))
+            nodes.append(
+                Node(node, local_graph.nodes[node]["pos"], self.degree(node)))
 
         return nodes
 

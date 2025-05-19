@@ -107,7 +107,7 @@ def main():
     graph.name = "Delaunay"
     nodes2 = graph.get_aktive_graph_nodes()
     graph2 = Graph_Wrapper(nodes2)
-    graph2.move_node_global()
+    graph2.move_node(distance=20)
     solver2 = Ortools(graph2)
     solver2.solve()
     graph2.show_and_save(show=False)
