@@ -102,6 +102,7 @@ def main():
     graph = Graph_Wrapper(nodes)
     solver = Delaunay(graph)
     solver.solve()
+
     graph.show_and_save(show=False)
     graph.name = "Delaunay"
     nodes2 = graph.get_aktive_graph_nodes()

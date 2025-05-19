@@ -4,7 +4,7 @@ ci:
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v5.0.0
     hooks:
       - id: check-case-conflict
       - id: check-merge-conflict
@@ -20,16 +20,13 @@ repos:
       - id: trailing-whitespace
         exclude: "^tests"
 
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v3.0.0-alpha.9-for-vscode"
+  - repo: https://github.com/hhatto/autopep8
+    rev: v2.3.2  # select the tag or revision you want, or run `pre-commit autoupdate`
     hooks:
-      - id: prettier
-        types_or: [yaml, markdown, html, css, scss, javascript, json]
-        args: [--prose-wrap=always]
-        exclude: "^tests"
+    - id: autopep8
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.7.3
+    rev: v0.11.10
     hooks:
       - id: ruff
         types_or: [python, pyi, jupyter]
