@@ -15,13 +15,12 @@ class Solver(ABC):
 
     def solve(self, timeout: int = -1) -> bool:
         if not isinstance(self.graph, Graph_Wrapper):
-            raise ValueError(
-                "Graph is not set. Please set the graph before solving.")
+            raise ValueError("Graph is not set. Please set the graph before solving.")
         logging.info(f"{self.name} started.")
         self.graph.name = self.name
-        self._actual_solver()
+        result = self._actual_solver()
         logging.info(f"{self.name} completed.")
-        return True
+        return result
 
     @abstractmethod
-    def _actual_solver(self): ...
+    def _actual_solver(self) -> bool: ...

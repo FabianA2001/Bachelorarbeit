@@ -13,13 +13,11 @@ class Possible(Solver):
         nearest_point = min(self.points, key=lambda p: point.distance(p))
         return nearest_point
 
-    def _actual_solver(self):
+    def _actual_solver(self) -> bool:
         if not isinstance(self.graph, Graph_Wrapper):
-            raise ValueError(
-                "Graph is not set. Please set the graph before solving.")
+            raise ValueError("Graph is not set. Please set the graph before solving.")
 
-        self.points = [attr["point"]
-                       for _, attr in self.graph.data.nodes(data=True)]
+        self.points = [attr["point"] for _, attr in self.graph.data.nodes(data=True)]
         self.graph.add_convex_hull()
 
         combinations = itertools.combinations(self.points, 2)
@@ -31,3 +29,4 @@ class Possible(Solver):
                     self.graph.get_node_from_point(point2),
                     True,
                 )
+        return True

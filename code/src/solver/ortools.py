@@ -26,19 +26,16 @@ class Ortools(Solver):
 
     def constraint_intersection(self):
         if self.graph is None:
-            raise ValueError(
-                "Graph is not set. Please set the graph before solving.")
+            raise ValueError("Graph is not set. Please set the graph before solving.")
         all_edges = self.graph.get_all_edges()
         combinations = list(itertools.combinations(all_edges, 2))
         for edge_1, edge_2 in combinations:
             if self.graph.check_for_intersection_except_corners(edge_1, edge_2):
-                self.model.AddBoolOr(
-                    [self.vars[edge_1].Not(), self.vars[edge_2].Not()])
+                self.model.AddBoolOr([self.vars[edge_1].Not(), self.vars[edge_2].Not()])
 
     def constraint_degree(self):
         if self.graph is None:
-            raise ValueError(
-                "Graph is not set. Please set the graph before solving.")
+            raise ValueError("Graph is not set. Please set the graph before solving.")
         for node in self.graph.get_all_nodes_name():
             degree = self.graph.data.nodes[node]["degree"]
             summ = 0
@@ -49,10 +46,9 @@ class Ortools(Solver):
                     summ += self.vars[(edge[1], edge[0])]
             self.model.Add(summ == degree)
 
-    def _actual_solver(self):
+    def _actual_solver(self) -> bool:
         if self.graph is None:
-            raise ValueError(
-                "Graph is not set. Please set the graph before solving.")
+            raise ValueError("Graph is not set. Please set the graph before solving.")
         self.graph.add_all_possible_edges()
         self.vars = {
             edge: self.model.NewBoolVar(f"edge_{edge[0]}_{edge[1]}")
@@ -66,13 +62,15 @@ class Ortools(Solver):
         # solver.parameters.log_search_progress = True  # Enable logging
         logging.info("Start solving...")
         status = solver.Solve(
-            self.model, FirstSolutionStop(
-                self.graph.get_number_edges_in_Triangulation())
+            self.model,
+            FirstSolutionStop(self.graph.get_number_edges_in_Triangulation()),
         )
         # status = solver.Solve(self.model)
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
             for edge, var in zip(self.graph.get_all_edges(), self.vars.values()):
                 if solver.BooleanValue(var):
                     self.graph.active_edge(edge)
+            return True
         else:
-            logging.error("No solution found.")
+            logging.info("No solution found.")
+            return False

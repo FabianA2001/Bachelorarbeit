@@ -1,7 +1,5 @@
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from graph_utils.node import (
-    load_nodes_from_json,
-)
+from graph_utils.node import load_nodes_from_json, move_degree
 import logging
 from graph_utils import generate
 from solver.delaunay import Delaunay
@@ -35,7 +33,7 @@ def test_algo():
 
 
 def move():
-    nodes = generate.gen_nodes(20, 100, 100)
+    nodes = generate.gen_nodes(30, 4000, 4000)
     graph = Graph_Wrapper(nodes)
     solver = Delaunay(graph)
     solver.solve()
@@ -43,11 +41,18 @@ def move():
     graph.show_and_save(show=False)
     graph.name = "Delaunay"
     nodes2 = graph.get_aktive_graph_nodes()
-    graph2 = Graph_Wrapper(nodes2)
-    graph2.move_node()
-    solver2 = Ortools(graph2)
-    solver2.solve()
-    graph2.show_and_save(show=False)
+    for _ in range(40):
+        nodes2 = move_degree(nodes2, 1, 1, 2)
+        graph2 = Graph_Wrapper(nodes2)
+        solver2 = Ortools(graph2)
+        if solver2.solve():
+            break
+    else:
+        print("No solution found after 100 iterations")
+        graph2.show_and_save()
+        return
+    graph2.save_graph_as_json("moved_delaune.json")
+    graph2.show_and_save()
 
 
 def run_instance_lokal():
@@ -77,7 +82,12 @@ def test(a):
 def main():
     setup_logging()
     logging.info("Start main function.")
-    # test_algo()
+    move()
+    # nodes = load_nodes_from_json("moved_delaune.json")
+    # grap = Graph_Wrapper(nodes)
+    # solver = Delaunay(grap)
+    # solver.solve()
+    # grap.show_and_save()
     logging.info("End main function.")
 
 
