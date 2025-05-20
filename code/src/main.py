@@ -4,13 +4,11 @@ from graph_utils.node import (
     save_nodes_as_json,
     load_nodes_from_json,
 )
-from graph_utils import node
 import logging
 from graph_utils import generate
 from solver.delaunay import Delaunay
 from graph_utils.node import Node
 from solver.ortools import Ortools
-from solver.possible import Possible
 from graph_utils import run_instance
 
 
@@ -88,9 +86,9 @@ def move():
 
 
 def run_instance_lokal():
-    inst = "simple_40"
+    inst = "simple_20"
     run_instance.run_solver_on_instance(
-        solver=Delaunay(),
+        solver=Ortools(),
         instance_name=inst,
     )
     run_instance.show_results(inst)
@@ -108,9 +106,9 @@ def create_instance():
 def main():
     setup_logging()
     logging.info("Start main function.")
-    # run_instance_lokal()
-    run_instance.show_triangulation_from_result(
-        "simple_40", "Delaunay", "005_delaunay_flips")
+    run_instance_lokal()
+    # run_instance.show_triangulation_from_result(
+    #     "simple_20", "Delaunay", "005_delaunay_flips")
     # create_instance()
     logging.info("End main function.")
 

@@ -86,8 +86,15 @@ def run_solver_on_instance(
         solver.graph = graph
         starttime = time.time()
         success = solver.solve(timeout)
-        correct = possible == success
-        if success and not possible:
+        if success:
+            if graph.check_if_triangulation_with_degree_constraint():
+                result = True
+            else:
+                result = False
+        else:
+            result = False
+        correct = possible == result
+        if result and not possible:
             logging.error(
                 f"{instance_name} - {solver.name} - {file_name}_{algo_suffix_name} should not be possible, but triangulation was found."
             )
@@ -139,8 +146,7 @@ def show_results(
         palette="muted",
     )
 
-    plt.title(
-        f"Vergleich der Laufzeiten (Time) für {instance_name} je Problem")
+    plt.title(f"Vergleich der Laufzeiten (Time) für {instance_name} je Problem")
     plt.xticks(rotation=45)
     plt.grid(True, axis="y", linestyle="--", alpha=0.7)
     plt.tight_layout()
@@ -153,8 +159,7 @@ def show_triangulation_from_result(
     instance_file_name: str,
 ):
     nodes = load_nodes_from_json(
-        os.path.join(graph_const.PREFIX_INSTANCE,
-                     instance_name, instance_file_name)
+        os.path.join(graph_const.PREFIX_INSTANCE, instance_name, instance_file_name)
     )
     with open(os.path.join(graph_const.RESULTS_DIR, f"{instance_name}.json"), "r") as f:
         data = json.load(f)
