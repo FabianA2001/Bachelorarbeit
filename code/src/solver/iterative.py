@@ -4,10 +4,10 @@ import shapely
 import itertools
 
 
-class Possible(Solver):
+class Iterative(Solver):
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
-        self.name = "Possible"
+        self.name = "Iterative"
 
     def find_nearest_point(self, point: shapely.Point) -> shapely.Point:
         nearest_point = min(self.points, key=lambda p: point.distance(p))
