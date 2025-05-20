@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
 from typing import Optional
+import concurrent.futures
 
 
 class Solver(ABC):
@@ -18,6 +19,21 @@ class Solver(ABC):
             raise ValueError("Graph is not set. Please set the graph before solving.")
         logging.info(f"{self.name} started.")
         self.graph.name = self.name
+
+        if timeout != -1:
+            try:
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    future = executor.submit(self._actual_solver)
+                    result = future.result(timeout=timeout)
+                    print("Ergebnis:", result)
+            except concurrent.futures.TimeoutError:
+                logging.info(
+                    f"{self.name} hat das Zeitlimit von {timeout} Sekunden überschritten!"
+                )
+                result = False
+        else:
+            result = self._actual_solver()
+
         result = self._actual_solver()
         logging.info(f"{self.name} completed.")
         return result

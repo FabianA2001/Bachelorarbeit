@@ -1,5 +1,5 @@
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from graph_utils.node import load_nodes_from_json, move_degree
+from graph_utils.node import move_degree
 import logging
 from graph_utils import generate
 from solver.delaunay import Delaunay
@@ -20,16 +20,11 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    # nodes = generate.gen_nodes(10, 500, 500)
-    # nodes = custom_points()
-    nodes = load_nodes_from_json("test.json")
-    # save_nodes_as_json(nodes, "test.json")
+    nodes = generate.gen_nodes(50, 500, 500)
     graph = Graph_Wrapper(nodes)
-    solver = Delaunay(graph)
-    solver.solve()
-    graph.add_edge("66", "97", True)
+    solver = Ortools(graph)
+    print(solver.solve(timeout=5))
     graph.show_and_save()
-    # print(time_function(graph.check_if_triangulation_with_degree_constraint)())
 
 
 def move():
@@ -82,12 +77,7 @@ def test(a):
 def main():
     setup_logging()
     logging.info("Start main function.")
-    move()
-    # nodes = load_nodes_from_json("moved_delaune.json")
-    # grap = Graph_Wrapper(nodes)
-    # solver = Delaunay(grap)
-    # solver.solve()
-    # grap.show_and_save()
+    test_algo()
     logging.info("End main function.")
 
 
