@@ -14,15 +14,11 @@ def check_for_intersection_except_corners(
     if isinstance(line2, tuple):
         line2 = data.edges[line2].get("line")
 
-    corner_points = [data.nodes[node].get("point") for node in data.nodes]
-    intersection = line1.intersection(line2)  # type: ignore
-    if intersection.is_empty:
-        return False
-    # Überprüfen, ob der Schnittpunkt einer der Eckpunkte ist
-    if isinstance(intersection, shapely.geometry.Point):
-        return intersection not in corner_points
-    else:
-        return True
+    if not isinstance(line1, shapely.geometry.LineString) or not isinstance(
+        line2, shapely.geometry.LineString
+    ):
+        raise ValueError("Erwarte Tuple oder LineString")
+    return line1.crosses(line2)
 
 
 def check_for_intersection_with_all_edges_and_nodes(
@@ -50,52 +46,52 @@ def check_for_intersection_with_all_edges_and_nodes(
         return True
 
     # Überprüfen, ob die Linie mit einer anderen Linie im Graphen schneidet
-    all_linestrings_from_edges = [
+    lines = [
         data.edges[edge].get("line")
         for edge in data.edges
         if data.edges[edge].get("active") or not check_if_active
     ]
-    for other in all_linestrings_from_edges:
-        if line == other:
-            continue
-        if check_for_intersection_except_corners(data, line, other):
-            return True
-
-    return False
-
-
-def __check_edges_for_intersection(lines) -> bool:
     # Baue spatial index
     tree = STRtree(lines)
 
-    # Prüfe auf Schnitte
-    for line in lines:
-        # Nur mögliche Kandidaten holen
-        candidates = tree.query(line)
-        for candidate in candidates:
-            if line == lines[candidate]:
-                continue
-            if line.crosses(lines[candidate]):
-                return True
-
+    candidates = tree.query(line)
+    for candidate in candidates:
+        if line == lines[candidate]:
+            continue
+        if line.crosses(lines[candidate]):
+            return True
     return False
 
 
 def check_if_triangulation_with_degree_constraint(data: Data) -> bool:
     """Überprüft, ob der Graph eine Triangulation ist."""
+
+    def __check_edges_for_intersection(lines) -> bool:
+        # Baue spatial index
+        tree = STRtree(lines)
+
+        # Prüfe auf Schnitte
+        for line in lines:
+            # Nur mögliche Kandidaten holen
+            candidates = tree.query(line)
+            for candidate in candidates:
+                if line == lines[candidate]:
+                    continue
+                if line.crosses(lines[candidate]):
+                    return True
+
+        return False
+
     lokal_graph = data.get_aktive_graph()
     edges = lokal_graph.get_all_edges()
     if len(edges) != data.number_edges_in_Triangulation:
         return False
 
-    # for edge in edges:
-    #     if check_for_intersection_with_all_edges_and_nodes(data, edge):
-    #         return False
     lines = [lokal_graph.edges[edge].get("line") for edge in edges]
     if __check_edges_for_intersection(lines):
         return False
 
-    # for node in data.get_all_nodes_name():
-    #     if lokal_graph.nodes[node].get("degree") != lokal_graph.degree(node):
-    #         return False
+    for node in data.get_all_nodes_name():
+        if lokal_graph.nodes[node].get("degree") != lokal_graph.degree(node):
+            return False
     return True

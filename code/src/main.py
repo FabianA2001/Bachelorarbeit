@@ -8,7 +8,7 @@ from solver.delaunay import Delaunay
 from graph_utils.node import Node
 from solver.ortools import Ortools
 from graph_utils import run_instance
-from utils import setup_logging, time_function
+from utils import setup_logging
 
 
 def custom_points() -> list[Node]:
@@ -30,8 +30,8 @@ def test_algo():
     solver = Delaunay(graph)
     solver.solve()
     graph.add_edge("66", "97", True)
-    # graph.show_and_save()
-    print(time_function(graph.check_if_triangulation_with_degree_constraint)())
+    graph.show_and_save()
+    # print(time_function(graph.check_if_triangulation_with_degree_constraint)())
 
 
 def move():
@@ -76,7 +76,7 @@ def test(a):
 def main():
     setup_logging()
     logging.info("Start main function.")
-    test_algo()
+    # test_algo()
     logging.info("End main function.")
 
 
