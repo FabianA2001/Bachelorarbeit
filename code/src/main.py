@@ -70,6 +70,7 @@ def create_instance():
 
 def test(a):
     print(a)
+    logging.error("Error in test function")
     return a
 
 

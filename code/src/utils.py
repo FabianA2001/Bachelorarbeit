@@ -1,4 +1,15 @@
 import logging
+import time
+
+start_time = time.time()
+
+
+class ElapsedTimeFormatter(logging.Formatter):
+    def format(self, record):
+        elapsed = int(time.time() - start_time)
+        minutes, seconds = divmod(elapsed, 60)
+        record.elapsed = f"{minutes:02}:{seconds:02}"
+        return super().format(record)
 
 
 def setup_logging():
@@ -19,10 +30,9 @@ def setup_logging():
     file_handler.setLevel(logging.ERROR)
 
     # Einheitliches Format
-    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    formatter = ElapsedTimeFormatter("[%(elapsed)s] %(levelname)s: %(message)s")
     console_handler.setFormatter(formatter)
     file_handler.setFormatter(formatter)
-
     # Handler hinzufügen
     logger.addHandler(console_handler)
     logger.addHandler(file_handler)
@@ -34,8 +44,6 @@ def time_function(func):
     """
 
     def wrapper(*args, **kwargs):
-        import time
-
         start_time = time.time()
         result = func(*args, **kwargs)
         end_time = time.time()
