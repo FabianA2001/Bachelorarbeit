@@ -1,6 +1,7 @@
 import shapely
 from typing import Union
 from graph_utils.graph_wrapper.data import Data
+from shapely.strtree import STRtree
 
 
 def check_for_intersection_except_corners(
@@ -63,16 +64,38 @@ def check_for_intersection_with_all_edges_and_nodes(
     return False
 
 
+def __check_edges_for_intersection(lines) -> bool:
+    # Baue spatial index
+    tree = STRtree(lines)
+
+    # Prüfe auf Schnitte
+    for line in lines:
+        # Nur mögliche Kandidaten holen
+        candidates = tree.query(line)
+        for candidate in candidates:
+            if line == lines[candidate]:
+                continue
+            if line.crosses(lines[candidate]):
+                return True
+
+    return False
+
+
 def check_if_triangulation_with_degree_constraint(data: Data) -> bool:
     """Überprüft, ob der Graph eine Triangulation ist."""
     lokal_graph = data.get_aktive_graph()
     edges = lokal_graph.get_all_edges()
     if len(edges) != data.number_edges_in_Triangulation:
         return False
-    for edge in edges:
-        if check_for_intersection_with_all_edges_and_nodes(data, edge):
-            return False
-    for node in data.get_all_nodes_name():
-        if lokal_graph.nodes[node].get("degree") != lokal_graph.degree(node):
-            return False
+
+    # for edge in edges:
+    #     if check_for_intersection_with_all_edges_and_nodes(data, edge):
+    #         return False
+    lines = [lokal_graph.edges[edge].get("line") for edge in edges]
+    if __check_edges_for_intersection(lines):
+        return False
+
+    # for node in data.get_all_nodes_name():
+    #     if lokal_graph.nodes[node].get("degree") != lokal_graph.degree(node):
+    #         return False
     return True

@@ -1,7 +1,7 @@
 from random import randint
 from graph_utils.node import Node
 from graph_utils import graph_const
-from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper, save_graph_as_json
+from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from solver.delaunay import Delaunay
 from random import choice
 from abc import ABC, abstractmethod
@@ -18,7 +18,7 @@ def gen_nodes(
     nodes = []
     poss = []
     for i in range(n):
-        while True:
+        for _ in range(500):
             pos = (randint(0, width), randint(0, height))
             if pos not in poss:
                 poss.append(pos)

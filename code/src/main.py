@@ -1,7 +1,5 @@
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from solver.solver import Solver
 from graph_utils.node import (
-    save_nodes_as_json,
     load_nodes_from_json,
 )
 import logging
@@ -10,26 +8,7 @@ from solver.delaunay import Delaunay
 from graph_utils.node import Node
 from solver.ortools import Ortools
 from graph_utils import run_instance
-
-
-def test_algo(points):
-    logging.info("Start test_algos function.")
-    nodes = generate.gen_nodes(points, 100, 100)
-    save_nodes_as_json(nodes)
-    graph = Graph_Wrapper(nodes)
-
-    solver: Solver = Delaunay(graph)
-    solver.solve()
-    graph.show_and_save(show=False)
-    graph.save_graph_as_json()
-
-    nodes2 = load_nodes_from_json()
-    graph2 = Graph_Wrapper(nodes2)
-
-    solver2: Solver = Ortools(graph2)
-    solver2.solve()
-    graph2.show_and_save()
-    logging.info("End test_algos function.")
+from utils import setup_logging, time_function
 
 
 def custom_points() -> list[Node]:
@@ -42,31 +21,17 @@ def custom_points() -> list[Node]:
     return nodes
 
 
-def setup_logging():
-    # Basis-Logger konfigurieren (falls mehrfach aufgerufen, keine Duplikate)
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
-
-    # Entferne ggf. alte Handler (wichtig bei mehrfachen Konfigurationen)
-    if logger.hasHandlers():
-        logger.handlers.clear()
-
-    # Console Handler – nur INFO
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
-
-    # File Handler – nur ERROR und höher
-    file_handler = logging.FileHandler("error.log", mode="w")
-    file_handler.setLevel(logging.ERROR)
-
-    # Einheitliches Format
-    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-    console_handler.setFormatter(formatter)
-    file_handler.setFormatter(formatter)
-
-    # Handler hinzufügen
-    logger.addHandler(console_handler)
-    logger.addHandler(file_handler)
+def test_algo():
+    # nodes = generate.gen_nodes(10, 500, 500)
+    # nodes = custom_points()
+    nodes = load_nodes_from_json("test.json")
+    # save_nodes_as_json(nodes, "test.json")
+    graph = Graph_Wrapper(nodes)
+    solver = Delaunay(graph)
+    solver.solve()
+    graph.add_edge("66", "97", True)
+    # graph.show_and_save()
+    print(time_function(graph.check_if_triangulation_with_degree_constraint)())
 
 
 def move():
@@ -103,13 +68,15 @@ def create_instance():
     ).generate()
 
 
+def test(a):
+    print(a)
+    return a
+
+
 def main():
     setup_logging()
     logging.info("Start main function.")
-    run_instance_lokal()
-    # run_instance.show_triangulation_from_result(
-    #     "simple_20", "Delaunay", "005_delaunay_flips")
-    # create_instance()
+    test_algo()
     logging.info("End main function.")
 
 

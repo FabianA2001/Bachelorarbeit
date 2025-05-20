@@ -19,7 +19,7 @@ class Node:
 def save_nodes_as_json(
     Nodes: list[Node], filename: str = graph_const.DEFAULT_FILE_NAME
 ) -> None:
-    path = f"{graph_const.PREFIX_INSTANCE}{filename}.json"
+    path = f"{graph_const.PREFIX_INSTANCE}{filename}"
     """Speichert eine Liste von Knoten in einer JSON-Datei."""
     # Erstelle den Ordner, falls er nicht existiert
     path_list = path.split("/")
@@ -39,7 +39,7 @@ def save_nodes_as_json(
 
 def load_nodes_from_json(filename: str = graph_const.DEFAULT_FILE_PATH) -> list[Node]:
     """Lädt eine Liste von Knoten aus einer JSON-Datei."""
-    with open(f"{filename}.json", "r") as f:
+    with open(f"{graph_const.PREFIX_INSTANCE}{filename}", "r") as f:
         data = json.load(f)["nodes"]
         nodes = [
             Node(node["name"], tuple(node["pos"]), node.get("degree", -1))
