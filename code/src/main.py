@@ -5,11 +5,10 @@ from graph_utils import generate
 from solver.delaunay import Delaunay
 from graph_utils.node import Node
 from solver.ortools import Ortools
-from solver.iterative import Iterative
 from solver.raw_flips import Raw_Flips
 from graph_utils import run_instance
 from utils import setup_logging
-from graph_utils.node import save_nodes_as_json
+from graph_utils.node import load_nodes_from_json
 
 
 def custom_points() -> list[Node]:
@@ -23,13 +22,13 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    nodes = generate.gen_nodes(5, 500, 500)
-    # nodes = load_nodes_from_json("test.json")
-    graph = Graph_Wrapper(nodes)
-    solver = Iterative(graph)
-    solver.solve()
-    nodes = graph.get_aktive_graph_nodes()
-    save_nodes_as_json(nodes, "test.json")
+    nodes = generate.gen_nodes(10, 500, 500)
+    nodes = load_nodes_from_json("test.json")
+    # graph = Graph_Wrapper(nodes)
+    # solver = Iterative(graph)
+    # solver.solve()
+    # nodes = graph.get_aktive_graph_nodes()
+    # save_nodes_as_json(nodes, "test.json")
     graph2 = Graph_Wrapper(nodes)
     solver2 = Raw_Flips(graph2)
     solver2.solve()
@@ -60,7 +59,7 @@ def move():
 
 
 def run_instance_lokal():
-    inst = "simple_20"
+    inst = "simple_10"
     run_instance.run_solver_on_instance(
         solver=Ortools(),
         instance_name=inst,
@@ -70,8 +69,8 @@ def run_instance_lokal():
 
 def create_instance():
     generate.Generate_Delaunay_Flips(
-        name="simple_40",
-        number_nodes=40,
+        name="simple_10",
+        number_nodes=10,
         number_instances=10,
         number_flips=50,
     ).generate()
@@ -86,7 +85,9 @@ def test(a):
 def main():
     setup_logging()
     logging.info("Start main function.")
-    test_algo()
+    # test_algo()
+    # create_instance()
+    run_instance_lokal()
     logging.info("End main function.")
 
 

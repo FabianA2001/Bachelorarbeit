@@ -51,7 +51,7 @@ class Generate_Instance(ABC):
             graph = Graph_Wrapper(nodes)
             graph, possible = self._generate_instance(graph)
             number = str(i).zfill(3)
-            graph.save_graph_as_json(f"{self.name}/{number}_{self.lokal_name}")
+            graph.save_graph_as_json(f"{self.name}/{number}_{self.lokal_name}.json")
             if possible is not None:
                 path = f"{graph_const.PREFIX_INSTANCE}{self.name}/{number}_{self.lokal_name}.json"
                 with open(path, "r") as f:

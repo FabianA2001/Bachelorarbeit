@@ -51,14 +51,23 @@ def flip_edge(data: Data, edge: tuple[str, str]) -> bool:
 
     """Flippt eine Kante im Graphen."""
     edge = data.is_edge_in_graph(edge)
-    if edge in data.get_hull_edges():
+    if data.check_if_edge_in_hull(edge):
         return False
+
     triangles = data.get_triangles_for_edge(edge)
     if len(triangles) <= 1:
         return False
 
     if len(triangles) > 2:
         triangles = reduce_to_two_tri(triangles)
+    if len(triangles) != 2:
+        show_and_save(
+            data,
+            data.number_edges_in_Triangulation,
+            show=True,
+            save=False,
+        )
+
     assert len(triangles) == 2, f"Edge {edge} is not a diagonal.\n{triangles}"
 
     triangle1, triangle2 = triangles

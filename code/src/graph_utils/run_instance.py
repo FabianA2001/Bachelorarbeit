@@ -24,7 +24,7 @@ def get_instances() -> dict[str, dict[str, str]]:
     for inst_name in inst_names:
         inst_dir = os.path.join(instances_dir, inst_name)
         instances[inst_name] = {
-            file.replace(".json", ""): os.path.join(inst_dir, file.replace(".json", ""))
+            file.replace(".json", ""): os.path.join(inst_name, file)
             for file in os.listdir(inst_dir)
             if file.endswith(".json")
         }
@@ -80,7 +80,7 @@ def run_solver_on_instance(
     instance = instance[instance_name]
     for file_name, file_path in instance.items():
         nodes = load_nodes_from_json(file_path)
-        with open(f"{file_path}.json", "r") as f:
+        with open(f"{graph_const.PREFIX_INSTANCE}{file_path}", "r") as f:
             possible = json.load(f)["possible"]
         graph = Graph_Wrapper(nodes)
         solver.graph = graph

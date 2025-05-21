@@ -8,6 +8,29 @@ class Raw_Flips(Solver):
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = "Raw_Flips"
+        self.PROBABILITY = 0.2
+        self.EXPONENT_ITERATIONS = 2
+
+    def probability_check(self) -> bool:
+        return self.PROBABILITY > random.random()
+
+    def choose_edge(self, node: str) -> tuple[str, str]:
+        if not isinstance(self.graph, Graph_Wrapper):
+            raise ValueError("Graph is not set. Please set the graph before solving.")
+        edges = self.graph.get_edges_for_node(node)
+        while len(edges) > 0:
+            edge = random.choice(edges)
+            edges.remove(edge)
+            a, b = edge
+            if a != node and not self.graph.check_node_for_degree(a):
+                return edge
+            if b != node and not self.graph.check_node_for_degree(b):
+                return edge
+            if self.probability_check():
+                return edge
+
+        # TODO Sehr unschön vlt bessere möglichkeit finden
+        return edge
 
     def __do_flip(
         self,
@@ -18,8 +41,7 @@ class Raw_Flips(Solver):
         for node in nodes:
             if self.graph.check_node_for_degree(node):
                 continue
-            edges = self.graph.get_edges_for_node(node)
-            edge = random.choice(edges)
+            edge = self.choose_edge(node)
             if not self.graph.flip_edge(edge):
                 continue
             return True
@@ -34,7 +56,9 @@ class Raw_Flips(Solver):
         self.graph.name = self.name
         solver.solve()
 
-        for _ in range(1000):
+        for _ in range(
+            self.graph.get_number_edges_in_Triangulation() ** self.EXPONENT_ITERATIONS
+        ):
             self.__do_flip()
             if not self.graph.check_if_triangulation_with_degree_constraint(
                 check_degree=False

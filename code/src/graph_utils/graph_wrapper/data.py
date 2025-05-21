@@ -59,6 +59,14 @@ class Data(Data_Raw):
             )
         return edges
 
+    def check_if_edge_in_hull(self, edge: tuple[str, str]) -> bool:
+        """Überprüft, ob die Kante im konvexen Rumpf ist."""
+        if edge in self.get_hull_edges():
+            return True
+        if (edge[1], edge[0]) in self.get_hull_edges():
+            return True
+        return False
+
     def get_triangles_for_node(self, node: str) -> list[str]:
         """Gibt die Dreiecke des Graphen zurück."""
         triangles = []
