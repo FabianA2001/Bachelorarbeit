@@ -33,8 +33,6 @@ class Solver(ABC):
                 result = False
         else:
             result = self._actual_solver()
-
-        result = self._actual_solver()
         logging.info(f"{self.name} completed.")
         return result
 

@@ -5,8 +5,11 @@ from graph_utils import generate
 from solver.delaunay import Delaunay
 from graph_utils.node import Node
 from solver.ortools import Ortools
+from solver.iterative import Iterative
+from solver.raw_flips import Raw_Flips
 from graph_utils import run_instance
 from utils import setup_logging
+from graph_utils.node import save_nodes_as_json
 
 
 def custom_points() -> list[Node]:
@@ -20,11 +23,17 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    nodes = generate.gen_nodes(50, 500, 500)
+    nodes = generate.gen_nodes(5, 500, 500)
+    # nodes = load_nodes_from_json("test.json")
     graph = Graph_Wrapper(nodes)
-    solver = Ortools(graph)
-    print(solver.solve(timeout=5))
-    graph.show_and_save()
+    solver = Iterative(graph)
+    solver.solve()
+    nodes = graph.get_aktive_graph_nodes()
+    save_nodes_as_json(nodes, "test.json")
+    graph2 = Graph_Wrapper(nodes)
+    solver2 = Raw_Flips(graph2)
+    solver2.solve()
+    graph2.show_and_save()
 
 
 def move():

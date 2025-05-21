@@ -1,18 +1,17 @@
-import networkx as nx
-import matplotlib.pyplot as plt
-from graph_utils import graph_const
-from graph_utils.node import Node, save_nodes_as_json
 import shapely
-import itertools
-from typing import Tuple, Union, Optional
-import logging
-import math
-import random
 from graph_utils.graph_wrapper.data import Data
 from graph_utils.graph_wrapper import check
+from graph_utils.graph_wrapper.visualisation import show_and_save
 
 
 def flip_edge(data: Data, edge: tuple[str, str]) -> bool:
+    if not isinstance(edge, tuple) or len(edge) != 2:
+        raise ValueError(f"Erwarte Tuple aber erhalte {type(edge)}, {edge}")
+        if not all(isinstance(x, str) for x in edge):
+            raise ValueError(
+                f"Erwarte Tuple mit Strings aber erhalte {type(edge)}, {edge}"
+            )
+
     def reduce_to_two_tri(
         triangles: list[tuple[str, str, str]],
     ) -> list[tuple[str, str, str]]:
@@ -29,15 +28,19 @@ def flip_edge(data: Data, edge: tuple[str, str]) -> bool:
         while len(triangles) > 2:
             counter += 1
             if counter > 500:
-                raise ValueError(
-                    "Zu viele Iterationen in reduce_to_two_tri.")
+                show_and_save(
+                    data,
+                    data.number_edges_in_Triangulation,
+                    show=True,
+                    save=False,
+                )
+
+                raise ValueError("Zu viele Iterationen in reduce_to_two_tri.")
             for tri in triangles:
-                tri_points = [data.nodes[node].get(
-                    "point") for node in tri]
+                tri_points = [data.nodes[node].get("point") for node in tri]
                 poly = shapely.geometry.Polygon(tri_points)
                 if not poly.is_valid:
-                    raise ValueError(
-                        f"Polygon {poly} is not valid.\n{tri_points}")
+                    raise ValueError(f"Polygon {poly} is not valid.\n{tri_points}")
                 for node, point in zip(nodes, points):
                     if node in tri:
                         continue
@@ -48,14 +51,15 @@ def flip_edge(data: Data, edge: tuple[str, str]) -> bool:
 
     """Flippt eine Kante im Graphen."""
     edge = data.is_edge_in_graph(edge)
+    if edge in data.get_hull_edges():
+        return False
     triangles = data.get_triangles_for_edge(edge)
     if len(triangles) <= 1:
         return False
 
     if len(triangles) > 2:
         triangles = reduce_to_two_tri(triangles)
-    assert len(
-        triangles) == 2, f"Edge {edge} is not a diagonal.\n{triangles}"
+    assert len(triangles) == 2, f"Edge {edge} is not a diagonal.\n{triangles}"
 
     triangle1, triangle2 = triangles
     for node in triangle1:
@@ -77,6 +81,6 @@ def flip_edge(data: Data, edge: tuple[str, str]) -> bool:
         #     f"({a},{b}) würde mit einer anderen Kante schneiden.")
         return False
     # logging.info(
-    #     f"({a},{b}) wurde erfolgreich hinzugefügt und ({edge[0]},{edge[1]}) entfernt.")
+    #     f"Flippe Kante {edge} zu ({a},{b})")
     data.remove_edge(edge)
     return True

@@ -17,7 +17,7 @@ class Iterative(Solver):
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
 
-        self.points = [attr["point"] for _, attr in self.graph.data.nodes(data=True)]
+        self.points = [attr["point"] for _, attr in self.graph._data.nodes(data=True)]
         self.graph.add_convex_hull()
 
         combinations = itertools.combinations(self.points, 2)

@@ -30,9 +30,9 @@ def test_flip():
     graph = Graph_Wrapper(nodes)
     graph.add_convex_hull()
     graph.add_edge("A", "D")
-    flipped = graph.flip_edge(("A", "D"))
-    assert flipped is True
+    assert graph.flip_edge(("A", "D"))
     assert ("B", "C") in graph.get_all_edges()
+    assert not graph.flip_edge(("A", "B"))
 
 
 def test_check_for_intersection_except_corners():

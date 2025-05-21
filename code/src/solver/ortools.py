@@ -37,9 +37,9 @@ class Ortools(Solver):
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
         for node in self.graph.get_all_nodes_name():
-            degree = self.graph.data.nodes[node]["degree"]
+            degree = self.graph._data.nodes[node]["degree"]
             summ = 0
-            for edge in self.graph.data.edges(node):
+            for edge in self.graph._data.edges(node):
                 if edge in self.vars:
                     summ += self.vars[edge]
                 else:

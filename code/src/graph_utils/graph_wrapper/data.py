@@ -69,7 +69,7 @@ class Data(Data_Raw):
         return triangles
 
     def get_triangles_for_edge(
-        self, edge: tuple[str, str]
+        self, edge: tuple[str, str], check_active: bool = True
     ) -> list[tuple[str, str, str]]:
         """Gibt die Dreiecke des Graphen zurück."""
         triangles = []
@@ -77,9 +77,20 @@ class Data(Data_Raw):
         neighbors1 = set(self[node1])
         neighbors2 = set(self[node2])
         for u in neighbors1.intersection(neighbors2):
-            if self.has_edge(node1, u) and self.has_edge(node2, u):
-                triangles.append(tuple(sorted([node1, node2, u])))
+            if not self.has_edge(node1, u):
+                continue
+            if not self.has_edge(node2, u):
+                continue
+            if check_active and not self.is_edge_active((node2, u)):
+                continue
+            if check_active and not self.is_edge_active((node1, u)):
+                continue
+            triangles.append(tuple(sorted([node1, node2, u])))
         return triangles
+
+    def get_edges_for_node(self, node: str) -> list[tuple[str, str]]:
+        """Gibt die Kanten des Graphen zurück."""
+        return [(node, neighbor) for neighbor in self[node]]
 
     def get_all_triangles(self) -> list[tuple[str, str, str]]:
         """Gibt alle Dreiecke des Graphen zurück."""

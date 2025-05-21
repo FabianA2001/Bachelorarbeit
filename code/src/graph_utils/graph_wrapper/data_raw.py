@@ -71,6 +71,7 @@ class Data_Raw(nx.Graph):
         node1, node2 = edge
         assert node1 in self and node2 in self
         if (node1, node2) in self.edges:
+            # logging.info(f"Removing edge {edge}")
             super().remove_edge(node1, node2)
         else:
             raise ValueError(f"Edge ({node1}, {node2}) not found in graph.")
@@ -115,6 +116,12 @@ class Data_Raw(nx.Graph):
         assert (node1, node2) in self.edges
         self.edges[node1, node2]["active"] = False
 
+    def is_edge_active(self, edge: tuple[str, str]) -> bool:
+        """Überprüft, ob eine Kante aktiv ist."""
+        if edge not in self.edges:
+            raise ValueError(f"Edge {edge} not found in graph.")
+        return self.edges[edge].get("active")
+
     def get_aktive_graph(self) -> "Data_Raw":
         local_graph = self.copy()
         for edge in local_graph.edges:
@@ -135,6 +142,12 @@ class Data_Raw(nx.Graph):
         return nodes
 
     def is_edge_in_graph(self, edge: tuple[str, str]) -> tuple[str, str]:
+        if not isinstance(edge, tuple) or len(edge) != 2:
+            raise ValueError(f"Erwarte Tuple aber erhalte {type(edge)}, {edge}")
+        if not all(isinstance(x, str) for x in edge):
+            raise ValueError(
+                f"Erwarte Tuple mit Strings aber erhalte {type(edge)}, {edge}"
+            )
         """Überprüft, ob eine Kante im Graphen vorhanden ist."""
         if edge not in self.edges:
             edge = (edge[1], edge[0])

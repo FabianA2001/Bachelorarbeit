@@ -63,7 +63,9 @@ def check_for_intersection_with_all_edges_and_nodes(
     return False
 
 
-def check_if_triangulation_with_degree_constraint(data: Data) -> bool:
+def check_if_triangulation_with_degree_constraint(
+    data: Data, check_degree: bool = True, check_triangulation: bool = True
+) -> bool:
     """Überprüft, ob der Graph eine Triangulation ist."""
 
     def __check_edges_for_intersection(lines) -> bool:
@@ -83,15 +85,25 @@ def check_if_triangulation_with_degree_constraint(data: Data) -> bool:
         return False
 
     lokal_graph = data.get_aktive_graph()
-    edges = lokal_graph.get_all_edges()
-    if len(edges) != data.number_edges_in_Triangulation:
-        return False
-
-    lines = [lokal_graph.edges[edge].get("line") for edge in edges]
-    if __check_edges_for_intersection(lines):
-        return False
-
-    for node in data.get_all_nodes_name():
-        if lokal_graph.nodes[node].get("degree") != lokal_graph.degree(node):
+    if check_triangulation:
+        edges = lokal_graph.get_all_edges()
+        if len(edges) != data.number_edges_in_Triangulation:
             return False
+
+        lines = [lokal_graph.edges[edge].get("line") for edge in edges]
+        if __check_edges_for_intersection(lines):
+            return False
+    if check_degree:
+        for node in data.get_all_nodes_name():
+            if lokal_graph.nodes[node].get("degree") != lokal_graph.degree(node):
+                return False
+    return True
+
+
+def check_node_for_degree(data: Data, node: str) -> bool:
+    """Überprüft, ob der Knoten die richtige Anzahl an Nachbarn hat."""
+    if node not in data.get_all_nodes_name():
+        raise ValueError(f"Node {node} is not in the graph.")
+    if data.nodes[node].get("degree") != data.degree(node):
+        return False
     return True

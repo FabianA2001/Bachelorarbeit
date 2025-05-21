@@ -12,9 +12,14 @@ class Delaunay(Solver):
         sleep(0.1)  # Simulate some processing time
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
+
+        assert (
+            self.graph.get_all_edges() == []
+        ), "Graph is not empty. Please clear the graph before solving."
+
         # Implement Delaunay triangulation algorithm here
         nodes_name = self.graph.get_all_nodes_name()
-        nodes_as_pos = [self.graph.data.nodes[name].get("pos") for name in nodes_name]
+        nodes_as_pos = [self.graph._data.nodes[name].get("pos") for name in nodes_name]
         triangles = ScipyDelaunay(nodes_as_pos)
 
         for tri in triangles.simplices:
