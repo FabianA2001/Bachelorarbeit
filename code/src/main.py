@@ -61,7 +61,7 @@ def move():
 def run_instance_lokal():
     inst = "simple_10"
     run_instance.run_solver_on_instance(
-        solver=Ortools(),
+        solver_type=Raw_Flips,
         instance_name=inst,
     )
     run_instance.show_results(inst)

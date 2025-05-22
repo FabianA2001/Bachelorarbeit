@@ -1,10 +1,11 @@
 from solver.solver import Solver
 from scipy.spatial import Delaunay as ScipyDelaunay
+from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from time import sleep
 
 
 class Delaunay(Solver):
-    def __init__(self, graph=None) -> None:
+    def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = "Delaunay"
 

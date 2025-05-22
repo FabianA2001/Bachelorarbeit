@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
-from typing import Optional
 import concurrent.futures
 
 
@@ -10,9 +9,9 @@ class Solver(ABC):
     Abstract base class for all solvers.
     """
 
-    def __init__(self, graph: Optional[Graph_Wrapper] = None) -> None:
+    def __init__(self, graph: Graph_Wrapper) -> None:
         self.name = "Solver"
-        self.graph: Optional[Graph_Wrapper] = graph
+        self.graph: Graph_Wrapper = graph
 
     def solve(self, timeout: int = -1) -> bool:
         if not isinstance(self.graph, Graph_Wrapper):

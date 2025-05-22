@@ -3,7 +3,6 @@ from ortools.sat.python import cp_model
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
 import itertools
-from typing import Optional
 
 
 class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
@@ -19,7 +18,7 @@ class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
 
 
 class Ortools(Solver):
-    def __init__(self, graph: Optional[Graph_Wrapper] = None) -> None:
+    def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = "Ortools"
         self.model = cp_model.CpModel()

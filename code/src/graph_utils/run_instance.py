@@ -70,7 +70,10 @@ def save_result(
 
 
 def run_solver_on_instance(
-    solver: Solver, instance_name: str, timeout: int = -1, algo_suffix_name: str = ""
+    solver_type: type[Solver],
+    instance_name: str,
+    timeout: int = -1,
+    algo_suffix_name: str = "",
 ):
     instance = get_instances()
     if instance_name not in instance.keys():
@@ -83,7 +86,7 @@ def run_solver_on_instance(
         with open(f"{graph_const.PREFIX_INSTANCE}{file_path}", "r") as f:
             possible = json.load(f)["possible"]
         graph = Graph_Wrapper(nodes)
-        solver.graph = graph
+        solver = solver_type(graph)
         starttime = time.time()
         success = solver.solve(timeout)
         if success:
