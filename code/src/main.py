@@ -61,8 +61,7 @@ def move():
 def run_instance_lokal():
     inst = "simple_10"
     run_instance.run_solver_on_instance(
-        solver_type=Raw_Flips,
-        instance_name=inst,
+        solver_type=Raw_Flips, instance_name=inst, algo_suffix_name="second"
     )
     run_instance.show_results(inst)
 
