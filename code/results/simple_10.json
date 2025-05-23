@@ -541,7 +541,7 @@
   },
   "Raw_Flips_second": {
     "003_delaunay_flips": {
-      "time": 0.21,
+      "time": 0.42,
       "correct": true,
       "triangulation": [
         ["0", "1"],
@@ -567,7 +567,7 @@
       ]
     },
     "002_delaunay_flips": {
-      "time": 3.58,
+      "time": 0.88,
       "correct": true,
       "triangulation": [
         ["0", "2"],
@@ -588,8 +588,8 @@
         ["4", "9"],
         ["4", "5"],
         ["5", "7"],
-        ["5", "8"],
         ["5", "9"],
+        ["5", "8"],
         ["6", "8"],
         ["8", "9"]
       ]

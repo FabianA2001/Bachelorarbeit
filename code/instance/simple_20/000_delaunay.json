@@ -1,0 +1,105 @@
+{
+  "nodes": [
+    {
+      "name": "0",
+      "pos": [6, 10],
+      "degree": 4
+    },
+    {
+      "name": "1",
+      "pos": [1, 2],
+      "degree": 5
+    },
+    {
+      "name": "2",
+      "pos": [5, 3],
+      "degree": 6
+    },
+    {
+      "name": "3",
+      "pos": [5, 7],
+      "degree": 6
+    },
+    {
+      "name": "4",
+      "pos": [8, 6],
+      "degree": 6
+    },
+    {
+      "name": "5",
+      "pos": [4, 7],
+      "degree": 4
+    },
+    {
+      "name": "6",
+      "pos": [0, 3],
+      "degree": 5
+    },
+    {
+      "name": "7",
+      "pos": [3, 7],
+      "degree": 5
+    },
+    {
+      "name": "8",
+      "pos": [10, 5],
+      "degree": 6
+    },
+    {
+      "name": "9",
+      "pos": [4, 4],
+      "degree": 7
+    },
+    {
+      "name": "10",
+      "pos": [9, 5],
+      "degree": 3
+    },
+    {
+      "name": "11",
+      "pos": [5, 10],
+      "degree": 5
+    },
+    {
+      "name": "12",
+      "pos": [10, 1],
+      "degree": 4
+    },
+    {
+      "name": "13",
+      "pos": [6, 6],
+      "degree": 5
+    },
+    {
+      "name": "14",
+      "pos": [0, 2],
+      "degree": 3
+    },
+    {
+      "name": "15",
+      "pos": [8, 7],
+      "degree": 5
+    },
+    {
+      "name": "16",
+      "pos": [5, 1],
+      "degree": 6
+    },
+    {
+      "name": "17",
+      "pos": [9, 3],
+      "degree": 6
+    },
+    {
+      "name": "18",
+      "pos": [0, 10],
+      "degree": 3
+    },
+    {
+      "name": "19",
+      "pos": [10, 0],
+      "degree": 2
+    }
+  ],
+  "possible": true
+}

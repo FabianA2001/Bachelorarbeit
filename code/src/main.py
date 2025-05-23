@@ -22,17 +22,11 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    nodes = generate.gen_nodes(10, 500, 500)
-    nodes = load_nodes_from_json("test.json")
-    # graph = Graph_Wrapper(nodes)
-    # solver = Iterative(graph)
-    # solver.solve()
-    # nodes = graph.get_aktive_graph_nodes()
-    # save_nodes_as_json(nodes, "test.json")
-    graph2 = Graph_Wrapper(nodes)
-    solver2 = Raw_Flips(graph2)
-    solver2.solve()
-    graph2.show_and_save()
+    nodes = load_nodes_from_json("simple_60/000_delaunay.json")
+    graph = Graph_Wrapper(nodes)
+    solver = Ortools(graph)
+    solver.solve()
+    graph.show_and_save()
 
 
 def move():
@@ -67,11 +61,11 @@ def run_instance_lokal():
 
 
 def create_instance():
-    generate.Generate_Delaunay_Flips(
-        name="simple_10",
-        number_nodes=10,
-        number_instances=10,
-        number_flips=50,
+    generate.Generate_Delaunay(
+        name="simple_20",
+        number_nodes=20,
+        number_instances=2,
+        # number_flips=100,
     ).generate()
 
 
@@ -84,12 +78,11 @@ def test(a):
 def main():
     setup_logging()
     logging.info("Start main function.")
-    # test_algo()
+    test_algo()
     # create_instance()
-    run_instance_lokal()
+    # run_instance_lokal()
     logging.info("End main function.")
 
 
 if __name__ == "__main__":
     main()
-    # test für commit

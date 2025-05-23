@@ -2,7 +2,6 @@ import networkx as nx
 from graph_utils import graph_const
 from graph_utils.node import Node
 import shapely
-import itertools
 from typing import Tuple, Union, Optional
 
 
@@ -154,9 +153,3 @@ class Data_Raw(nx.Graph):
         if edge not in self.edges:
             raise ValueError(f"Edge {edge} not found in graph.")
         return edge
-
-    def add_all_possible_edges(self, default_for_active: bool = False) -> None:
-        """Fügt alle möglichen Kanten zwischen den Knoten hinzu."""
-        combinations = list(itertools.combinations(self.nodes, 2))
-        for com in combinations:
-            self.add_edge(com[0], com[1], default_for_active)

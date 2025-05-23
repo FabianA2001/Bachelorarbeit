@@ -21,7 +21,7 @@ def check_for_intersection_except_corners(
     return line1.crosses(line2)
 
 
-def check_for_intersection_with_all_edges_and_nodes(
+def check_edge_intersection_with_nodes(
     data: Data,
     edge: Union[tuple[str, str], shapely.LineString],
     check_if_active: bool = True,
@@ -45,7 +45,28 @@ def check_for_intersection_with_all_edges_and_nodes(
     if len(intersection.geoms) > 2:
         return True
 
-    # Überprüfen, ob die Linie mit einer anderen Linie im Graphen schneidet
+    return False
+
+
+def check_for_intersection_with_all_edges_and_nodes(
+    data: Data,
+    edge: Union[tuple[str, str], shapely.LineString],
+    check_if_active: bool = True,
+) -> bool:
+    """Überprüft, ob eine Linie mit einer anderen Linie im Graphen schneidet."""
+    if isinstance(edge, tuple):
+        if check_if_active:
+            if not data.edges[edge].get("active"):
+                return False
+        line = data.edges[edge].get("line")
+    elif isinstance(edge, shapely.LineString):
+        line = edge
+    else:
+        raise ValueError("Erwarte Tuple oder LineString")
+
+    if check_edge_intersection_with_nodes(data, line, check_if_active):
+        return True
+        # Überprüfen, ob die Linie mit einer anderen Linie im Graphen schneidet
     lines = [
         data.edges[edge].get("line")
         for edge in data.edges

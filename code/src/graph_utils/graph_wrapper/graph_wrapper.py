@@ -9,6 +9,7 @@ from graph_utils.graph_wrapper import visualisation
 from graph_utils.graph_wrapper.operation import flip_edge
 from graph_utils.graph_wrapper.operation import move_node
 from graph_utils.graph_wrapper.file_system import save_graph_as_json
+from graph_utils.graph_wrapper.operation import simple_operation
 
 
 class Graph_Wrapper:
@@ -82,7 +83,7 @@ class Graph_Wrapper:
 
     def add_all_possible_edges(self, default_for_active: bool = False) -> None:
         """Fügt alle möglichen Kanten zwischen den Knoten hinzu."""
-        self._data.add_all_possible_edges(default_for_active)
+        simple_operation.add_all_possible_edges(self._data, default_for_active)
 
     def get_all_edges(self, test_active: bool = False) -> list[tuple[str, str]]:
         """Gibt alle Kanten des Graphen zurück."""
@@ -160,3 +161,12 @@ class Graph_Wrapper:
     def get_edges_for_node(self, node: str) -> list[tuple[str, str]]:
         """Gibt die Kanten des Graphen zurück."""
         return self._data.get_edges_for_node(node)
+
+    def check_edge_interection_with_nodes(
+        self,
+        edge: Union[tuple[str, str], shapely.LineString],
+        check_if_active: bool = True,
+    ) -> bool:
+        return check.check_edge_intersection_with_nodes(
+            self._data, edge, check_if_active
+        )

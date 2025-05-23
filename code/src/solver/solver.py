@@ -24,7 +24,6 @@ class Solver(ABC):
                 with concurrent.futures.ThreadPoolExecutor() as executor:
                     future = executor.submit(self._actual_solver)
                     result = future.result(timeout=timeout)
-                    print("Ergebnis:", result)
             except concurrent.futures.TimeoutError:
                 logging.info(
                     f"{self.name} hat das Zeitlimit von {timeout} Sekunden überschritten!"
@@ -32,6 +31,9 @@ class Solver(ABC):
                 result = False
         else:
             result = self._actual_solver()
+
+        # if result:
+        # print(*self.graph.get_all_edges(), sep="\n")
         logging.info(f"{self.name} completed.")
         return result
 
