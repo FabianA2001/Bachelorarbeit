@@ -97,7 +97,7 @@ class Graph_Wrapper:
 
     def get_hull_edges(self) -> list[tuple[str, str]]:
         if self.hull_edges == []:
-            self._data.get_hull_edges()
+            self.hull_edges = self._data.get_hull_edges()
         return self.hull_edges
 
     def add_convex_hull(self) -> None:
@@ -170,3 +170,7 @@ class Graph_Wrapper:
         return check.check_edge_intersection_with_nodes(
             self._data, edge, check_if_active
         )
+
+    def clear_all_edges(self) -> None:
+        """Entfernt alle Kanten des Graphen."""
+        self._data.clear_edges()

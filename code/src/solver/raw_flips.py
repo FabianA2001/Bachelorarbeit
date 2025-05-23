@@ -2,10 +2,12 @@ from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from solver.solver import Solver
 from solver.delaunay import Delaunay
 import random
+import logging
 
 
 class Raw_Flips(Solver):
     def __init__(self, graph: Graph_Wrapper) -> None:
+        logging.warning("Raw_Flips hat einen Logik Fehler")  # TODO Fix this
         super().__init__(graph)
         self.name = "Raw_Flips"
         self.PROBABILITY = 0.2
@@ -29,8 +31,12 @@ class Raw_Flips(Solver):
             if self.probability_check():
                 return edge
 
+        if len(edges) == 0:
+            self.graph.show_and_save()
+            assert len(edges) > 0, "No edges found for node: {}".format(node)
+
         # TODO Sehr unschön vlt bessere möglichkeit finden
-        return edge
+        return edges[0]
 
     def __do_flip(
         self,
@@ -47,11 +53,10 @@ class Raw_Flips(Solver):
             return True
         return False
 
-    def _actual_solver(self) -> bool:
+    def _actual_solver(self, timeout, queue) -> None:
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
 
-        self.graph.add_convex_hull()
         solver = Delaunay(self.graph)
         self.graph.name = self.name
         solver.solve()
@@ -66,5 +71,7 @@ class Raw_Flips(Solver):
                 self.graph.show_and_save()
                 assert False, "Graph is not triangulated."
             if self.graph.check_if_triangulation_with_degree_constraint():
-                return True
-        return False
+                queue.put({"success": True, "edges": self.graph.get_all_edges()})
+                return
+        queue.put({"success": False, "edges": []})
+        return

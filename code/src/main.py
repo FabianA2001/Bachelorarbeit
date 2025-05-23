@@ -22,10 +22,10 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    nodes = load_nodes_from_json("simple_60/000_delaunay.json")
+    nodes = load_nodes_from_json("simple_60/000_delaunay_flips.json")
     graph = Graph_Wrapper(nodes)
     solver = Ortools(graph)
-    solver.solve()
+    solver.solve(timeout=3)
     graph.show_and_save()
 
 

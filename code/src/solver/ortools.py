@@ -45,7 +45,7 @@ class Ortools(Solver):
                     summ += self.vars[(edge[1], edge[0])]
             self.model.Add(summ == degree)
 
-    def _actual_solver(self) -> bool:
+    def _actual_solver(self, timeout, queue) -> None:
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
         self.graph.add_all_possible_edges()
@@ -66,10 +66,12 @@ class Ortools(Solver):
         )
         # status = solver.Solve(self.model)
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
+            edges = []
             for edge, var in zip(self.graph.get_all_edges(), self.vars.values()):
                 if solver.BooleanValue(var):
-                    self.graph.active_edge(edge)
-            return True
+                    edges.append(edge)
+            queue.put({"success": True, "edges": edges})
+            return
         else:
-            logging.info("No solution found.")
-            return False
+            queue.put({"success": False, "edges": []})
+            return
