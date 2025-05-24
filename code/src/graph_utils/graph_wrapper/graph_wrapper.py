@@ -174,3 +174,15 @@ class Graph_Wrapper:
     def clear_all_edges(self) -> None:
         """Entfernt alle Kanten des Graphen."""
         self._data.clear_edges()
+
+    def number_of_correct_nodes(self) -> int:
+        """Gibt die Anzahl der Knoten im Graphen zurück."""
+        counter = 0
+        for node in self.get_all_nodes_name():
+            if self.check_node_for_degree(node):
+                counter += 1
+        return counter
+
+    def percentage_of_correct_nodes(self) -> float:
+        """Gibt den Prozentsatz der Knoten im Graphen zurück, die die richtige Anzahl an Nachbarn haben."""
+        return self.number_of_correct_nodes() / len(self.get_all_nodes_name()) * 100

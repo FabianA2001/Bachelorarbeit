@@ -10,6 +10,8 @@ from solver.iterative import Iterative
 from graph_utils import run_instance
 from utils import setup_logging
 from graph_utils.node import load_nodes_from_json
+import matplotlib.pyplot as plt
+import matplotlib._pylab_helpers
 
 
 def solver():
@@ -62,8 +64,10 @@ def move():
 
 def run_instance_lokal():
     inst = "simple_20"
-    run_instance.run_solver_on_instance(solver_type=Ortools, instance_name=inst)
+    # run_instance.run_solver_on_instance(
+    #     solver_type=Delaunay, instance_name=inst)
     run_instance.show_results(inst)
+    run_instance.show_percentage_of_correct_nodes(inst)
 
 
 def create_instance():
@@ -82,13 +86,15 @@ def test(a):
 
 
 def main():
-    setup_logging()
-    logging.info("Start main function.")
     # test_algo()
     # create_instance()
     run_instance_lokal()
-    logging.info("End main function.")
 
 
 if __name__ == "__main__":
+    setup_logging()
+    logging.info("Start main function.")
     main()
+    logging.info("End main function.")
+    while matplotlib._pylab_helpers.Gcf.get_all_fig_managers():
+        plt.pause(0.1)  # Kleine Pause, um GUI nicht zu blockieren

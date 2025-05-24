@@ -38,6 +38,7 @@ def save_result(
     time: float,
     correct: bool = True,
     triangulation: list[tuple[str, str]] = [],
+    Percentage: float = 0.0,
 ):
     filename = f"{instance_name}.json"
     path = os.path.join(RESULTS_DIR, filename)
@@ -57,6 +58,7 @@ def save_result(
         instance_file_name: {
             "time": time,
             "correct": correct,
+            "percentage": Percentage,
             "triangulation": triangulation,
         }
     }
@@ -112,12 +114,11 @@ def run_solver_on_instance(
             duration,
             correct,
             graph.get_all_edges(True),
+            graph.percentage_of_correct_nodes(),
         )
 
 
-def show_results(
-    instance_name: str,
-):
+def show_results(instance_name: str, block: bool = False):
     with open(f"{os.path.join(graph_const.RESULTS_DIR, instance_name)}.json", "r") as f:
         data = json.load(f)
 
@@ -150,7 +151,44 @@ def show_results(
     plt.xticks(rotation=45)
     plt.grid(True, axis="y", linestyle="--", alpha=0.7)
     plt.tight_layout()
-    plt.show()
+    plt.show(block=block)
+
+
+def show_percentage_of_correct_nodes(instance_name: str, block: bool = False):
+    with open(f"{os.path.join(graph_const.RESULTS_DIR, instance_name)}.json", "r") as f:
+        data = json.load(f)
+
+    # In ein DataFrame umwandeln
+    rows = []
+    for algo_name, problems in data.items():
+        for problem_name, info in problems.items():
+            percentage = info["percentage"]
+            rows.append(
+                {
+                    "Algorithm": algo_name,
+                    "Problem": problem_name,
+                    "Percentage": percentage,
+                }
+            )
+
+    df = pd.DataFrame(rows)
+
+    # Seaborn Barplot
+    plt.figure(figsize=(12, 6))
+    sns.barplot(
+        data=df,
+        x="Problem",
+        y="Percentage",
+        hue="Algorithm",  # Dadurch werden die Balken nebeneinander gruppiert
+        palette="muted",
+    )
+
+    plt.title(f"Vergleich der Prozentsätze (Percentage) für {instance_name} je Problem")
+    plt.xticks(rotation=45)
+    plt.grid(True, axis="y", linestyle="--", alpha=0.7)
+    plt.tight_layout()
+    plt.show(block=block)
+    plt.pause(1)
 
 
 def show_triangulation_from_result(

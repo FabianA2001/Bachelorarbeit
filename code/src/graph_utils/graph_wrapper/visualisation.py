@@ -8,7 +8,11 @@ from graph_utils.graph_wrapper import check
 
 
 def show_and_save(
-    data: Data, number_edges_in_Triangulation: int, show: bool = True, save: bool = True
+    data: Data,
+    number_edges_in_Triangulation: int,
+    show: bool = True,
+    save: bool = True,
+    block: bool = False,
 ) -> None:
     """Zeichnet den Graphen mit den festgelegten Positionen und Farben."""
     logging.info("starte show_and_save")
@@ -63,5 +67,5 @@ def show_and_save(
         plt.savefig(f"{graph_const.FIGURES_PREFIX}{data.name}.pdf")
     if show:
         logging.info("show Graph")
-        plt.show()
+        plt.show(block=block)
     logging.info("ende show_and_save")
