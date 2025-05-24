@@ -36,9 +36,6 @@ class Iterative(Solver):
                         self.graph.get_node_from_point(point2),
                     )
                 )
-        queue.put(
-            {
-                "success": False,
-                "edges": edges,
-            }
-        )
+
+        queue.put(edges)
+        queue.put(False)

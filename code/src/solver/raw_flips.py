@@ -2,12 +2,10 @@ from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from solver.solver import Solver
 from solver.delaunay import Delaunay
 import random
-import logging
 
 
 class Raw_Flips(Solver):
     def __init__(self, graph: Graph_Wrapper) -> None:
-        logging.warning("Raw_Flips hat einen Logik Fehler")  # TODO Fix this
         super().__init__(graph)
         self.name = "Raw_Flips"
         self.PROBABILITY = 0.2
@@ -61,7 +59,7 @@ class Raw_Flips(Solver):
         self.graph.name = self.name
         solver.solve()
 
-        for _ in range(
+        for i in range(
             self.graph.get_number_edges_in_Triangulation() ** self.EXPONENT_ITERATIONS
         ):
             self.__do_flip()
@@ -71,7 +69,9 @@ class Raw_Flips(Solver):
                 self.graph.show_and_save()
                 assert False, "Graph is not triangulated."
             if self.graph.check_if_triangulation_with_degree_constraint():
-                queue.put({"success": True, "edges": self.graph.get_all_edges()})
+                queue.put(self.graph.get_all_edges())
+                queue.put(True)
                 return
-        queue.put({"success": False, "edges": []})
-        return
+            # einen Zwischenstand Speichern
+            if i % self.graph.get_number_edges_in_Triangulation() == 0:
+                queue.put(self.graph.get_all_edges())

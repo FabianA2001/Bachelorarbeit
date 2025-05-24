@@ -27,9 +27,5 @@ class Delaunay(Solver):
             edges.append((nodes_name[tri[0]], nodes_name[tri[1]]))
             edges.append((nodes_name[tri[1]], nodes_name[tri[2]]))
             edges.append((nodes_name[tri[2]], nodes_name[tri[0]]))
-        queue.put(
-            {
-                "success": False,
-                "edges": edges,
-            }
-        )
+        queue.put(edges)
+        queue.put(False)

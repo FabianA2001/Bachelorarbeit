@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
 import multiprocessing
-import time
+import queue
 
 
 class Solver(ABC):
@@ -13,6 +13,36 @@ class Solver(ABC):
     def __init__(self, graph: Graph_Wrapper) -> None:
         self.name = "Solver"
         self.graph: Graph_Wrapper = graph
+        self.success = False
+
+    def handel_queue(self, result_queue) -> bool:
+        if result_queue.empty():
+            logging.warning("queue ist empty")
+            self.success = False
+            return False
+
+        edges = []
+        while not result_queue.empty():
+            result = result_queue.get()
+            if isinstance(result, list):
+                if all(isinstance(i, tuple) for i in result):
+                    edges = result
+                    continue
+
+            if isinstance(result, bool):
+                self.success = result
+                break
+
+            assert False, "Result is not a tuple or bool, result: {}".format(result)
+
+        if not len(edges) > 0:
+            logging.warning("No edges found in queue")
+            return self.success
+
+        self.graph.clear_all_edges()
+        for edge in edges:
+            self.graph.add_edge(edge[0], edge[1], active=True)
+        return self.success
 
     def __handel_solver_with_timeout(self, timeout: int) -> bool:
         result_queue = multiprocessing.Queue()
@@ -26,35 +56,12 @@ class Solver(ABC):
             process.terminate()
             process.join()
             self.success = False
-            return False
-
-        if not result_queue.empty():
-            result = result_queue.get()
-            self.success = result["success"]
-            self.edges = result["edges"]
-            self.graph.clear_all_edges()
-            for edge in self.edges:
-                self.graph.add_edge(edge[0], edge[1], active=True)
-        else:
-            self.success = False
-
-        return self.success
+        return self.handel_queue(result_queue)
 
     def __handel_solver_without_timeout(self) -> bool:
-        result_queue = multiprocessing.Queue()
+        result_queue = queue.Queue()
         self._actual_solver(-1, result_queue)
-        time.sleep(00.1)
-        if result_queue.empty():
-            logging.error("queue ist empty")
-            return False
-        result = result_queue.get()
-        self.success = result["success"]
-        self.edges = result["edges"]
-        if len(self.edges) != 0:
-            self.graph.clear_all_edges()
-            for edge in self.edges:
-                self.graph.add_edge(edge[0], edge[1], active=True)
-        return self.success
+        return self.handel_queue(result_queue)
 
     def solve(self, timeout: int = -1) -> bool:
         if not isinstance(self.graph, Graph_Wrapper):
