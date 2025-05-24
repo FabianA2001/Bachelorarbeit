@@ -1,7 +1,6 @@
 from solver.solver import Solver
 from scipy.spatial import Delaunay as ScipyDelaunay
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from time import sleep
 
 
 class Delaunay(Solver):
@@ -11,7 +10,6 @@ class Delaunay(Solver):
         self.version = "0.1"
 
     def _actual_solver(self, timeout, queue) -> None:
-        sleep(0.1)  # Simulate some processing time
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
 

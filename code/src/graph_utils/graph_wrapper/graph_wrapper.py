@@ -186,3 +186,10 @@ class Graph_Wrapper:
     def percentage_of_correct_nodes(self) -> float:
         """Gibt den Prozentsatz der Knoten im Graphen zurück, die die richtige Anzahl an Nachbarn haben."""
         return self.number_of_correct_nodes() / len(self.get_all_nodes_name()) * 100
+
+    def get_point_from_node(self, node: str) -> shapely.Point:
+        """Gibt den Punkt des Knotens zurück."""
+        point = self._data.nodes[node].get("point")
+        if not isinstance(point, shapely.Point):
+            raise TypeError(f"Point is not a shapely.Point, but {type(point)}")
+        return point

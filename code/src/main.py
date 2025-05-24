@@ -7,6 +7,7 @@ from graph_utils.node import Node
 from solver.ortools import Ortools
 from solver.raw_flips import Raw_Flips
 from solver.iterative import Iterative
+from solver.cycle_add import Cycle_Add
 from graph_utils import run_instance
 from utils import setup_logging
 from graph_utils.node import load_nodes_from_json
@@ -19,6 +20,7 @@ def solver():
     Delaunay
     Iterative
     Ortools
+    Cycle_Add
 
 
 def custom_points() -> list[Node]:
@@ -34,8 +36,8 @@ def custom_points() -> list[Node]:
 def test_algo():
     nodes = load_nodes_from_json("simple_20/000_delaunay_flips.json")
     graph = Graph_Wrapper(nodes)
-    solver = Raw_Flips(graph)
-    solver.solve(timeout=5)
+    solver = Cycle_Add(graph)
+    solver.solve(timeout=-1)
     graph.show_and_save()
 
 
@@ -64,8 +66,7 @@ def move():
 
 def run_instance_lokal():
     inst = "simple_20"
-    # run_instance.run_solver_on_instance(
-    #     solver_type=Delaunay, instance_name=inst)
+    run_instance.run_solver_on_instance(solver_type=Cycle_Add, instance_name=inst)
     run_instance.show_results(inst)
     run_instance.show_percentage_of_correct_nodes(inst)
 
