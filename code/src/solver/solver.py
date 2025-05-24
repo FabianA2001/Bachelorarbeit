@@ -14,6 +14,7 @@ class Solver(ABC):
         self.name = "Solver"
         self.graph: Graph_Wrapper = graph
         self.success = False
+        self.version = "0.0"
 
     def handel_queue(self, result_queue) -> bool:
         if result_queue.empty():

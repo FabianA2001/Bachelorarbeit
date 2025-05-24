@@ -61,10 +61,8 @@ def move():
 
 
 def run_instance_lokal():
-    inst = "simple_10"
-    run_instance.run_solver_on_instance(
-        solver_type=Raw_Flips, instance_name=inst, algo_suffix_name="second"
-    )
+    inst = "simple_20"
+    run_instance.run_solver_on_instance(solver_type=Ortools, instance_name=inst)
     run_instance.show_results(inst)
 
 
@@ -86,9 +84,9 @@ def test(a):
 def main():
     setup_logging()
     logging.info("Start main function.")
-    test_algo()
+    # test_algo()
     # create_instance()
-    # run_instance_lokal()
+    run_instance_lokal()
     logging.info("End main function.")
 
 

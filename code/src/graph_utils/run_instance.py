@@ -104,9 +104,9 @@ def run_solver_on_instance(
         duration = time.time() - starttime
         duration = round(duration, 2)
         solver_name = (
-            f"{solver.name}_{algo_suffix_name}"
+            f"{solver.name}_{solver.version}_{algo_suffix_name}"
             if algo_suffix_name != ""
-            else solver.name
+            else f"{solver.name}_{solver.version}"
         )
         save_result(
             instance_name,

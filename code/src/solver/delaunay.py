@@ -8,6 +8,7 @@ class Delaunay(Solver):
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = "Delaunay"
+        self.version = "0.1"
 
     def _actual_solver(self, timeout, queue) -> None:
         sleep(0.1)  # Simulate some processing time

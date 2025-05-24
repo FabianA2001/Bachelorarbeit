@@ -8,6 +8,7 @@ class Raw_Flips(Solver):
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = "Raw_Flips"
+        self.version = "0.1"
         self.PROBABILITY = 0.2
         self.EXPONENT_ITERATIONS = 2
 

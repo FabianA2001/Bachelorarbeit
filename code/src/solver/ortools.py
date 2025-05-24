@@ -10,6 +10,7 @@ class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
     def __init__(self, goal: int) -> None:
         cp_model.CpSolverSolutionCallback.__init__(self)
         self.goal = goal
+        self.version = "0.1"
 
     def on_solution_callback(self):
         if self.ObjectiveValue() >= self.goal:
