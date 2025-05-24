@@ -7,6 +7,13 @@ from shapely.strtree import STRtree
 class Check:
     def __init__(self, data: Data) -> None:
         self.data = data
+        self.multipoint = None
+
+    def get_multipoint_for_points(self) -> shapely.geometry.MultiPoint:
+        if self.multipoint is None:
+            points = [self.data.nodes[node].get("point") for node in self.data.nodes]
+            self.multipoint = shapely.geometry.MultiPoint(points)
+        return self.multipoint
 
     def check_for_intersection_except_corners(
         self,
@@ -40,8 +47,8 @@ class Check:
         else:
             raise ValueError("Erwarte Tuple oder LineString")
 
-        points = [self.data.nodes[node].get("point") for node in self.data.nodes]
-        multipoint = shapely.geometry.MultiPoint(points)
+        multipoint = self.multipoint
+
         intersection = multipoint.intersection(line)
         if not isinstance(intersection, shapely.geometry.MultiPoint):
             raise ValueError(
