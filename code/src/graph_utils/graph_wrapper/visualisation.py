@@ -4,11 +4,12 @@ from graph_utils import graph_const
 import logging
 from graph_utils.graph_wrapper.data import Data
 from graph_utils.graph_wrapper.file_system import save_graph_as_json
-from graph_utils.graph_wrapper import check
+from graph_utils.graph_wrapper.check import Check
 
 
 def show_and_save(
     data: Data,
+    check: Check,
     number_edges_in_Triangulation: int,
     show: bool = True,
     save: bool = True,
@@ -46,7 +47,7 @@ def show_and_save(
     edge_colors = [
         graph_const.EDGE_COLOR_TRUE
         # Beispielbedingung
-        if not check.check_for_intersection_with_all_edges_and_nodes(data, edge)
+        if not check.check_for_intersection_with_all_edges_and_nodes(edge)
         else graph_const.EDGE_COLOR_FALSE
         for edge in local_graph.edges
     ]

@@ -1,10 +1,10 @@
 import shapely
 from graph_utils.graph_wrapper.data import Data
-from graph_utils.graph_wrapper import check
 from graph_utils.graph_wrapper.visualisation import show_and_save
+from graph_utils.graph_wrapper.check import Check
 
 
-def flip_edge(data: Data, edge: tuple[str, str]) -> bool:
+def flip_edge(data: Data, check: Check, edge: tuple[str, str]) -> bool:
     if not isinstance(edge, tuple) or len(edge) != 2:
         raise ValueError(f"Erwarte Tuple aber erhalte {type(edge)}, {edge}")
         if not all(isinstance(x, str) for x in edge):
@@ -30,6 +30,7 @@ def flip_edge(data: Data, edge: tuple[str, str]) -> bool:
             if counter > 500:
                 show_and_save(
                     data,
+                    check,
                     data.number_edges_in_Triangulation,
                     show=True,
                     save=False,
@@ -63,6 +64,7 @@ def flip_edge(data: Data, edge: tuple[str, str]) -> bool:
     if len(triangles) != 2:
         show_and_save(
             data,
+            check,
             data.number_edges_in_Triangulation,
             show=True,
             save=False,
@@ -83,7 +85,7 @@ def flip_edge(data: Data, edge: tuple[str, str]) -> bool:
 
     data.add_edge(a, b, True)
     data.deactivate_edge(edge)
-    if check.check_for_intersection_with_all_edges_and_nodes(data, (a, b), True):
+    if check.check_for_intersection_with_all_edges_and_nodes((a, b), True):
         data.remove_edge((a, b))
         data.active_edge(edge)
         # logging.warning(

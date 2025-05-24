@@ -11,8 +11,6 @@ from solver.cycle_add import Cycle_Add
 from graph_utils import run_instance
 from utils import setup_logging
 from graph_utils.node import load_nodes_from_json
-import matplotlib.pyplot as plt
-import matplotlib._pylab_helpers
 
 
 def solver():
@@ -34,7 +32,7 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    nodes = load_nodes_from_json("simple_100/000_delaunay_flips.json")
+    nodes = load_nodes_from_json("simple_60/000_delaunay_flips.json")
     graph = Graph_Wrapper(nodes)
     solver = Cycle_Add(graph)
     solver.solve(timeout=-1)
@@ -87,9 +85,9 @@ def test(a):
 
 
 def main():
-    # test_algo()
+    test_algo()
     # create_instance()
-    run_instance_lokal()
+    # run_instance_lokal()
 
 
 if __name__ == "__main__":
@@ -97,5 +95,5 @@ if __name__ == "__main__":
     logging.info("Start main function.")
     main()
     logging.info("End main function.")
-    while matplotlib._pylab_helpers.Gcf.get_all_fig_managers():
-        plt.pause(0.1)  # Kleine Pause, um GUI nicht zu blockieren
+    # while matplotlib._pylab_helpers.Gcf.get_all_fig_managers():
+    #     plt.pause(0.1)  # Kleine Pause, um GUI nicht zu blockieren

@@ -4,18 +4,19 @@ import shapely
 from typing import Tuple, Union, Optional
 from graph_utils.graph_wrapper.data import Data
 from graph_utils.graph_wrapper.data_raw import Data_Raw
-from graph_utils.graph_wrapper import check
+from graph_utils.graph_wrapper.check import Check
 from graph_utils.graph_wrapper import visualisation
 from graph_utils.graph_wrapper.operation import flip_edge
 from graph_utils.graph_wrapper.operation import move_node
 from graph_utils.graph_wrapper.file_system import save_graph_as_json
-from graph_utils.graph_wrapper.operation import simple_operation
+import itertools
 
 
 class Graph_Wrapper:
     def __init__(self, nodes: list[Node]) -> None:
         self._data = Data(nodes)
         self._name = graph_const.DEFAULT_NAME
+        self._check = Check(self._data)
         self.hull_edges = []
 
     @property
@@ -38,20 +39,21 @@ class Graph_Wrapper:
         line1: shapely.geometry.LineString | tuple[str, str],
         line2: shapely.geometry.LineString | tuple[str, str],
     ) -> bool:
-        return check.check_for_intersection_except_corners(self._data, line1, line2)
+        return self._check.check_for_intersection_except_corners(line1, line2)
 
     def check_for_intersection_with_all_edges_and_nodes(
         self,
         edge: Union[tuple[str, str], shapely.LineString],
         check_if_active: bool = True,
     ) -> bool:
-        return check.check_for_intersection_with_all_edges_and_nodes(
-            self._data, edge, check_if_active
+        return self._check.check_for_intersection_with_all_edges_and_nodes(
+            edge, check_if_active
         )
 
     def show_and_save(self, show: bool = True, save: bool = True) -> None:
         visualisation.show_and_save(
             self._data,
+            self._check,
             self._data.number_edges_in_Triangulation,
             show=show,
             save=save,
@@ -80,10 +82,6 @@ class Graph_Wrapper:
     def is_edge_active(self, edge: tuple[str, str]) -> bool:
         """Überprüft, ob eine Kante aktiv ist."""
         return self._data.is_edge_active(edge)
-
-    def add_all_possible_edges(self, default_for_active: bool = False) -> None:
-        """Fügt alle möglichen Kanten zwischen den Knoten hinzu."""
-        simple_operation.add_all_possible_edges(self._data, default_for_active)
 
     def get_all_edges(self, test_active: bool = False) -> list[tuple[str, str]]:
         """Gibt alle Kanten des Graphen zurück."""
@@ -120,7 +118,7 @@ class Graph_Wrapper:
         return self._data.get_all_triangles()
 
     def flip_edge(self, edge: tuple[str, str]) -> bool:
-        return flip_edge.flip_edge(self._data, edge)
+        return flip_edge.flip_edge(self._data, self._check, edge)
 
     def move_node(self, node: str = "", distance: int = -1) -> bool:
         return move_node.move_node(self._data, node, distance)
@@ -132,8 +130,8 @@ class Graph_Wrapper:
         self, check_degree: bool = True, check_triangulation: bool = True
     ) -> bool:
         """Überprüft, ob der Graph eine Triangulation ist."""
-        return check.check_if_triangulation_with_degree_constraint(
-            self._data, check_degree, check_triangulation
+        return self._check.check_if_triangulation_with_degree_constraint(
+            check_degree, check_triangulation
         )
 
     def get_aktive_graph_nodes(self) -> list[Node]:
@@ -156,7 +154,7 @@ class Graph_Wrapper:
 
     def check_node_for_degree(self, node: str) -> bool:
         """Überprüft, ob der Knoten die richtige Anzahl an Nachbarn hat."""
-        return check.check_node_for_degree(self._data, node)
+        return self._check.check_node_for_degree(node)
 
     def get_edges_for_node(self, node: str) -> list[tuple[str, str]]:
         """Gibt die Kanten des Graphen zurück."""
@@ -167,9 +165,7 @@ class Graph_Wrapper:
         edge: Union[tuple[str, str], shapely.LineString],
         check_if_active: bool = True,
     ) -> bool:
-        return check.check_edge_intersection_with_nodes(
-            self._data, edge, check_if_active
-        )
+        return self._check.check_edge_intersection_with_nodes(edge, check_if_active)
 
     def clear_all_edges(self) -> None:
         """Entfernt alle Kanten des Graphen."""
@@ -193,3 +189,11 @@ class Graph_Wrapper:
         if not isinstance(point, shapely.Point):
             raise TypeError(f"Point is not a shapely.Point, but {type(point)}")
         return point
+
+    def add_all_possible_edges(self, default_for_active: bool = False) -> None:
+        """Fügt alle möglichen Kanten zwischen den Knoten hinzu."""
+        combinations = list(itertools.combinations(self._data.nodes, 2))
+        for com in combinations:
+            self._data.add_edge(com[0], com[1], default_for_active)
+            if self._check.check_edge_intersection_with_nodes((com[0], com[1]), False):
+                self._data.remove_edge((com[0], com[1]))

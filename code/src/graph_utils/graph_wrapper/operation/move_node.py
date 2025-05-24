@@ -1,15 +1,7 @@
-import networkx as nx
-import matplotlib.pyplot as plt
-from graph_utils import graph_const
-from graph_utils.node import Node, save_nodes_as_json
 import shapely
-import itertools
-from typing import Tuple, Union, Optional
 import logging
-import math
 import random
 from graph_utils.graph_wrapper.data import Data
-from graph_utils.graph_wrapper import check
 
 
 class No_Solution_Error(Exception):
@@ -32,12 +24,8 @@ def move_node(data: Data, node: str = "", distance: int = -1) -> bool:
             if point.y > max_y:
                 max_y = point.y
         for _ in range(100):
-            x = random.randint(
-                int(min_x * MULTIPLIER_MIN), int(max_x * MULTIPLIER_MAX)
-            )
-            y = random.randint(
-                int(min_y * MULTIPLIER_MIN), int(max_y * MULTIPLIER_MAX)
-            )
+            x = random.randint(int(min_x * MULTIPLIER_MIN), int(max_x * MULTIPLIER_MAX))
+            y = random.randint(int(min_y * MULTIPLIER_MIN), int(max_y * MULTIPLIER_MAX))
             if x < 0 or y < 0:
                 continue
             point = shapely.geometry.Point(x, y)
@@ -47,8 +35,7 @@ def move_node(data: Data, node: str = "", distance: int = -1) -> bool:
         raise No_Solution_Error
 
     if node == "":
-        node = data.get_all_nodes_name(
-        )[random.randint(0, len(data.nodes) - 1)]
+        node = data.get_all_nodes_name()[random.randint(0, len(data.nodes) - 1)]
     points = [attr["point"] for _, attr in data.nodes(data=True)]
     multipoint = shapely.geometry.MultiPoint(points)
 
@@ -76,9 +63,7 @@ def move_node(data: Data, node: str = "", distance: int = -1) -> bool:
         )
         return False
 
-    logging.info(
-        f"Bewege Knoten {node} von {data.nodes[node]['point']} nach {point}"
-    )
+    logging.info(f"Bewege Knoten {node} von {data.nodes[node]['point']} nach {point}")
     data.nodes[node]["point"] = point
     data.nodes[node]["pos"] = pos
     return True
