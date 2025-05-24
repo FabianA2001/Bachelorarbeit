@@ -34,7 +34,7 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    nodes = load_nodes_from_json("simple_20/000_delaunay_flips.json")
+    nodes = load_nodes_from_json("simple_100/000_delaunay_flips.json")
     graph = Graph_Wrapper(nodes)
     solver = Cycle_Add(graph)
     solver.solve(timeout=-1)
@@ -65,18 +65,18 @@ def move():
 
 
 def run_instance_lokal():
-    inst = "simple_20"
+    inst = "simple_50"
     run_instance.run_solver_on_instance(solver_type=Cycle_Add, instance_name=inst)
     run_instance.show_results(inst)
     run_instance.show_percentage_of_correct_nodes(inst)
 
 
 def create_instance():
-    generate.Generate_Delaunay(
-        name="simple_20",
-        number_nodes=20,
-        number_instances=2,
-        # number_flips=100,
+    generate.Generate_Delaunay_Flips(
+        name="simple_50",
+        number_nodes=50,
+        number_instances=10,
+        number_flips=100,
     ).generate()
 
 

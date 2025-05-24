@@ -7,7 +7,7 @@ class Cycle_Add(Solver):
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = "Cycle_Add"
-        self.version = "0.1"
+        self.version = "0.2"
 
     def sort_nodes_from_center(self) -> bool:
         """
@@ -49,6 +49,12 @@ class Cycle_Add(Solver):
                 if self.graph.check_for_intersection_with_all_edges_and_nodes(
                     edge, check_if_active=True
                 ):
+                    self.graph.deactivate_edge(edge)
+                    continue
+                if node != edge[0] and self.graph.check_node_for_degree(edge[0]):
+                    self.graph.deactivate_edge(edge)
+                    continue
+                if node != edge[1] and self.graph.check_node_for_degree(edge[1]):
                     self.graph.deactivate_edge(edge)
                     continue
                 quere_edges.append(edge)

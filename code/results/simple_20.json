@@ -1345,7 +1345,7 @@
   },
   "Cycle_Add_0.1": {
     "003_delaunay_flips": {
-      "time": 0.16,
+      "time": 0.25,
       "correct": false,
       "percentage": 20.0,
       "triangulation": [
@@ -1401,7 +1401,7 @@
       ]
     },
     "002_delaunay_flips": {
-      "time": 0.17,
+      "time": 0.27,
       "correct": false,
       "percentage": 10.0,
       "triangulation": [
@@ -1459,7 +1459,7 @@
       ]
     },
     "001_delaunay_flips": {
-      "time": 0.16,
+      "time": 0.25,
       "correct": false,
       "percentage": 15.0,
       "triangulation": [
@@ -1516,7 +1516,7 @@
       ]
     },
     "000_delaunay_flips": {
-      "time": 0.15,
+      "time": 0.25,
       "correct": false,
       "percentage": 15.0,
       "triangulation": [
@@ -1569,7 +1569,7 @@
       ]
     },
     "006_delaunay_flips": {
-      "time": 0.16,
+      "time": 0.23,
       "correct": false,
       "percentage": 25.0,
       "triangulation": [
@@ -1625,7 +1625,7 @@
       ]
     },
     "001_delaunay": {
-      "time": 0.2,
+      "time": 0.24,
       "correct": false,
       "percentage": 5.0,
       "triangulation": [
@@ -1680,7 +1680,7 @@
       ]
     },
     "007_delaunay_flips": {
-      "time": 0.15,
+      "time": 0.24,
       "correct": false,
       "percentage": 20.0,
       "triangulation": [
@@ -1734,7 +1734,7 @@
       ]
     },
     "004_delaunay_flips": {
-      "time": 0.15,
+      "time": 0.24,
       "correct": false,
       "percentage": 35.0,
       "triangulation": [
@@ -1790,7 +1790,7 @@
       ]
     },
     "005_delaunay_flips": {
-      "time": 0.16,
+      "time": 0.25,
       "correct": false,
       "percentage": 35.0,
       "triangulation": [
@@ -1845,7 +1845,7 @@
       ]
     },
     "008_delaunay_flips": {
-      "time": 0.17,
+      "time": 0.24,
       "correct": false,
       "percentage": 15.0,
       "triangulation": [
@@ -1902,7 +1902,7 @@
       ]
     },
     "009_delaunay_flips": {
-      "time": 0.16,
+      "time": 0.24,
       "correct": false,
       "percentage": 30.0,
       "triangulation": [
@@ -1960,7 +1960,7 @@
       ]
     },
     "000_delaunay": {
-      "time": 0.17,
+      "time": 0.25,
       "correct": false,
       "percentage": 20.0,
       "triangulation": [
