@@ -89,19 +89,16 @@ def run_solver_on_instance(
         solver = solver_type(graph)
         starttime = time.time()
         success = solver.solve(timeout)
-        if success:
-            if graph.check_if_triangulation_with_degree_constraint():
-                result = True
-            else:
-                result = False
-        else:
-            result = False
+        duration = time.time() - starttime
+
+        is_triangulation = graph.check_if_triangulation_with_degree_constraint()
+        result = success and is_triangulation
         correct = possible == result
-        if result and not possible:
+        if is_triangulation and not possible:
             logging.error(
                 f"{instance_name} - {solver.name} - {file_name}_{algo_suffix_name} should not be possible, but triangulation was found."
             )
-        duration = time.time() - starttime
+
         duration = round(duration, 2)
         solver_name = (
             f"{solver.name}_{solver.version}_{algo_suffix_name}"
