@@ -47,7 +47,7 @@ class Check:
         else:
             raise ValueError("Erwarte Tuple oder LineString")
 
-        multipoint = self.multipoint
+        multipoint = self.get_multipoint_for_points()
 
         intersection = multipoint.intersection(line)
         if not isinstance(intersection, shapely.geometry.MultiPoint):
