@@ -50,6 +50,13 @@ class Graph_Wrapper:
             edge, check_if_active
         )
 
+    def count_intersections_with_all_edges(
+        self,
+        edge: Union[tuple[str, str], shapely.LineString],
+        check_if_active: bool = True,
+    ) -> int:
+        return self._check.count_intersections_with_all_edges(edge, check_if_active)
+
     def show_and_save(self, show: bool = True, save: bool = True) -> None:
         visualisation.show_and_save(
             self._data,
