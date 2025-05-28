@@ -12,6 +12,7 @@ dependencies = [
     "shapely",
     "scipy",
     "seaborn",
+    "python-sat",
 ]
 [project.optional-dependencies]
 dev = [

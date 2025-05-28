@@ -94,37 +94,38 @@ class Check:
                 return True
         return False
 
-    def count_intersections_with_all_edges(
+    def get_intersections_with_all_edges(
         self,
         edge: Union[tuple[str, str], shapely.LineString],
         check_if_active: bool = True,
-    ) -> int:
+    ) -> list[tuple[str, str]]:
         """Überprüft, ob eine Linie mit einer anderen Linie im Graphen schneidet."""
         if isinstance(edge, tuple):
             if check_if_active:
                 if not self.data.edges[edge].get("active"):
-                    return False
+                    return []
             line = self.data.edges[edge].get("line")
         elif isinstance(edge, shapely.LineString):
             line = edge
         else:
             raise ValueError("Erwarte Tuple oder LineString")
-        lines = [
-            self.data.edges[edge].get("line")
+        aktive_edges = [
+            edge
             for edge in self.data.edges
             if self.data.edges[edge].get("active") or not check_if_active
         ]
+        lines = [self.data.edges[edge].get("line") for edge in aktive_edges]
         # Baue spatial index
         tree = STRtree(lines)
 
-        counter = 0
+        edges = []
         candidates = tree.query(line)
         for candidate in candidates:
             if line == lines[candidate]:
                 continue
             if line.crosses(lines[candidate]):
-                counter += 1
-        return counter
+                edges.append(aktive_edges[candidate])
+        return edges
 
     def check_if_triangulation_with_degree_constraint(
         self, check_degree: bool = True, check_triangulation: bool = True

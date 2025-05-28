@@ -62,6 +62,7 @@ class Solver(ABC):
     def __handel_solver_without_timeout(self) -> bool:
         result_queue = queue.Queue()
         self._actual_solver(-1, result_queue)
+        self.graph.clear_all_edges()
         return self.handel_queue(result_queue)
 
     def solve(self, timeout: int = -1) -> bool:

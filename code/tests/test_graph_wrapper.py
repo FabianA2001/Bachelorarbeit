@@ -192,3 +192,29 @@ def test_check_for_intersection_with_all_edges_and_nodes():
     graph.add_edge("B", "C")
     assert graph.check_for_intersection_with_all_edges_and_nodes(("A", "D"))
     assert not graph.check_for_intersection_with_all_edges_and_nodes(("A", "B"))
+
+
+def test_get_intersections_with_all_edges():
+    nodes = [
+        Node("0", (5, 10)),
+        Node("1", (2, 6)),
+        Node("2", (6, 5)),
+        Node("3", (9, 3)),
+        Node("4", (0, 10)),
+        Node("5", (9, 5)),
+        Node("6", (1, 2)),
+        Node("7", (8, 6)),
+        Node("8", (2, 3)),
+        Node("9", (2, 10)),
+    ]
+    graph = Graph_Wrapper(nodes)
+    graph.add_all_possible_edges(True)
+    assert graph.get_intersections_with_all_edges(("5", "6")) == [
+        ("3", "4"),
+        ("3", "8"),
+        ("2", "3"),
+        ("1", "3"),
+        ("3", "7"),
+        ("3", "9"),
+        ("0", "3"),
+    ]
