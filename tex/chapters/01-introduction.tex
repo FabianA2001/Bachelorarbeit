@@ -232,6 +232,21 @@ Als mögliche Iterationsanzahl wird folgende Formel verwendet,
 \]
 dabei bezeichnet \(\bar{b}\) die durchschnittliche Gradbeschränkung.
 Diese Formel sorgt dafür, dass große Instanzen mehr Iterationen erhalten, während leichtere Instanzen (mit höherem Grad) schneller bearbeitet werden.
+
+Sandor P. Fekete et al~\cite{A_network-flow_technique_for_finding_low-weight_bounded-degree_spanning_trees} betrachten ebenfalls das \emph{degree constrained minimum spanning tree} Problem. 
+Hierbei wird ein \emph{Flow based Algorithmus} verwendet. 
+Da dieser Ansatz wahrscheinlich nicht gut auf Triangulationen übertragbar ist, wird er hier nur kurz behandelt. 
+Zunächst wird das Problem als \emph{NP hard} eingeordnet. 
+
+Im praktischen Teil des Papers werden zwei Algorithmen vorgestellt. 
+Diese erhalten einen minimalen Spannbaum und verändern ihn so, dass er eine Gradbeschränkung einhält. 
+Dabei wird darauf geachtet, dass sich das Gewicht des Spannbaums nicht stark verschlechtert. 
+Für diese Algorithmen werden Hauptoperationen namens \emph{Adoptions} eingeführt. 
+Diese funktionieren ähnlich wie Flips, jedoch für einen Spannbaum. 
+Es handelt sich also um Operationen, die eine legale Veränderung bewirken. 
+Die beiden Algorithmen liefern anschließend eine Liste von Adoptionen, welche die gewünschte Änderung erzeugen.
+
+
 \newpage
 
 \section{Overview}
