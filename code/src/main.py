@@ -11,6 +11,8 @@ from solver.cycle_add import Cycle_Add
 from graph_utils import run_instance
 from utils import setup_logging
 from graph_utils.node import load_nodes_from_json
+import matplotlib.pyplot as plt
+import matplotlib._pylab_helpers
 
 
 def solver():
@@ -84,6 +86,11 @@ def test(a):
     return a
 
 
+def block_plt():
+    while matplotlib._pylab_helpers.Gcf.get_all_fig_managers():
+        plt.pause(0.1)  # Kleine Pause, um GUI nicht zu blockieren
+
+
 def main():
     test_algo()
     # create_instance()
@@ -95,5 +102,4 @@ if __name__ == "__main__":
     logging.info("Start main function.")
     main()
     logging.info("End main function.")
-    # while matplotlib._pylab_helpers.Gcf.get_all_fig_managers():
-    #     plt.pause(0.1)  # Kleine Pause, um GUI nicht zu blockieren
+    block_plt()
