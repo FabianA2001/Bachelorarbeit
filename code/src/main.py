@@ -27,16 +27,17 @@ def solver():
 
 def custom_points() -> list[Node]:
     nodes = [
-        Node("A", (0, 0)),
-        Node("B", (0, 1)),
-        Node("C", (1, 0)),
-        Node("D", (1, 1)),
+        Node("A", (0, 0), 3),
+        Node("B", (0, 1), 2),
+        Node("C", (1, 0), 2),
+        Node("D", (1, 1), 3),
     ]
     return nodes
 
 
 def test_algo():
-    nodes = load_nodes_from_json("simple_10/000_delaunay_flips.json")
+    nodes = load_nodes_from_json("simple_60/000_delaunay_flips.json")
+    # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
     solver = SAT(graph)
     solver.solve(timeout=-1)

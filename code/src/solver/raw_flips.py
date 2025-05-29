@@ -18,7 +18,7 @@ class Raw_Flips(Solver):
     def choose_edge(self, node: str) -> tuple[str, str]:
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
-        edges = self.graph.get_edges_for_node(node)
+        edges = self.graph.get_edges_of_node(node)
         while len(edges) > 0:
             edge = random.choice(edges)
             edges.remove(edge)

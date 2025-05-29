@@ -166,7 +166,7 @@ class Graph_Wrapper:
         """Überprüft, ob der Knoten die richtige Anzahl an Nachbarn hat."""
         return self._check.check_node_for_degree(node)
 
-    def get_edges_for_node(self, node: str) -> list[tuple[str, str]]:
+    def get_edges_of_node(self, node: str) -> list[tuple[str, str]]:
         """Gibt die Kanten des Graphen zurück."""
         return self._data.get_edges_for_node(node)
 
@@ -207,3 +207,9 @@ class Graph_Wrapper:
             self._data.add_edge(com[0], com[1], default_for_active)
             if self._check.check_edge_intersection_with_nodes((com[0], com[1]), False):
                 self._data.remove_edge((com[0], com[1]))
+
+    def get_degree(self, node: str) -> int:
+        """Gibt den Grad eines Knotens zurück."""
+        if node not in self._data.nodes:
+            raise ValueError(f"Node {node} does not exist in the graph.")
+        return self._data.nodes[node].get("degree")

@@ -43,7 +43,7 @@ class Cycle_Add(Solver):
         self.sort_nodes_from_center()
         quere_edges = []
         for node in reversed(self.sorted_nodes):
-            edges = self.graph.get_edges_for_node(node)
+            edges = self.graph.get_edges_of_node(node)
             for edge in edges:
                 self.graph.active_edge(edge)
                 if self.graph.check_for_intersection_with_all_edges_and_nodes(

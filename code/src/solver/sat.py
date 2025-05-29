@@ -3,6 +3,7 @@ from solver.solver import Solver
 from pysat.solvers import Solver as SatSolver
 from pysat.formula import CNF
 from pysat.card import CardEnc
+import logging
 
 
 class SAT(Solver):
@@ -13,9 +14,12 @@ class SAT(Solver):
         self.graph.add_all_possible_edges(default_for_active=True)
         self.edges = self.graph.get_all_edges()
         self.edges_to_index = {edge: i for i, edge in enumerate(self.edges)}
+        self.all_vars = list(range(1, len(self.edges) + 1))
 
     def get_index(self, edge) -> int:
-        return self.edges_to_index[edge] + 1
+        if edge in self.edges_to_index:
+            return self.edges_to_index[edge] + 1
+        return self.edges_to_index[(edge[1], edge[0])] + 1
 
     def get_edge(self, index) -> tuple[str, str]:
         return self.edges[index - 1]
@@ -28,28 +32,49 @@ class SAT(Solver):
                     [-self.get_index(edge), -self.get_index(intersection)]
                 )
 
-    def formula_number_vars(self, n):
+    def degree_constraint(self):
+        for node in self.graph.get_all_nodes_name():
+            degree = self.graph.get_degree(node)
+            if degree == -1:
+                continue
+            edges = self.graph.get_edges_of_node(node)
+            cnf = self.formula_number_vars(
+                [self.get_index(edge) for edge in edges], degree
+            )
+            self.solver.append_formula(cnf)
+
+    def formula_number_vars(self, vars, n):
         # CNF-Formel erstellen
         cnf = CNF()
         # Cardinality Constraint: genau n Variablen aus "vars" sind True
-        self.vars = list(range(1, len(self.edges) + 1))
-        assert len(self.vars) >= n
-        enc = CardEnc.equals(lits=self.vars, bound=n, encoding=1)
+        assert len(vars) >= n
+        used = (
+            max(
+                self.solver.nof_vars(),
+                len(  # type: ignore
+                    self.all_vars
+                ),
+            )
+            + 1
+        )
+        enc = CardEnc.equals(lits=vars, bound=n, encoding=1, top_id=used)
         cnf.extend(enc.clauses)
         return cnf
 
     def _actual_solver(self, timeout, queue) -> None:
-        cnf = self.formula_number_vars(self.graph.get_number_edges_in_Triangulation())
-
-        self.solver = SatSolver(name="glucose3", bootstrap_with=cnf)
+        self.solver = SatSolver(name="glucose42")
+        cnf = self.formula_number_vars(
+            self.all_vars, self.graph.get_number_edges_in_Triangulation()
+        )
+        self.solver.append_formula(cnf)
         self.intersection_constraint()
-
+        self.degree_constraint()
         # SAT lösen
         if self.solver.solve():
             quere_edges = []
             model = self.solver.get_model()
             assert model is not None, "Model should not be None"
-            for var in self.vars:
+            for var in self.all_vars:
                 if var in model:
                     edge = self.get_edge(var)
                     quere_edges.append(edge)
@@ -58,5 +83,6 @@ class SAT(Solver):
             return
 
         else:
+            logging.error("SAT Solver could not find a solution.")
             queue.put(False)
             return
