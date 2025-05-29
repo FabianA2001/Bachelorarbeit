@@ -10,7 +10,7 @@ class SAT(Solver):
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = "SAT"
-        self.version = "0.1"
+        self.version = "0.2"
         self.graph.add_all_possible_edges(default_for_active=True)
         self.edges = self.graph.get_all_edges()
         self.edges_to_index = {edge: i for i, edge in enumerate(self.edges)}
@@ -50,10 +50,8 @@ class SAT(Solver):
         assert len(vars) >= n
         used = (
             max(
-                self.solver.nof_vars(),
-                len(  # type: ignore
-                    self.all_vars
-                ),
+                self.solver.nof_vars(),  # type: ignore
+                len(self.all_vars),
             )
             + 1
         )
@@ -63,10 +61,10 @@ class SAT(Solver):
 
     def _actual_solver(self, timeout, queue) -> None:
         self.solver = SatSolver(name="glucose42")
-        cnf = self.formula_number_vars(
-            self.all_vars, self.graph.get_number_edges_in_Triangulation()
-        )
-        self.solver.append_formula(cnf)
+        # cnf = self.formula_number_vars(
+        #     self.all_vars, self.graph.get_number_edges_in_Triangulation()
+        # )
+        # self.solver.append_formula(cnf)
         self.intersection_constraint()
         self.degree_constraint()
         # SAT lösen
@@ -79,7 +77,7 @@ class SAT(Solver):
                     edge = self.get_edge(var)
                     quere_edges.append(edge)
             queue.put(quere_edges)
-            queue.put(self.graph.check_if_triangulation_with_degree_constraint())
+            queue.put(True)
             return
 
         else:

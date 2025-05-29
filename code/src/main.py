@@ -68,18 +68,15 @@ def move():
 
 
 def run_instance_lokal():
-    inst = "simple_50"
-    run_instance.run_solver_on_instance(solver_type=Cycle_Add, instance_name=inst)
+    inst = "iterative_70_5"
+    run_instance.run_solver_on_instance(solver_type=SAT, instance_name=inst)
     run_instance.show_results(inst)
-    run_instance.show_percentage_of_correct_nodes(inst)
+    # run_instance.show_percentage_of_correct_nodes(inst)
 
 
 def create_instance():
-    generate.Generate_Delaunay_Flips(
-        name="simple_50",
-        number_nodes=50,
-        number_instances=10,
-        number_flips=100,
+    generate.Generate_Delaunay_Iterativ(
+        name="iterative_70_5", number_nodes=70, number_instances=10, step=5
     ).generate()
 
 
@@ -95,9 +92,9 @@ def block_plt():
 
 
 def main():
-    test_algo()
+    # test_algo()
     # create_instance()
-    # run_instance_lokal()
+    run_instance_lokal()
 
 
 if __name__ == "__main__":

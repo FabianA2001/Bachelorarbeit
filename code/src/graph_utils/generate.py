@@ -47,7 +47,7 @@ class Generate_Instance(ABC):
         if self.lokal_name == "":
             raise ValueError("lokal_name is not set.")
         for i in range(self.number_instances):
-            nodes = gen_nodes(self.number_nodes, self.width, self.height)
+            nodes = self._generate_nodes()
             graph = Graph_Wrapper(nodes)
             graph, possible = self._generate_instance(graph)
             number = str(i).zfill(3)
@@ -64,6 +64,10 @@ class Generate_Instance(ABC):
     def _generate_instance(
         self, graph: Graph_Wrapper
     ) -> tuple[Graph_Wrapper, Optional[bool]]: ...
+
+    def _generate_nodes(self) -> list[Node]:
+        """Generiert eine Liste von Knoten mit zufälligen Positionen und Graden."""
+        return gen_nodes(self.number_nodes, self.width, self.height)
 
 
 class Generate_Delaunay_Flips(Generate_Instance):
@@ -112,3 +116,36 @@ class Generate_Delaunay(Generate_Instance):
         solver = Delaunay(graph)
         solver.solve()
         return (graph, True)
+
+
+class Generate_Delaunay_Iterativ(Generate_Instance):
+    def __init__(
+        self,
+        name: str,
+        number_nodes: int,
+        number_instances: int,
+        step: int = 1,
+        width: int = graph_const.GEN_WIDTH,
+        height: int = graph_const.GEN_HEIGHT,
+    ) -> None:
+        assert step > 0, "Step must be greater than 0."
+        assert number_nodes > 0, "Number of nodes must be greater than 0."
+        assert number_instances > 0, "Number of instances must be greater than 0."
+        assert number_nodes >= step * number_instances
+        super().__init__(name, number_nodes, number_instances, width, height)
+        self.lokal_name = "delaunay_iterativ"
+        self.step = step
+        self.round = self.number_instances
+
+    def _generate_instance(
+        self, graph: Graph_Wrapper
+    ) -> tuple[Graph_Wrapper, Optional[bool]]:
+        solver = Delaunay(graph)
+        solver.solve()
+        return (graph, True)
+
+    def _generate_nodes(self) -> list[Node]:
+        """Generiert eine Liste von Knoten mit zufälligen Positionen und Graden."""
+        number_nodes = self.number_nodes - self.step * self.round
+        self.round -= 1
+        return gen_nodes(number_nodes, self.width, self.height)
