@@ -233,6 +233,7 @@ Als mögliche Iterationsanzahl wird folgende Formel verwendet,
 dabei bezeichnet \(\bar{b}\) die durchschnittliche Gradbeschränkung.
 Diese Formel sorgt dafür, dass große Instanzen mehr Iterationen erhalten, während leichtere Instanzen (mit höherem Grad) schneller bearbeitet werden.
 
+
 Sandor P. Fekete et al~\cite{A_network-flow_technique_for_finding_low-weight_bounded-degree_spanning_trees} betrachten ebenfalls das \emph{degree constrained minimum spanning tree} Problem.
 Hierbei wird ein \emph{Flow based Algorithmus} verwendet.
 Da dieser Ansatz wahrscheinlich nicht gut auf Triangulationen übertragbar ist, wird er hier nur kurz behandelt.
@@ -247,6 +248,26 @@ Die beiden Algorithmen liefern eine Liste von Adoptionen, welche die gewünschte
 Der erste Algorithmus nutzt eine fraktionale Lösung und eine Greedy Strategie, um die Adoptionen zu finden.
 Der andere Algorithmus beschränkt die betrachteten Kanten auf jene des gegebenen Spannbaums.
 So können die Algorithmen in polynomialer Zeit eine Lösung finden, die eine Gradbeschränkung einhält.
+
+
+Eine Abwandlung des minimalen Spannbaums mit Gradbeschränkung wurde von Ana Maria de Almeida et al.~\cite{Min-degree_constrained_minimum_spanning_tree_problem:_complexity_properties_and_formulations} untersucht.
+Dabei erweitern sie das Problem um eine Funktion, welche für jeden Knoten einen Mindestgrad vorgibt.
+Dieses Problem wird als \emph{Min-Degree Constrained Minimum Spanning Tree} bezeichnet.
+
+Es wurde das \emph{k-Dimensional Matching Problem} verwendet, um zu zeigen, dass das \emph{Min-Degree Constrained Minimum Spanning Tree} Problem in NP liegt.
+Zu erwähnen ist, dass dies in der dritten Dimension nicht gezeigt wurde.
+Allerdings soll das Problem schwieriger sein als das \emph{Degree Constrained Minimum Spanning Tree}, obwohl auch dieses in NP liegt.
+
+Auch in diesem Fall wird das Problem mit einer \emph{Flow based Formulierung} betrachtet.
+Dabei werden zwei Formulierungen angegeben.
+Eine gerichtete und eine ungerichtete Formulierung.
+Die gerichtete Formulierung soll hierbei effizienter Ergebnisse liefern.
+Die Formulierungen wurden mit einem \emph{Branch and Bound} Algorithmus getestet.
+Dabei wurde festgestellt, dass es bei der gerichteten Formulierung relevant ist, welcher Knoten als Wurzelknoten ausgewählt wird.
+Es konnte jedoch kein einheitlich optimaler Wurzelknoten für die Formulierungen festgestellt werden.
+Des Weiteren wurde häufig festgestellt, dass die Relaxierung keine guten Schranken lieferte.
+Dies konnte damit erklärt werden, dass die zugehörige Formel für den minimalen Spannbaum ohne Gradbeschränkung gleiche Ergebnisse lieferte.
+
 
 \newpage
 
