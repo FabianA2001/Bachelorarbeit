@@ -10,6 +10,7 @@ class SAT(Solver):
         super().__init__(graph)
         self.name = "SAT"
         self.version = "0.1"
+        self.graph.add_all_possible_edges(default_for_active=True)
         self.edges = self.graph.get_all_edges()
         self.edges_to_index = {edge: i for i, edge in enumerate(self.edges)}
 
@@ -31,17 +32,13 @@ class SAT(Solver):
         # CNF-Formel erstellen
         cnf = CNF()
         # Cardinality Constraint: genau n Variablen aus "vars" sind True
-        vars = list(range(1, len(self.edges) + 1))
-        enc = CardEnc.equals(lits=vars, bound=n, encoding=1)
+        self.vars = list(range(1, len(self.edges) + 1))
+        assert len(self.vars) >= n
+        enc = CardEnc.equals(lits=self.vars, bound=n, encoding=1)
         cnf.extend(enc.clauses)
         return cnf
 
     def _actual_solver(self, timeout, queue) -> None:
-        assert (
-            self.graph.get_all_edges() == []
-        ), "Graph is not empty. Please clear the graph before solving."
-        self.graph.add_all_possible_edges(default_for_active=True)
-
         cnf = self.formula_number_vars(self.graph.get_number_edges_in_Triangulation())
 
         self.solver = SatSolver(name="glucose3", bootstrap_with=cnf)
@@ -49,13 +46,17 @@ class SAT(Solver):
 
         # SAT lösen
         if self.solver.solve():
-            # z.B. [1, 2] oder [-1, -2]
-            print("Model:", self.solver.get_model())
+            quere_edges = []
+            model = self.solver.get_model()
+            assert model is not None, "Model should not be None"
+            for var in self.vars:
+                if var in model:
+                    edge = self.get_edge(var)
+                    quere_edges.append(edge)
+            queue.put(quere_edges)
+            queue.put(self.graph.check_if_triangulation_with_degree_constraint())
+            return
+
         else:
             queue.put(False)
             return
-
-        quere_edges = []
-        queue.put(quere_edges)
-        queue.put(self.graph.check_if_triangulation_with_degree_constraint())
-        return
