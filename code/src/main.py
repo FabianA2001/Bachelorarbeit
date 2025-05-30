@@ -8,6 +8,7 @@ from solver.ortools import Ortools
 from solver.raw_flips import Raw_Flips
 from solver.iterative import Iterative
 from solver.cycle_add import Cycle_Add
+from solver.random_adder import Random_Adder
 from solver.sat import SAT
 from graph_utils import run_instance
 from utils import setup_logging
@@ -23,6 +24,7 @@ def solver():
     Ortools
     Cycle_Add
     SAT
+    Random_Adder
 
 
 def custom_points() -> list[Node]:
@@ -39,7 +41,7 @@ def test_algo():
     nodes = load_nodes_from_json("simple_60/000_delaunay_flips.json")
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    solver = SAT(graph)
+    solver = Random_Adder(graph)
     solver.solve(timeout=-1)
     graph.show_and_save()
 
@@ -102,9 +104,9 @@ def block_plt():
 
 
 def main():
-    # test_algo()
+    test_algo()
     # create_instance()
-    run_instance_lokal()
+    # run_instance_lokal()
 
 
 if __name__ == "__main__":

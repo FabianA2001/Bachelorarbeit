@@ -45,7 +45,7 @@ class Cycle_Add(Solver):
         for node in reversed(self.sorted_nodes):
             edges = self.graph.get_edges_of_node(node)
             for edge in edges:
-                self.graph.active_edge(edge)
+                self.graph.activate_edge(edge)
                 if self.graph.check_for_intersection_with_all_edges_and_nodes(
                     edge, check_if_active=True
                 ):

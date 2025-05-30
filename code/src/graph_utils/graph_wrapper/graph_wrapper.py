@@ -77,7 +77,7 @@ class Graph_Wrapper:
         """Entfernt eine Kante zwischen zwei Knoten."""
         self._data.remove_edge(edge)
 
-    def active_edge(
+    def activate_edge(
         self, node1: Union[str, Tuple[str, str]], node2: Optional[str] = None
     ) -> None:
         """Aktiviert eine Kante zwischen zwei Knoten."""

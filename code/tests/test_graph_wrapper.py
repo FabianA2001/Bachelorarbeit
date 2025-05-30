@@ -178,6 +178,23 @@ def test_check_if_triangulation_with_degree_constraint():
     assert not graph.check_if_triangulation_with_degree_constraint()
 
 
+def test_activate_edge():
+    # Test the activate_edge function
+    nodes = [
+        Node("A", (0, 0)),
+        Node("B", (0, 1)),
+        Node("C", (1, 0)),
+        Node("D", (1, 1)),
+    ]
+    graph = Graph_Wrapper(nodes)
+    graph.add_edge("A", "D")
+    assert ("A", "D") in graph.get_all_edges(True)
+    graph.deactivate_edge("A", "D")
+    assert ("A", "D") not in graph.get_all_edges(True)
+    graph.activate_edge("A", "D")
+    assert ("A", "D") in graph.get_all_edges(True)
+
+
 def test_check_for_intersection_with_all_edges_and_nodes():
     # Test the check_for_intersection_with_all_edges_and_nodes function
     nodes = [
