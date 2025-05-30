@@ -2,83 +2,83 @@
   "nodes": [
     {
       "name": "0",
-      "pos": [0, 3],
-      "degree": 4
-    },
-    {
-      "name": "1",
-      "pos": [1, 9],
-      "degree": 4
-    },
-    {
-      "name": "2",
-      "pos": [7, 8],
+      "pos": [3, 10],
       "degree": 3
     },
     {
+      "name": "1",
+      "pos": [8, 9],
+      "degree": 5
+    },
+    {
+      "name": "2",
+      "pos": [10, 5],
+      "degree": 5
+    },
+    {
       "name": "3",
-      "pos": [5, 4],
+      "pos": [10, 6],
       "degree": 4
     },
     {
       "name": "4",
-      "pos": [9, 2],
-      "degree": 3
+      "pos": [6, 6],
+      "degree": 7
     },
     {
       "name": "5",
-      "pos": [8, 3],
-      "degree": 3
+      "pos": [9, 9],
+      "degree": 2
     },
     {
       "name": "6",
-      "pos": [9, 4],
-      "degree": 5
+      "pos": [8, 7],
+      "degree": 4
     },
     {
       "name": "7",
-      "pos": [7, 4],
+      "pos": [7, 7],
       "degree": 6
     },
     {
       "name": "8",
-      "pos": [7, 1],
-      "degree": 7
-    },
-    {
-      "name": "9",
-      "pos": [9, 6],
+      "pos": [8, 10],
       "degree": 6
     },
     {
+      "name": "9",
+      "pos": [5, 7],
+      "degree": 5
+    },
+    {
       "name": "10",
-      "pos": [4, 6],
+      "pos": [2, 9],
       "degree": 6
     },
     {
       "name": "11",
-      "pos": [4, 0],
-      "degree": 4
+      "pos": [2, 1],
+      "degree": 5
     },
     {
       "name": "12",
-      "pos": [3, 2],
-      "degree": 7
+      "pos": [3, 8],
+      "degree": 4
     },
     {
       "name": "13",
-      "pos": [1, 6],
+      "pos": [0, 9],
       "degree": 6
     },
     {
       "name": "14",
-      "pos": [0, 8],
-      "degree": 3
+      "pos": [7, 1],
+      "degree": 5
     },
     {
       "name": "15",
-      "pos": [5, 1],
-      "degree": 5
+      "pos": [3, 7],
+      "degree": 6
     },
     {
       "name": "16",
@@ -87,18 +87,19 @@
     },
     {
       "name": "17",
-      "pos": [4, 7],
-      "degree": 5
+      "pos": [3, 6],
+      "degree": 4
     },
     {
       "name": "18",
-      "pos": [8, 7],
-      "degree": 5
+      "pos": [6, 1],
+      "degree": 4
     },
     {
       "name": "19",
-      "pos": [10, 3],
-      "degree": 3
+      "pos": [6, 3],
+      "degree": 6
     }
-  ]
+  ],
+  "possible": true
 }

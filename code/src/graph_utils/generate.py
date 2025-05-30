@@ -27,64 +27,72 @@ def gen_nodes(
     return nodes
 
 
-class Generate_Instance(ABC):
+class Generate_Instance_ABC_Edges(ABC):
+    @abstractmethod
+    def generate_instance(self, graph: Graph_Wrapper) -> tuple[Graph_Wrapper, bool]:
+        """Generiert eine Instanz des Graphen mit den gegebenen Knoten."""
+        pass
+
+
+class Generate_Instance_ABC_Nodes(ABC):
+    @abstractmethod
+    def generate_nodes(
+        self,
+        number_nodes: int,
+        width: int = graph_const.GEN_WIDTH,
+        height: int = graph_const.GEN_HEIGHT,
+    ) -> list[Node]:
+        """Generiert eine Liste von Knoten mit zufälligen Positionen und Graden."""
+        pass
+
+
+class Generate_Instance:
     def __init__(
         self,
         name: str,
+        file_name: str,
         number_nodes: int,
         number_instances: int,
+        nodes_gen: Generate_Instance_ABC_Nodes,
+        edges_gen: Generate_Instance_ABC_Edges,
         width: int = graph_const.GEN_WIDTH,
         height: int = graph_const.GEN_HEIGHT,
     ) -> None:
         self.name = name
-        self.lokal_name = ""
+        self.file_name = file_name
         self.number_nodes = number_nodes
         self.number_instances = number_instances
+        self.nodes_gen = nodes_gen
+        self.edges_gen = edges_gen
         self.width = width
         self.height = height
 
     def generate(self) -> None:
-        if self.lokal_name == "":
+        if self.file_name == "":
             raise ValueError("lokal_name is not set.")
         for i in range(self.number_instances):
-            nodes = self._generate_nodes()
+            nodes = self.nodes_gen.generate_nodes(
+                self.number_nodes, self.width, self.height
+            )
             graph = Graph_Wrapper(nodes)
-            graph, possible = self._generate_instance(graph)
+            graph, possible = self.edges_gen.generate_instance(graph)
             number = str(i).zfill(3)
-            graph.save_graph_as_json(f"{self.name}/{number}_{self.lokal_name}.json")
+            graph.save_graph_as_json(f"{self.name}/{number}_{self.file_name}.json")
             if possible is not None:
-                path = f"{graph_const.PREFIX_INSTANCE}{self.name}/{number}_{self.lokal_name}.json"
+                path = f"{graph_const.PREFIX_INSTANCE}{self.name}/{number}_{self.file_name}.json"
                 with open(path, "r") as f:
                     data = json.load(f)
                 data["possible"] = possible
                 with open(path, "w") as f:
                     json.dump(data, f, indent=4)
 
-    @abstractmethod
-    def _generate_instance(
-        self, graph: Graph_Wrapper
-    ) -> tuple[Graph_Wrapper, Optional[bool]]: ...
 
-    def _generate_nodes(self) -> list[Node]:
-        """Generiert eine Liste von Knoten mit zufälligen Positionen und Graden."""
-        return gen_nodes(self.number_nodes, self.width, self.height)
-
-
-class Generate_Delaunay_Flips(Generate_Instance):
-    def __init__(
-        self,
-        name: str,
-        number_nodes: int,
-        number_instances: int,
-        number_flips: int = 50,
-        width: int = graph_const.GEN_WIDTH,
-        height: int = graph_const.GEN_HEIGHT,
-    ) -> None:
-        super().__init__(name, number_nodes, number_instances, width, height)
-        self.lokal_name = "delaunay_flips"
+class Generate_Edges_Delaunay_Flips(Generate_Instance_ABC_Edges):
+    def __init__(self, number_flips) -> None:
+        assert number_flips > 0, "Number of flips must be greater than 0."
         self.number_flips = number_flips
 
-    def _generate_instance(
+    def generate_instance(
         self, graph: Graph_Wrapper
     ) -> tuple[Graph_Wrapper, Optional[bool]]:
         solver = Delaunay(graph)
@@ -98,19 +106,8 @@ class Generate_Delaunay_Flips(Generate_Instance):
         return (graph, True)
 
 
-class Generate_Delaunay(Generate_Instance):
-    def __init__(
-        self,
-        name: str,
-        number_nodes: int,
-        number_instances: int,
-        width: int = graph_const.GEN_WIDTH,
-        height: int = graph_const.GEN_HEIGHT,
-    ) -> None:
-        super().__init__(name, number_nodes, number_instances, width, height)
-        self.lokal_name = "delaunay"
-
-    def _generate_instance(
+class Generate_Edges_Delaunay(Generate_Instance_ABC_Edges):
+    def generate_instance(
         self, graph: Graph_Wrapper
     ) -> tuple[Graph_Wrapper, Optional[bool]]:
         solver = Delaunay(graph)
@@ -118,34 +115,29 @@ class Generate_Delaunay(Generate_Instance):
         return (graph, True)
 
 
-class Generate_Delaunay_Iterativ(Generate_Instance):
-    def __init__(
-        self,
-        name: str,
-        number_nodes: int,
-        number_instances: int,
-        step: int = 1,
-        width: int = graph_const.GEN_WIDTH,
-        height: int = graph_const.GEN_HEIGHT,
-    ) -> None:
-        assert step > 0, "Step must be greater than 0."
-        assert number_nodes > 0, "Number of nodes must be greater than 0."
-        assert number_instances > 0, "Number of instances must be greater than 0."
-        assert number_nodes >= step * number_instances
-        super().__init__(name, number_nodes, number_instances, width, height)
-        self.lokal_name = "delaunay_iterativ"
+class Generate_Nodes_Iterativ(Generate_Instance_ABC_Nodes):
+    def __init__(self, step: int, number_instance: int) -> None:
         self.step = step
-        self.round = self.number_instances
+        self.round = number_instance
 
-    def _generate_instance(
-        self, graph: Graph_Wrapper
-    ) -> tuple[Graph_Wrapper, Optional[bool]]:
-        solver = Delaunay(graph)
-        solver.solve()
-        return (graph, True)
-
-    def _generate_nodes(self) -> list[Node]:
+    def generate_nodes(
+        self,
+        number_nodes: int,
+        width: int = graph_const.GEN_WIDTH,
+        height: int = graph_const.GEN_HEIGHT,
+    ) -> list[Node]:
         """Generiert eine Liste von Knoten mit zufälligen Positionen und Graden."""
-        number_nodes = self.number_nodes - self.step * self.round
+        number_nodes = number_nodes - self.step * self.round
         self.round -= 1
-        return gen_nodes(number_nodes, self.width, self.height)
+        return gen_nodes(number_nodes, width, height)
+
+
+class Generate_Nodes_Random(Generate_Instance_ABC_Nodes):
+    def generate_nodes(
+        self,
+        number_nodes: int,
+        width: int = graph_const.GEN_WIDTH,
+        height: int = graph_const.GEN_HEIGHT,
+    ) -> list[Node]:
+        """Generiert eine Liste von Knoten mit zufälligen Positionen und Graden."""
+        return gen_nodes(number_nodes, width, height)

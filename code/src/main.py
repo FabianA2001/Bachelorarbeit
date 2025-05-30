@@ -75,8 +75,18 @@ def run_instance_lokal():
 
 
 def create_instance():
-    generate.Generate_Delaunay_Iterativ(
-        name="iterative_70_5", number_nodes=70, number_instances=10, step=5
+    NAME = "iterative_70_5"
+    FILE_NAME = "delaunay_flips_iterative"
+    NUMBER_INSTANCE = 10
+    NUMBER_NODES = 70
+    STEP = 5
+    generate.Generate_Instance(
+        NAME,
+        FILE_NAME,
+        NUMBER_NODES,
+        NUMBER_INSTANCE,
+        generate.Generate_Nodes_Iterativ(STEP, NUMBER_INSTANCE),
+        generate.Generate_Edges_Delaunay_Flips(200),
     ).generate()
 
 
