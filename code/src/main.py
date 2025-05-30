@@ -71,13 +71,21 @@ def move():
 
 def run_instance_lokal():
     inst = "iterative_70_5"
+    file_suffix_name = ""
     file_suffix_name = "incorrect"
-    for solver in [Raw_Flips, Iterative, Random_Adder, Cycle_Add]:
+    for solver in [Raw_Flips, Random_Adder, Cycle_Add, SAT, Ortools]:
         run_instance.run_solver_on_instance(
-            solver_type=solver, instance_name=inst, file_suffix_name=file_suffix_name
+            solver_type=solver,
+            instance_name=inst,
+            file_suffix_name=file_suffix_name,
+            timeout=10,
         )
-    run_instance.show_results(f"{inst}_{file_suffix_name}")
-    # run_instance.show_percentage_of_correct_nodes(inst)
+    if file_suffix_name != "":
+        run_instance.show_results(f"{inst}_{file_suffix_name}", ignore_correct=True)
+        run_instance.show_percentage_of_correct_nodes(f"{inst}_{file_suffix_name}")
+    else:
+        run_instance.show_results(inst)
+        run_instance.show_percentage_of_correct_nodes(inst)
 
 
 def create_instance():

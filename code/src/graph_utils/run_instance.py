@@ -158,7 +158,7 @@ def show_results(instance_name: str, block: bool = False, ignore_correct: bool =
     )
 
     plt.title(f"Vergleich der Laufzeiten (Time) für {instance_name} je Problem")
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=90)
     plt.grid(True, axis="y", linestyle="--", alpha=0.7)
     plt.tight_layout()
     plt.show(block=block)
@@ -194,7 +194,7 @@ def show_percentage_of_correct_nodes(instance_name: str, block: bool = False):
     )
 
     plt.title(f"Vergleich der Prozentsätze (Percentage) für {instance_name} je Problem")
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=90)
     plt.grid(True, axis="y", linestyle="--", alpha=0.7)
     plt.tight_layout()
     plt.show(block=block)
