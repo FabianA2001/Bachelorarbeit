@@ -19,6 +19,9 @@ class Raw_Flips(Solver):
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
         edges = self.graph.get_edges_of_node(node)
+        if len(edges) == 0:
+            self.graph.show_and_save(show=False)
+            assert len(edges) > 0, "No edges found for node: {}".format(node)
         while len(edges) > 0:
             edge = random.choice(edges)
             edges.remove(edge)
@@ -30,12 +33,8 @@ class Raw_Flips(Solver):
             if self.probability_check():
                 return edge
 
-        if len(edges) == 0:
-            self.graph.show_and_save()
-            assert len(edges) > 0, "No edges found for node: {}".format(node)
-
         # TODO Sehr unschön vlt bessere möglichkeit finden
-        return edges[0]
+        return edge
 
     def __do_flip(
         self,
