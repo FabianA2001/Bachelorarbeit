@@ -125,7 +125,7 @@ def run_solver_on_instance(
         )
 
 
-def show_results(instance_name: str, block: bool = False):
+def show_results(instance_name: str, block: bool = False, ignore_correct: bool = False):
     with open(f"{os.path.join(graph_const.RESULTS_DIR, instance_name)}.json", "r") as f:
         data = json.load(f)
 
@@ -134,7 +134,10 @@ def show_results(instance_name: str, block: bool = False):
         # Sortiere die Probleme nach der führenden Nummer
         for problem_name in sorted(problems.keys(), key=lambda x: int(x.split("_")[0])):
             info = problems[problem_name]
-            time = info["time"] if info["correct"] else graph_const.FAIL_VALUE
+            if ignore_correct:
+                time = info["time"]
+            else:
+                time = info["time"] if info["correct"] else graph_const.FAIL_VALUE
             rows.append(
                 {
                     "Algorithm": algo_name,
