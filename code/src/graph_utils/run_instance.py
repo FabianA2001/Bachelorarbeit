@@ -84,6 +84,11 @@ def run_solver_on_instance(
             f"Instance {instance_name} not found in {graph_const.PREFIX_INSTANCE}"
         )
     instance = instance[instance_name]
+    instance_name_file = (
+        f"{instance_name}_{file_suffix_name}"
+        if file_suffix_name != ""
+        else f"{instance_name}"
+    )
     for file_name, file_path in instance.items():
         nodes = load_nodes_from_json(file_path)
         with open(f"{graph_const.PREFIX_INSTANCE}{file_path}", "r") as f:
@@ -109,13 +114,8 @@ def run_solver_on_instance(
             else f"{solver.name}_{solver.version}"
         )
 
-        file_name = (
-            f"{file_name}_{file_suffix_name}"
-            if file_suffix_name != ""
-            else f"{file_name}"
-        )
         save_result(
-            instance_name,
+            instance_name_file,
             solver_name,
             file_name,
             duration,
@@ -129,10 +129,11 @@ def show_results(instance_name: str, block: bool = False):
     with open(f"{os.path.join(graph_const.RESULTS_DIR, instance_name)}.json", "r") as f:
         data = json.load(f)
 
-    # In ein DataFrame umwandeln
     rows = []
     for algo_name, problems in data.items():
-        for problem_name, info in problems.items():
+        # Sortiere die Probleme nach der führenden Nummer
+        for problem_name in sorted(problems.keys(), key=lambda x: int(x.split("_")[0])):
+            info = problems[problem_name]
             time = info["time"] if info["correct"] else graph_const.FAIL_VALUE
             rows.append(
                 {
@@ -144,13 +145,12 @@ def show_results(instance_name: str, block: bool = False):
 
     df = pd.DataFrame(rows)
 
-    # Seaborn Barplot
     plt.figure(figsize=(12, 6))
     sns.barplot(
         data=df,
         x="Problem",
         y="Time",
-        hue="Algorithm",  # Dadurch werden die Balken nebeneinander gruppiert
+        hue="Algorithm",
         palette="muted",
     )
 
@@ -165,10 +165,11 @@ def show_percentage_of_correct_nodes(instance_name: str, block: bool = False):
     with open(f"{os.path.join(graph_const.RESULTS_DIR, instance_name)}.json", "r") as f:
         data = json.load(f)
 
-    # In ein DataFrame umwandeln
     rows = []
     for algo_name, problems in data.items():
-        for problem_name, info in problems.items():
+        # Sortiere die Probleme nach der führenden Nummer
+        for problem_name in sorted(problems.keys(), key=lambda x: int(x.split("_")[0])):
+            info = problems[problem_name]
             percentage = info["percentage"]
             rows.append(
                 {
@@ -180,13 +181,12 @@ def show_percentage_of_correct_nodes(instance_name: str, block: bool = False):
 
     df = pd.DataFrame(rows)
 
-    # Seaborn Barplot
     plt.figure(figsize=(12, 6))
     sns.barplot(
         data=df,
         x="Problem",
         y="Percentage",
-        hue="Algorithm",  # Dadurch werden die Balken nebeneinander gruppiert
+        hue="Algorithm",
         palette="muted",
     )
 
