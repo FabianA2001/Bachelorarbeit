@@ -76,6 +76,7 @@ def run_solver_on_instance(
     instance_name: str,
     timeout: int = -1,
     algo_suffix_name: str = "",
+    file_suffix_name: str = "",
 ):
     instance = get_instances()
     if instance_name not in instance.keys():
@@ -106,6 +107,12 @@ def run_solver_on_instance(
             f"{solver.name}_{solver.version}_{algo_suffix_name}"
             if algo_suffix_name != ""
             else f"{solver.name}_{solver.version}"
+        )
+
+        file_name = (
+            f"{file_name}_{file_suffix_name}"
+            if file_suffix_name != ""
+            else f"{file_name}"
         )
         save_result(
             instance_name,

@@ -3,6 +3,7 @@ from graph_utils.node import Node
 from graph_utils import graph_const
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from solver.delaunay import Delaunay
+from solver.random_adder import Random_Adder
 from random import choice
 from abc import ABC, abstractmethod
 from typing import Optional
@@ -111,6 +112,15 @@ class Generate_Edges_Delaunay(Generate_Instance_ABC_Edges):
         self, graph: Graph_Wrapper
     ) -> tuple[Graph_Wrapper, Optional[bool]]:
         solver = Delaunay(graph)
+        solver.solve()
+        return (graph, True)
+
+
+class Generate_Edges_Random(Generate_Instance_ABC_Edges):
+    def generate_instance(
+        self, graph: Graph_Wrapper
+    ) -> tuple[Graph_Wrapper, Optional[bool]]:
+        solver = Random_Adder(graph)
         solver.solve()
         return (graph, True)
 

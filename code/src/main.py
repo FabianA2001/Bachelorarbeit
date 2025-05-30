@@ -41,8 +41,8 @@ def test_algo():
     nodes = load_nodes_from_json("simple_60/000_delaunay_flips.json")
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    solver = Random_Adder(graph)
-    solver.solve(timeout=-1)
+    solver = Raw_Flips(graph)
+    solver.solve(timeout=10)
     graph.show_and_save()
 
 
@@ -71,14 +71,18 @@ def move():
 
 def run_instance_lokal():
     inst = "iterative_70_5"
-    run_instance.run_solver_on_instance(solver_type=SAT, instance_name=inst)
-    run_instance.show_results(inst)
+    file_suffix_name = "incorrect"
+    for solver in [Raw_Flips, Iterative, Random_Adder, Cycle_Add]:
+        run_instance.run_solver_on_instance(
+            solver_type=solver, instance_name=inst, file_suffix_name=file_suffix_name
+        )
+    run_instance.show_results(f"{inst}_{file_suffix_name}")
     # run_instance.show_percentage_of_correct_nodes(inst)
 
 
 def create_instance():
     NAME = "iterative_70_5"
-    FILE_NAME = "delaunay_flips_iterative"
+    FILE_NAME = "Random_iterative"
     NUMBER_INSTANCE = 10
     NUMBER_NODES = 70
     STEP = 5
@@ -88,7 +92,7 @@ def create_instance():
         NUMBER_NODES,
         NUMBER_INSTANCE,
         generate.Generate_Nodes_Iterativ(STEP, NUMBER_INSTANCE),
-        generate.Generate_Edges_Delaunay_Flips(200),
+        generate.Generate_Edges_Random(),
     ).generate()
 
 
@@ -104,9 +108,9 @@ def block_plt():
 
 
 def main():
-    test_algo()
+    # test_algo()
     # create_instance()
-    # run_instance_lokal()
+    run_instance_lokal()
 
 
 if __name__ == "__main__":

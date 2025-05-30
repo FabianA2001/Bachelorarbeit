@@ -1,0 +1,180 @@
+{
+  "nodes": [
+    {
+      "name": "0",
+      "pos": [9, 10],
+      "degree": 5
+    },
+    {
+      "name": "1",
+      "pos": [8, 0],
+      "degree": 5
+    },
+    {
+      "name": "2",
+      "pos": [3, 7],
+      "degree": 5
+    },
+    {
+      "name": "3",
+      "pos": [3, 4],
+      "degree": 9
+    },
+    {
+      "name": "4",
+      "pos": [0, 0],
+      "degree": 4
+    },
+    {
+      "name": "5",
+      "pos": [2, 10],
+      "degree": 3
+    },
+    {
+      "name": "6",
+      "pos": [8, 4],
+      "degree": 5
+    },
+    {
+      "name": "7",
+      "pos": [7, 5],
+      "degree": 3
+    },
+    {
+      "name": "8",
+      "pos": [2, 9],
+      "degree": 9
+    },
+    {
+      "name": "9",
+      "pos": [3, 8],
+      "degree": 10
+    },
+    {
+      "name": "10",
+      "pos": [2, 7],
+      "degree": 4
+    },
+    {
+      "name": "11",
+      "pos": [2, 5],
+      "degree": 5
+    },
+    {
+      "name": "12",
+      "pos": [7, 2],
+      "degree": 8
+    },
+    {
+      "name": "13",
+      "pos": [4, 3],
+      "degree": 4
+    },
+    {
+      "name": "14",
+      "pos": [3, 5],
+      "degree": 5
+    },
+    {
+      "name": "15",
+      "pos": [3, 6],
+      "degree": 4
+    },
+    {
+      "name": "16",
+      "pos": [6, 2],
+      "degree": 5
+    },
+    {
+      "name": "17",
+      "pos": [3, 2],
+      "degree": 7
+    },
+    {
+      "name": "18",
+      "pos": [1, 8],
+      "degree": 6
+    },
+    {
+      "name": "19",
+      "pos": [8, 9],
+      "degree": 3
+    },
+    {
+      "name": "20",
+      "pos": [8, 1],
+      "degree": 13
+    },
+    {
+      "name": "21",
+      "pos": [1, 3],
+      "degree": 8
+    },
+    {
+      "name": "22",
+      "pos": [5, 1],
+      "degree": 3
+    },
+    {
+      "name": "23",
+      "pos": [7, 6],
+      "degree": 3
+    },
+    {
+      "name": "24",
+      "pos": [4, 6],
+      "degree": 3
+    },
+    {
+      "name": "25",
+      "pos": [9, 8],
+      "degree": 8
+    },
+    {
+      "name": "26",
+      "pos": [2, 3],
+      "degree": 4
+    },
+    {
+      "name": "27",
+      "pos": [4, 2],
+      "degree": 4
+    },
+    {
+      "name": "28",
+      "pos": [10, 2],
+      "degree": 4
+    },
+    {
+      "name": "29",
+      "pos": [2, 0],
+      "degree": 5
+    },
+    {
+      "name": "30",
+      "pos": [2, 6],
+      "degree": 4
+    },
+    {
+      "name": "31",
+      "pos": [10, 1],
+      "degree": 3
+    },
+    {
+      "name": "32",
+      "pos": [5, 8],
+      "degree": 7
+    },
+    {
+      "name": "33",
+      "pos": [4, 8],
+      "degree": 4
+    },
+    {
+      "name": "34",
+      "pos": [0, 1],
+      "degree": 4
+    }
+  ],
+  "possible": true
+}
