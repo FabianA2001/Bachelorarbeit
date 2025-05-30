@@ -15,48 +15,11 @@ Try to use existing abbreviations from related work if possible.
 
 
 \section{Related Work}
-% What has been done in existing literature?
-% This is needed to provide context of the area you are working in.
-
-% You could for example cite~\cite{limper2013pop} with
-% \begin{verbatim}
-% ... example cite~\cite{limper2013pop} with
-% \end{verbatim}
-% The $\sim$ keeps two word in the same line but also separates with a space.
-% Note that there is no space before the $\sim$.
-
-% \section{Hints}
-% For titles see \url{https://en.wikipedia.org/wiki/Title_case}.
-
-% Leave an empty line to start a new paragraph.
-% As a general rule: Never force line breaks.
-% \begin{verbatim}
-% Never use \\ or \newline
-% \end{verbatim}
-
-% You can add and refer to figures like \cref{fig:logo}.
-% \begin{verbatim}
-% ... figures like \cref{fig:logo}.
-% \end{verbatim}
-% The \verb|\cref{}| command automatically detects the reference type.
-
-% \begin{figure}
-% 	\centering
-% 	\includegraphics[]{tu-bs_logo}
-% 	\caption[Short description]{Long description: Notice that the List of Figures has a shorter description than this text right here. Isn't this fascinating?}
-% 	\label{fig:logo}
-% \end{figure}
-
-% Generally, we prefer a graph $G$ is \emph{complete} over \textbf{complete} if \ldots
-% \begin{verbatim}
-% ... graph $G$ is \emph{complete} over \textbf{complete} if \ldots.
-% \end{verbatim}
-
 In diesem Abschnitt werden verschiedene wissenschaftliche Arbeiten aus diesem Themenbereich betrachtet.
 Dies dient dazu, einen Überblick über den aktuellen Entwicklungsstand zu erhalten.
-Wir betrachten dazu drei verschiedene Bereiche.
+Dazu werden drei Bereiche begutachtet.
 Der erste Bereich behandelt die \emph{Delaunay Triangulation}.
-Diese zählt zu den bekanntesten Triangulationen und bietet einen grundlegenden Einblick in das Thema Triangulation.
+Diese zählt zu den bekanntesten Triangulations und bietet einen grundlegenden Einblick in das Thema Triangulation.
 Der zweite Bereich umfasst \emph{Flips in Triangulations}.
 Hier wird untersucht, wie sich Triangulation durch lokale Änderungen gezielt modifizieren lassen.
 Der dritte und letzte Bereich befasst sich mit dem Problem des \emph{degree constrained minimum spanning tree}.
@@ -64,15 +27,15 @@ Dabei werden insbesondere Ansätze zur Einhaltung von Grad Beschränkungen betra
 
 Es ist noch zu erwähnen, dass Sharir et. al.~\cite{On_degrees_in_random_triangulations_of_point_setss} den minimalen und maximalen Grad in einer Triangulation untersucht haben.
 Darüber hinaus haben Datta et. al.~\cite{Degree_regular_triangulations_of_surfaces} und Gewali et. al.~\cite{Degree_aware_triangulation_of_annular_regions} sich mit Triangulation beschäftigt, bei denen jeder Knoten einen geraden Grad hat.
-Da diese beiden Themenbereiche keinen direkten Mehrwert für die vorliegende Arbeit bieten, werden sie hier lediglich der Vollständigkeit halber namentlich erwähnt.
+Da diese beiden Themenbereiche keinen direkten Mehrwert für die vorliegende Arbeit bieten, werden sie hier lediglich der Vollständigkeitshalber namentlich erwähnt.
 
 \subsection{Delaunay Triangulations}
-Als Grundlage für den Algorithmus kann die Delaunay-Triangulation betrachtet werden.
+Als Grundlage für den Algorithmus kann die \emph{Delaunay-Triangulation} betrachtet werden.
 Diese liefert eine Triangulation, die möglichst gleichschenklige und gleichwinklige Dreiecke verwendet~\cite{Properties_of_the_Delaunay_triangulation}.
 Dies wird erreicht, indem der minimale Winkel maximiert wird.
 Im Buch von de Berg et al.~\cite{Delaunay_Triangulation} wird diese Variante der Triangulation ausführlich behandelt.
 
-Triangulationen eignen sich durch ihre Struktur besonders gut zur Darstellung von Höhendaten im zweidimensionalen Raum (siehe~\cref{fig:terrain}).
+Triangulations eignen sich durch ihre Struktur besonders gut zur Darstellung von Höhendaten im zweidimensionalen Raum (siehe~\cref{fig:terrain}).
 Dabei kann ausgenutzt werden, dass Dreiecke unterschiedliche Innenwinkel und Kantenlängen besitzen.
 
 \begin{figure}[tb]
@@ -84,15 +47,6 @@ Dabei kann ausgenutzt werden, dass Dreiecke unterschiedliche Innenwinkel und Kan
 Das Grundproblem besteht darin, dass die Höhendaten nur an bestimmten Punkten bekannt sind und die restlichen Werte daher geschätzt werden müssen.
 Dies kann durch die Delaunay-Triangulation gut gelöst werden, da die Dreiecke aufgrund ihrer gleichschenkligen Eigenschaft visuell geeignet sind, die fehlenden Daten zu ergänzen.
 
-% Es wird außerdem angegeben, dass die Anzahl der Kanten in einer Triangulation immer
-% \[
-% 3 \cdot n - 3 - k
-% \]
-% und die Anzahl der Dreiecke
-% \[
-% 2 \cdot n - 2 - k
-% \]
-% beträgt, wobei \(n\) die Anzahl der Knoten und \(k\) die Anzahl der Knoten auf der konvexen Hülle darstellt.
 Es werden auch Formel für die Anzahl der Kanten und Dreiecke in einer Triangulation angegeben.
 Für eine Punktemenge mit \(n\) Punkten und \(k\) Punkten auf der konvexen Hülle gilt:
 \[
@@ -102,12 +56,8 @@ Für eine Punktemenge mit \(n\) Punkten und \(k\) Punkten auf der konvexen Hüll
 \text{Anzahl Dreiecke: }2 n - 2 - k
 \]
 
-
-% Grob gesagt können Delaunay Triangulation durch \emph{Voronoi Diagramm} erzeugt werden oder in dem zufällig Kanten hinzugefügt werden und danach \emph{Legalisiert} werden.
-
 \subsection{Flips in Triangulations}
 Flips sind Möglichkeiten, um Kanten in einer Triangulation auszutauschen.
-% Da Triangulationen für die gleiche Knotenmenge, wie in~\cite{Delaunay_Triangulation} erwähnt, stets die gleiche Anzahl an Kanten besitzen
 Wie oben erwähnt, müssen Triangulation eine feste Anzahl an Kanten besitzen~\cite{Delaunay_Triangulation}.
 Dementsprechend können keine Kanten hinzugefügt oder entfernt werden, um den Grad einer Triangulation zu verändern.
 Daraus folgt, dass für jede entfernte Kante eine andere Kante eingefügt werden muss.
@@ -233,18 +183,40 @@ Als mögliche Iterationsanzahl wird folgende Formel verwendet,
 dabei bezeichnet \(\bar{b}\) die durchschnittliche Gradbeschränkung.
 Diese Formel sorgt dafür, dass große Instanzen mehr Iterationen erhalten, während leichtere Instanzen (mit höherem Grad) schneller bearbeitet werden.
 
-Sandor P. Fekete et al~\cite{A_network-flow_technique_for_finding_low-weight_bounded-degree_spanning_trees} betrachten ebenfalls das \emph{degree constrained minimum spanning tree} Problem. 
-Hierbei wird ein \emph{Flow based Algorithmus} verwendet. 
-Da dieser Ansatz wahrscheinlich nicht gut auf Triangulationen übertragbar ist, wird er hier nur kurz behandelt. 
-Zunächst wird das Problem als \emph{NP hard} eingeordnet. 
 
-Im praktischen Teil des Papers werden zwei Algorithmen vorgestellt. 
-Diese erhalten einen minimalen Spannbaum und verändern ihn so, dass er eine Gradbeschränkung einhält. 
-Dabei wird darauf geachtet, dass sich das Gewicht des Spannbaums nicht stark verschlechtert. 
-Für diese Algorithmen werden Hauptoperationen namens \emph{Adoptions} eingeführt. 
-Diese funktionieren ähnlich wie Flips, jedoch für einen Spannbaum. 
-Es handelt sich also um Operationen, die eine legale Veränderung bewirken. 
-Die beiden Algorithmen liefern anschließend eine Liste von Adoptionen, welche die gewünschte Änderung erzeugen.
+Sandor P. Fekete et al~\cite{A_network-flow_technique_for_finding_low-weight_bounded-degree_spanning_trees} betrachten ebenfalls das \emph{degree constrained minimum spanning tree} problem.
+Hierbei wird ein \emph{Flow based Algorithmus} verwendet.
+Da dieser Ansatz wahrscheinlich nicht gut auf Triangulations übertragbar ist, wird er hier nur kurz behandelt.
+
+Im praktischen Teil des Papers werden zwei Algorithmen vorgestellt.
+Diese erhalten einen minimalen Spannbaum und verändern ihn so, dass er eine Gradbeschränkung einhält.
+Dabei wird darauf geachtet, dass sich das Gewicht des Spannbaums nicht stark verschlechtert.
+Für diese Algorithmen werden Hauptoperationen namens \emph{Adoptions} eingeführt.
+Diese funktionieren ähnlich wie Flips nur für einen Spannbaum.
+Es handelt sich also um Operationen, die eine legale Veränderung bewirken.
+Die beiden Algorithmen liefern eine Liste von Adoptionen, welche die gewünschte Änderung erzeugen.
+Der erste Algorithmus nutzt eine fraktionale Lösung und eine Greedy Strategie, um die Adoptionen zu finden.
+Der andere Algorithmus beschränkt die betrachteten Kanten auf jene des gegebenen Spannbaums.
+So können die Algorithmen in polynomialer Zeit eine Lösung finden, die eine Gradbeschränkung einhält.
+
+
+Eine Abwandlung des minimalen Spannbaums mit Gradbeschränkung wurde von Ana Maria de Almeida et al.~\cite{Min-degree_constrained_minimum_spanning_tree_problem:_complexity_properties_and_formulations} untersucht.
+Dabei erweitern sie das Problem um eine Funktion, welche für jeden Knoten einen Mindestgrad vorgibt.
+Dieses Problem wird als \emph{Min-Degree Constrained Minimum Spanning Tree} bezeichnet.
+
+Es wurde das \emph{k-Dimensional Matching Problem} verwendet, um zu zeigen, dass das \emph{Min-Degree Constrained Minimum Spanning Tree} Problem in NP liegt.
+Zu erwähnen ist, dass dies in der dritten Dimension nicht gezeigt wurde.
+Allerdings soll das Problem schwieriger sein als das \emph{Degree Constrained Minimum Spanning Tree}, obwohl auch dieses in NP liegt.
+
+Auch in diesem Fall wird das Problem mit einer \emph{Flow based Formulierung} betrachtet.
+Dabei werden zwei Formulierungen angegeben.
+Eine gerichtete und eine ungerichtete Formulierung.
+Die gerichtete Formulierung soll hierbei effizienter Ergebnisse liefern.
+Die Formulierungen wurden mit einem \emph{Branch and Bound} Algorithmus getestet.
+Dabei wurde festgestellt, dass es bei der gerichteten Formulierung relevant ist, welcher Knoten als Wurzelknoten ausgewählt wird.
+Es konnte jedoch kein einheitlich optimaler Wurzelknoten für die Formulierungen festgestellt werden.
+Des Weiteren wurde häufig festgestellt, dass die Relaxierung keine guten Schranken lieferte.
+Dies konnte damit erklärt werden, dass die zugehörige Formel für den minimalen Spannbaum ohne Gradbeschränkung gleiche Ergebnisse lieferte.
 
 
 \newpage
