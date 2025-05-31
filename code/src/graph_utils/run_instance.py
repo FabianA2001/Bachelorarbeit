@@ -121,7 +121,7 @@ def run_solver_on_instance(
             duration,
             correct,
             graph.get_all_edges(True),
-            graph.percentage_of_correct_nodes(),
+            graph.evaluate_graph(),
         )
 
 

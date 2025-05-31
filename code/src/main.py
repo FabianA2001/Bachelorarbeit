@@ -40,11 +40,12 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    nodes = load_nodes_from_json("simple_20/000_delaunay_flips.json")
+    nodes = load_nodes_from_json("simple_40/000_delaunay_flips.json")
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    solver = Remover(graph)
-    solver.solve(timeout=-1)
+    solver = SAT(graph)
+    solver.solve(timeout=10)
+    logging.info(f"evaluation: {graph.evaluate_graph()}")
     graph.show_and_save()
 
 
@@ -74,16 +75,16 @@ def move():
 def run_instance_lokal():
     inst = "iterative_70_5"
     file_suffix_name = ""
-    file_suffix_name = "Sat_Vergleich"
-    # for solver in [Raw_Flips, Random_Adder, Cycle_Add, SAT, Ortools]:
-    run_instance.run_solver_on_instance(
-        solver_type=SAT,
-        instance_name=inst,
-        file_suffix_name=file_suffix_name,
-        timeout=20,
-    )
+    file_suffix_name = "incorrect_30_sec"
+    for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
+        run_instance.run_solver_on_instance(
+            solver_type=solver,
+            instance_name=inst,
+            file_suffix_name=file_suffix_name,
+            timeout=30,
+        )
     if file_suffix_name != "":
-        run_instance.show_results(f"{inst}_{file_suffix_name}")
+        run_instance.show_results(f"{inst}_{file_suffix_name}", ignore_correct=True)
         run_instance.show_percentage_of_correct_nodes(f"{inst}_{file_suffix_name}")
 
         # run_instance.show_triangulation_from_result(
@@ -125,9 +126,9 @@ def block_plt():
 
 
 def main():
-    # test_algo()
+    test_algo()
     # create_instance()
-    run_instance_lokal()
+    # run_instance_lokal()
 
 
 if __name__ == "__main__":

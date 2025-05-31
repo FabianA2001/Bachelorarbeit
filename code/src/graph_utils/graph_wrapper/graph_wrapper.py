@@ -213,3 +213,18 @@ class Graph_Wrapper:
         if node not in self._data.nodes:
             raise ValueError(f"Node {node} does not exist in the graph.")
         return self._data.nodes[node].get("degree")
+
+    def evaluate_graph(self) -> float:
+        evaluation = 0.0
+        number_of_nodes = len(self.get_all_nodes_name())
+        for node in self.get_all_nodes_name():
+            sollGrad = self.get_degree_of_node(node)
+            echterGrad = self._data.degree(node)
+            x = (sollGrad - abs(sollGrad - echterGrad)) / sollGrad
+            evaluation += x
+
+        evaluation /= number_of_nodes
+
+        assert evaluation >= 0, "Evaluation must be non-negative."
+        assert evaluation <= 1, "Evaluation must be smaller then 1."
+        return evaluation
