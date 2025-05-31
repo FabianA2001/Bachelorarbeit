@@ -43,7 +43,7 @@ def test_algo():
     nodes = load_nodes_from_json("simple_40/000_delaunay_flips.json")
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    solver = Cycle_Add(graph)
+    solver = SAT(graph)
     solver.solve(timeout=10)
     logging.info(f"evaluation: {graph.evaluate_graph()}")
     graph.show_and_save()
@@ -126,9 +126,9 @@ def block_plt():
 
 
 def main():
-    # test_algo()
+    test_algo()
     # create_instance()
-    run_instance_lokal()
+    # run_instance_lokal()
 
 
 if __name__ == "__main__":
