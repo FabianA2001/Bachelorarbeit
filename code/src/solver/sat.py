@@ -34,7 +34,7 @@ class SAT(Solver):
 
     def degree_constraint(self):
         for node in self.graph.get_all_nodes_name():
-            degree = self.graph.get_degree(node)
+            degree = self.graph.get_degree_of_node(node)
             if degree == -1:
                 continue
             edges = self.graph.get_edges_of_node(node)

@@ -9,6 +9,7 @@ from solver.raw_flips import Raw_Flips
 from solver.iterative import Iterative
 from solver.cycle_add import Cycle_Add
 from solver.random_adder import Random_Adder
+from solver.remover import Remover
 from solver.sat import SAT
 from graph_utils import run_instance
 from utils import setup_logging
@@ -25,6 +26,7 @@ def solver():
     Cycle_Add
     SAT
     Random_Adder
+    Remover
 
 
 def custom_points() -> list[Node]:
@@ -38,11 +40,11 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    nodes = load_nodes_from_json("simple_60/000_delaunay_flips.json")
+    nodes = load_nodes_from_json("simple_20/000_delaunay_flips.json")
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    solver = Raw_Flips(graph)
-    solver.solve(timeout=10)
+    solver = Remover(graph)
+    solver.solve(timeout=-1)
     graph.show_and_save()
 
 
@@ -116,9 +118,9 @@ def block_plt():
 
 
 def main():
-    # test_algo()
+    test_algo()
     # create_instance()
-    run_instance_lokal()
+    # run_instance_lokal()
 
 
 if __name__ == "__main__":
