@@ -10,7 +10,7 @@ class SAT(Solver):
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = "SAT"
-        self.version = "0.4"
+        self.version = "0.2"
         self.graph.add_all_possible_edges(default_for_active=True)
         self.edges = self.graph.get_all_edges()
         self.edges_to_index = {edge: i for i, edge in enumerate(self.edges)}
