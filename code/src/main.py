@@ -74,17 +74,24 @@ def move():
 def run_instance_lokal():
     inst = "iterative_70_5"
     file_suffix_name = ""
-    file_suffix_name = "incorrect"
-    for solver in [Raw_Flips, Random_Adder, Cycle_Add, SAT, Ortools]:
-        run_instance.run_solver_on_instance(
-            solver_type=solver,
-            instance_name=inst,
-            file_suffix_name=file_suffix_name,
-            timeout=10,
-        )
+    file_suffix_name = "Sat_Vergleich"
+    # for solver in [Raw_Flips, Random_Adder, Cycle_Add, SAT, Ortools]:
+    run_instance.run_solver_on_instance(
+        solver_type=SAT,
+        instance_name=inst,
+        file_suffix_name=file_suffix_name,
+        timeout=20,
+    )
     if file_suffix_name != "":
-        run_instance.show_results(f"{inst}_{file_suffix_name}", ignore_correct=True)
+        run_instance.show_results(f"{inst}_{file_suffix_name}")
         run_instance.show_percentage_of_correct_nodes(f"{inst}_{file_suffix_name}")
+
+        # run_instance.show_triangulation_from_result(
+        #     inst,
+        #     "SAT_0.2",
+        #     "009_delaunay_flips_iterative",
+        #     f"{inst}_{file_suffix_name}"
+        # )
     else:
         run_instance.show_results(inst)
         run_instance.show_percentage_of_correct_nodes(inst)
@@ -118,9 +125,9 @@ def block_plt():
 
 
 def main():
-    test_algo()
+    # test_algo()
     # create_instance()
-    # run_instance_lokal()
+    run_instance_lokal()
 
 
 if __name__ == "__main__":
