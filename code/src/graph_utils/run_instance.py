@@ -205,11 +205,14 @@ def show_triangulation_from_result(
     instance_name: str,
     algorithm_name: str,
     instance_file_name: str,
+    result_file_name: str,
 ):
     nodes = load_nodes_from_json(
-        os.path.join(graph_const.PREFIX_INSTANCE, instance_name, instance_file_name)
+        f"{os.path.join(instance_name, instance_file_name)}.json"
     )
-    with open(os.path.join(graph_const.RESULTS_DIR, f"{instance_name}.json"), "r") as f:
+    with open(
+        os.path.join(graph_const.RESULTS_DIR, f"{result_file_name}.json"), "r"
+    ) as f:
         data = json.load(f)
     triangulation = data[algorithm_name][instance_file_name]["triangulation"]
     graph = Graph_Wrapper(nodes)
