@@ -10,7 +10,7 @@ class SAT(Solver):
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = "SAT"
-        self.version = "0.3"
+        self.version = "0.4"
         self.graph.add_all_possible_edges(default_for_active=True)
         self.edges = self.graph.get_all_edges()
         self.edges_to_index = {edge: i for i, edge in enumerate(self.edges)}
@@ -25,15 +25,9 @@ class SAT(Solver):
         return self.edges[index - 1]
 
     def intersection_constraint(self):
-        seen = set()
         for edge in self.edges:
             intersections = self.graph.get_intersections_with_all_edges(edge)
             for intersection in intersections:
-                # Erzeuge ein sortiertes Tupel, damit (a,b) und (b,a) gleich behandelt werden
-                pair = tuple(sorted([edge, intersection]))
-                if pair in seen:
-                    continue
-                seen.add(pair)
                 self.solver.add_clause(
                     [-self.get_index(edge), -self.get_index(intersection)]
                 )
