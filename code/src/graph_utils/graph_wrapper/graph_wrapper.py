@@ -220,11 +220,15 @@ class Graph_Wrapper:
         for node in self.get_all_nodes_name():
             sollGrad = self.get_degree_of_node(node)
             echterGrad = self._data.degree(node)
-            x = (sollGrad - abs(sollGrad - echterGrad)) / sollGrad
+            x = (sollGrad - min(abs(sollGrad - echterGrad), sollGrad)) / sollGrad
             evaluation += x
 
         evaluation /= number_of_nodes
 
-        assert evaluation >= 0, "Evaluation must be non-negative."
-        assert evaluation <= 1, "Evaluation must be smaller then 1."
+        assert (
+            evaluation >= 0
+        ), f"Evaluation must be non-negative, but got {evaluation}."
+        assert (
+            evaluation <= 1
+        ), f"Evaluation must be smaller then 1, but got {evaluation}."
         return evaluation
