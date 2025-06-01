@@ -8,6 +8,7 @@ from random import choice
 from abc import ABC, abstractmethod
 from typing import Optional
 import json
+import math
 
 
 def gen_nodes(
@@ -151,3 +152,56 @@ class Generate_Nodes_Random(Generate_Instance_ABC_Nodes):
     ) -> list[Node]:
         """Generiert eine Liste von Knoten mit zufälligen Positionen und Graden."""
         return gen_nodes(number_nodes, width, height)
+
+
+class Generate_Nodes_n_gon(Generate_Instance_ABC_Nodes):
+    def __init__(self, radius: int) -> None:
+        """Generiert Knoten in einem n-Eck."""
+        self.radius = radius
+
+    def generate_nodes(
+        self,
+        number_nodes: int,
+        width: int = graph_const.GEN_WIDTH,
+        height: int = graph_const.GEN_HEIGHT,
+    ) -> list[Node]:
+        angle = 2 * math.pi / number_nodes
+        center_x = width // 2
+        center_y = height // 2
+
+        nodes = []
+        for i in range(number_nodes):
+            x: int = int(center_x + math.cos(i * angle) * self.radius)
+            y: int = int(center_y + math.sin(i * angle) * self.radius)
+            nodes.append(Node(str(i), (x, y)))
+        return nodes
+
+
+class Generate_Nodes_Iterativ_N_Gon(Generate_Instance_ABC_Nodes):
+    def __init__(self, step: int, number_instance: int, radius: int) -> None:
+        self.step = step
+        self.round = number_instance
+        self.radius = radius
+
+    def generate_nodes(
+        self,
+        number_nodes: int,
+        width: int = graph_const.GEN_WIDTH,
+        height: int = graph_const.GEN_HEIGHT,
+    ) -> list[Node]:
+        """Generiert eine Liste von Knoten mit zufälligen Positionen und Graden."""
+        number_nodes = number_nodes - self.step * self.round
+        self.round -= 1
+        return self.__n_gone(number_nodes, width, height)
+
+    def __n_gone(self, number_nodes, width, height):
+        angle = 2 * math.pi / number_nodes
+        center_x = width // 2
+        center_y = height // 2
+
+        nodes = []
+        for i in range(number_nodes):
+            x: int = int(center_x + math.cos(i * angle) * self.radius)
+            y: int = int(center_y + math.sin(i * angle) * self.radius)
+            nodes.append(Node(str(i), (x, y)))
+        return nodes

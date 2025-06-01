@@ -13,7 +13,6 @@ from solver.remover import Remover
 from solver.sat import SAT
 from graph_utils import run_instance
 from utils import setup_logging
-from graph_utils.node import load_nodes_from_json
 import matplotlib.pyplot as plt
 import matplotlib._pylab_helpers
 
@@ -40,11 +39,12 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    nodes = load_nodes_from_json("simple_40/000_delaunay_flips.json")
+    gen = generate.Generate_Nodes_n_gon(300)
+    nodes = gen.generate_nodes(40)
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    solver = SAT(graph)
-    solver.solve(timeout=1)
+    solver = Delaunay(graph)
+    solver.solve(timeout=-1)
     logging.info(f"evaluation: {graph.evaluate_graph()}")
     graph.show_and_save()
 
@@ -99,18 +99,20 @@ def run_instance_lokal():
 
 
 def create_instance():
-    NAME = "iterative_70_5"
-    FILE_NAME = "Random_iterative"
-    NUMBER_INSTANCE = 10
-    NUMBER_NODES = 70
+    NAME = "N_Gon_60"
+    FILE_NAME = "random"
+    NUMBER_INSTANCE = 11
+    NUMBER_NODES = 60
     STEP = 5
     generate.Generate_Instance(
         NAME,
         FILE_NAME,
         NUMBER_NODES,
         NUMBER_INSTANCE,
-        generate.Generate_Nodes_Iterativ(STEP, NUMBER_INSTANCE),
+        generate.Generate_Nodes_Iterativ_N_Gon(STEP, NUMBER_INSTANCE, 300),
         generate.Generate_Edges_Random(),
+        width=1000,
+        height=1000,
     ).generate()
 
 
@@ -126,8 +128,8 @@ def block_plt():
 
 
 def main():
-    test_algo()
-    # create_instance()
+    # test_algo()
+    create_instance()
     # run_instance_lokal()
 
 
