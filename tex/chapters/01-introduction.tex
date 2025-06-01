@@ -14,13 +14,20 @@ Try to use existing abbreviations from related work if possible.
 
 Formel zwischen lagern:
 
-\[
-x_i = \frac{sollGrad_i - abs(sollGrad_i - echterGrad_i)}{sollGrad_i}
-\]
-\[
-\sum_{i=1}^{n} \frac{x_i}{n} 
-\]
+\begin{align}
+difference_i &= \left| sollGrad_i - echterGrad_i \right| \label{eq:difference} \\
+evaluation_i &= \left\{
+\begin{array}{ll}
+\frac{sollGrad_i - difference_i}{sollGrad_i} & sollGrad \geq difference_i \\
+0 & \, \textrm{sonst} \\
+\end{array}
+\right. \label{eq:evaluation}\\
+evaluation &= \sum_{i=0}^{n} \frac{evaluation_i}{n} \label{eq:total_evaluation}
+\end{align}
 
+Das ist die Difference Brechnung~\eqref{eq:difference}.
+Bei~\eqref{eq:evaluation} wird daraus eine Prozentzahl gemacht.
+Diese werden dann bei~\eqref{eq:total_evaluation} für alle Knoten zusammengefasst
 
 
 
