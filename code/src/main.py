@@ -16,16 +16,20 @@ from utils import setup_logging
 import matplotlib.pyplot as plt
 import matplotlib._pylab_helpers
 
+BENCHMARK_PATH = "./results/benchmark"
 
-def solver():
-    Raw_Flips
-    Delaunay
-    Iterative
-    Ortools
-    Cycle_Add
-    SAT
-    Random_Adder
-    Remover
+
+def get_solvers():
+    return [
+        Raw_Flips,
+        Delaunay,
+        Iterative,
+        Ortools,
+        Cycle_Add,
+        SAT,
+        Random_Adder,
+        Remover,
+    ]
 
 
 def custom_points() -> list[Node]:
@@ -73,20 +77,6 @@ def move():
     graph2.show_and_save()
 
 
-def run_instance_lokal():
-    ri = run_instance.Run_Instance(path_benchmark="./results/benchmark")
-    inst = "iterative_70_5"
-    inst = "N_Gon_60"
-    # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
-    ri.run_solver_on_instance(
-        solver_type=Random_Adder,
-        instance_name=inst,
-        timeout=30,
-    )
-    # ri.show_results([inst], [Random_Adder])
-    ri.show_results()
-
-
 def create_instance():
     NAME = "N_Gon_60"
     FILE_NAME = "random"
@@ -105,10 +95,10 @@ def create_instance():
     ).generate()
 
 
-def test(a):
-    print(a)
-    logging.error("Error in test function")
-    return a
+def run_instance_lokal():
+    ri = run_instance.Run_Instance(path_benchmark=BENCHMARK_PATH, solver=get_solvers())
+    # ri.select()
+    ri.run_default()
 
 
 def block_plt():

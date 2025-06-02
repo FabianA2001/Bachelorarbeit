@@ -1,7 +1,6 @@
 import os
 from graph_utils import graph_const
 from solver.solver import Solver
-from graph_utils.graph_const import RESULTS_DIR
 import json
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from graph_utils.node import load_nodes_from_json
@@ -10,14 +9,18 @@ from algbench import Benchmark, read_as_pandas
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
-from stupid_hostname import HOSTNAME
+import socket
+import questionary
 
 
 class Run_Instance:
-    def __init__(self, path_benchmark: str = RESULTS_DIR) -> None:
+    DEFAULT_TIME = 30  # Default timeout for solvers in seconds
+
+    def __init__(self, path_benchmark: str, solver: list) -> None:
         self.path_benchmark = path_benchmark
         self.benchmark = Benchmark(self.path_benchmark)
         self.benchmark.capture_logger("my_alg", logging.INFO)
+        self.solvers_dict = {i.NAME: i for i in solver}
         pd.set_option("display.max_rows", None)
 
     @staticmethod
@@ -66,6 +69,23 @@ class Run_Instance:
             "triangulation": _graph.get_all_edges(True),
         }
 
+    def save_default(self, insts: list[str], solvers: list[type[Solver]]):
+        data = {
+            "instances": insts,
+            "solvers": [solver.NAME for solver in solvers],
+        }
+        with open("./run_instance.json", "w") as f:
+            json.dump(data, f, indent=4)
+
+    def load_default(self) -> tuple[list[str], list[type[Solver]]]:
+        """Lädt die Standardinstanzen und -solver aus der run_instance.json Datei."""
+        with open("./run_instance.json", "r") as f:
+            data = json.load(f)
+        instances = data.get("instances", [])
+        solvers = data.get("solvers", [])
+        solvers = [self.solvers_dict[solver] for solver in solvers]
+        return instances, solvers
+
     def run_solver_on_instance(
         self,
         solver_type: type[Solver],
@@ -103,7 +123,7 @@ class Run_Instance:
         only_newest: bool = True,
         ignore_correct: bool = False,
         block: bool = False,
-        host: str = HOSTNAME,
+        host: str = socket.gethostname(),
     ):
         table = read_as_pandas(
             self.path_benchmark,
@@ -188,95 +208,59 @@ class Run_Instance:
         plt.tight_layout()
         plt.show(block=block)
 
-    # def show_results(instance_name: str, block: bool = False, ignore_correct: bool = False):
-    #     with open(f"{os.path.join(graph_const.RESULTS_DIR, instance_name)}.json", "r") as f:
-    #         data = json.load(f)
+    def run(
+        self, insts: list[str], solvers: list[type[Solver]], timeout: int = DEFAULT_TIME
+    ):
+        for inst in insts:
+            for solver in solvers:
+                self.run_solver_on_instance(
+                    solver_type=solver,
+                    instance_name=inst,
+                    timeout=timeout,
+                )
+        self.show_results(insts, solvers)
 
-    #     rows = []
-    #     for algo_name, problems in data.items():
-    #         # Sortiere die Probleme nach der führenden Nummer
-    #         for problem_name in sorted(problems.keys(), key=lambda x: int(x.split("_")[0])):
-    #             info = problems[problem_name]
-    #             if ignore_correct:
-    #                 time = info["time"]
-    #             else:
-    #                 time = info["time"] if info["correct"] else graph_const.FAIL_VALUE
-    #             rows.append(
-    #                 {
-    #                     "Algorithm": algo_name,
-    #                     "Problem": problem_name,
-    #                     "Time": time,
-    #                 }
-    #             )
+    @staticmethod
+    def get_selection(lit: list):
+        selected_inst = []
+        while True:
+            selected_inst = questionary.checkbox(
+                "Wähle eine oder mehrere Optionen:", choices=lit
+            ).ask()
+            if selected_inst:
+                break
+            print("Bitte wähle mindestens einen Wert aus.")
+        return [str(i) for i in selected_inst]
 
-    #     df = pd.DataFrame(rows)
+    def select(self):
+        instances = self.get_instances()
+        instances_names = sorted(list(instances.keys()))
+        insts = self.get_selection(instances_names)
 
-    #     plt.figure(figsize=(12, 6))
-    #     sns.barplot(
-    #         data=df,
-    #         x="Problem",
-    #         y="Time",
-    #         hue="Algorithm",
-    #         palette="muted",
-    #     )
+        solvers = self.get_selection(list(self.solvers_dict.keys()))
+        solvers = [self.solvers_dict[i] for i in solvers]
+        self.save_default(insts, solvers)
+        self.run(insts, solvers)
 
-    #     plt.title(f"Vergleich der Laufzeiten (Time) für {instance_name} je Problem")
-    #     plt.xticks(rotation=90)
-    #     plt.grid(True, axis="y", linestyle="--", alpha=0.7)
-    #     plt.tight_layout()
-    #     plt.show(block=block)
+    def run_default(self):
+        insts, solvers = self.load_default()
+        self.run(insts, solvers)
 
-    # def show_percentage_of_correct_nodes(instance_name: str, block: bool = False):
-    #     with open(f"{os.path.join(graph_const.RESULTS_DIR, instance_name)}.json", "r") as f:
-    #         data = json.load(f)
-
-    #     rows = []
-    #     for algo_name, problems in data.items():
-    #         # Sortiere die Probleme nach der führenden Nummer
-    #         for problem_name in sorted(problems.keys(), key=lambda x: int(x.split("_")[0])):
-    #             info = problems[problem_name]
-    #             percentage = info["percentage"]
-    #             rows.append(
-    #                 {
-    #                     "Algorithm": algo_name,
-    #                     "Problem": problem_name,
-    #                     "Percentage": percentage,
-    #                 }
-    #             )
-
-    #     df = pd.DataFrame(rows)
-
-    #     plt.figure(figsize=(12, 6))
-    #     sns.barplot(
-    #         data=df,
-    #         x="Problem",
-    #         y="Percentage",
-    #         hue="Algorithm",
-    #         palette="muted",
-    #     )
-
-    #     plt.title(f"Vergleich der Prozentsätze (Percentage) für {instance_name} je Problem")
-    #     plt.xticks(rotation=90)
-    #     plt.grid(True, axis="y", linestyle="--", alpha=0.7)
-    #     plt.tight_layout()
-    #     plt.show(block=block)
-    #     plt.pause(1)
-
-    # def show_triangulation_from_result(
-    #     instance_name: str,
-    #     algorithm_name: str,
-    #     instance_file_name: str,
-    #     result_file_name: str,
-    # ):
-    #     nodes = load_nodes_from_json(
-    #         f"{os.path.join(instance_name, instance_file_name)}.json"
-    #     )
-    #     with open(
-    #         os.path.join(graph_const.RESULTS_DIR, f"{result_file_name}.json"), "r"
-    #     ) as f:
-    #         data = json.load(f)
-    #     triangulation = data[algorithm_name][instance_file_name]["triangulation"]
-    #     graph = Graph_Wrapper(nodes)
-    #     for edge in triangulation:
-    #         graph.add_edge(edge[0], edge[1], active=True)
-    #     graph.show_and_save(show=True, save=True)
+        # def show_triangulation_from_result(
+        #     instance_name: str,
+        #     algorithm_name: str,
+        #     instance_file_name: str,
+        #     result_file_name: str,
+        # ):
+        #     nodes = load_nodes_from_json(
+        #         f"{os.path.join(instance_name, instance_file_name)}.json"
+        #     )
+        #     with open(
+        #         os.path.join(graph_const.RESULTS_DIR, f"{result_file_name}.json"), "r"
+        #     ) as f:
+        #         data = json.load(f)
+        #     triangulation = data[algorithm_name][instance_file_name]["triangulation"]
+        #     graph = Graph_Wrapper(nodes)
+        #     for edge in triangulation:
+        #         graph.add_edge(edge[0], edge[1], active=True)
+        #     graph.show_and_save(show=True, save=True)

@@ -1,0 +1,4 @@
+{
+  "instances": ["simple_10", "simple_20", "simple_30"],
+  "solvers": ["Ortools", "SAT"]
+}
