@@ -100,6 +100,7 @@ class Run_Instance:
         instances: list[str] = [],
         solvers: list[type[Solver]] = [],
         only_newest: bool = True,
+        block: bool = False,
     ):
         table = read_as_pandas(
             self.path_benchmark,
@@ -117,12 +118,27 @@ class Run_Instance:
         # Neue Spalte für Solver+Version
         print(table)
         self.create_plt(
-            table, instances, [solver.NAME for solver in solvers], only_newest
+            table=table,
+            y="evaluation",
+            block=False,
+            instances=instances,
+            solvers=[solver.NAME for solver in solvers],
+            only_newest=only_newest,
+        )
+        self.create_plt(
+            table=table,
+            y="runtime",
+            block=block,
+            instances=instances,
+            solvers=[solver.NAME for solver in solvers],
+            only_newest=only_newest,
         )
 
     def create_plt(
         self,
         table,
+        y: str,
+        block: bool = False,
         instances: list[str] = [],
         solvers: list[str] = [],
         only_newest: bool = True,
@@ -134,7 +150,6 @@ class Run_Instance:
         table["solver_version"] = table["solver"] + " v" + table["version"].astype(str)
 
         if only_newest:
-            # Für jeden Solver nur die Zeilen mit der höchsten Version behalten
             table["version_num"] = table["version"].astype(float)
             idx = (
                 table.groupby("solver")["version_num"].transform("max")
@@ -147,19 +162,19 @@ class Run_Instance:
         sns.barplot(
             data=table,
             x="file",
-            y="runtime",
+            y=y,
             hue="solver_version",
         )
         plt.title(
-            "Laufzeiten pro Instanz und Solver-Version"
+            f"{y.capitalize()} pro Instanz und Solver-Version"
             + (" (nur neueste Version)" if only_newest else "")
         )
         plt.xlabel("Instanz-Datei")
-        plt.ylabel("Laufzeit (s)")
+        plt.ylabel(y.capitalize())
         plt.xticks(rotation=90)
         plt.grid(True, axis="y", linestyle="--", alpha=0.7)
         plt.tight_layout()
-        plt.show()
+        plt.show(block=block)
 
     # def show_results(instance_name: str, block: bool = False, ignore_correct: bool = False):
     #     with open(f"{os.path.join(graph_const.RESULTS_DIR, instance_name)}.json", "r") as f:
