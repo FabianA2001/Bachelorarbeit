@@ -100,6 +100,7 @@ class Run_Instance:
         instances: list[str] = [],
         solvers: list[type[Solver]] = [],
         only_newest: bool = True,
+        ignore_correct: bool = False,
         block: bool = False,
     ):
         table = read_as_pandas(
@@ -115,7 +116,11 @@ class Run_Instance:
             },
         )
         table = table.sort_values(by=["solver", "instance", "file"])
-        # Neue Spalte für Solver+Version
+
+        if not ignore_correct:
+            # Setze runtime auf -1, wenn correct False ist
+            table.loc[~table["correct"], "runtime"] = -1
+
         print(table)
         self.create_plt(
             table=table,

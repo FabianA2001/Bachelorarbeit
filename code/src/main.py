@@ -84,7 +84,7 @@ def run_instance_lokal():
         timeout=30,
     )
     # ri.show_results([inst], [Random_Adder])
-    ri.show_results(only_newest=False)
+    ri.show_results()
 
 
 def create_instance():
