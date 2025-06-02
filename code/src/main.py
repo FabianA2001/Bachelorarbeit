@@ -97,8 +97,8 @@ def create_instance():
 
 def run_instance_lokal():
     ri = run_instance.Run_Instance(path_benchmark=BENCHMARK_PATH, solver=get_solvers())
-    # ri.select()
-    ri.run_default()
+    ri.select()
+    # ri.run_default()
 
 
 def block_plt():

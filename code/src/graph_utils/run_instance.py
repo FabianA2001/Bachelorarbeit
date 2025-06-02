@@ -242,7 +242,15 @@ class Run_Instance:
 
         solvers = self.get_selection(list(self.solvers_dict.keys()))
         solvers = [self.solvers_dict[i] for i in solvers]
-        self.save_default(insts, solvers)
+
+        # Frage, ob speichern, Standard ist Nein
+        save = questionary.confirm(
+            "Auswahl als Standard speichern?", default=False
+        ).ask()
+
+        if save:
+            self.save_default(insts, solvers)
+
         self.run(insts, solvers)
 
     def run_default(self):
