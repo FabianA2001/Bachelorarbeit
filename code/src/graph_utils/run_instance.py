@@ -181,6 +181,9 @@ class Run_Instance:
             table = table[table["solver"].isin(solvers)]
         table["solver_version"] = table["solver"] + " v" + table["version"].astype(str)
 
+        # Kombiniere Instanz und Dateiname für die x-Achse
+        table["instance_file"] = table["instance"] + "/" + table["file"]
+
         if only_newest:
             table["version_num"] = table["version"].astype(float)
             idx = (
@@ -193,15 +196,15 @@ class Run_Instance:
         plt.figure()
         sns.barplot(
             data=table,
-            x="file",
+            x="instance_file",  # <-- jetzt eindeutig
             y=y,
             hue="solver_version",
         )
         plt.title(
-            f"{y.capitalize()} pro Instanz und Solver-Version"
+            f"{y.capitalize()} pro Instanz/File und Solver-Version"
             + (" (nur neueste Version)" if only_newest else "")
         )
-        plt.xlabel("Instanz-Datei")
+        plt.xlabel("Instanz/Datei")
         plt.ylabel(y.capitalize())
         plt.xticks(rotation=90)
         plt.grid(True, axis="y", linestyle="--", alpha=0.7)
