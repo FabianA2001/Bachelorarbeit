@@ -74,16 +74,15 @@ def move():
 
 
 def run_instance_lokal():
+    ri = run_instance.Run_Instance(path_benchmark="./results/benchmark")
     inst = "N_Gon_60"
-    path = str("./results/benchmark")
     # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
-    run_instance.run_solver_on_instance(
+    ri.run_solver_on_instance(
         solver_type=Ortools,
         instance_name=inst,
-        benchmark_path=path,
         timeout=30,
     )
-    run_instance.show_results(path)
+    ri.show_results()
 
 
 def create_instance():
