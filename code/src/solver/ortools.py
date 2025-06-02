@@ -21,10 +21,11 @@ class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
 
 class Ortools(Solver):
     VERSION = "0.1"
+    NAME = "Ortools"
 
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
-        self.name = "Ortools"
+        self.name = self.NAME
         self.model = cp_model.CpModel()
 
     def constraint_intersection(self):

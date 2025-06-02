@@ -6,10 +6,11 @@ import random
 
 class Raw_Flips(Solver):
     VERSION = "0.1"
+    NAME = "Raw_Flips"
 
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
-        self.name = "Raw_Flips"
+        self.name = self.NAME
         self.PROBABILITY = 0.2
         self.EXPONENT_ITERATIONS = 2
 

@@ -15,7 +15,6 @@ from graph_utils import run_instance
 from utils import setup_logging
 import matplotlib.pyplot as plt
 import matplotlib._pylab_helpers
-from algbench import describe
 
 
 def solver():
@@ -79,12 +78,12 @@ def run_instance_lokal():
     path = str("./results/benchmark")
     # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
     run_instance.run_solver_on_instance(
-        solver_type=SAT,
+        solver_type=Ortools,
         instance_name=inst,
         benchmark_path=path,
         timeout=30,
     )
-    describe(path)
+    run_instance.show_results(path)
 
 
 def create_instance():

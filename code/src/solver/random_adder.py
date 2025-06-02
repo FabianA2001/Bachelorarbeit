@@ -5,10 +5,11 @@ import random
 
 class Random_Adder(Solver):
     VERSION = "0.1"
+    NAME = "Random"
 
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
-        self.name = "random"
+        self.name = self.NAME
 
     def _actual_solver(self, timeout, queue) -> None:
         if not isinstance(self.graph, Graph_Wrapper):

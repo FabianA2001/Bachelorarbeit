@@ -5,10 +5,11 @@ import shapely
 
 class Cycle_Add(Solver):
     VERSION = "0.2"
+    NAME = "Cycle_Add"
 
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
-        self.name = "Cycle_Add"
+        self.name = self.NAME
 
     def sort_nodes_from_center(self) -> bool:
         """

@@ -5,11 +5,8 @@ from graph_utils.graph_const import RESULTS_DIR
 import json
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from graph_utils.node import load_nodes_from_json
-import seaborn as sns
-import matplotlib.pyplot as plt
-import pandas as pd
 import logging
-from algbench import Benchmark
+from algbench import Benchmark, read_as_pandas
 
 
 def get_instances() -> dict[str, dict[str, str]]:
@@ -73,6 +70,7 @@ def save_result(
 
 def create_benchmark_entry(
     solver_type: type[Solver],
+    solver_name: str,
     solver_version: int,
     instance_name: str,
     file_name: str,
@@ -119,6 +117,7 @@ def run_solver_on_instance(
         benchmark.add(
             create_benchmark_entry,
             solver_type=solver_type,
+            solver_name=solver_type.NAME,
             solver_version=solver_type.VERSION,
             instance_name=instance_name,
             file_name=file_name,
@@ -129,97 +128,112 @@ def run_solver_on_instance(
     benchmark.compress()
 
 
-def show_results(instance_name: str, block: bool = False, ignore_correct: bool = False):
-    with open(f"{os.path.join(graph_const.RESULTS_DIR, instance_name)}.json", "r") as f:
-        data = json.load(f)
-
-    rows = []
-    for algo_name, problems in data.items():
-        # Sortiere die Probleme nach der führenden Nummer
-        for problem_name in sorted(problems.keys(), key=lambda x: int(x.split("_")[0])):
-            info = problems[problem_name]
-            if ignore_correct:
-                time = info["time"]
-            else:
-                time = info["time"] if info["correct"] else graph_const.FAIL_VALUE
-            rows.append(
-                {
-                    "Algorithm": algo_name,
-                    "Problem": problem_name,
-                    "Time": time,
-                }
-            )
-
-    df = pd.DataFrame(rows)
-
-    plt.figure(figsize=(12, 6))
-    sns.barplot(
-        data=df,
-        x="Problem",
-        y="Time",
-        hue="Algorithm",
-        palette="muted",
+def show_results(path: str):
+    table = read_as_pandas(
+        path,
+        lambda result: {
+            "solver": result["parameters"]["args"]["solver_name"],
+            "instance": result["parameters"]["args"]["instance_name"],
+            "file": result["parameters"]["args"]["file_name"],
+            "correct": result["result"]["correct"],
+            "evaluation": result["result"]["evaluation"],
+            "runtime": result["runtime"],
+        },
     )
-
-    plt.title(f"Vergleich der Laufzeiten (Time) für {instance_name} je Problem")
-    plt.xticks(rotation=90)
-    plt.grid(True, axis="y", linestyle="--", alpha=0.7)
-    plt.tight_layout()
-    plt.show(block=block)
+    print(table)
 
 
-def show_percentage_of_correct_nodes(instance_name: str, block: bool = False):
-    with open(f"{os.path.join(graph_const.RESULTS_DIR, instance_name)}.json", "r") as f:
-        data = json.load(f)
+# def show_results(instance_name: str, block: bool = False, ignore_correct: bool = False):
+#     with open(f"{os.path.join(graph_const.RESULTS_DIR, instance_name)}.json", "r") as f:
+#         data = json.load(f)
 
-    rows = []
-    for algo_name, problems in data.items():
-        # Sortiere die Probleme nach der führenden Nummer
-        for problem_name in sorted(problems.keys(), key=lambda x: int(x.split("_")[0])):
-            info = problems[problem_name]
-            percentage = info["percentage"]
-            rows.append(
-                {
-                    "Algorithm": algo_name,
-                    "Problem": problem_name,
-                    "Percentage": percentage,
-                }
-            )
+#     rows = []
+#     for algo_name, problems in data.items():
+#         # Sortiere die Probleme nach der führenden Nummer
+#         for problem_name in sorted(problems.keys(), key=lambda x: int(x.split("_")[0])):
+#             info = problems[problem_name]
+#             if ignore_correct:
+#                 time = info["time"]
+#             else:
+#                 time = info["time"] if info["correct"] else graph_const.FAIL_VALUE
+#             rows.append(
+#                 {
+#                     "Algorithm": algo_name,
+#                     "Problem": problem_name,
+#                     "Time": time,
+#                 }
+#             )
 
-    df = pd.DataFrame(rows)
+#     df = pd.DataFrame(rows)
 
-    plt.figure(figsize=(12, 6))
-    sns.barplot(
-        data=df,
-        x="Problem",
-        y="Percentage",
-        hue="Algorithm",
-        palette="muted",
-    )
+#     plt.figure(figsize=(12, 6))
+#     sns.barplot(
+#         data=df,
+#         x="Problem",
+#         y="Time",
+#         hue="Algorithm",
+#         palette="muted",
+#     )
 
-    plt.title(f"Vergleich der Prozentsätze (Percentage) für {instance_name} je Problem")
-    plt.xticks(rotation=90)
-    plt.grid(True, axis="y", linestyle="--", alpha=0.7)
-    plt.tight_layout()
-    plt.show(block=block)
-    plt.pause(1)
+#     plt.title(f"Vergleich der Laufzeiten (Time) für {instance_name} je Problem")
+#     plt.xticks(rotation=90)
+#     plt.grid(True, axis="y", linestyle="--", alpha=0.7)
+#     plt.tight_layout()
+#     plt.show(block=block)
 
 
-def show_triangulation_from_result(
-    instance_name: str,
-    algorithm_name: str,
-    instance_file_name: str,
-    result_file_name: str,
-):
-    nodes = load_nodes_from_json(
-        f"{os.path.join(instance_name, instance_file_name)}.json"
-    )
-    with open(
-        os.path.join(graph_const.RESULTS_DIR, f"{result_file_name}.json"), "r"
-    ) as f:
-        data = json.load(f)
-    triangulation = data[algorithm_name][instance_file_name]["triangulation"]
-    graph = Graph_Wrapper(nodes)
-    for edge in triangulation:
-        graph.add_edge(edge[0], edge[1], active=True)
-    graph.show_and_save(show=True, save=True)
+# def show_percentage_of_correct_nodes(instance_name: str, block: bool = False):
+#     with open(f"{os.path.join(graph_const.RESULTS_DIR, instance_name)}.json", "r") as f:
+#         data = json.load(f)
+
+#     rows = []
+#     for algo_name, problems in data.items():
+#         # Sortiere die Probleme nach der führenden Nummer
+#         for problem_name in sorted(problems.keys(), key=lambda x: int(x.split("_")[0])):
+#             info = problems[problem_name]
+#             percentage = info["percentage"]
+#             rows.append(
+#                 {
+#                     "Algorithm": algo_name,
+#                     "Problem": problem_name,
+#                     "Percentage": percentage,
+#                 }
+#             )
+
+#     df = pd.DataFrame(rows)
+
+#     plt.figure(figsize=(12, 6))
+#     sns.barplot(
+#         data=df,
+#         x="Problem",
+#         y="Percentage",
+#         hue="Algorithm",
+#         palette="muted",
+#     )
+
+#     plt.title(f"Vergleich der Prozentsätze (Percentage) für {instance_name} je Problem")
+#     plt.xticks(rotation=90)
+#     plt.grid(True, axis="y", linestyle="--", alpha=0.7)
+#     plt.tight_layout()
+#     plt.show(block=block)
+#     plt.pause(1)
+
+
+# def show_triangulation_from_result(
+#     instance_name: str,
+#     algorithm_name: str,
+#     instance_file_name: str,
+#     result_file_name: str,
+# ):
+#     nodes = load_nodes_from_json(
+#         f"{os.path.join(instance_name, instance_file_name)}.json"
+#     )
+#     with open(
+#         os.path.join(graph_const.RESULTS_DIR, f"{result_file_name}.json"), "r"
+#     ) as f:
+#         data = json.load(f)
+#     triangulation = data[algorithm_name][instance_file_name]["triangulation"]
+#     graph = Graph_Wrapper(nodes)
+#     for edge in triangulation:
+#         graph.add_edge(edge[0], edge[1], active=True)
+#     graph.show_and_save(show=True, save=True)

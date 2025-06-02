@@ -11,11 +11,15 @@ class Solver(ABC):
     """
 
     VERSION = "0.1"
+    NAME = "Solver"
 
     def __init__(self, graph: Graph_Wrapper) -> None:
-        self.name = "Solver"
+        self.name = self.NAME
         self.graph: Graph_Wrapper = graph
         self.success = False
+
+    def __str__(self) -> str:
+        return self.name
 
     def handel_queue(self, result_queue) -> bool:
         if result_queue.empty():
