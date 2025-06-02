@@ -75,6 +75,7 @@ def move():
 
 def run_instance_lokal():
     ri = run_instance.Run_Instance(path_benchmark="./results/benchmark")
+    inst = "iterative_70_5"
     inst = "N_Gon_60"
     # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
     ri.run_solver_on_instance(
@@ -82,7 +83,7 @@ def run_instance_lokal():
         instance_name=inst,
         timeout=30,
     )
-    ri.show_results()
+    ri.show_results([inst], [Random_Adder])
 
 
 def create_instance():

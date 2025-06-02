@@ -7,6 +7,8 @@ from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from graph_utils.node import load_nodes_from_json
 import logging
 from algbench import Benchmark, read_as_pandas
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 class Run_Instance:
@@ -91,7 +93,7 @@ class Run_Instance:
             )
         self.benchmark.compress()
 
-    def show_results(self):
+    def show_results(self, instances: list[str] = [], solvers: list[type[Solver]] = []):
         table = read_as_pandas(
             self.path_benchmark,
             lambda result: {
@@ -103,7 +105,29 @@ class Run_Instance:
                 "runtime": result["runtime"],
             },
         )
+        table = table.sort_values(by=["solver", "instance", "file"])
+        self.create_plt(table, instances, [solver.NAME for solver in solvers])
         print(table)
+
+    def create_plt(self, table, instances: list[str] = [], solvers: list[str] = []):
+        if instances:
+            table = table[table["instance"].isin(instances)]
+        if solvers:
+            table = table[table["solver"].isin(solvers)]
+        plt.figure()
+        sns.barplot(
+            data=table,
+            x="file",
+            y="runtime",
+            hue="solver",
+        )
+        plt.title("Laufzeiten pro Instanz und Solver")
+        plt.xlabel("Instanz-Datei")
+        plt.ylabel("Laufzeit (s)")
+        plt.xticks(rotation=90)
+        plt.grid(True, axis="y", linestyle="--", alpha=0.7)
+        plt.tight_layout()
+        plt.show()
 
     # def show_results(instance_name: str, block: bool = False, ignore_correct: bool = False):
     #     with open(f"{os.path.join(graph_const.RESULTS_DIR, instance_name)}.json", "r") as f:
