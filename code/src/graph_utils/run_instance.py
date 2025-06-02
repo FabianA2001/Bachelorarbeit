@@ -10,6 +10,7 @@ from algbench import Benchmark, read_as_pandas
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+from stupid_hostname import HOSTNAME
 
 
 class Run_Instance:
@@ -102,10 +103,12 @@ class Run_Instance:
         only_newest: bool = True,
         ignore_correct: bool = False,
         block: bool = False,
+        host: str = HOSTNAME,
     ):
         table = read_as_pandas(
             self.path_benchmark,
             lambda result: {
+                "host": result["env"]["hostname"],
                 "solver": result["parameters"]["args"]["solver_name"],
                 "instance": result["parameters"]["args"]["instance_name"],
                 "file": result["parameters"]["args"]["file_name"],
@@ -115,13 +118,17 @@ class Run_Instance:
                 "runtime": result["runtime"],
             },
         )
+        # filter nach Host
         table = table.sort_values(by=["solver", "instance", "file"])
+        # Filter nach Host, falls host angegeben ist
+        if host:
+            table = table[table["host"] == host]
+        print(table)
 
         if not ignore_correct:
             # Setze runtime auf -1, wenn correct False ist
             table.loc[~table["correct"], "runtime"] = -1
 
-        print(table)
         self.create_plt(
             table=table,
             y="evaluation",
