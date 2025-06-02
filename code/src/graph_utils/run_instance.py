@@ -9,6 +9,7 @@ import logging
 from algbench import Benchmark, read_as_pandas
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
 
 
 class Run_Instance:
@@ -16,6 +17,7 @@ class Run_Instance:
         self.path_benchmark = path_benchmark
         self.benchmark = Benchmark(self.path_benchmark)
         self.benchmark.capture_logger("my_alg", logging.INFO)
+        pd.set_option("display.max_rows", None)
 
     @staticmethod
     def get_instances() -> dict[str, dict[str, str]]:
@@ -93,35 +95,65 @@ class Run_Instance:
             )
         self.benchmark.compress()
 
-    def show_results(self, instances: list[str] = [], solvers: list[type[Solver]] = []):
+    def show_results(
+        self,
+        instances: list[str] = [],
+        solvers: list[type[Solver]] = [],
+        only_newest: bool = True,
+    ):
         table = read_as_pandas(
             self.path_benchmark,
             lambda result: {
                 "solver": result["parameters"]["args"]["solver_name"],
                 "instance": result["parameters"]["args"]["instance_name"],
                 "file": result["parameters"]["args"]["file_name"],
+                "version": result["parameters"]["args"]["solver_version"],
                 "correct": result["result"]["correct"],
                 "evaluation": result["result"]["evaluation"],
                 "runtime": result["runtime"],
             },
         )
         table = table.sort_values(by=["solver", "instance", "file"])
-        self.create_plt(table, instances, [solver.NAME for solver in solvers])
+        # Neue Spalte für Solver+Version
         print(table)
+        self.create_plt(
+            table, instances, [solver.NAME for solver in solvers], only_newest
+        )
 
-    def create_plt(self, table, instances: list[str] = [], solvers: list[str] = []):
+    def create_plt(
+        self,
+        table,
+        instances: list[str] = [],
+        solvers: list[str] = [],
+        only_newest: bool = True,
+    ):
         if instances:
             table = table[table["instance"].isin(instances)]
         if solvers:
             table = table[table["solver"].isin(solvers)]
+        table["solver_version"] = table["solver"] + " v" + table["version"].astype(str)
+
+        if only_newest:
+            # Für jeden Solver nur die Zeilen mit der höchsten Version behalten
+            table["version_num"] = table["version"].astype(float)
+            idx = (
+                table.groupby("solver")["version_num"].transform("max")
+                == table["version_num"]
+            )
+            table = table[idx]
+            table = table.drop(columns=["version_num"])
+
         plt.figure()
         sns.barplot(
             data=table,
             x="file",
             y="runtime",
-            hue="solver",
+            hue="solver_version",
         )
-        plt.title("Laufzeiten pro Instanz und Solver")
+        plt.title(
+            "Laufzeiten pro Instanz und Solver-Version"
+            + (" (nur neueste Version)" if only_newest else "")
+        )
         plt.xlabel("Instanz-Datei")
         plt.ylabel("Laufzeit (s)")
         plt.xticks(rotation=90)

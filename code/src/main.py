@@ -79,11 +79,12 @@ def run_instance_lokal():
     inst = "N_Gon_60"
     # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
     ri.run_solver_on_instance(
-        solver_type=Ortools,
+        solver_type=Random_Adder,
         instance_name=inst,
         timeout=30,
     )
-    ri.show_results([inst], [Random_Adder])
+    # ri.show_results([inst], [Random_Adder])
+    ri.show_results(only_newest=False)
 
 
 def create_instance():
