@@ -20,6 +20,8 @@ class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
 
 
 class Ortools(Solver):
+    VERSION = "0.1"
+
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = "Ortools"

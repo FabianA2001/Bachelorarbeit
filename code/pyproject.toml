@@ -13,6 +13,7 @@ dependencies = [
     "scipy",
     "seaborn",
     "python-sat",
+    "algbench",
 ]
 [project.optional-dependencies]
 dev = [

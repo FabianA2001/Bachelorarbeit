@@ -4,11 +4,12 @@ import logging
 
 
 class Remover(Solver):
+    VERSION = "0.1"
+
     def __init__(self, graph: Graph_Wrapper) -> None:
         logging.error("Remover ist noch nicht Fertig implementiert!")
         super().__init__(graph)
         self.name = "remover"
-        self.version = "0.1"
 
     def _actual_solver(self, timeout, queue) -> None:
         if not isinstance(self.graph, Graph_Wrapper):

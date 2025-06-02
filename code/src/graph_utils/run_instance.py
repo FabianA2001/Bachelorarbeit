@@ -5,11 +5,11 @@ from graph_utils.graph_const import RESULTS_DIR
 import json
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from graph_utils.node import load_nodes_from_json
-import time
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import logging
+from algbench import Benchmark
 
 
 def get_instances() -> dict[str, dict[str, str]]:
@@ -71,58 +71,62 @@ def save_result(
         json.dump(data, f, indent=4)
 
 
+def create_benchmark_entry(
+    solver_type: type[Solver],
+    solver_version: int,
+    instance_name: str,
+    file_name: str,
+    possible: bool,
+    timeout: int,
+    _graph: Graph_Wrapper,
+):
+    solver = solver_type(_graph)
+    success = solver.solve(timeout)
+    is_triangulation = _graph.check_if_triangulation_with_degree_constraint()
+    result = success and is_triangulation
+    correct = possible == result
+    if is_triangulation and not possible:
+        logging.error(
+            f"{instance_name} - {solver.name} - {file_name} should not be possible, but triangulation was found."
+        )
+
+    return {
+        "correct": correct,
+        "evaluation": _graph.evaluate_graph(),
+        "triangulation": _graph.get_all_edges(True),
+    }
+
+
 def run_solver_on_instance(
     solver_type: type[Solver],
     instance_name: str,
+    benchmark_path: str,
     timeout: int = -1,
-    algo_suffix_name: str = "",
-    file_suffix_name: str = "",
 ):
     instance = get_instances()
     if instance_name not in instance.keys():
         raise ValueError(
             f"Instance {instance_name} not found in {graph_const.PREFIX_INSTANCE}"
         )
+    benchmark = Benchmark(benchmark_path)
+    benchmark.capture_logger("my_alg", logging.INFO)
     instance = instance[instance_name]
-    instance_name_file = (
-        f"{instance_name}_{file_suffix_name}"
-        if file_suffix_name != ""
-        else f"{instance_name}"
-    )
     for file_name, file_path in instance.items():
         nodes = load_nodes_from_json(file_path)
         with open(f"{graph_const.PREFIX_INSTANCE}{file_path}", "r") as f:
             possible = json.load(f)["possible"]
         graph = Graph_Wrapper(nodes)
-        solver = solver_type(graph)
-        starttime = time.time()
-        success = solver.solve(timeout)
-        duration = time.time() - starttime
-
-        is_triangulation = graph.check_if_triangulation_with_degree_constraint()
-        result = success and is_triangulation
-        correct = possible == result
-        if is_triangulation and not possible:
-            logging.error(
-                f"{instance_name} - {solver.name} - {file_name}_{algo_suffix_name} should not be possible, but triangulation was found."
-            )
-
-        duration = round(duration, 2)
-        solver_name = (
-            f"{solver.name}_{solver.version}_{algo_suffix_name}"
-            if algo_suffix_name != ""
-            else f"{solver.name}_{solver.version}"
+        benchmark.add(
+            create_benchmark_entry,
+            solver_type=solver_type,
+            solver_version=solver_type.VERSION,
+            instance_name=instance_name,
+            file_name=file_name,
+            possible=possible,
+            timeout=timeout,
+            _graph=graph,
         )
-
-        save_result(
-            instance_name_file,
-            solver_name,
-            file_name,
-            duration,
-            correct,
-            graph.get_all_edges(True),
-            graph.evaluate_graph(),
-        )
+    benchmark.compress()
 
 
 def show_results(instance_name: str, block: bool = False, ignore_correct: bool = False):

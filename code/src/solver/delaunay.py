@@ -4,10 +4,11 @@ from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 
 
 class Delaunay(Solver):
+    VERSION = "0.1"
+
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = "Delaunay"
-        self.version = "0.1"
 
     def _actual_solver(self, timeout, queue) -> None:
         if self.graph is None:

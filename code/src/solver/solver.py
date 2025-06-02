@@ -10,11 +10,12 @@ class Solver(ABC):
     Abstract base class for all solvers.
     """
 
+    VERSION = "0.1"
+
     def __init__(self, graph: Graph_Wrapper) -> None:
         self.name = "Solver"
         self.graph: Graph_Wrapper = graph
         self.success = False
-        self.version = "0.0"
 
     def handel_queue(self, result_queue) -> bool:
         if result_queue.empty():

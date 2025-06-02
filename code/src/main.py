@@ -15,6 +15,7 @@ from graph_utils import run_instance
 from utils import setup_logging
 import matplotlib.pyplot as plt
 import matplotlib._pylab_helpers
+from algbench import describe
 
 
 def solver():
@@ -74,29 +75,16 @@ def move():
 
 
 def run_instance_lokal():
-    inst = "iterative_70_5"
-    file_suffix_name = ""
-    file_suffix_name = "incorrect_30_sec"
+    inst = "N_Gon_60"
+    path = str("./results/benchmark")
     # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
     run_instance.run_solver_on_instance(
         solver_type=SAT,
         instance_name=inst,
-        file_suffix_name=file_suffix_name,
+        benchmark_path=path,
         timeout=30,
     )
-    if file_suffix_name != "":
-        run_instance.show_results(f"{inst}_{file_suffix_name}", ignore_correct=True)
-        run_instance.show_percentage_of_correct_nodes(f"{inst}_{file_suffix_name}")
-
-        # run_instance.show_triangulation_from_result(
-        #     inst,
-        #     "SAT_0.2",
-        #     "009_delaunay_flips_iterative",
-        #     f"{inst}_{file_suffix_name}"
-        # )
-    else:
-        run_instance.show_results(inst)
-        # run_instance.show_percentage_of_correct_nodes(inst)
+    describe(path)
 
 
 def create_instance():
@@ -130,8 +118,8 @@ def block_plt():
 
 def main():
     # test_algo()
-    create_instance()
-    # run_instance_lokal()
+    # create_instance()
+    run_instance_lokal()
 
 
 if __name__ == "__main__":
