@@ -1,0 +1,30 @@
+{
+  "nodes": [
+    {
+      "name": "0",
+      "pos": [800, 500],
+      "degree": 2
+    },
+    {
+      "name": "1",
+      "pos": [592, 785],
+      "degree": 4
+    },
+    {
+      "name": "2",
+      "pos": [257, 676],
+      "degree": 2
+    },
+    {
+      "name": "3",
+      "pos": [257, 323],
+      "degree": 3
+    },
+    {
+      "name": "4",
+      "pos": [592, 214],
+      "degree": 3
+    }
+  ],
+  "possible": true
+}

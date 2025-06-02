@@ -13,7 +13,6 @@ from solver.remover import Remover
 from solver.sat import SAT
 from graph_utils import run_instance
 from utils import setup_logging
-from graph_utils.node import load_nodes_from_json
 import matplotlib.pyplot as plt
 import matplotlib._pylab_helpers
 
@@ -40,7 +39,8 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    nodes = load_nodes_from_json("simple_40/000_delaunay_flips.json")
+    gen = generate.Generate_Nodes_n_gon(300)
+    nodes = gen.generate_nodes(40)
     # nodes = custom_points()
     for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
         graph = Graph_Wrapper(nodes)
@@ -77,13 +77,13 @@ def run_instance_lokal():
     inst = "iterative_70_5"
     file_suffix_name = ""
     file_suffix_name = "incorrect_30_sec"
-    for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
-        run_instance.run_solver_on_instance(
-            solver_type=solver,
-            instance_name=inst,
-            file_suffix_name=file_suffix_name,
-            timeout=30,
-        )
+    # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
+    run_instance.run_solver_on_instance(
+        solver_type=SAT,
+        instance_name=inst,
+        file_suffix_name=file_suffix_name,
+        timeout=30,
+    )
     if file_suffix_name != "":
         run_instance.show_results(f"{inst}_{file_suffix_name}", ignore_correct=True)
         run_instance.show_percentage_of_correct_nodes(f"{inst}_{file_suffix_name}")
@@ -96,22 +96,24 @@ def run_instance_lokal():
         # )
     else:
         run_instance.show_results(inst)
-        run_instance.show_percentage_of_correct_nodes(inst)
+        # run_instance.show_percentage_of_correct_nodes(inst)
 
 
 def create_instance():
-    NAME = "iterative_70_5"
-    FILE_NAME = "Random_iterative"
-    NUMBER_INSTANCE = 10
-    NUMBER_NODES = 70
+    NAME = "N_Gon_60"
+    FILE_NAME = "random"
+    NUMBER_INSTANCE = 11
+    NUMBER_NODES = 60
     STEP = 5
     generate.Generate_Instance(
         NAME,
         FILE_NAME,
         NUMBER_NODES,
         NUMBER_INSTANCE,
-        generate.Generate_Nodes_Iterativ(STEP, NUMBER_INSTANCE),
+        generate.Generate_Nodes_Iterativ_N_Gon(STEP, NUMBER_INSTANCE, 300),
         generate.Generate_Edges_Random(),
+        width=1000,
+        height=1000,
     ).generate()
 
 
@@ -127,8 +129,8 @@ def block_plt():
 
 
 def main():
-    test_algo()
-    # create_instance()
+    # test_algo()
+    create_instance()
     # run_instance_lokal()
 
 
