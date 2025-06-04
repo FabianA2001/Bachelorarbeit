@@ -257,21 +257,45 @@ class Run_Instance:
         insts, solvers = self.load_default()
         self.run(insts, solvers)
 
-        # def show_triangulation_from_result(
-        #     instance_name: str,
-        #     algorithm_name: str,
-        #     instance_file_name: str,
-        #     result_file_name: str,
-        # ):
-        #     nodes = load_nodes_from_json(
-        #         f"{os.path.join(instance_name, instance_file_name)}.json"
-        #     )
-        #     with open(
-        #         os.path.join(graph_const.RESULTS_DIR, f"{result_file_name}.json"), "r"
-        #     ) as f:
-        #         data = json.load(f)
-        #     triangulation = data[algorithm_name][instance_file_name]["triangulation"]
-        #     graph = Graph_Wrapper(nodes)
-        #     for edge in triangulation:
-        #         graph.add_edge(edge[0], edge[1], active=True)
-        #     graph.show_and_save(show=True, save=True)
+    def show_triangulation_from_instance(
+        self,
+        instance_name: str,
+        algorithm_name: str,
+        instance_file_name: str,
+        host=socket.gethostname(),
+    ):
+        table = read_as_pandas(
+            self.path_benchmark,
+            lambda result: {
+                "host": result["env"]["hostname"],
+                "solver": result["parameters"]["args"]["solver_name"],
+                "instance": result["parameters"]["args"]["instance_name"],
+                "file": result["parameters"]["args"]["file_name"],
+                "tri": result["result"]["triangulation"],
+            },
+        )
+
+        table = table[
+            (table["instance"] == instance_name)
+            & (table["solver"] == algorithm_name)
+            & (table["file"] == instance_file_name)
+            & (table["host"] == host)
+        ]
+
+        print(table)  # oder weitere Verarbeitung
+        nodes = load_nodes_from_json(f"{instance_name}/{instance_file_name}.json")
+        graph = Graph_Wrapper(nodes)
+        if table.empty:
+            logging.error(
+                f"No results found for {instance_name} - {algorithm_name} - {instance_file_name} on host {host}"
+            )
+            return
+        triangulation = table.iloc[0]["tri"]
+        if triangulation is None:
+            logging.error(
+                f"No triangulation found for {instance_name} - {algorithm_name} - {instance_file_name} on host {host}"
+            )
+            return
+        for edge in triangulation:
+            graph.add_edge(edge[0], edge[1], active=True)
+        graph.show_and_save()

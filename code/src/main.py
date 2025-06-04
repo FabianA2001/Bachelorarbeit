@@ -1,5 +1,5 @@
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from graph_utils.node import move_degree
+from graph_utils.node import move_degree, load_nodes_from_json
 import logging
 from graph_utils import generate
 from solver.delaunay import Delaunay
@@ -15,6 +15,7 @@ from graph_utils import run_instance
 from utils import setup_logging
 import matplotlib.pyplot as plt
 import matplotlib._pylab_helpers
+
 
 BENCHMARK_PATH = "./results/benchmark"
 
@@ -43,15 +44,13 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    gen = generate.Generate_Nodes_n_gon(300)
-    nodes = gen.generate_nodes(40)
-    # nodes = custom_points()
-    for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
-        graph = Graph_Wrapper(nodes)
-        solver = solver(graph)
-        solver.solve(timeout=10)
-        # logging.info(f"evaluation: {graph.evaluate_graph()}")
-        graph.show_and_save()
+    nodes = load_nodes_from_json("simple_20/000_delaunay_flips.json")
+    # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
+    graph = Graph_Wrapper(nodes)
+    solver = SAT(graph)
+    solver.solve(timeout=10)
+    # logging.info(f"evaluation: {graph.evaluate_graph()}")
+    graph.show_and_save()
 
 
 def move():
@@ -98,6 +97,11 @@ def create_instance():
 def run_instance_lokal():
     ri = run_instance.Run_Instance(path_benchmark=BENCHMARK_PATH, solver=get_solvers())
     ri.select()
+    # ri.show_triangulation_from_instance(
+    #     algorithm_name="SAT",
+    #     instance_name="simple_20",
+    #     instance_file_name="000_delaunay_flips"
+    # )
     # ri.run_default()
 
 

@@ -10,6 +10,8 @@ class SAT(Solver):
     VERSION = "0.1"
     NAME = "SAT"
 
+    # TODO Paper von Discord zur Intersection constraind
+    # TODO Hülle vorher entfernen und aus degree rausrechnen
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = self.NAME
@@ -29,6 +31,7 @@ class SAT(Solver):
     def intersection_constraint(self):
         for edge in self.edges:
             intersections = self.graph.get_intersections_with_all_edges(edge)
+            # TODO nur als eine Klausel
             for intersection in intersections:
                 self.solver.add_clause(
                     [-self.get_index(edge), -self.get_index(intersection)]
@@ -45,6 +48,7 @@ class SAT(Solver):
             )
             self.solver.append_formula(cnf)
 
+    # TODO subset FOTO
     def formula_number_vars(self, vars, n):
         # CNF-Formel erstellen
         cnf = CNF()
@@ -61,6 +65,7 @@ class SAT(Solver):
         cnf.extend(enc.clauses)
         return cnf
 
+    # TODO andere sat solver testen
     def _actual_solver(self, timeout, queue) -> None:
         self.solver = SatSolver(name="glucose42")
         # cnf = self.formula_number_vars(

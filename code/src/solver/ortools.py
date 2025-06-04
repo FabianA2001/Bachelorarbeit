@@ -36,6 +36,7 @@ class Ortools(Solver):
         for edge_1, edge_2 in combinations:
             if self.graph.check_for_intersection_except_corners(edge_1, edge_2):
                 self.model.AddBoolOr([self.vars[edge_1].Not(), self.vars[edge_2].Not()])
+        # mit Arrangements verbessern
 
     def constraint_degree(self):
         if self.graph is None:
