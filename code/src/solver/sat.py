@@ -48,7 +48,7 @@ class SAT(Solver):
             )
             self.solver.append_formula(cnf)
 
-    # TODO subset FOTO
+    # TODO subsets bilden und statt dieser Funktion nutzen FOTO(1)
     def formula_number_vars(self, vars, n):
         # CNF-Formel erstellen
         cnf = CNF()
@@ -65,7 +65,7 @@ class SAT(Solver):
         cnf.extend(enc.clauses)
         return cnf
 
-    # TODO andere sat solver testen
+    # TODO andere sat solver testen, anstatt glucose42
     def _actual_solver(self, timeout, queue) -> None:
         self.solver = SatSolver(name="glucose42")
         # cnf = self.formula_number_vars(
