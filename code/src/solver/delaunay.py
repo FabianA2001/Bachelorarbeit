@@ -1,4 +1,4 @@
-from solver.solver import Solver
+from solver.solver import Solver, Solution
 from scipy.spatial import Delaunay as ScipyDelaunay
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 
@@ -11,7 +11,7 @@ class Delaunay(Solver):
         super().__init__(graph)
         self.name = self.NAME
 
-    def _actual_solver(self, timeout, queue) -> None:
+    def _actual_solver(self, timeout, queue) -> Solution:
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
 
@@ -23,10 +23,9 @@ class Delaunay(Solver):
         nodes_name = self.graph.get_all_nodes_name()
         nodes_as_pos = [self.graph._data.nodes[name].get("pos") for name in nodes_name]
         triangles = ScipyDelaunay(nodes_as_pos)
-        edges = []
         for tri in triangles.simplices:
-            edges.append((nodes_name[tri[0]], nodes_name[tri[1]]))
-            edges.append((nodes_name[tri[1]], nodes_name[tri[2]]))
-            edges.append((nodes_name[tri[2]], nodes_name[tri[0]]))
-        queue.put(edges)
-        queue.put(False)
+            self.graph.add_edge(nodes_name[tri[0]], nodes_name[tri[1]])
+            self.graph.add_edge(nodes_name[tri[1]], nodes_name[tri[2]])
+            self.graph.add_edge(nodes_name[tri[2]], nodes_name[tri[0]])
+
+        return Solution(success=True)

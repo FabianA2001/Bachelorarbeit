@@ -1,6 +1,6 @@
 import os
 from graph_utils import graph_const
-from solver.solver import Solver
+from solver.solver import Solver, Solution
 import json
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from graph_utils.node import load_nodes_from_json
@@ -54,9 +54,9 @@ class Run_Instance:
         _graph: Graph_Wrapper,
     ):
         solver = solver_type(_graph)
-        success = solver.solve(timeout)
+        solution: Solution = solver.solve(timeout)
         is_triangulation = _graph.check_if_triangulation_with_degree_constraint()
-        result = success and is_triangulation
+        result = solution.success and is_triangulation
         correct = possible == result
         if is_triangulation and not possible:
             logging.error(
@@ -143,7 +143,6 @@ class Run_Instance:
         # Filter nach Host, falls host angegeben ist
         if host:
             table = table[table["host"] == host]
-        print(table)
 
         if not ignore_correct:
             # Setze runtime auf -1, wenn correct False ist

@@ -7,9 +7,7 @@ from graph_utils.node import Node
 from solver.ortools import Ortools
 from solver.raw_flips import Raw_Flips
 from solver.iterative import Iterative
-from solver.cycle_add import Cycle_Add
 from solver.random_adder import Random_Adder
-from solver.remover import Remover
 from solver.sat import SAT
 from graph_utils import run_instance
 from utils import setup_logging
@@ -26,10 +24,8 @@ def get_solvers():
         Delaunay,
         Iterative,
         Ortools,
-        Cycle_Add,
         SAT,
         Random_Adder,
-        Remover,
     ]
 
 
@@ -47,7 +43,7 @@ def test_algo():
     nodes = load_nodes_from_json("simple_20/000_delaunay_flips.json")
     # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
     graph = Graph_Wrapper(nodes)
-    solver = SAT(graph)
+    solver = Ortools(graph)
     solver.solve(timeout=10)
     # logging.info(f"evaluation: {graph.evaluate_graph()}")
     graph.show_and_save()
@@ -111,9 +107,9 @@ def block_plt():
 
 
 def main():
-    # test_algo()
+    test_algo()
     # create_instance()
-    run_instance_lokal()
+    # run_instance_lokal()
 
 
 if __name__ == "__main__":

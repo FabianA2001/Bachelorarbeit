@@ -1,4 +1,4 @@
-from solver.solver import Solver
+from solver.solver import Solver, Solution
 from ortools.sat.python import cp_model
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
@@ -51,7 +51,7 @@ class Ortools(Solver):
                     summ += self.vars[(edge[1], edge[0])]
             self.model.Add(summ == degree)
 
-    def _actual_solver(self, timeout, queue) -> None:
+    def _actual_solver(self, timeout, queue) -> Solution:
         start_time = time.time()
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
@@ -81,10 +81,10 @@ class Ortools(Solver):
             FirstSolutionStop(self.graph.get_number_edges_in_Triangulation()),
         )
         # status = solver.Solve(self.model)
-        if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-            edges = []
-            for edge, var in zip(self.graph.get_all_edges(), self.vars.values()):
-                if solver.BooleanValue(var):
-                    edges.append(edge)
-            queue.put(edges)
-        queue.put(True)
+        if not (status == cp_model.OPTIMAL or status == cp_model.FEASIBLE):
+            return Solution(success=False)
+        self.graph.clear_all_edges()
+        for edge, var in zip(self.graph.get_all_edges(), self.vars.values()):
+            if solver.BooleanValue(var):
+                self.graph.add_edge(edge[0], edge[1])
+        return Solution(success=True)

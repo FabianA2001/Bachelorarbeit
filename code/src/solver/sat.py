@@ -1,5 +1,5 @@
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from solver.solver import Solver
+from solver.solver import Solver, Solution
 from pysat.solvers import Solver as SatSolver
 from pysat.formula import CNF
 from pysat.card import CardEnc
@@ -66,7 +66,7 @@ class SAT(Solver):
         return cnf
 
     # TODO andere sat solver testen, anstatt glucose42
-    def _actual_solver(self, timeout, queue) -> None:
+    def _actual_solver(self) -> Solution:
         self.solver = SatSolver(name="glucose42")
         # cnf = self.formula_number_vars(
         #     self.all_vars, self.graph.get_number_edges_in_Triangulation()
@@ -75,19 +75,15 @@ class SAT(Solver):
         self.intersection_constraint()
         self.degree_constraint()
         # SAT lösen
-        if self.solver.solve():
-            quere_edges = []
-            model = self.solver.get_model()
-            assert model is not None, "Model should not be None"
-            for var in self.all_vars:
-                if var in model:
-                    edge = self.get_edge(var)
-                    quere_edges.append(edge)
-            queue.put(quere_edges)
-            queue.put(True)
-            return
+        if not self.solver.solve():
+            logging.info("SAT Solver could not find a solution.")
+            return Solution(False)
 
-        else:
-            logging.error("SAT Solver could not find a solution.")
-            queue.put(False)
-            return
+        model = self.solver.get_model()
+        assert model is not None, "Model should not be None"
+        self.graph.clear_all_edges()
+        for var in self.all_vars:
+            if var in model:
+                edge = self.get_edge(var)
+                self.graph.add_edge(edge[0], edge[1], active=True)
+        return Solution(True)
