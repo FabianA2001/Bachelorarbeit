@@ -72,5 +72,8 @@ class Raw_Flips(Solver):
                 assert False, "Graph is not triangulated."
             if self.graph.check_if_triangulation_with_degree_constraint():
                 return Solution(success=True)
+            if i % 100 == 0:
+                if self.reach_timeout():
+                    return Solution(success=False)
 
         return Solution(success=False)

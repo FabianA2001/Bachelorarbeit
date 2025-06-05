@@ -14,6 +14,7 @@ class SAT(Solver):
     # TODO Hülle vorher entfernen und aus degree rausrechnen
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
+        logging.warning("Kein Timeout")
         self.name = self.NAME
         self.graph.add_all_possible_edges(default_for_active=True)
         self.edges = self.graph.get_all_edges()
@@ -68,15 +69,14 @@ class SAT(Solver):
     # TODO andere sat solver testen, anstatt glucose42
     def _actual_solver(self) -> Solution:
         self.solver = SatSolver(name="glucose42")
-        # cnf = self.formula_number_vars(
-        #     self.all_vars, self.graph.get_number_edges_in_Triangulation()
-        # )
-        # self.solver.append_formula(cnf)
         self.intersection_constraint()
         self.degree_constraint()
-        # SAT lösen
+        logging.info(self.get_remaining_time())
+        # TODO Remaining Time zum solver hinzufügen
         if not self.solver.solve():
-            logging.info("SAT Solver could not find a solution.")
+            logging.info(
+                "SAT Solver could not find a solution (Timeout oder unlösbar)."
+            )
             return Solution(False)
 
         model = self.solver.get_model()

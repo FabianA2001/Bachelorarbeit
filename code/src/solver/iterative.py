@@ -24,6 +24,7 @@ class Iterative(Solver):
         self.graph.add_convex_hull()
 
         combinations = itertools.combinations(self.points, 2)
+        counter = 0
         for point1, point2 in combinations:
             line = shapely.LineString([point1, point2])
             if not self.graph.check_for_intersection_with_all_edges_and_nodes(line):
@@ -32,5 +33,10 @@ class Iterative(Solver):
                     self.graph.get_node_from_point(point2),
                     active=True,
                 )
+
+            counter += 1
+            if counter % 100 == 0:
+                if self.reach_timeout():
+                    return Solution(success=False)
 
         return Solution(success=True)

@@ -3,7 +3,6 @@ from ortools.sat.python import cp_model
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
 import itertools
-import time
 
 
 class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
@@ -52,7 +51,6 @@ class Ortools(Solver):
             self.model.Add(summ == degree)
 
     def _actual_solver(self, timeout, queue) -> Solution:
-        start_time = time.time()
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
         self.graph.add_all_possible_edges()
@@ -66,15 +64,7 @@ class Ortools(Solver):
 
         solver = cp_model.CpSolver()
         # solver.parameters.log_search_progress = True  # Enable logging
-        if timeout > 0:
-            solver.parameters.max_time_in_seconds = (
-                timeout - (time.time() - start_time) - 2
-            )
-
-            logging.info(
-                f"Timeout set to {solver.parameters.max_time_in_seconds} seconds"
-            )
-
+        solver.parameters.max_time_in_seconds = self.get_remaining_time()
         logging.info("Start solving...")
         status = solver.Solve(
             self.model,

@@ -16,10 +16,15 @@ class Random_Adder(Solver):
             raise ValueError("Graph is not set. Please set the graph before solving.")
         self.graph.add_all_possible_edges(False)
         edges = self.graph.get_all_edges(False)
+        counter = 0
         while len(edges) > 0:
             edge = random.choice(edges)
             edges.remove(edge)
             self.graph.activate_edge(edge)
             if self.graph.check_for_intersection_with_all_edges_and_nodes(edge):
                 self.graph.deactivate_edge(edge)
+            counter += 1
+            if counter % 100 == 0:
+                if self.reach_timeout():
+                    return Solution(success=False)
         return Solution(success=True)

@@ -1,6 +1,7 @@
 from solver.solver import Solver, Solution
 from scipy.spatial import Delaunay as ScipyDelaunay
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
+import logging
 
 
 class Delaunay(Solver):
@@ -9,6 +10,7 @@ class Delaunay(Solver):
 
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
+        logging.warning("Kein Timeout")
         self.name = self.NAME
 
     def _actual_solver(self, timeout, queue) -> Solution:
