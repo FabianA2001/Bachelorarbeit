@@ -40,11 +40,11 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    nodes = load_nodes_from_json("simple_40/000_delaunay_flips.json")
+    nodes = load_nodes_from_json("simple_60/000_delaunay_flips.json")
     # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
     graph = Graph_Wrapper(nodes)
     solver = SAT(graph)
-    solver.solve(timeout=7)
+    solver.solve(timeout=20)
     # logging.info(f"evaluation: {graph.evaluate_graph()}")
     graph.show_and_save()
 
