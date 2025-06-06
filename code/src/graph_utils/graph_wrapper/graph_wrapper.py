@@ -10,6 +10,7 @@ from graph_utils.graph_wrapper.operation import flip_edge
 from graph_utils.graph_wrapper.operation import move_node
 from graph_utils.graph_wrapper.file_system import save_graph_as_json
 import itertools
+import logging
 
 
 class Graph_Wrapper:
@@ -179,6 +180,7 @@ class Graph_Wrapper:
 
     def clear_all_edges(self) -> None:
         """Entfernt alle Kanten des Graphen."""
+        logging.info("Clearing all edges in the graph.")
         self._data.clear_edges()
 
     def number_of_correct_nodes(self) -> int:

@@ -34,7 +34,7 @@ class Ortools(Solver):
         for edge_1, edge_2 in combinations:
             if self.graph.check_for_intersection_except_corners(edge_1, edge_2):
                 self.model.AddBoolOr([self.vars[edge_1].Not(), self.vars[edge_2].Not()])
-        # mit Arrangements verbessern
+        # TODO mit Arrangements verbessern
 
     def constraint_degree(self):
         if self.graph is None:
@@ -52,11 +52,12 @@ class Ortools(Solver):
     def _actual_solver(self, parameter: dict) -> dict:
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
-        self.graph.add_all_possible_edges()
+        self.graph.add_all_possible_edges(default_for_active=False)
         self.vars = {
             edge: self.model.NewBoolVar(f"edge_{edge[0]}_{edge[1]}")
             for edge in self.graph.get_all_edges()
         }
+
         self.model.Maximize(sum(list(self.vars.values())))
         self.constraint_intersection()
         self.constraint_degree()
@@ -71,13 +72,13 @@ class Ortools(Solver):
         )
         # status = solver.Solve(self.model)
         if not (status == cp_model.OPTIMAL or status == cp_model.FEASIBLE):
+            logging.warning("No solution found.")
             return {
                 "success": False,
             }
-        self.graph.clear_all_edges()
         for edge, var in zip(self.graph.get_all_edges(), self.vars.values()):
             if solver.BooleanValue(var):
-                self.graph.add_edge(edge[0], edge[1])
+                self.graph.activate_edge(edge)
         return {
             "success": True,
         }

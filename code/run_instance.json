@@ -1,4 +1,4 @@
 {
-  "instances": ["simple_30"],
-  "solvers": ["Random"]
+  "instances": ["iterative_60_10"],
+  "solvers": ["Ortools"]
 }

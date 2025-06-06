@@ -40,13 +40,13 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    nodes = load_nodes_from_json("simple_60/000_delaunay_flips.json")
+    nodes = load_nodes_from_json("iterative_60_10/000_random.json")
     # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
     graph = Graph_Wrapper(nodes)
-    solver = Random_Adder(graph)
+    solver = Ortools(graph)
     solver.solve(
         {
-            "timeout": 10,
+            "timeout": 30,
             "version": 0.1,
         }
     )
@@ -89,17 +89,17 @@ def move():
 
 
 def create_instance():
-    NAME = "N_Gon_60"
+    NAME = "iterative_60_10"
     FILE_NAME = "random"
-    NUMBER_INSTANCE = 11
+    NUMBER_INSTANCE = 5
     NUMBER_NODES = 60
-    STEP = 5
+    STEP = 10
     generate.Generate_Instance(
         NAME,
         FILE_NAME,
         NUMBER_NODES,
         NUMBER_INSTANCE,
-        generate.Generate_Nodes_Iterativ_N_Gon(STEP, NUMBER_INSTANCE, 300),
+        generate.Generate_Nodes_Iterativ(STEP, NUMBER_INSTANCE),
         generate.Generate_Edges_Random(),
         width=1000,
         height=1000,
@@ -108,13 +108,13 @@ def create_instance():
 
 def run_instance_lokal():
     ri = run_instance.Run_Instance(path_benchmark=BENCHMARK_PATH, solver=get_solvers())
-    # ri.select()
+    ri.select()
     # ri.show_triangulation_from_instance(
     #     algorithm_name="Random",
     #     instance_name="simple_30",
     #     instance_file_name="001_delaunay"
     # )
-    ri.run_default()
+    # ri.run_default()
 
 
 def block_plt():

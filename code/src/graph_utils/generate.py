@@ -98,7 +98,12 @@ class Generate_Edges_Delaunay_Flips(Generate_Instance_ABC_Edges):
         self, graph: Graph_Wrapper
     ) -> tuple[Graph_Wrapper, Optional[bool]]:
         solver = Delaunay(graph)
-        solver.solve()
+        solver.solve(
+            {
+                "timeout": 60,
+                "version": 0.1,
+            }
+        )
         for _ in range(self.number_flips):
             while True:
                 edges = graph.get_all_edges()
@@ -113,7 +118,12 @@ class Generate_Edges_Delaunay(Generate_Instance_ABC_Edges):
         self, graph: Graph_Wrapper
     ) -> tuple[Graph_Wrapper, Optional[bool]]:
         solver = Delaunay(graph)
-        solver.solve()
+        solver.solve(
+            {
+                "timeout": -1,
+                "version": 0.1,
+            }
+        )
         return (graph, True)
 
 
@@ -122,7 +132,12 @@ class Generate_Edges_Random(Generate_Instance_ABC_Edges):
         self, graph: Graph_Wrapper
     ) -> tuple[Graph_Wrapper, Optional[bool]]:
         solver = Random_Adder(graph)
-        solver.solve()
+        solver.solve(
+            {
+                "timeout": -1,
+                "version": 0.1,
+            }
+        )
         return (graph, True)
 
 

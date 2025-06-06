@@ -139,11 +139,9 @@ class Data_Raw(nx.Graph):
         return lokal.degree(node)
 
     def get_aktive_graph_nodes(self) -> list[Node]:
-        local_graph = self.get_aktive_graph()
-
         nodes = []
-        for node in local_graph.nodes:
-            nodes.append(Node(node, local_graph.nodes[node]["pos"], self.degree(node)))
+        for node in self.get_all_nodes_name():
+            nodes.append(Node(node, self.nodes[node]["pos"], self.degree_aktive(node)))
 
         return nodes
 
