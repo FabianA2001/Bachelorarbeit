@@ -9,12 +9,20 @@ class Solution:
         self.success = success
 
 
+class Parameter:
+    def __init__(self, version: float, timeout: int = -1) -> None:
+        self.version = version
+        self.timeout = timeout
+
+    def __str__(self) -> str:
+        return f"Version: {self.version}"
+
+
 class Solver(ABC):
     """
     Abstract base class for all solvers.
     """
 
-    VERSION = "0.1"
     NAME = "Solver"
 
     def __init__(self, graph: Graph_Wrapper) -> None:
@@ -47,17 +55,18 @@ class Solver(ABC):
             return True
         return False
 
-    def solve(self, timeout: int = -1) -> Solution:
+    def solve(self, parameter: Parameter) -> Solution:
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
         logging.info(f"{self.name} started.")
-        self.timeout = timeout
+        self.graph.clear_all_edges()
+        self.timeout = parameter.timeout
         self.start_time = time.time()
         self.graph.name = self.name
 
-        solution = self._actual_solver()
+        solution = self._actual_solver(parameter)
         logging.info(f"{self.name} completed.")
         return solution
 
     @abstractmethod
-    def _actual_solver(self) -> Solution: ...
+    def _actual_solver(self, parameter: Parameter) -> Solution: ...

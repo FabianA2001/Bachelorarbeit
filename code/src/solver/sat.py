@@ -1,5 +1,5 @@
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from solver.solver import Solver, Solution
+from solver.solver import Solver, Solution, Parameter
 from pysat.solvers import Solver as SatSolver
 from pysat.formula import CNF
 from pysat.card import CardEnc
@@ -15,7 +15,6 @@ class TimeoutError(Exception):
 
 
 class SAT(Solver):
-    VERSION = "0.1"
     NAME = "SAT"
 
     # TODO Paper von Discord zur Intersection constraind
@@ -146,7 +145,7 @@ class SAT(Solver):
 
         # TODO andere sat solver testen, anstatt glucose42
 
-    def _actual_solver(self) -> Solution:
+    def _actual_solver(self, parameter: Parameter) -> Solution:
         try:
             self.solver = SatSolver(name="glucose42")
             self.intersection_constraint()

@@ -1,11 +1,10 @@
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from solver.solver import Solver, Solution
+from solver.solver import Solver, Solution, Parameter
 from solver.delaunay import Delaunay
 import random
 
 
 class Raw_Flips(Solver):
-    VERSION = "0.1"
     NAME = "Raw_Flips"
 
     def __init__(self, graph: Graph_Wrapper) -> None:
@@ -53,13 +52,13 @@ class Raw_Flips(Solver):
             return True
         return False
 
-    def _actual_solver(self) -> Solution:
+    def _actual_solver(self, parameter: Parameter) -> Solution:
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
 
         solver = Delaunay(self.graph)
         self.graph.name = self.name
-        solver.solve()
+        solver.solve(parameter)
 
         for i in range(
             self.graph.get_number_edges_in_Triangulation() ** self.EXPONENT_ITERATIONS

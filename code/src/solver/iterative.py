@@ -1,11 +1,10 @@
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from solver.solver import Solver, Solution
+from solver.solver import Solver, Solution, Parameter
 import shapely
 import itertools
 
 
 class Iterative(Solver):
-    VERSION = "0.1"
     NAME = "Iterative"
 
     def __init__(self, graph: Graph_Wrapper) -> None:
@@ -16,7 +15,7 @@ class Iterative(Solver):
         nearest_point = min(self.points, key=lambda p: point.distance(p))
         return nearest_point
 
-    def _actual_solver(self, timeout, queue) -> Solution:
+    def _actual_solver(self, parameter: Parameter) -> Solution:
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
 

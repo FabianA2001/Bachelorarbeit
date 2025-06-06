@@ -1,17 +1,16 @@
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from solver.solver import Solver, Solution
+from solver.solver import Solver, Solution, Parameter
 import random
 
 
 class Random_Adder(Solver):
-    VERSION = "0.2"
     NAME = "Random"
 
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = self.NAME
 
-    def _actual_solver(self, timeout, queue) -> Solution:
+    def _actual_solver(self, parameter: Parameter) -> Solution:
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
         self.graph.add_all_possible_edges(False)
