@@ -49,6 +49,14 @@ class Ortools(Solver):
                     summ += self.vars[(edge[1], edge[0])]
             self.model.Add(summ == degree)
 
+    def constraint_number_edges(self, number_edges: int):
+        if self.graph is None:
+            raise ValueError("Graph is not set. Please set the graph before solving.")
+        if number_edges < 0:
+            raise ValueError("Number of edges must be non-negative.")
+        summ = sum(self.vars.values())
+        self.model.Add(summ == number_edges)
+
     def _actual_solver(self, parameter: dict) -> dict:
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
@@ -58,9 +66,18 @@ class Ortools(Solver):
             for edge in self.graph.get_all_edges()
         }
 
-        self.model.Maximize(sum(list(self.vars.values())))
-        self.constraint_intersection()
-        self.constraint_degree()
+        if parameter["version"] == 0.1:
+            self.model.Maximize(sum(list(self.vars.values())))
+            self.constraint_intersection()
+            self.constraint_degree()
+        elif parameter["version"] == 0.2:
+            self.constraint_intersection()
+            self.constraint_degree()
+            self.constraint_number_edges(self.graph.get_number_edges_in_Triangulation())
+        else:
+            raise ValueError(
+                f"Version {parameter['version']} for OrTools not supported."
+            )
 
         solver = cp_model.CpSolver()
         # solver.parameters.log_search_progress = True  # Enable logging

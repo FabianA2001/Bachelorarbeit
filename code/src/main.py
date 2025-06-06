@@ -108,13 +108,13 @@ def create_instance():
 
 def run_instance_lokal():
     ri = run_instance.Run_Instance(path_benchmark=BENCHMARK_PATH, solver=get_solvers())
-    ri.select()
+    # ri.select()
     # ri.show_triangulation_from_instance(
     #     algorithm_name="Random",
     #     instance_name="simple_30",
     #     instance_file_name="001_delaunay"
     # )
-    # ri.run_default()
+    ri.run_default()
 
 
 def block_plt():

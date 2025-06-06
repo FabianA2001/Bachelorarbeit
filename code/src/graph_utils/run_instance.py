@@ -140,7 +140,6 @@ class Run_Instance:
 
         # filter nach Host
         table = table.sort_values(by=["solver", "instance", "file"])
-        print(table)
         # Filter nach Host, falls host angegeben ist
         if host:
             table = table[table["host"] == host]
@@ -221,7 +220,7 @@ class Run_Instance:
                 )
         # from algbench import describe
         # describe(self.path_benchmark)
-        self.show_results(insts, solvers)
+        self.show_results(insts, solvers, only_newest=False)
 
     @staticmethod
     def get_selection(lit: list):
@@ -262,7 +261,7 @@ class Run_Instance:
         insts, solvers = self.load_default()
         parameter = {
             "timeout": self.DEFAULT_TIME,
-            "version": 0.2,
+            "version": 0.3,
         }
         self.run(insts, solvers, parameter)
 
