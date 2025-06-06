@@ -1,4 +1,4 @@
 {
-  "instances": ["simple_10"],
-  "solvers": ["SAT"]
+  "instances": ["simple_30"],
+  "solvers": ["Random"]
 }

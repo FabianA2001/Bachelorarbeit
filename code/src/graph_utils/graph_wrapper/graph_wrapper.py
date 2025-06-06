@@ -219,7 +219,7 @@ class Graph_Wrapper:
         number_of_nodes = len(self.get_all_nodes_name())
         for node in self.get_all_nodes_name():
             sollGrad = self.get_degree_of_node(node)
-            echterGrad = self._data.degree(node)
+            echterGrad = self._data.degree_aktive(node)
             x = (sollGrad - min(abs(sollGrad - echterGrad), sollGrad)) / sollGrad
             evaluation += x
 

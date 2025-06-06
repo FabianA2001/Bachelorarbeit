@@ -1,4 +1,4 @@
-from solver.solver import Solver, Solution, Parameter
+from solver.solver import Solver
 from ortools.sat.python import cp_model
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
@@ -49,7 +49,7 @@ class Ortools(Solver):
                     summ += self.vars[(edge[1], edge[0])]
             self.model.Add(summ == degree)
 
-    def _actual_solver(self, parameter: Parameter) -> Solution:
+    def _actual_solver(self, parameter: dict) -> dict:
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
         self.graph.add_all_possible_edges()
@@ -71,9 +71,13 @@ class Ortools(Solver):
         )
         # status = solver.Solve(self.model)
         if not (status == cp_model.OPTIMAL or status == cp_model.FEASIBLE):
-            return Solution(success=False)
+            return {
+                "success": False,
+            }
         self.graph.clear_all_edges()
         for edge, var in zip(self.graph.get_all_edges(), self.vars.values()):
             if solver.BooleanValue(var):
                 self.graph.add_edge(edge[0], edge[1])
-        return Solution(success=True)
+        return {
+            "success": True,
+        }

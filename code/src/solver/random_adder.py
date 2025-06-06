@@ -1,5 +1,5 @@
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from solver.solver import Solver, Solution, Parameter
+from solver.solver import Solver
 import random
 
 
@@ -10,7 +10,7 @@ class Random_Adder(Solver):
         super().__init__(graph)
         self.name = self.NAME
 
-    def _actual_solver(self, parameter: Parameter) -> Solution:
+    def _actual_solver(self, parameter: dict) -> dict:
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
         self.graph.add_all_possible_edges(False)
@@ -25,5 +25,9 @@ class Random_Adder(Solver):
             counter += 1
             if counter % 100 == 0:
                 if self.reach_timeout():
-                    return Solution(success=False)
-        return Solution(success=True)
+                    return {
+                        "success": False,
+                    }
+        return {
+            "success": True,
+        }

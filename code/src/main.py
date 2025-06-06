@@ -43,8 +43,14 @@ def test_algo():
     nodes = load_nodes_from_json("simple_60/000_delaunay_flips.json")
     # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
     graph = Graph_Wrapper(nodes)
-    solver = SAT(graph)
-    solver.solve(timeout=20)
+    solver = Random_Adder(graph)
+    solver.solve(
+        {
+            "timeout": 10,
+            "version": 0.1,
+        }
+    )
+    print(graph.evaluate_graph())
     # logging.info(f"evaluation: {graph.evaluate_graph()}")
     graph.show_and_save()
 
@@ -53,7 +59,12 @@ def move():
     nodes = generate.gen_nodes(30, 4000, 4000)
     graph = Graph_Wrapper(nodes)
     solver = Delaunay(graph)
-    solver.solve()
+    solver.solve(
+        {
+            "timeout": 10,
+            "version": 0.1,
+        }
+    )
 
     graph.show_and_save(show=False)
     graph.name = "Delaunay"
@@ -62,7 +73,12 @@ def move():
         nodes2 = move_degree(nodes2, 1, 1, 2)
         graph2 = Graph_Wrapper(nodes2)
         solver2 = Ortools(graph2)
-        if solver2.solve():
+        if solver2.solve(
+            {
+                "timeout": 10,
+                "version": 0.1,
+            }
+        ):
             break
     else:
         print("No solution found after 100 iterations")
@@ -92,13 +108,13 @@ def create_instance():
 
 def run_instance_lokal():
     ri = run_instance.Run_Instance(path_benchmark=BENCHMARK_PATH, solver=get_solvers())
-    ri.select()
+    # ri.select()
     # ri.show_triangulation_from_instance(
-    #     algorithm_name="SAT",
-    #     instance_name="simple_20",
-    #     instance_file_name="000_delaunay_flips"
+    #     algorithm_name="Random",
+    #     instance_name="simple_30",
+    #     instance_file_name="001_delaunay"
     # )
-    # ri.run_default()
+    ri.run_default()
 
 
 def block_plt():
@@ -107,9 +123,9 @@ def block_plt():
 
 
 def main():
-    test_algo()
+    # test_algo()
     # create_instance()
-    # run_instance_lokal()
+    run_instance_lokal()
 
 
 if __name__ == "__main__":

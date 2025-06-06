@@ -1,5 +1,5 @@
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from solver.solver import Solver, Solution, Parameter
+from solver.solver import Solver
 from pysat.solvers import Solver as SatSolver
 from pysat.formula import CNF
 from pysat.card import CardEnc
@@ -76,11 +76,13 @@ class SAT(Solver):
         cnf.extend(enc.clauses)
         return cnf
 
-    def handel_queue(self, result_queue) -> Solution:
+    def handel_queue(self, result_queue) -> dict:
         if result_queue.empty():
             self.graph.clear_all_edges()
             logging.warning("queue ist empty")
-            return Solution(False)
+            return {
+                "success": False,
+            }
 
         vars = []
         success = False
@@ -100,14 +102,19 @@ class SAT(Solver):
         self.graph.clear_all_edges()
         if not len(vars) > 0:
             logging.warning("No edges found in queue")
-            return Solution(success)
+            return {
+                "success": success,
+            }
 
         for var in vars:
             edge = self.get_edge(var)
             self.graph.add_edge(edge[0], edge[1], active=True)
-        return Solution(success)
+        return {
+            "success": success,
+            "vars": vars,
+        }
 
-    def __handel_solver_with_timeout(self, timeout: float) -> Solution:
+    def __handel_solver_with_timeout(self, timeout: float) -> dict:
         result_queue = multiprocessing.Queue()
         process = multiprocessing.Process(
             target=self.prcess_solver, args=(result_queue, self.solver, self.all_vars)
@@ -121,7 +128,7 @@ class SAT(Solver):
             self.success = False
         return self.handel_queue(result_queue)
 
-    def __handel_solver_without_timeout(self) -> Solution:
+    def __handel_solver_without_timeout(self) -> dict:
         result_queue = queue.Queue()
         self.prcess_solver(result_queue, self.solver, self.all_vars)
         self.graph.clear_all_edges()
@@ -145,7 +152,7 @@ class SAT(Solver):
 
         # TODO andere sat solver testen, anstatt glucose42
 
-    def _actual_solver(self, parameter: Parameter) -> Solution:
+    def _actual_solver(self, parameter: dict) -> dict:
         try:
             self.solver = SatSolver(name="glucose42")
             self.intersection_constraint()
@@ -163,4 +170,6 @@ class SAT(Solver):
         except TimeoutError:
             self.graph.clear_all_edges()
             logging.warning("abbruch wegen timeout")
-            return Solution(False)
+            return {
+                "success": False,
+            }

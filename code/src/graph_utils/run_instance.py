@@ -1,6 +1,6 @@
 import os
 from graph_utils import graph_const
-from solver.solver import Solver, Solution
+from solver.solver import Solver
 import json
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from graph_utils.node import load_nodes_from_json
@@ -46,17 +46,16 @@ class Run_Instance:
     def create_benchmark_entry(
         solver_type: type[Solver],
         solver_name: str,
-        solver_version: int,
+        parameter: dict,
         instance_name: str,
         file_name: str,
         possible: bool,
-        timeout: int,
         _graph: Graph_Wrapper,
     ):
         solver = solver_type(_graph)
-        solution: Solution = solver.solve(timeout)
+        solution: dict = solver.solve(parameter)
         is_triangulation = _graph.check_if_triangulation_with_degree_constraint()
-        result = solution.success and is_triangulation
+        result = solution["success"] and is_triangulation
         correct = possible == result
         if is_triangulation and not possible:
             logging.error(
@@ -90,7 +89,7 @@ class Run_Instance:
         self,
         solver_type: type[Solver],
         instance_name: str,
-        timeout: int = -1,
+        parameter: dict,
     ):
         instance = self.get_instances()
         if instance_name not in instance.keys():
@@ -98,6 +97,7 @@ class Run_Instance:
                 f"Instance {instance_name} not found in {graph_const.PREFIX_INSTANCE}"
             )
         instance = instance[instance_name]
+
         for file_name, file_path in instance.items():
             nodes = load_nodes_from_json(file_path)
             with open(f"{graph_const.PREFIX_INSTANCE}{file_path}", "r") as f:
@@ -107,11 +107,10 @@ class Run_Instance:
                 self.create_benchmark_entry,
                 solver_type=solver_type,
                 solver_name=solver_type.NAME,
-                solver_version=solver_type.VERSION,
+                parameter=parameter,
                 instance_name=instance_name,
                 file_name=file_name,
                 possible=possible,
-                timeout=timeout,
                 _graph=graph,
             )
         self.benchmark.compress()
@@ -132,14 +131,16 @@ class Run_Instance:
                 "solver": result["parameters"]["args"]["solver_name"],
                 "instance": result["parameters"]["args"]["instance_name"],
                 "file": result["parameters"]["args"]["file_name"],
-                "version": result["parameters"]["args"]["solver_version"],
+                "version": result["parameters"]["args"]["parameter"]["version"],
                 "correct": result["result"]["correct"],
                 "evaluation": result["result"]["evaluation"],
                 "runtime": result["runtime"],
             },
         )
+
         # filter nach Host
         table = table.sort_values(by=["solver", "instance", "file"])
+        print(table)
         # Filter nach Host, falls host angegeben ist
         if host:
             table = table[table["host"] == host]
@@ -195,7 +196,7 @@ class Run_Instance:
         plt.figure()
         sns.barplot(
             data=table,
-            x="instance_file",  # <-- jetzt eindeutig
+            x="instance_file",
             y=y,
             hue="solver_version",
         )
@@ -210,16 +211,16 @@ class Run_Instance:
         plt.tight_layout()
         plt.show(block=block)
 
-    def run(
-        self, insts: list[str], solvers: list[type[Solver]], timeout: int = DEFAULT_TIME
-    ):
+    def run(self, insts: list[str], solvers: list[type[Solver]], parameter: dict):
         for inst in insts:
             for solver in solvers:
                 self.run_solver_on_instance(
                     solver_type=solver,
                     instance_name=inst,
-                    timeout=timeout,
+                    parameter=parameter,
                 )
+        # from algbench import describe
+        # describe(self.path_benchmark)
         self.show_results(insts, solvers)
 
     @staticmethod
@@ -250,11 +251,20 @@ class Run_Instance:
         if save:
             self.save_default(insts, solvers)
 
-        self.run(insts, solvers)
+        parameter = {
+            "timeout": self.DEFAULT_TIME,
+            "version": 0.1,
+        }
+
+        self.run(insts, solvers, parameter)
 
     def run_default(self):
         insts, solvers = self.load_default()
-        self.run(insts, solvers)
+        parameter = {
+            "timeout": self.DEFAULT_TIME,
+            "version": 0.2,
+        }
+        self.run(insts, solvers, parameter)
 
     def show_triangulation_from_instance(
         self,

@@ -131,6 +131,13 @@ class Data_Raw(nx.Graph):
     def degree(self, node):
         return super().degree(node)  # type:ignore
 
+    def degree_aktive(self, node: str) -> int:
+        """Gibt den Grad eines Knotens im aktiven Graphen zurück."""
+        if node not in self.nodes:
+            raise ValueError(f"Node {node} not found in graph.")
+        lokal = self.get_aktive_graph()
+        return lokal.degree(node)
+
     def get_aktive_graph_nodes(self) -> list[Node]:
         local_graph = self.get_aktive_graph()
 

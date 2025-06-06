@@ -1,4 +1,4 @@
-from solver.solver import Solver, Solution, Parameter
+from solver.solver import Solver
 from scipy.spatial import Delaunay as ScipyDelaunay
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
@@ -12,7 +12,7 @@ class Delaunay(Solver):
         logging.warning("Kein Timeout")
         self.name = self.NAME
 
-    def _actual_solver(self, parameter: Parameter) -> Solution:
+    def _actual_solver(self, parameter: dict) -> dict:
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
 
@@ -29,4 +29,6 @@ class Delaunay(Solver):
             self.graph.add_edge(nodes_name[tri[1]], nodes_name[tri[2]])
             self.graph.add_edge(nodes_name[tri[2]], nodes_name[tri[0]])
 
-        return Solution(success=True)
+        return {
+            "success": True,
+        }

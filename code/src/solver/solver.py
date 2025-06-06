@@ -4,20 +4,6 @@ import logging
 import time
 
 
-class Solution:
-    def __init__(self, success: bool) -> None:
-        self.success = success
-
-
-class Parameter:
-    def __init__(self, version: float, timeout: int = -1) -> None:
-        self.version = version
-        self.timeout = timeout
-
-    def __str__(self) -> str:
-        return f"Version: {self.version}"
-
-
 class Solver(ABC):
     """
     Abstract base class for all solvers.
@@ -55,12 +41,11 @@ class Solver(ABC):
             return True
         return False
 
-    def solve(self, parameter: Parameter) -> Solution:
+    def solve(self, parameter: dict) -> dict:
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
         logging.info(f"{self.name} started.")
-        self.graph.clear_all_edges()
-        self.timeout = parameter.timeout
+        self.timeout = parameter["timeout"]
         self.start_time = time.time()
         self.graph.name = self.name
 
@@ -69,4 +54,4 @@ class Solver(ABC):
         return solution
 
     @abstractmethod
-    def _actual_solver(self, parameter: Parameter) -> Solution: ...
+    def _actual_solver(self, parameter: dict) -> dict: ...
