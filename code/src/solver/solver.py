@@ -4,6 +4,12 @@ import logging
 import time
 
 
+class TimeoutError(Exception):
+    """Custom exception for timeout errors."""
+
+    pass
+
+
 class Solver(ABC):
     """
     Abstract base class for all solvers.
@@ -40,6 +46,10 @@ class Solver(ABC):
             logging.warning(f"{self.name} timed out after {elapsed_time:.2f} seconds.")
             return True
         return False
+
+    def timeout_error(self):
+        if self.reach_timeout():
+            raise TimeoutError()
 
     def solve(self, parameter: dict) -> dict:
         if not isinstance(self.graph, Graph_Wrapper):

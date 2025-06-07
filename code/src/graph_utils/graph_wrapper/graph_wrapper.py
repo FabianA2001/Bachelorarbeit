@@ -58,6 +58,11 @@ class Graph_Wrapper:
     ) -> list[tuple[str, str]]:
         return self._check.get_intersections_with_all_edges(edge, check_if_active)
 
+    def get_all_intersections(
+        self, check_if_active: bool = True, timeout_func=lambda: ...
+    ) -> set[tuple[str, str]]:
+        return self._check.get_all_intersections(check_if_active, timeout_func)
+
     def show_and_save(
         self, show: bool = True, save: bool = True, block: bool = False
     ) -> None:

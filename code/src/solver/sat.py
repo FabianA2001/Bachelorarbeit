@@ -5,12 +5,7 @@ from pysat.formula import CNF
 from pysat.card import CardEnc
 import logging
 import threading
-
-
-class TimeoutError(Exception):
-    """Custom exception for timeout errors."""
-
-    pass
+from utils import time_function
 
 
 class SAT(Solver):
@@ -34,17 +29,10 @@ class SAT(Solver):
         return self.edges[index - 1]
 
     def intersection_constraint(self):
-        for edge in self.edges:
-            intersections = self.graph.get_intersections_with_all_edges(
-                edge, check_if_active=False
-            )
-            for intersection in intersections:
-                self.solver.add_clause(
-                    [-self.get_index(edge), -self.get_index(intersection)]
-                )
-
-            if self.reach_timeout():
-                raise TimeoutError()
+        intersection = self.graph.get_all_intersections(False, self.timeout_error)
+        for edge, other_edge in intersection:
+            self.solver.add_clause([-self.get_index(edge), -self.get_index(other_edge)])
+        self.timeout_error()
 
     def degree_constraint(self):
         for node in self.graph.get_all_nodes_name():
@@ -103,10 +91,10 @@ class SAT(Solver):
             if "version" not in parameter:
                 raise ValueError("Version parameter is missing.")
             if parameter.get("version") == 0.1:
-                self.intersection_constraint()
+                time_function(self.intersection_constraint)()
                 self.degree_constraint()
             elif parameter.get("version") == 0.2:
-                self.intersection_constraint()
+                time_function(self.intersection_constraint)()
                 self.degree_constraint()
                 self.set_hull_fix_constraint()
             else:

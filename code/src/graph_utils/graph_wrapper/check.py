@@ -160,6 +160,31 @@ class Check:
                     return False
         return True
 
+    def get_all_intersections(
+        self, check_if_active: bool = True, timeout_func=lambda: ...
+    ) -> set[tuple[str, str]]:
+        """Gibt alle Kanten zurück, die sich schneiden."""
+        hull = self.data.get_hull_edges()
+        aktive_edges = [
+            edge
+            for edge in self.data.edges
+            if edge not in hull
+            and (self.data.edges[edge].get("active") or not check_if_active)
+        ]
+        lines = [self.data.edges[edge].get("line") for edge in aktive_edges]
+        # Baue spatial index
+        tree = STRtree(lines)
+        intersections = set()
+        for i, line in enumerate(lines):
+            candidates = tree.query(line)
+            for candidate in candidates:
+                if i == candidate:
+                    continue
+                if line.crosses(lines[candidate]):
+                    intersections.add((aktive_edges[i], aktive_edges[candidate]))
+            timeout_func()
+        return intersections
+
     def check_node_for_degree(self, node: str) -> bool:
         """Überprüft, ob der Knoten die richtige Anzahl an Nachbarn hat."""
         if node not in self.data.get_all_nodes_name():
