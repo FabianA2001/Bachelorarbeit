@@ -38,9 +38,8 @@ class Check:
     ) -> bool:
         """Überprüft, ob eine Linie mit einer anderen Linie im Graphen schneidet."""
         if isinstance(edge, tuple):
-            if check_if_active:
-                if not self.data.edges[edge].get("active"):
-                    return False
+            if edge not in self.data.get_all_edges():
+                raise ValueError(f"Edge {edge} is not in the graph.")
             line = self.data.edges[edge].get("line")
         elif isinstance(edge, shapely.LineString):
             line = edge
@@ -66,9 +65,8 @@ class Check:
     ) -> bool:
         """Überprüft, ob eine Linie mit einer anderen Linie im Graphen schneidet."""
         if isinstance(edge, tuple):
-            if check_if_active:
-                if not self.data.edges[edge].get("active"):
-                    return False
+            if edge not in self.data.get_all_edges():
+                raise ValueError(f"Edge {edge} is not in the graph.")
             line = self.data.edges[edge].get("line")
         elif isinstance(edge, shapely.LineString):
             line = edge
@@ -101,9 +99,8 @@ class Check:
     ) -> list[tuple[str, str]]:
         """Überprüft, ob eine Linie mit einer anderen Linie im Graphen schneidet."""
         if isinstance(edge, tuple):
-            if check_if_active:
-                if not self.data.edges[edge].get("active"):
-                    return []
+            if edge not in self.data.get_all_edges():
+                raise ValueError(f"Edge {edge} is not in the graph.")
             line = self.data.edges[edge].get("line")
         elif isinstance(edge, shapely.LineString):
             line = edge
