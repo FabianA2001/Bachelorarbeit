@@ -2,53 +2,53 @@
   "nodes": [
     {
       "name": "0",
-      "pos": [955, 677],
-      "degree": 0
+      "pos": [412, 229],
+      "degree": 9
     },
     {
       "name": "1",
-      "pos": [419, 222],
-      "degree": 0
+      "pos": [540, 506],
+      "degree": 9
     },
     {
       "name": "2",
-      "pos": [256, 727],
-      "degree": 0
+      "pos": [414, 476],
+      "degree": 9
     },
     {
       "name": "3",
-      "pos": [902, 514],
-      "degree": 0
+      "pos": [303, 379],
+      "degree": 9
     },
     {
       "name": "4",
-      "pos": [755, 964],
-      "degree": 0
+      "pos": [765, 654],
+      "degree": 9
     },
     {
       "name": "5",
-      "pos": [653, 984],
-      "degree": 0
+      "pos": [276, 960],
+      "degree": 9
     },
     {
       "name": "6",
-      "pos": [365, 100],
-      "degree": 0
+      "pos": [308, 75],
+      "degree": 9
     },
     {
       "name": "7",
-      "pos": [1, 97],
-      "degree": 0
+      "pos": [562, 771],
+      "degree": 9
     },
     {
       "name": "8",
-      "pos": [885, 111],
-      "degree": 0
+      "pos": [943, 895],
+      "degree": 9
     },
     {
       "name": "9",
-      "pos": [74, 664],
-      "degree": 0
+      "pos": [724, 236],
+      "degree": 9
     }
   ]
 }

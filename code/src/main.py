@@ -40,17 +40,18 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    nodes = load_nodes_from_json("iterative_60_10/000_random.json")
+    nodes = load_nodes_from_json("iterative_60_10/004_random.json")
+    # nodes = load_nodes_from_json("simple_100/000_delaunay_flips.json")
     # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
     graph = Graph_Wrapper(nodes)
-    solver = Ortools(graph)
+    solver = SAT(graph)
     solver.solve(
         {
-            "timeout": 30,
+            "timeout": 300,
             "version": 0.1,
         }
     )
-    print(graph.evaluate_graph())
+    # print(graph.evaluate_graph())
     # logging.info(f"evaluation: {graph.evaluate_graph()}")
     graph.show_and_save()
 
@@ -123,9 +124,9 @@ def block_plt():
 
 
 def main():
-    # test_algo()
+    test_algo()
     # create_instance()
-    run_instance_lokal()
+    # run_instance_lokal()
 
 
 if __name__ == "__main__":

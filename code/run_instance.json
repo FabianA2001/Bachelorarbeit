@@ -1,7 +1,7 @@
 {
-  "instances": ["simple_20"],
-  "solvers": ["Random"],
-  "timeout": -1,
+  "instances": ["iterative_60_10"],
+  "solvers": ["SAT"],
+  "timeout": 30,
   "version": 0.1,
   "only_new": true,
   "ignore_correct": false

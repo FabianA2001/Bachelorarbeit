@@ -4,25 +4,23 @@ from pysat.solvers import Solver as SatSolver
 from pysat.formula import CNF
 from pysat.card import CardEnc
 import logging
-import multiprocessing
-import queue
+import threading
 
 
 class TimeoutError(Exception):
-    """Custom exception for timeout errors in solvers."""
+    """Custom exception for timeout errors."""
 
     pass
 
 
 class SAT(Solver):
     NAME = "SAT"
-
     # TODO Paper von Discord zur Intersection constraind
-    # TODO Hülle vorher entfernen und aus degree rausrechnen
+
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = self.NAME
-        self.graph.add_all_possible_edges(default_for_active=True)
+        self.graph.add_all_possible_edges(default_for_active=False)
         self.edges = self.graph.get_all_edges()
         self.edges_to_index = {edge: i for i, edge in enumerate(self.edges)}
         self.all_vars = list(range(1, len(self.edges) + 1))
@@ -37,7 +35,9 @@ class SAT(Solver):
 
     def intersection_constraint(self):
         for edge in self.edges:
-            intersections = self.graph.get_intersections_with_all_edges(edge)
+            intersections = self.graph.get_intersections_with_all_edges(
+                edge, check_if_active=False
+            )
             for intersection in intersections:
                 self.solver.add_clause(
                     [-self.get_index(edge), -self.get_index(intersection)]
@@ -59,6 +59,18 @@ class SAT(Solver):
             if self.reach_timeout():
                 raise TimeoutError()
 
+    def set_hull_fix_constraint(self):
+        hull_edges = self.graph.get_hull_edges()
+        if len(hull_edges) == 0:
+            return
+
+        for edge in hull_edges:
+            index = self.get_index(edge)
+            # Setze die Kante als aktiv
+            self.solver.add_clause([index])
+        if self.reach_timeout():
+            raise TimeoutError()
+
     # TODO subsets bilden und statt dieser Funktion nutzen FOTO(1)
     def formula_number_vars(self, vars, n):
         # CNF-Formel erstellen
@@ -75,101 +87,68 @@ class SAT(Solver):
         enc = CardEnc.equals(lits=vars, bound=n, top_id=used)
         cnf.extend(enc.clauses)
         return cnf
-
-    def handel_queue(self, result_queue) -> dict:
-        if result_queue.empty():
-            self.graph.clear_all_edges()
-            logging.warning("queue ist empty")
-            return {
-                "success": False,
-            }
-
-        vars = []
-        success = False
-        while not result_queue.empty():
-            result = result_queue.get()
-            if isinstance(result, list):
-                if all(isinstance(i, int) for i in result):
-                    vars = result
-                    continue
-
-            if isinstance(result, bool):
-                success = result
-                break
-
-            assert False, "Result is not a tuple or bool, result: {}".format(result)
-
-        self.graph.clear_all_edges()
-        if not len(vars) > 0:
-            logging.warning("No edges found in queue")
-            return {
-                "success": success,
-            }
-
-        for var in vars:
-            edge = self.get_edge(var)
-            self.graph.add_edge(edge[0], edge[1], active=True)
-        return {
-            "success": success,
-            "vars": vars,
-        }
-
-    def __handel_solver_with_timeout(self, timeout: float) -> dict:
-        result_queue = multiprocessing.Queue()
-        process = multiprocessing.Process(
-            target=self.prcess_solver, args=(result_queue, self.solver, self.all_vars)
-        )
-        process.start()
-        process.join(timeout if timeout > 0 else None)
-
-        if process.is_alive():
-            process.terminate()
-            process.join()
-            self.success = False
-        return self.handel_queue(result_queue)
-
-    def __handel_solver_without_timeout(self) -> dict:
-        result_queue = queue.Queue()
-        self.prcess_solver(result_queue, self.solver, self.all_vars)
-        self.graph.clear_all_edges()
-        return self.handel_queue(result_queue)
-
-    @staticmethod
-    def prcess_solver(queue, solver, all_vars):
-        if not solver.solve():
-            queue.put(False)
-            return
-
-        model = solver.get_model()
-        aktive_vars = []
-        assert model is not None, "Model should not be None"
-        for var in all_vars:
-            if var in model:
-                aktive_vars.append(var)
-        logging.info(len(aktive_vars))
-        queue.put(aktive_vars)
-        queue.put(True)
-
-        # TODO andere sat solver testen, anstatt glucose42
+        # TODO andere self solver testen, anstatt glucose42
 
     def _actual_solver(self, parameter: dict) -> dict:
+        if not isinstance(parameter, dict):
+            raise TypeError("Parameter must be a dictionary.")
+
         try:
-            self.solver = SatSolver(name="glucose42")
-            self.intersection_constraint()
-            self.degree_constraint()
-            # TODO Remaining Time zum solver hinzufügen
-
-            if self.reach_timeout():
-                raise TimeoutError()
-
-            if self.timeout < 0:
-                result = self.__handel_solver_without_timeout()
+            self.solver = SatSolver(name="glucose3")
+            if not hasattr(self.solver, "interrupt"):
+                raise RuntimeError(
+                    "The solver does not support interruption. "
+                    "Please use a different solver that supports this feature."
+                )
+            if "version" not in parameter:
+                raise ValueError("Version parameter is missing.")
+            if parameter.get("version") == 0.1:
+                self.intersection_constraint()
+                self.degree_constraint()
+            elif parameter.get("version") == 0.2:
+                self.intersection_constraint()
+                self.degree_constraint()
+                self.set_hull_fix_constraint()
             else:
-                result = self.__handel_solver_with_timeout(self.get_remaining_time())
-            return result
+                raise ValueError(
+                    f"Version {parameter.get('version')} is not supported for self solver."
+                )
+
+            if "timeout" not in parameter:
+                raise ValueError("Timeout parameter is missing.")
+
+            timeout = parameter["timeout"]
+            if not isinstance(timeout, (int, float)):
+                raise TypeError("Timeout must be an integer or float.")
+
+            result = [None]
+
+            if timeout == -1:
+                result[0] = self.solver.solve()
+            else:
+                logging.info("start solving")
+
+                def run_solver():
+                    result[0] = self.solver.solve_limited(expect_interrupt=True)
+
+                thread = threading.Thread(target=run_solver)
+                thread.start()
+                thread.join(self.get_remaining_time())
+                if thread.is_alive():
+                    self.solver.interrupt()
+                    thread.join()
+                    raise TimeoutError()
+
+            model = self.solver.get_model()
+            assert model is not None, "Model should not be None"
+            for var in self.all_vars:
+                if var in model:
+                    self.graph.activate_edge(self.get_edge(var))
+
+            return {
+                "success": result[0],
+            }
         except TimeoutError:
-            self.graph.clear_all_edges()
-            logging.warning("abbruch wegen timeout")
             return {
                 "success": False,
             }
