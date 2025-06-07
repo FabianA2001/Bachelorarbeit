@@ -129,7 +129,9 @@ class SAT(Solver):
                 logging.info("start solving")
 
                 def run_solver():
-                    result[0] = self.solver.solve_limited(expect_interrupt=True)
+                    result[0] = self.solver.solve_limited(  # type: ignore
+                        expect_interrupt=True
+                    )
 
                 thread = threading.Thread(target=run_solver)
                 thread.start()
