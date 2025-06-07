@@ -13,6 +13,7 @@ from graph_utils import run_instance
 from utils import setup_logging
 import matplotlib.pyplot as plt
 import matplotlib._pylab_helpers
+from utils import time_function
 
 
 BENCHMARK_PATH = "./results/benchmark"
@@ -44,16 +45,19 @@ def test_algo():
     # nodes = load_nodes_from_json("simple_100/000_delaunay_flips.json")
     # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
     graph = Graph_Wrapper(nodes)
-    solver = SAT(graph)
-    solver.solve(
-        {
-            "timeout": -1,
-            "version": 0.1,
-        }
-    )
-    # print(graph.evaluate_graph())
-    # logging.info(f"evaluation: {graph.evaluate_graph()}")
-    graph.show_and_save()
+    graph.add_all_possible_edges(default_for_active=True)
+    time_function(graph.get_all_intersections)(False)
+
+    # solver = SAT(graph)
+    # solver.solve(
+    #     {
+    #         "timeout": -1,
+    #         "version": 0.1,
+    #     }
+    # )
+    # # print(graph.evaluate_graph())
+    # # logging.info(f"evaluation: {graph.evaluate_graph()}")
+    # graph.show_and_save()
 
 
 def move():
@@ -109,13 +113,13 @@ def create_instance():
 
 def run_instance_lokal():
     ri = run_instance.Run_Instance(path_benchmark=BENCHMARK_PATH, solver=get_solvers())
-    ri.select()
+    # ri.select()
     # ri.show_triangulation_from_instance(
     #     algorithm_name="Random",
     #     instance_name="simple_30",
     #     instance_file_name="001_delaunay"
     # )
-    # ri.run_default()
+    ri.run_default()
 
 
 def block_plt():
@@ -124,9 +128,9 @@ def block_plt():
 
 
 def main():
-    test_algo()
+    # test_algo()
     # create_instance()
-    # run_instance_lokal()
+    run_instance_lokal()
 
 
 if __name__ == "__main__":

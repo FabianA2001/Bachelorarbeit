@@ -50,6 +50,7 @@ class Run_Instance:
         instance_name: str,
         file_name: str,
         possible: bool,
+        host: str,
         _graph: Graph_Wrapper,
     ):
         solver = solver_type(_graph)
@@ -104,6 +105,7 @@ class Run_Instance:
                 instance_name=instance_name,
                 file_name=file_name,
                 possible=possible,
+                host=socket.gethostname(),
                 _graph=graph,
             )
         self.benchmark.compress()
@@ -130,25 +132,28 @@ class Run_Instance:
                 "runtime": result["runtime"],
             },
         )
+        print(table)
 
         # filter nach Host
-        table = table.sort_values(by=["solver", "instance", "file"])
+        # table = table.sort_values(by=["solver", "instance", "file"])
         # Filter nach Host, falls host angegeben ist
         if host:
             table = table[table["host"] == host]
+            table = table.drop(columns=["host"])
 
         if not ignore_correct:
             # Setze runtime auf -1, wenn correct False ist
             table.loc[~table["correct"], "runtime"] = -1
+            table = table.drop(columns=["correct"])
 
-        self.create_plt(
-            table=table,
-            y="evaluation",
-            block=False,
-            instances=instances,
-            solvers=[solver.NAME for solver in solvers],
-            only_newest=only_newest,
-        )
+        # self.create_plt(
+        #     table=table,
+        #     y="evaluation",
+        #     block=False,
+        #     instances=instances,
+        #     solvers=[solver.NAME for solver in solvers],
+        #     only_newest=only_newest,
+        # )
         self.create_plt(
             table=table,
             y="runtime",
@@ -171,20 +176,23 @@ class Run_Instance:
             table = table[table["instance"].isin(instances)]
         if solvers:
             table = table[table["solver"].isin(solvers)]
-        table["solver_version"] = table["solver"] + " v" + table["version"].astype(str)
 
         # Kombiniere Instanz und Dateiname für die x-Achse
-        table["instance_file"] = table["instance"] + "/" + table["file"]
 
+        table["instance_file"] = table["instance"] + "/" + table["file"]
         if only_newest:
             table["version_num"] = table["version"].astype(float)
             idx = (
-                table.groupby("solver")["version_num"].transform("max")
+                table.groupby(["solver", "instance_file"])["version_num"].transform(
+                    "max"
+                )
                 == table["version_num"]
             )
             table = table[idx]
             table = table.drop(columns=["version_num"])
 
+        table["solver_version"] = table["solver"] + " v" + table["version"].astype(str)
+        table = table.sort_values(by=["solver_version", "instance_file"])
         plt.figure()
         sns.barplot(
             data=table,
