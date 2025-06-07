@@ -1,4 +1,8 @@
 {
-  "instances": ["iterative_60_10"],
-  "solvers": ["Ortools"]
+  "instances": ["simple_20"],
+  "solvers": ["Random"],
+  "timeout": -1,
+  "version": 0.1,
+  "only_new": true,
+  "ignore_correct": false
 }

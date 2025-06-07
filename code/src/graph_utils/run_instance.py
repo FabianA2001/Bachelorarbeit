@@ -68,22 +68,15 @@ class Run_Instance:
             "triangulation": _graph.get_all_edges(True),
         }
 
-    def save_default(self, insts: list[str], solvers: list[type[Solver]]):
-        data = {
-            "instances": insts,
-            "solvers": [solver.NAME for solver in solvers],
-        }
+    def save_default(self, data: dict):
         with open("./run_instance.json", "w") as f:
             json.dump(data, f, indent=4)
 
-    def load_default(self) -> tuple[list[str], list[type[Solver]]]:
+    def load_default(self) -> dict:
         """Lädt die Standardinstanzen und -solver aus der run_instance.json Datei."""
         with open("./run_instance.json", "r") as f:
             data = json.load(f)
-        instances = data.get("instances", [])
-        solvers = data.get("solvers", [])
-        solvers = [self.solvers_dict[solver] for solver in solvers]
-        return instances, solvers
+        return data
 
     def run_solver_on_instance(
         self,
@@ -210,7 +203,14 @@ class Run_Instance:
         plt.tight_layout()
         plt.show(block=block)
 
-    def run(self, insts: list[str], solvers: list[type[Solver]], parameter: dict):
+    def run(
+        self,
+        insts: list[str],
+        solvers: list[type[Solver]],
+        parameter: dict,
+        only_newest: bool = True,
+        ignore_correct: bool = False,
+    ):
         for inst in insts:
             for solver in solvers:
                 self.run_solver_on_instance(
@@ -220,7 +220,7 @@ class Run_Instance:
                 )
         # from algbench import describe
         # describe(self.path_benchmark)
-        self.show_results(insts, solvers, only_newest=False)
+        self.show_results(insts, solvers, only_newest, ignore_correct)
 
     @staticmethod
     def get_selection(lit: list):
@@ -235,35 +235,88 @@ class Run_Instance:
         return [str(i) for i in selected_inst]
 
     def select(self):
+        # Fragen nach Instanzen
         instances = self.get_instances()
         instances_names = sorted(list(instances.keys()))
         insts = self.get_selection(instances_names)
 
+        # Frage nach Solver
         solvers = self.get_selection(list(self.solvers_dict.keys()))
         solvers = [self.solvers_dict[i] for i in solvers]
+
+        # Frage nach Timeout, Standard ist -1 Sekunden
+        while True:
+            timeout = questionary.text(
+                "Timeout in Sekunden angeben (-1 = kein Timeout):", default="-1"
+            ).ask()
+            try:
+                timeout = int(timeout)
+            except ValueError:
+                print("Bitte eine gültige Zahl eingeben.")
+                continue
+            if timeout < -1:
+                print("Timeout muss größer oder gleich -1 sein.")
+                continue
+            elif timeout == 0:
+                print("Timeout kann nicht 0 sein, bitte -1 für kein Timeout verwenden.")
+                continue
+            break
+
+        while True:
+            version = questionary.text(
+                "Version der Parameter (z.B. 0.1, 0.2, ...):", default="0.1"
+            ).ask()
+            try:
+                version = float(version)
+            except ValueError:
+                print("Bitte eine gültige Zahl eingeben.")
+                continue
+            if version < 0:
+                print("Version muss größer oder gleich 0 sein.")
+                continue
+            break
+
+        only_new = questionary.confirm(
+            "Nur die neuste Version anzeigen?", default=True
+        ).ask()
+
+        ignore_correct = not questionary.confirm(
+            "Ergebnisse mit falschen Triangulationen als -1 Darstellen?", default=True
+        ).ask()
 
         # Frage, ob speichern, Standard ist Nein
         save = questionary.confirm(
             "Auswahl als Standard speichern?", default=False
         ).ask()
-
         if save:
-            self.save_default(insts, solvers)
+            self.save_default(
+                {
+                    "instances": insts,
+                    "solvers": [solver.NAME for solver in solvers],
+                    "timeout": timeout,
+                    "version": version,
+                    "only_new": only_new,
+                    "ignore_correct": ignore_correct,
+                }
+            )
 
-        parameter = {
-            "timeout": self.DEFAULT_TIME,
-            "version": 0.1,
-        }
+        parameter = {"timeout": timeout, "version": version}
 
-        self.run(insts, solvers, parameter)
+        self.run(insts, solvers, parameter, only_new, ignore_correct)
 
     def run_default(self):
-        insts, solvers = self.load_default()
+        data = self.load_default()
         parameter = {
-            "timeout": self.DEFAULT_TIME,
-            "version": 0.3,
+            "timeout": data.get("timeout", self.DEFAULT_TIME),
+            "version": data.get("version", 0.1),
         }
-        self.run(insts, solvers, parameter)
+        self.run(
+            data.get("instances", []),
+            [self.solvers_dict[i] for i in data.get("solvers", [])],
+            parameter,
+            only_newest=data.get("only_new", True),
+            ignore_correct=data.get("ignore_correct", True),
+        )
 
     def show_triangulation_from_instance(
         self,
