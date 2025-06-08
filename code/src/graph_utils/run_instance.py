@@ -132,8 +132,6 @@ class Run_Instance:
                 "runtime": result["runtime"],
             },
         )
-        print(table)
-
         # filter nach Host
         # table = table.sort_values(by=["solver", "instance", "file"])
         # Filter nach Host, falls host angegeben ist

@@ -207,13 +207,18 @@ class Graph_Wrapper:
             raise TypeError(f"Point is not a shapely.Point, but {type(point)}")
         return point
 
-    def add_all_possible_edges(self, default_for_active: bool = False) -> None:
+    def add_all_possible_edges(
+        self, default_for_active: bool = False, ignore_hull: bool = False
+    ) -> None:
         """Fügt alle möglichen Kanten zwischen den Knoten hinzu."""
+        hull = self.get_hull_edges()
         combinations = list(itertools.combinations(self._data.nodes, 2))
         for com in combinations:
             self._data.add_edge(com[0], com[1], default_for_active)
-            if self._check.check_edge_intersection_with_nodes((com[0], com[1]), False):
-                self._data.remove_edge((com[0], com[1]))
+            if self._check.check_edge_intersection_with_nodes(com, False):
+                self._data.remove_edge(com)
+            if ((com in hull) or ((com[1], com[0]) in hull)) and ignore_hull:
+                self._data.remove_edge(com)
 
     def get_degree_of_node(self, node: str) -> int:
         """Gibt den Grad eines Knotens zurück."""

@@ -1,5 +1,5 @@
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from graph_utils.node import move_degree, load_nodes_from_json
+from graph_utils.node import move_degree
 import logging
 from graph_utils import generate
 from solver.delaunay import Delaunay
@@ -13,7 +13,6 @@ from graph_utils import run_instance
 from utils import setup_logging
 import matplotlib.pyplot as plt
 import matplotlib._pylab_helpers
-from utils import time_function
 
 
 BENCHMARK_PATH = "./results/benchmark"
@@ -41,12 +40,12 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    nodes = load_nodes_from_json("iterative_60_10/004_random.json")
+    # nodes = load_nodes_from_json("iterative_60_10/004_random.json")
     # nodes = load_nodes_from_json("simple_100/000_delaunay_flips.json")
+    nodes = custom_points()
     # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
     graph = Graph_Wrapper(nodes)
-    graph.add_all_possible_edges(default_for_active=True)
-    time_function(graph.get_all_intersections)(False)
+    graph.add_all_possible_edges(default_for_active=True, ignore_hull=True)
 
     # solver = SAT(graph)
     # solver.solve(
@@ -57,7 +56,7 @@ def test_algo():
     # )
     # # print(graph.evaluate_graph())
     # # logging.info(f"evaluation: {graph.evaluate_graph()}")
-    # graph.show_and_save()
+    graph.show_and_save()
 
 
 def move():
@@ -128,9 +127,9 @@ def block_plt():
 
 
 def main():
-    # test_algo()
+    test_algo()
     # create_instance()
-    run_instance_lokal()
+    # run_instance_lokal()
 
 
 if __name__ == "__main__":
