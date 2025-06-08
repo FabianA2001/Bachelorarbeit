@@ -47,7 +47,7 @@ def custom_points() -> list[Node]:
 
 def test_algo():
     # nodes = load_nodes_from_json("iterative_60_10/004_random.json")
-    nodes = load_nodes_from_json("simple_100/000_delaunay_flips.json")
+    nodes = load_nodes_from_json("simple_100/000_random.json")
     # nodes = load_nodes_from_json("test_algo.json")
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
@@ -102,17 +102,17 @@ def move():
 
 
 def create_instance():
-    NAME = "iterative_60_10"
+    NAME = "simple_100"
     FILE_NAME = "random"
     NUMBER_INSTANCE = 5
-    NUMBER_NODES = 60
-    STEP = 10
+    NUMBER_NODES = 100
+    # STEP = 10
     generate.Generate_Instance(
         NAME,
         FILE_NAME,
         NUMBER_NODES,
         NUMBER_INSTANCE,
-        generate.Generate_Nodes_Iterativ(STEP, NUMBER_INSTANCE),
+        generate.Generate_Nodes_Random(),
         generate.Generate_Edges_Random(),
         width=10000,
         height=10000,
