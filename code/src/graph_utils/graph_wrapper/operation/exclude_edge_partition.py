@@ -39,8 +39,11 @@ class Exclude_Edge_Partition:
                 return False
         return True
 
+    def __triangulate_half(self) -> bool:
+        return True
+
     def exclude_edge(self) -> list[tuple[str, str]]:
-        edges = []
+        edges = set()
         for com in itertools.combinations(self.hull_nodes, 2):
             if com in self.hull_edges or (com[1], com[0]) in self.hull_edges:
                 continue
@@ -48,11 +51,11 @@ class Exclude_Edge_Partition:
             index1 = self.hull_nodes.index(com[1])
             if index0 > index1:
                 index0, index1 = index1, index0
-            poly_nodes_0 = self.hull_nodes[index1:] + self.hull_nodes[: index0 + 1]
-            if not self.__possible_half(poly_nodes_0, [com[0], com[1]]):
-                edges.append(com)
-            poly_nodes_1 = self.hull_nodes[index0 : index1 + 1]
-            if not self.__possible_half(poly_nodes_1, [com[0], com[1]]):
-                edges.append(com)
 
-        return edges
+            poly_nodes_0 = self.hull_nodes[index1:] + self.hull_nodes[: index0 + 1]
+            poly_nodes_1 = self.hull_nodes[index0 : index1 + 1]
+            for half in [poly_nodes_0, poly_nodes_1]:
+                if not self.__possible_half(half, [com[0], com[1]]):
+                    edges.add(com)
+
+        return list(edges)
