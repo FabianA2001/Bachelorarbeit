@@ -8,6 +8,9 @@ from graph_utils.graph_wrapper.check import Check
 from graph_utils.graph_wrapper import visualisation
 from graph_utils.graph_wrapper.operation import flip_edge
 from graph_utils.graph_wrapper.operation import move_node
+from graph_utils.graph_wrapper.operation.exclude_edge_partition import (
+    Exclude_Edge_Partition,
+)
 from graph_utils.graph_wrapper.file_system import save_graph_as_json
 import itertools
 import logging
@@ -168,6 +171,10 @@ class Graph_Wrapper:
     def get_node_from_point(self, point: shapely.Point) -> str:
         return self._data.get_node_from_point(point)
 
+    def get_point_from_node(self, node: str) -> shapely.Point:
+        """Gibt den Punkt des Knotens zurück."""
+        return self._data.get_point_from_node(node)
+
     def check_node_for_degree(self, node: str) -> bool:
         """Überprüft, ob der Knoten die richtige Anzahl an Nachbarn hat."""
         return self._check.check_node_for_degree(node)
@@ -199,13 +206,6 @@ class Graph_Wrapper:
     def percentage_of_correct_nodes(self) -> float:
         """Gibt den Prozentsatz der Knoten im Graphen zurück, die die richtige Anzahl an Nachbarn haben."""
         return self.number_of_correct_nodes() / len(self.get_all_nodes_name()) * 100
-
-    def get_point_from_node(self, node: str) -> shapely.Point:
-        """Gibt den Punkt des Knotens zurück."""
-        point = self._data.nodes[node].get("point")
-        if not isinstance(point, shapely.Point):
-            raise TypeError(f"Point is not a shapely.Point, but {type(point)}")
-        return point
 
     def add_all_possible_edges(
         self, default_for_active: bool = False, ignore_hull: bool = False
@@ -244,3 +244,6 @@ class Graph_Wrapper:
             evaluation <= 1
         ), f"Evaluation must be smaller then 1, but got {evaluation}."
         return evaluation
+
+    def exclude_edge_partition(self) -> list[tuple[str, str]]:
+        return Exclude_Edge_Partition(self._data)()

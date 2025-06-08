@@ -3,7 +3,7 @@ from graph_utils.node import move_degree
 import logging
 from graph_utils import generate
 from solver.delaunay import Delaunay
-from graph_utils.node import Node
+from graph_utils.node import Node, load_nodes_from_json
 from solver.ortools import Ortools
 from solver.raw_flips import Raw_Flips
 from solver.iterative import Iterative
@@ -13,6 +13,7 @@ from graph_utils import run_instance
 from utils import setup_logging
 import matplotlib.pyplot as plt
 import matplotlib._pylab_helpers
+from utils import time_function
 
 
 BENCHMARK_PATH = "./results/benchmark"
@@ -31,32 +32,40 @@ def get_solvers():
 
 def custom_points() -> list[Node]:
     nodes = [
-        Node("A", (0, 0), 3),
-        Node("B", (0, 1), 2),
-        Node("C", (1, 0), 2),
-        Node("D", (1, 1), 3),
+        Node("0", (9, 4)),
+        Node("1", (5, 7)),
+        Node("2", (13, 7)),
+        Node("3", (12, 5)),
+        Node("4", (7, 7)),
+        Node("5", (9, 6)),
+        Node("6", (10, 8)),
+        Node("7", (7, 9)),
+        Node("8", (8, 11)),
     ]
     return nodes
 
 
 def test_algo():
     # nodes = load_nodes_from_json("iterative_60_10/004_random.json")
-    # nodes = load_nodes_from_json("simple_100/000_delaunay_flips.json")
-    nodes = custom_points()
-    # for solver in [Raw_Flips, Random_Adder, Cycle_Add, Delaunay, Iterative]:
+    nodes = load_nodes_from_json("simple_100/000_delaunay_flips.json")
+    # nodes = load_nodes_from_json("test_algo.json")
+    # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    graph.add_all_possible_edges(default_for_active=True, ignore_hull=True)
+    # graph.add_all_possible_edges(default_for_active=True, ignore_hull=True)
+    # graph.add_convex_hull()
+    print(len(time_function(graph.exclude_edge_partition)()))
+    # for edge in graph.exclude_edge_partition():
+    #     graph.add_edge(edge[0], edge[1])
 
-    # solver = SAT(graph)
+    # solver = Random_Adder(graph)
     # solver.solve(
     #     {
     #         "timeout": -1,
     #         "version": 0.1,
     #     }
     # )
-    # # print(graph.evaluate_graph())
-    # # logging.info(f"evaluation: {graph.evaluate_graph()}")
     graph.show_and_save()
+    # graph.save_graph_as_json("test_algo.json")
 
 
 def move():
@@ -105,8 +114,8 @@ def create_instance():
         NUMBER_INSTANCE,
         generate.Generate_Nodes_Iterativ(STEP, NUMBER_INSTANCE),
         generate.Generate_Edges_Random(),
-        width=1000,
-        height=1000,
+        width=10000,
+        height=10000,
     ).generate()
 
 

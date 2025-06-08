@@ -34,6 +34,15 @@ class Data_Raw(nx.Graph):
         assert node is not None, f"Node for point {point} not found."
         return node
 
+    def get_point_from_node(self, node: str) -> shapely.Point:
+        """Gibt den Punkt des Knotens zurück."""
+        if node not in self.nodes:
+            raise ValueError(f"Node {node} not found in graph.")
+        point = self.nodes[node].get("point")
+        if not isinstance(point, shapely.Point):
+            raise TypeError(f"Point is not a shapely.Point, but {type(point)}")
+        return point
+
     def copy(self) -> "Data_Raw":
         nodes = []
         for node in self.get_all_nodes_name():
