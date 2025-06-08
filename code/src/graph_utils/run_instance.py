@@ -314,7 +314,7 @@ class Run_Instance:
 
         # Frage, ob speichern, Standard ist Nein
         save = questionary.confirm(
-            "Auswahl als Standard speichern?", default=False
+            "Auswahl als Standard speichern?", default=True
         ).ask()
         if save:
             self.save_default(

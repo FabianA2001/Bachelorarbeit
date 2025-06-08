@@ -162,7 +162,7 @@ class Check:
 
     def get_all_intersections(
         self, check_if_active: bool = True, timeout_func=lambda: ...
-    ) -> set[tuple[str, str]]:
+    ) -> set[tuple[tuple[str, str], tuple[str, str]]]:
         """Gibt alle Kanten zurück, die sich schneiden."""
         hull = self.data.get_hull_edges()
         aktive_edges = [

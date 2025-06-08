@@ -1,8 +1,8 @@
 {
-  "instances": ["iterative_60_10", "iterative_70_5"],
-  "solvers": ["Ortools", "SAT"],
-  "timeout": -1,
-  "version": 0.1,
-  "only_new": true,
+  "instances": ["iterative_60_10"],
+  "solvers": ["Ortools"],
+  "timeout": 30,
+  "version": 0.2,
+  "only_new": false,
   "ignore_correct": false
 }

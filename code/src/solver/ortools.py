@@ -2,7 +2,6 @@ from solver.solver import Solver
 from ortools.sat.python import cp_model
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
-import itertools
 
 
 class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
@@ -29,12 +28,8 @@ class Ortools(Solver):
     def constraint_intersection(self):
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
-        all_edges = self.graph.get_all_edges()
-        combinations = list(itertools.combinations(all_edges, 2))
-        for edge_1, edge_2 in combinations:
-            if self.graph.check_for_intersection_except_corners(edge_1, edge_2):
-                self.model.AddBoolOr([self.vars[edge_1].Not(), self.vars[edge_2].Not()])
-        # TODO mit Arrangements verbessern
+        for edge, other_edge in self.graph.get_all_intersections(check_if_active=False):
+            self.model.AddBoolOr([self.vars[edge].Not(), self.vars[other_edge].Not()])
 
     def constraint_degree(self):
         if self.graph is None:
