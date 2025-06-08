@@ -22,6 +22,8 @@ class Run_Instance:
         self.benchmark.capture_logger("my_alg", logging.INFO)
         self.solvers_dict = {i.NAME: i for i in solver}
         pd.set_option("display.max_rows", None)
+        pd.set_option("display.max_columns", None)
+        pd.set_option("display.width", 200)
 
     @staticmethod
     def get_instances() -> dict[str, dict[str, str]]:
@@ -130,6 +132,7 @@ class Run_Instance:
                 "correct": result["result"]["correct"],
                 "evaluation": result["result"]["evaluation"],
                 "runtime": result["runtime"],
+                "timeout": result["parameters"]["args"]["parameter"]["timeout"],
             },
         )
         # filter nach Host
@@ -190,7 +193,26 @@ class Run_Instance:
             table = table.drop(columns=["version_num"])
 
         table["solver_version"] = table["solver"] + " v" + table["version"].astype(str)
+
+        # --- Timeout-Filter: Behalte nur Zeilen mit maximalem Timeout pro solver/instance_file ---
+        # Sonderfall: -1 zählt als höchster Wert
+        def timeout_rank(x):
+            # -1 wird als sehr großer Wert behandelt
+            return x.replace(-1, float("inf"))
+
+        table["timeout_rank"] = timeout_rank(table["timeout"])
+        idx = (
+            table.groupby(["solver_version", "instance_file"])[
+                "timeout_rank"
+            ].transform("max")
+            == table["timeout_rank"]
+        )
+        table = table[idx]
+        table = table.drop(columns=["timeout_rank"])
+
+        table = table.drop(columns=["version", "solver", "instance", "file"])
         table = table.sort_values(by=["solver_version", "instance_file"])
+        print(table)
         plt.figure()
         sns.barplot(
             data=table,
