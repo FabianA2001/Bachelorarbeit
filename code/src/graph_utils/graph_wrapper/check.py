@@ -3,6 +3,7 @@ from typing import Union
 from graph_utils.graph_wrapper.data import Data
 from shapely.strtree import STRtree
 from itertools import combinations
+import logging
 
 
 class Check:
@@ -198,9 +199,12 @@ class Check:
         self, check_if_active: bool = True, timeout_func=lambda: ...
     ) -> set[tuple[tuple[str, str], tuple[str, str]]]:
         """Gibt alle Kanten zurück, die sich schneiden."""
+        if check_if_active:
+            logging.warning("check_if_active is not implemented yet.")
         nodes = self.data.get_all_nodes_name()
         intersections = set()
         for node1, node2 in combinations(range(len(nodes)), 2):
+            timeout_func()
             for current_node in range(len(nodes)):
                 if current_node == node1 or current_node == node2:
                     continue
