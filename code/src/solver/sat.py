@@ -34,6 +34,15 @@ class SAT(Solver):
             self.solver.add_clause([-self.get_index(edge), -self.get_index(other_edge)])
         self.timeout_error()
 
+    def alle_edges_constraint(self):
+        edges = self.graph.get_all_edges()
+        for edge in edges:
+            intersection = self.graph.get_intersections_with_all_edges(edge, False)
+            self.solver.add_clause(
+                [self.get_index(edge)]
+                + [self.get_index(other_edge) for other_edge in intersection]
+            )
+
     def degree_constraint(self):
         for node in self.graph.get_all_nodes_name():
             degree = self.graph.get_degree_of_node(node)
@@ -97,6 +106,11 @@ class SAT(Solver):
                 time_function(self.intersection_constraint)()
                 self.degree_constraint()
                 self.set_hull_fix_constraint()
+            elif parameter.get("version") == 0.3:
+                time_function(self.intersection_constraint)()
+                self.degree_constraint()
+                self.set_hull_fix_constraint()
+                time_function(self.alle_edges_constraint)()
             else:
                 raise ValueError(
                     f"Version {parameter.get('version')} is not supported for self solver."

@@ -46,8 +46,8 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
-    # nodes = load_nodes_from_json("iterative_60_10/003_random.json")
-    nodes = load_nodes_from_json("simple_80/000_random.json")
+    nodes = load_nodes_from_json("iterative_60_10/004_random.json")
+    # nodes = load_nodes_from_json("simple_80/000_random.json")
     # nodes = load_nodes_from_json("test_algo.json")
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
@@ -57,7 +57,7 @@ def test_algo():
     solver.solve(
         {
             "timeout": -1,
-            "version": 0.2,
+            "version": 0.3,
         }
     )
     graph.show_and_save(show=False, save=True)
