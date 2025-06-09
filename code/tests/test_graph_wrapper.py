@@ -226,12 +226,9 @@ def test_get_intersections_with_all_edges():
     ]
     graph = Graph_Wrapper(nodes)
     graph.add_all_possible_edges(True)
-    assert graph.get_intersections_with_all_edges_n2(("5", "6")) == [
-        ("3", "4"),
-        ("3", "8"),
-        ("2", "3"),
-        ("1", "3"),
-        ("3", "7"),
-        ("3", "9"),
-        ("0", "3"),
-    ]
+    edge = ("5", "7")
+    assert graph.get_intersections_with_all_edges_n2(
+        (edge)
+    ) == graph.get_intersections_with_all_edges(edge)
+
+    assert graph.get_all_intersections_n2() == graph.get_all_intersections()

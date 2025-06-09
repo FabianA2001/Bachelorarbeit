@@ -41,23 +41,44 @@ def custom_points() -> list[Node]:
     #     Node("7", (7, 9)),
     #     Node("8", (8, 11)),
     # ]
-    nodes = [Node("0", (2, 2)), Node("1", (2, 7)), Node("2", (7, 7)), Node("3", (7, 2))]
-    return nodes
+    # nodes = [Node("0", (2, 2), 3),
+    #          Node("1", (2, 7), 2),
+    #          Node("2", (7, 7), 3),
+    #          Node("3", (7, 2), 2)]
+    nodes = [
+        Node("0", (7, 4)),
+        Node("1", (7, 7)),
+        Node("2", (10, 4)),
+        Node("3", (10, 6)),
+        Node("4", (9, 8)),
+    ]
+    graph = Graph_Wrapper(nodes)
+    solver = Random_Adder(graph)
+    solver.solve(
+        {
+            "timeout": -1,
+            "version": 0.1,
+        }
+    )
+    return graph.get_aktive_graph_nodes()
 
 
 def test_algo():
     nodes = load_nodes_from_json("iterative_60_10/004_random.json")
-    # nodes = load_nodes_from_json("simple_80/000_random.json")
+    # nodes = load_nodes_from_json("simple_70/000_random.json")
+    # nodes = load_nodes_from_json("simple_10/000_delaunay_flips.json")
     # nodes = load_nodes_from_json("test_algo.json")
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
     graph.name = "Test Algo"
-
+    # graph.add_all_possible_edges(default_for_active=True)
+    # print(graph.get_intersections_with_all_edges(("0", "4")))
+    # print(*graph.get_all_edges(), sep="\n")
     solver = SAT(graph)
     solver.solve(
         {
             "timeout": -1,
-            "version": 0.3,
+            "version": 0.4,
         }
     )
     graph.show_and_save(show=False, save=True)

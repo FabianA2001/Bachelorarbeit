@@ -137,6 +137,67 @@ class Check:
 
         return list(edges)
 
+    def get_intersections_with_all_edges(
+        self,
+        edge: tuple[str, str],
+    ) -> list[tuple[str, str]]:
+        nodes = self.data.get_all_nodes_name()
+        node1 = nodes.index(edge[0])
+        node2 = nodes.index(edge[1])
+        intersections = set()
+        for current_node in range(len(nodes)):
+            if current_node == node1 or current_node == node2:
+                continue
+
+            orientation_node1_node2_current = self.orientation(
+                self.data.get_pos_from_node(nodes[node1]),
+                self.data.get_pos_from_node(nodes[node2]),
+                self.data.get_pos_from_node(nodes[current_node]),
+            )
+            for remaining_node in range(current_node + 1, len(nodes)):
+                # Unterschied zu get_all_intersections
+                if remaining_node == node1 or remaining_node == node2:
+                    continue  # make sure to not double count
+
+                orientation_node1_node2_remaining = self.orientation(
+                    self.data.get_pos_from_node(nodes[node1]),
+                    self.data.get_pos_from_node(nodes[node2]),
+                    self.data.get_pos_from_node(nodes[remaining_node]),
+                )
+                # both points are on the same side of the line
+                if orientation_node1_node2_current == orientation_node1_node2_remaining:
+                    continue
+
+                orientation_current_remaining_node1 = self.orientation(
+                    self.data.get_pos_from_node(nodes[current_node]),
+                    self.data.get_pos_from_node(nodes[remaining_node]),
+                    self.data.get_pos_from_node(nodes[node1]),
+                )
+                orientation_current_remaining_node2 = self.orientation(
+                    self.data.get_pos_from_node(nodes[current_node]),
+                    self.data.get_pos_from_node(nodes[remaining_node]),
+                    self.data.get_pos_from_node(nodes[node2]),
+                )
+                # if the orientations are the same, the lines do not intersect
+                if (
+                    orientation_current_remaining_node1
+                    == orientation_current_remaining_node2
+                ):
+                    continue
+
+                intersections.add(
+                    (
+                        nodes[min(current_node, remaining_node)],
+                        nodes[max(current_node, remaining_node)],
+                    )
+                )
+        return [
+            edge
+            for edge in intersections
+            if edge in self.data.get_all_edges()
+            or (edge[1], edge[0]) in self.data.get_all_edges()
+        ]
+
     def check_if_triangulation_with_degree_constraint(
         self, check_degree: bool = True, check_triangulation: bool = True
     ) -> bool:
@@ -219,7 +280,7 @@ class Check:
                         or remaining_node == node2
                         or (node1, node2) < (current_node, remaining_node)
                     ):
-                        # if remaining_node == node1 or remaining_node == node2:
+                        # Unterschied zu get_itersection_with_all_edges
                         continue  # make sure to not double count
 
                     orientation_node1_node2_remaining = self.orientation(
@@ -257,7 +318,21 @@ class Check:
                         nodes[max(current_node, remaining_node)],
                     )
                     intersections.add((min(inter, inter2), max(inter, inter2)))
-        return intersections
+
+        result = set()
+        for edge1, edge2 in intersections:
+            if (
+                edge1 not in self.data.get_all_edges()
+                and (edge1[1], edge1[0]) not in self.data.get_all_edges()
+            ):
+                continue
+            if (
+                edge2 not in self.data.get_all_edges()
+                and (edge2[1], edge2[0]) not in self.data.get_all_edges()
+            ):
+                continue
+            result.add((edge1, edge2))
+        return result
 
     def check_node_for_degree(self, node: str) -> bool:
         """Überprüft, ob der Knoten die richtige Anzahl an Nachbarn hat."""

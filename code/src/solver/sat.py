@@ -37,11 +37,24 @@ class SAT(Solver):
     def alle_edges_constraint(self):
         edges = self.graph.get_all_edges()
         for edge in edges:
-            intersection = self.graph.get_intersections_with_all_edges_n2(edge, False)
+            intersection = self.graph.get_intersections_with_all_edges(edge)
             self.solver.add_clause(
                 [self.get_index(edge)]
                 + [self.get_index(other_edge) for other_edge in intersection]
             )
+
+    def alle_edges_and_intersection_constraint(self):
+        edges = self.graph.get_all_edges()
+        for edge in edges:
+            intersections = self.graph.get_intersections_with_all_edges(edge)
+            self.solver.add_clause(
+                [self.get_index(edge)]
+                + [self.get_index(other_edge) for other_edge in intersections]
+            )
+            for intersect in intersections:
+                self.solver.add_clause(
+                    [-self.get_index(edge), -self.get_index(intersect)]
+                )
 
     def degree_constraint(self):
         for node in self.graph.get_all_nodes_name():
@@ -104,13 +117,18 @@ class SAT(Solver):
                 self.degree_constraint()
             elif parameter.get("version") == 0.2:
                 time_function(self.intersection_constraint)()
-                self.degree_constraint()
                 self.set_hull_fix_constraint()
+                self.degree_constraint()
             elif parameter.get("version") == 0.3:
                 time_function(self.intersection_constraint)()
                 self.degree_constraint()
                 self.set_hull_fix_constraint()
                 time_function(self.alle_edges_constraint)()
+            elif parameter.get("version") == 0.4:
+                self.degree_constraint()
+                self.set_hull_fix_constraint()
+                self.alle_edges_and_intersection_constraint()
+
             else:
                 raise ValueError(
                     f"Version {parameter.get('version')} is not supported for self solver."
