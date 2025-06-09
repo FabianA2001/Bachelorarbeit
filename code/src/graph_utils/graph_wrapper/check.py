@@ -106,7 +106,7 @@ class Check:
                 return True
         return False
 
-    def get_intersections_with_all_edges(
+    def get_intersections_with_all_edges_n2(
         self,
         edge: Union[tuple[str, str], shapely.LineString],
         check_if_active: bool = True,
@@ -120,23 +120,22 @@ class Check:
             line = edge
         else:
             raise ValueError("Erwarte Tuple oder LineString")
-        aktive_edges = [
+        aktive_edges: list[tuple[str, str]] = [
             edge
             for edge in self.data.edges
             if self.data.edges[edge].get("active") or not check_if_active
         ]
         lines = [self.data.edges[edge].get("line") for edge in aktive_edges]
         # Baue spatial index
-        tree = STRtree(lines)
 
-        edges = []
-        candidates = tree.query(line)
-        for candidate in candidates:
-            if line == lines[candidate]:
+        edges = set()
+        for edge, other_line in zip(aktive_edges, lines):
+            if edge == line:
                 continue
-            if line.crosses(lines[candidate]):
-                edges.append(aktive_edges[candidate])
-        return edges
+            if line.crosses(other_line):
+                edges.add((min(edge[0], edge[1]), max(edge[0], edge[1])))
+
+        return list(edges)
 
     def check_if_triangulation_with_degree_constraint(
         self, check_degree: bool = True, check_triangulation: bool = True

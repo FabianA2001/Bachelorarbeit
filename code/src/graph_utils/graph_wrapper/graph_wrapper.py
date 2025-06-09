@@ -54,12 +54,12 @@ class Graph_Wrapper:
             edge, check_if_active
         )
 
-    def get_intersections_with_all_edges(
+    def get_intersections_with_all_edges_n2(
         self,
         edge: Union[tuple[str, str], shapely.LineString],
         check_if_active: bool = True,
     ) -> list[tuple[str, str]]:
-        return self._check.get_intersections_with_all_edges(edge, check_if_active)
+        return self._check.get_intersections_with_all_edges_n2(edge, check_if_active)
 
     def get_all_intersections(
         self, check_if_active: bool = True, timeout_func=lambda: ...

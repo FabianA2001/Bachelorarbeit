@@ -37,7 +37,7 @@ class SAT(Solver):
     def alle_edges_constraint(self):
         edges = self.graph.get_all_edges()
         for edge in edges:
-            intersection = self.graph.get_intersections_with_all_edges(edge, False)
+            intersection = self.graph.get_intersections_with_all_edges_n2(edge, False)
             self.solver.add_clause(
                 [self.get_index(edge)]
                 + [self.get_index(other_edge) for other_edge in intersection]
