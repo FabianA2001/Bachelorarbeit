@@ -2,12 +2,25 @@ import shapely
 from typing import Union
 from graph_utils.graph_wrapper.data import Data
 from shapely.strtree import STRtree
+from itertools import combinations
 
 
 class Check:
     def __init__(self, data: Data) -> None:
         self.data = data
         self.multipoint = None
+
+    @staticmethod
+    def sign(x):
+        """Return the sign of x as -1 or 1."""
+        return (x > 0) - (x < 0)
+
+    @staticmethod
+    def orientation(p1, p2, p3):
+        """Check if the turn from p1 to p2 to p3 is a left turn."""
+        return Check.sign(
+            (p2[0] - p1[0]) * (p3[1] - p1[1]) - (p2[1] - p1[1]) * (p3[0] - p1[0])
+        )
 
     def get_multipoint_for_points(self) -> shapely.geometry.MultiPoint:
         if self.multipoint is None:
@@ -160,29 +173,99 @@ class Check:
                     return False
         return True
 
+    def get_all_intersections_n2(
+        self, check_if_active: bool = True, timeout_func=lambda: ...
+    ) -> set[tuple[tuple[str, str], tuple[str, str]]]:
+        intersections = set()
+        for edge1 in self.data.get_all_edges():
+            for edge2 in self.data.get_all_edges():
+                if edge1 == edge2:
+                    continue
+                if not self.data.edges[edge1].get("active") and check_if_active:
+                    continue
+                if not self.data.edges[edge2].get("active") and check_if_active:
+                    continue
+                if self.check_for_intersection_except_corners(edge1, edge2):
+                    intersections.add((edge1, edge2))
+        return intersections
+
     def get_all_intersections(
         self, check_if_active: bool = True, timeout_func=lambda: ...
     ) -> set[tuple[tuple[str, str], tuple[str, str]]]:
         """Gibt alle Kanten zurück, die sich schneiden."""
-        hull = self.data.get_hull_edges()
-        aktive_edges = [
-            edge
-            for edge in self.data.edges
-            if edge not in hull
-            and (self.data.edges[edge].get("active") or not check_if_active)
-        ]
-        lines = [self.data.edges[edge].get("line") for edge in aktive_edges]
-        # Baue spatial index
-        tree = STRtree(lines)
+        # hull = self.data.get_hull_edges()
+        # edges: list[tuple[str, str]] = [
+        #     edge
+        #     for edge in self.data.edges
+        #     if edge not in hull
+        #     and (self.data.edges[edge].get("active") or not check_if_active)
+        # ]
+        nodes = self.data.get_all_nodes_name()
         intersections = set()
-        for i, line in enumerate(lines):
-            candidates = tree.query(line)
-            for candidate in candidates:
-                if i == candidate:
+        # point_indices_to_line_idx = {
+        #     (i, j): k for k, (i, j) in enumerate(edges)
+        # }
+        for node1, node2 in combinations(nodes, 2):
+            # line1_idx = point_indices_to_line_idx[(node1, node2)]
+
+            for current_node in nodes:
+                if current_node == node1 or current_node == node2:
                     continue
-                if line.crosses(lines[candidate]):
-                    intersections.add((aktive_edges[i], aktive_edges[candidate]))
-            timeout_func()
+
+                orientation_node1_node2_current = self.orientation(
+                    self.data.get_pos_from_node(node1),
+                    self.data.get_pos_from_node(node2),
+                    self.data.get_pos_from_node(current_node),
+                )
+                for remaining_node in nodes[: nodes.index(current_node) + 1]:
+                    # if remaining_node == node1 or remaining_node == node2 or (node1, node2) < (current_node, remaining_node):
+                    # if remaining_node == node1 or remaining_node == node2 or (nodes.index(node1), nodes.index(node2)) < (nodes.index(current_node), nodes.index(remaining_node)):
+                    #     continue  # make sure to not double count
+                    if remaining_node == node1 or remaining_node == node2:
+                        continue
+
+                    orientation_node1_node2_remaining = self.orientation(
+                        self.data.get_pos_from_node(node1),
+                        self.data.get_pos_from_node(node2),
+                        self.data.get_pos_from_node(remaining_node),
+                    )
+                    # both points are on the same side of the line
+                    if (
+                        orientation_node1_node2_current
+                        == orientation_node1_node2_remaining
+                    ):
+                        continue
+
+                    orientation_current_remaining_node1 = self.orientation(
+                        self.data.get_pos_from_node(current_node),
+                        self.data.get_pos_from_node(remaining_node),
+                        self.data.get_pos_from_node(node1),
+                    )
+                    orientation_current_remaining_node2 = self.orientation(
+                        self.data.get_pos_from_node(current_node),
+                        self.data.get_pos_from_node(remaining_node),
+                        self.data.get_pos_from_node(node2),
+                    )
+                    # if the orientations are the same, the lines do not intersect
+                    if (
+                        orientation_current_remaining_node1
+                        == orientation_current_remaining_node2
+                    ):
+                        continue
+
+                    # line2_idx = point_indices_to_line_idx[(
+                    #     current_node, remaining_node)]
+                    # intersections.add((
+                    #     edges[min(line1_idx, line2_idx)], edges[max(line1_idx, line2_idx)]))
+                    intersections.add(
+                        (
+                            (min(node1, node2), max(node1, node2)),
+                            (
+                                min(current_node, remaining_node),
+                                max(current_node, remaining_node),
+                            ),
+                        )
+                    )
         return intersections
 
     def check_node_for_degree(self, node: str) -> bool:

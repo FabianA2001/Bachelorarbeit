@@ -30,40 +30,57 @@ def get_solvers():
 
 
 def custom_points() -> list[Node]:
-    nodes = [
-        Node("0", (9, 4)),
-        Node("1", (5, 7)),
-        Node("2", (13, 7)),
-        Node("3", (12, 5)),
-        Node("4", (7, 7)),
-        Node("5", (9, 6)),
-        Node("6", (10, 8)),
-        Node("7", (7, 9)),
-        Node("8", (8, 11)),
-    ]
+    # nodes = [
+    #     Node("0", (9, 4)),
+    #     Node("1", (5, 7)),
+    #     Node("2", (13, 7)),
+    #     Node("3", (12, 5)),
+    #     Node("4", (7, 7)),
+    #     Node("5", (9, 6)),
+    #     Node("6", (10, 8)),
+    #     Node("7", (7, 9)),
+    #     Node("8", (8, 11)),
+    # ]
+    nodes = [Node("0", (2, 2)), Node("1", (2, 7)), Node("2", (7, 7)), Node("3", (7, 2))]
     return nodes
 
 
 def test_algo():
-    nodes = load_nodes_from_json("iterative_60_10/004_random.json")
+    nodes = load_nodes_from_json("iterative_60_10/000_random.json")
     # nodes = load_nodes_from_json("simple_100/000_random.json")
     # nodes = load_nodes_from_json("test_algo.json")
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
+    graph.name = "Test Algo"
+    graph2 = Graph_Wrapper(nodes)
+    graph2.name = "Test Algo 2"
+    graph.add_all_possible_edges(default_for_active=False, ignore_hull=True)
+    graph2.add_all_possible_edges(default_for_active=False, ignore_hull=True)
+    intersection = graph.get_all_intersections_n2(check_if_active=False)
+    intersection2 = graph2.get_all_intersections(check_if_active=False)
+    for inter in intersection:
+        graph.activate_edge(inter[0])
+        graph.activate_edge(inter[1])
+    for inter in intersection2:
+        graph2.activate_edge(inter[0])
+        graph2.activate_edge(inter[1])
+
+    assert intersection == intersection2, "Intersection methods do not match"
     # graph.add_all_possible_edges(default_for_active=True, ignore_hull=True)
     # graph.add_convex_hull()
     # print(len(time_function(graph.exclude_edge_partition)()))
     # for edge in graph.exclude_edge_partition():
     #     graph.add_edge(edge[0], edge[1])
 
-    solver = SAT(graph)
-    solver.solve(
-        {
-            "timeout": -1,
-            "version": 0.2,
-        }
-    )
-    graph.show_and_save()
+    # solver = SAT(graph)
+    # solver.solve(
+    #     {
+    #         "timeout": -1,
+    #         "version": 0.2,
+    #     }
+    # )
+    graph.show_and_save(show=False, save=True)
+    graph2.show_and_save(show=False, save=True)
     # graph.save_graph_as_json("test_algo.json")
 
 

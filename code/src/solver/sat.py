@@ -29,7 +29,7 @@ class SAT(Solver):
         return self.edges[index - 1]
 
     def intersection_constraint(self):
-        intersection = self.graph.get_all_intersections(False, self.timeout_error)
+        intersection = self.graph.get_all_intersections_n2(False, self.timeout_error)
         for edge, other_edge in intersection:
             self.solver.add_clause([-self.get_index(edge), -self.get_index(other_edge)])
         self.timeout_error()

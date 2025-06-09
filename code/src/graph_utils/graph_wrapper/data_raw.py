@@ -14,6 +14,9 @@ class Data_Raw(nx.Graph):
         self.point_to_node: dict[shapely.Point, str] = {
             attr["point"]: node for node, attr in self.nodes(data=True)
         }
+        self.pos_to_node: dict[tuple[int, int], str] = {
+            attr["pos"]: node for node, attr in self.nodes(data=True)
+        }
 
     def add_node(self, key: str, pos: tuple[int, int], degree: int) -> None:
         """Fügt einen Knoten zum Graphen hinzu."""
@@ -34,6 +37,16 @@ class Data_Raw(nx.Graph):
         assert node is not None, f"Node for point {point} not found."
         return node
 
+    def get_node_from_pos(self, pos: tuple[int, int]) -> str:
+        """Gibt den Knoten zurück, der eine bestimmte Position repräsentiert."""
+        if not isinstance(pos, tuple):
+            raise ValueError(f"Erwarte ein Tuple, aber erhalte {type(pos)}")
+        if pos not in self.pos_to_node:
+            raise ValueError(f"Position {pos} not found in pos_to_node.")
+        node = self.pos_to_node.get(pos)
+        assert node is not None, f"Node for position {pos} not found."
+        return node
+
     def get_point_from_node(self, node: str) -> shapely.Point:
         """Gibt den Punkt des Knotens zurück."""
         if node not in self.nodes:
@@ -42,6 +55,15 @@ class Data_Raw(nx.Graph):
         if not isinstance(point, shapely.Point):
             raise TypeError(f"Point is not a shapely.Point, but {type(point)}")
         return point
+
+    def get_pos_from_node(self, node: str) -> tuple[int, int]:
+        """Gibt die Position des Knotens zurück."""
+        if node not in self.nodes:
+            raise ValueError(f"Node {node} not found in graph.")
+        pos = self.nodes[node].get("pos")
+        if not isinstance(pos, tuple):
+            raise TypeError(f"Position is not a tuple, but {type(pos)}")
+        return pos
 
     def copy(self) -> "Data_Raw":
         nodes = []

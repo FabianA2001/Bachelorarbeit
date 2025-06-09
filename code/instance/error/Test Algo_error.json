@@ -3,52 +3,52 @@
     {
       "name": "0",
       "pos": [412, 229],
-      "degree": 0
+      "degree": 8
     },
     {
       "name": "1",
       "pos": [540, 506],
-      "degree": 0
+      "degree": 9
     },
     {
       "name": "2",
       "pos": [414, 476],
-      "degree": 0
+      "degree": 9
     },
     {
       "name": "3",
       "pos": [303, 379],
-      "degree": 0
+      "degree": 7
     },
     {
       "name": "4",
       "pos": [765, 654],
-      "degree": 0
+      "degree": 7
     },
     {
       "name": "5",
       "pos": [276, 960],
-      "degree": 0
+      "degree": 5
     },
     {
       "name": "6",
       "pos": [308, 75],
-      "degree": 0
+      "degree": 5
     },
     {
       "name": "7",
       "pos": [562, 771],
-      "degree": 0
+      "degree": 8
     },
     {
       "name": "8",
       "pos": [943, 895],
-      "degree": 0
+      "degree": 6
     },
     {
       "name": "9",
       "pos": [724, 236],
-      "degree": 0
+      "degree": 6
     }
   ]
 }
