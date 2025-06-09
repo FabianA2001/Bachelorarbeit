@@ -186,48 +186,43 @@ class Check:
                 if not self.data.edges[edge2].get("active") and check_if_active:
                     continue
                 if self.check_for_intersection_except_corners(edge1, edge2):
-                    intersections.add((edge1, edge2))
+                    intersections.add(
+                        (
+                            min(min(edge1, edge2), max(edge1, edge2)),
+                            max(min(edge1, edge2), max(edge1, edge2)),
+                        )
+                    )
         return intersections
 
     def get_all_intersections(
         self, check_if_active: bool = True, timeout_func=lambda: ...
     ) -> set[tuple[tuple[str, str], tuple[str, str]]]:
         """Gibt alle Kanten zurück, die sich schneiden."""
-        # hull = self.data.get_hull_edges()
-        # edges: list[tuple[str, str]] = [
-        #     edge
-        #     for edge in self.data.edges
-        #     if edge not in hull
-        #     and (self.data.edges[edge].get("active") or not check_if_active)
-        # ]
         nodes = self.data.get_all_nodes_name()
         intersections = set()
-        # point_indices_to_line_idx = {
-        #     (i, j): k for k, (i, j) in enumerate(edges)
-        # }
-        for node1, node2 in combinations(nodes, 2):
-            # line1_idx = point_indices_to_line_idx[(node1, node2)]
-
-            for current_node in nodes:
+        for node1, node2 in combinations(range(len(nodes)), 2):
+            for current_node in range(len(nodes)):
                 if current_node == node1 or current_node == node2:
                     continue
 
                 orientation_node1_node2_current = self.orientation(
-                    self.data.get_pos_from_node(node1),
-                    self.data.get_pos_from_node(node2),
-                    self.data.get_pos_from_node(current_node),
+                    self.data.get_pos_from_node(nodes[node1]),
+                    self.data.get_pos_from_node(nodes[node2]),
+                    self.data.get_pos_from_node(nodes[current_node]),
                 )
-                for remaining_node in nodes[: nodes.index(current_node) + 1]:
-                    # if remaining_node == node1 or remaining_node == node2 or (node1, node2) < (current_node, remaining_node):
-                    # if remaining_node == node1 or remaining_node == node2 or (nodes.index(node1), nodes.index(node2)) < (nodes.index(current_node), nodes.index(remaining_node)):
-                    #     continue  # make sure to not double count
-                    if remaining_node == node1 or remaining_node == node2:
-                        continue
+                for remaining_node in range(current_node + 1, len(nodes)):
+                    if (
+                        remaining_node == node1
+                        or remaining_node == node2
+                        or (node1, node2) < (current_node, remaining_node)
+                    ):
+                        # if remaining_node == node1 or remaining_node == node2:
+                        continue  # make sure to not double count
 
                     orientation_node1_node2_remaining = self.orientation(
-                        self.data.get_pos_from_node(node1),
-                        self.data.get_pos_from_node(node2),
-                        self.data.get_pos_from_node(remaining_node),
+                        self.data.get_pos_from_node(nodes[node1]),
+                        self.data.get_pos_from_node(nodes[node2]),
+                        self.data.get_pos_from_node(nodes[remaining_node]),
                     )
                     # both points are on the same side of the line
                     if (
@@ -237,14 +232,14 @@ class Check:
                         continue
 
                     orientation_current_remaining_node1 = self.orientation(
-                        self.data.get_pos_from_node(current_node),
-                        self.data.get_pos_from_node(remaining_node),
-                        self.data.get_pos_from_node(node1),
+                        self.data.get_pos_from_node(nodes[current_node]),
+                        self.data.get_pos_from_node(nodes[remaining_node]),
+                        self.data.get_pos_from_node(nodes[node1]),
                     )
                     orientation_current_remaining_node2 = self.orientation(
-                        self.data.get_pos_from_node(current_node),
-                        self.data.get_pos_from_node(remaining_node),
-                        self.data.get_pos_from_node(node2),
+                        self.data.get_pos_from_node(nodes[current_node]),
+                        self.data.get_pos_from_node(nodes[remaining_node]),
+                        self.data.get_pos_from_node(nodes[node2]),
                     )
                     # if the orientations are the same, the lines do not intersect
                     if (
@@ -253,19 +248,12 @@ class Check:
                     ):
                         continue
 
-                    # line2_idx = point_indices_to_line_idx[(
-                    #     current_node, remaining_node)]
-                    # intersections.add((
-                    #     edges[min(line1_idx, line2_idx)], edges[max(line1_idx, line2_idx)]))
-                    intersections.add(
-                        (
-                            (min(node1, node2), max(node1, node2)),
-                            (
-                                min(current_node, remaining_node),
-                                max(current_node, remaining_node),
-                            ),
-                        )
+                    inter = (nodes[min(node1, node2)], nodes[max(node1, node2)])
+                    inter2 = (
+                        nodes[min(current_node, remaining_node)],
+                        nodes[max(current_node, remaining_node)],
                     )
+                    intersections.add((min(inter, inter2), max(inter, inter2)))
         return intersections
 
     def check_node_for_degree(self, node: str) -> bool:
