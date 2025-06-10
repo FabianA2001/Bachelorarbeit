@@ -284,7 +284,7 @@ class Graph_Wrapper:
     def impossible_edges(self) -> list[tuple[str, str]]:
         """Gibt alle Kanten zurück, die nicht im Graphen vorhanden sind."""
         impossible_edges = []
-        for note, note1 in itertools.combinations(self.get_all_nodes_name(), 2):
-            if self.check_edge_interection_with_nodes((note, note1), False):
-                impossible_edges.append((note, note1))
+        for node1, node2 in itertools.combinations(self.get_all_nodes_name(), 2):
+            if self.check_edge_interection_with_nodes((node1, node2), False):
+                impossible_edges.append((min(node1, node2), node2))
         return impossible_edges

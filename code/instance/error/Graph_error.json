@@ -1,54 +1,29 @@
 {
   "nodes": [
     {
-      "name": "0",
-      "pos": [412, 229],
-      "degree": 0
-    },
-    {
-      "name": "1",
-      "pos": [540, 506],
-      "degree": 0
-    },
-    {
       "name": "2",
-      "pos": [414, 476],
-      "degree": 0
+      "pos": [6, 5],
+      "degree": 4
     },
     {
       "name": "3",
-      "pos": [303, 379],
-      "degree": 0
-    },
-    {
-      "name": "4",
-      "pos": [765, 654],
-      "degree": 0
+      "pos": [9, 3],
+      "degree": 4
     },
     {
       "name": "5",
-      "pos": [276, 960],
-      "degree": 0
-    },
-    {
-      "name": "6",
-      "pos": [308, 75],
-      "degree": 0
+      "pos": [9, 5],
+      "degree": 4
     },
     {
       "name": "7",
-      "pos": [562, 771],
-      "degree": 0
+      "pos": [8, 6],
+      "degree": 3
     },
     {
       "name": "8",
-      "pos": [943, 895],
-      "degree": 0
-    },
-    {
-      "name": "9",
-      "pos": [724, 236],
-      "degree": 0
+      "pos": [2, 3],
+      "degree": 3
     }
   ]
 }

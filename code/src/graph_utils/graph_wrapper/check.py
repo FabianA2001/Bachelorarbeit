@@ -52,8 +52,14 @@ class Check:
         """Überprüft, ob eine Linie mit einer anderen Linie im Graphen schneidet."""
         if isinstance(edge, tuple):
             if edge not in self.data.get_all_edges():
-                raise ValueError(f"Edge {edge} is not in the graph.")
-            line = self.data.edges[edge].get("line")
+                line = shapely.LineString(
+                    (
+                        self.data.get_pos_from_node(edge[0]),
+                        self.data.get_pos_from_node(edge[1]),
+                    )
+                )
+            else:
+                line = self.data.edges[edge].get("line")
         elif isinstance(edge, shapely.LineString):
             line = edge
         else:
