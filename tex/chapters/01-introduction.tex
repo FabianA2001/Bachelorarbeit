@@ -22,12 +22,12 @@ e_i &= \left\{
 0 & \, \textrm{sonst} \\
 \end{array}
 \right. \label{eq:evaluation}\\
-E_G &= \sum_{i=0}^{n} \frac{e_i}{n} \label{eq:total_evaluation}
+Q_G &= \sum_{i=0}^{n} \frac{e_i}{n} \label{eq:total_evaluation}
 \end{align}
 
-Die Formel liefert eine Evaluation (\(E_G\)) für einen Graphen(\(G\)) mit \(n\) Knoten.
-Die Funktion \(deg^*_G(i)\) gibt den gewünschten Grad an der stelle i an.
-Dazu passend gibt \(deg_G(i)\) den aktuellen Grad zurückgibt.
+Die Formel liefert eine Evaluation (\(Q_G\)) für einen Graphen(\(G\)) mit \(n\) Knoten.
+Hierbei gibt \(deg^*_G(i)\) den gewünschten Grad an der stelle i an.
+Dazu passend gibt \(deg_G(i)\) den aktuellen Grad an.
 In der Brechnung~\eqref{eq:difference} wird die Difference zwischen dem gewünschten und aktuellen Grad berechnet.
 In~\eqref{eq:evaluation} wird diese Abweichung Prozentual bewertet.
 Am Ende wird in~\eqref{eq:total_evaluation} ein Durchschnitt über alle Prozentualen Werte gebildet.
