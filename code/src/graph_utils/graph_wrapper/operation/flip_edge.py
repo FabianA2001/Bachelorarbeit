@@ -4,17 +4,17 @@ from graph_utils.graph_wrapper.visualisation import show_and_save
 from graph_utils.graph_wrapper.check import Check
 
 
-def flip_edge(data: Data, check: Check, edge: tuple[str, str]) -> bool:
+def flip_edge(data: Data, check: Check, edge: tuple[int, int]) -> bool:
     if not isinstance(edge, tuple) or len(edge) != 2:
         raise ValueError(f"Erwarte Tuple aber erhalte {type(edge)}, {edge}")
-        if not all(isinstance(x, str) for x in edge):
+        if not all(isinstance(x, int) for x in edge):
             raise ValueError(
                 f"Erwarte Tuple mit Strings aber erhalte {type(edge)}, {edge}"
             )
 
     def reduce_to_two_tri(
-        triangles: list[tuple[str, str, str]],
-    ) -> list[tuple[str, str, str]]:
+        triangles: list[tuple[int, int, int]],
+    ) -> list[tuple[int, int, int]]:
         """Reduziert die Liste der Dreiecke auf zwei."""
         nodes = set()
         for tri in triangles:

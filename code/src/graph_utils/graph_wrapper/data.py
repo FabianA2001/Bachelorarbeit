@@ -29,10 +29,10 @@ class Data(Data_Raw):
             raise ValueError("Intersection is not a MultiPoint.")
         return [node for node in outer_points.geoms]
 
-    def get_hull_nodes(self) -> list[str]:
+    def get_hull_nodes(self) -> list[int]:
         return [self.get_node_from_point(node) for node in self.get_hull_points()]
 
-    def get_hull_edges(self) -> list[tuple[str, str]]:
+    def get_hull_edges(self) -> list[tuple[int, int]]:
         def sorted_nodes(nodes: list[shapely.Point]) -> list[shapely.Point]:
             """Sortiert die Punkte im Uhrzeigersinn."""
             # Berechne den Schwerpunkt (Centroid) der Punkte
@@ -59,7 +59,7 @@ class Data(Data_Raw):
             )
         return edges
 
-    def check_if_edge_in_hull(self, edge: tuple[str, str]) -> bool:
+    def check_if_edge_in_hull(self, edge: tuple[int, int]) -> bool:
         """Überprüft, ob die Kante im konvexen Rumpf ist."""
         if edge in self.get_hull_edges():
             return True
@@ -67,7 +67,7 @@ class Data(Data_Raw):
             return True
         return False
 
-    def get_triangles_for_node(self, node: str) -> list[str]:
+    def get_triangles_for_node(self, node: int) -> list[int]:
         """Gibt die Dreiecke des Graphen zurück."""
         triangles = []
         neighbors = set(self[node])
@@ -77,8 +77,8 @@ class Data(Data_Raw):
         return triangles
 
     def get_triangles_for_edge(
-        self, edge: tuple[str, str], check_active: bool = True
-    ) -> list[tuple[str, str, str]]:
+        self, edge: tuple[int, int], check_active: bool = True
+    ) -> list[tuple[int, int, int]]:
         """Gibt die Dreiecke des Graphen zurück."""
         triangles = []
         node1, node2 = edge
@@ -96,11 +96,11 @@ class Data(Data_Raw):
             triangles.append(tuple(sorted([node1, node2, u])))
         return triangles
 
-    def get_edges_for_node(self, node: str) -> list[tuple[str, str]]:
+    def get_edges_for_node(self, node: int) -> list[tuple[int, int]]:
         """Gibt die Kanten des Graphen zurück."""
         return [(node, neighbor) for neighbor in self[node]]
 
-    def get_all_triangles(self) -> list[tuple[str, str, str]]:
+    def get_all_triangles(self) -> list[tuple[int, int, int]]:
         """Gibt alle Dreiecke des Graphen zurück."""
         triangles = set()
         for node in self.get_all_nodes_name():

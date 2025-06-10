@@ -30,8 +30,8 @@ class Check:
 
     def check_for_intersection_except_corners(
         self,
-        line1: shapely.geometry.LineString | tuple[str, str],
-        line2: shapely.geometry.LineString | tuple[str, str],
+        line1: shapely.geometry.LineString | tuple[int, int],
+        line2: shapely.geometry.LineString | tuple[int, int],
     ) -> bool:
         if isinstance(line1, tuple):
             line1 = self.data.edges[line1].get("line")
@@ -46,7 +46,7 @@ class Check:
 
     def check_edge_intersection_with_nodes(
         self,
-        edge: Union[tuple[str, str], shapely.LineString],
+        edge: Union[tuple[int, int], shapely.LineString],
         check_if_active: bool = True,
     ) -> bool:
         """Überprüft, ob eine Linie mit einer anderen Linie im Graphen schneidet."""
@@ -79,7 +79,7 @@ class Check:
 
     def check_for_intersection_with_all_edges_and_nodes(
         self,
-        edge: Union[tuple[str, str], shapely.LineString],
+        edge: Union[tuple[int, int], shapely.LineString],
         check_if_active: bool = True,
     ) -> bool:
         """Überprüft, ob eine Linie mit einer anderen Linie im Graphen schneidet."""
@@ -113,9 +113,9 @@ class Check:
 
     def get_intersections_with_all_edges_n2(
         self,
-        edge: Union[tuple[str, str], shapely.LineString],
+        edge: Union[tuple[int, int], shapely.LineString],
         check_if_active: bool = True,
-    ) -> list[tuple[str, str]]:
+    ) -> list[tuple[int, int]]:
         """Überprüft, ob eine Linie mit einer anderen Linie im Graphen schneidet."""
         if isinstance(edge, tuple):
             if edge not in self.data.get_all_edges():
@@ -125,7 +125,7 @@ class Check:
             line = edge
         else:
             raise ValueError("Erwarte Tuple oder LineString")
-        aktive_edges: list[tuple[str, str]] = [
+        aktive_edges: list[tuple[int, int]] = [
             edge
             for edge in self.data.edges
             if self.data.edges[edge].get("active") or not check_if_active
@@ -144,8 +144,8 @@ class Check:
 
     def get_intersections_with_all_edges(
         self,
-        edge: tuple[str, str],
-    ) -> list[tuple[str, str]]:
+        edge: tuple[int, int],
+    ) -> list[tuple[int, int]]:
         nodes = self.data.get_all_nodes_name()
         node1 = nodes.index(edge[0])
         node2 = nodes.index(edge[1])
@@ -240,7 +240,7 @@ class Check:
 
     def get_all_intersections_n2(
         self, check_if_active: bool = True, timeout_func=lambda: ...
-    ) -> set[tuple[tuple[str, str], tuple[str, str]]]:
+    ) -> set[tuple[tuple[int, int], tuple[int, int]]]:
         intersections = set()
         for edge1 in self.data.get_all_edges():
             for edge2 in self.data.get_all_edges():
@@ -261,7 +261,7 @@ class Check:
 
     def get_all_intersections(
         self, timeout_func=lambda: ...
-    ) -> set[tuple[tuple[str, str], tuple[str, str]]]:
+    ) -> set[tuple[tuple[int, int], tuple[int, int]]]:
         """Gibt alle Kanten zurück, die sich schneiden."""
         """Es wird nicht getestet ob die Kanten aktiv sind oder garnicht möglich weil sie auf Knoten liegen."""
         nodes = self.data.get_all_nodes_name()
@@ -324,7 +324,7 @@ class Check:
 
         return intersections
 
-    def check_node_for_degree(self, node: str) -> bool:
+    def check_node_for_degree(self, node: int) -> bool:
         """Überprüft, ob der Knoten die richtige Anzahl an Nachbarn hat."""
         if node not in self.data.get_all_nodes_name():
             raise ValueError(f"Node {node} is not in the graph.")

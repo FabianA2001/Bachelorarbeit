@@ -25,7 +25,7 @@ def gen_nodes(
             if pos not in poss:
                 poss.append(pos)
                 break
-        nodes.append(Node(str(i), pos))
+        nodes.append(Node(pos))
     return nodes
 
 
@@ -188,7 +188,7 @@ class Generate_Nodes_n_gon(Generate_Instance_ABC_Nodes):
         for i in range(number_nodes):
             x: int = int(center_x + math.cos(i * angle) * self.radius)
             y: int = int(center_y + math.sin(i * angle) * self.radius)
-            nodes.append(Node(str(i), (x, y)))
+            nodes.append(Node((x, y)))
         return nodes
 
 
@@ -218,5 +218,5 @@ class Generate_Nodes_Iterativ_N_Gon(Generate_Instance_ABC_Nodes):
         for i in range(number_nodes):
             x: int = int(center_x + math.cos(i * angle) * self.radius)
             y: int = int(center_y + math.sin(i * angle) * self.radius)
-            nodes.append(Node(str(i), (x, y)))
+            nodes.append(Node((x, y)))
         return nodes

@@ -36,20 +36,20 @@ class Graph_Wrapper:
     def get_aktive_graph(self) -> "Data_Raw":
         return self._data.get_aktive_graph()
 
-    def add_node(self, key: str, pos: tuple[int, int], degree: int) -> None:
+    def add_node(self, pos: tuple[int, int], degree: int) -> None:
         self.clear_cache()
-        self._data.add_node(key, pos, degree)
+        self._data.add_node(pos, degree)
 
     def check_for_intersection_except_corners(
         self,
-        line1: shapely.geometry.LineString | tuple[str, str],
-        line2: shapely.geometry.LineString | tuple[str, str],
+        line1: shapely.geometry.LineString | tuple[int, int],
+        line2: shapely.geometry.LineString | tuple[int, int],
     ) -> bool:
         return self._check.check_for_intersection_except_corners(line1, line2)
 
     def check_for_intersection_with_all_edges_and_nodes(
         self,
-        edge: Union[tuple[str, str], shapely.LineString],
+        edge: Union[tuple[int, int], shapely.LineString],
         check_if_active: bool = True,
     ) -> bool:
         return self._check.check_for_intersection_with_all_edges_and_nodes(
@@ -58,25 +58,25 @@ class Graph_Wrapper:
 
     def get_intersections_with_all_edges_n2(
         self,
-        edge: Union[tuple[str, str], shapely.LineString],
+        edge: Union[tuple[int, int], shapely.LineString],
         check_if_active: bool = True,
-    ) -> list[tuple[str, str]]:
+    ) -> list[tuple[int, int]]:
         return self._check.get_intersections_with_all_edges_n2(edge, check_if_active)
 
     def get_intersections_with_all_edges(
         self,
-        edge: tuple[str, str],
-    ) -> list[tuple[str, str]]:
+        edge: tuple[int, int],
+    ) -> list[tuple[int, int]]:
         return self._check.get_intersections_with_all_edges(edge)
 
     def get_all_intersections(
         self, timeout_func=lambda: ...
-    ) -> set[tuple[tuple[str, str], tuple[str, str]]]:
+    ) -> set[tuple[tuple[int, int], tuple[int, int]]]:
         return self._check.get_all_intersections(timeout_func)
 
     def get_all_intersections_n2(
         self, check_if_active: bool = True, timeout_func=lambda: ...
-    ) -> set[tuple[tuple[str, str], tuple[str, str]]]:
+    ) -> set[tuple[tuple[int, int], tuple[int, int]]]:
         return self._check.get_all_intersections_n2(check_if_active, timeout_func)
 
     def show_and_save(
@@ -91,35 +91,35 @@ class Graph_Wrapper:
             block=block,
         )
 
-    def add_edge(self, node1: str, node2: str, active: bool = True) -> None:
+    def add_edge(self, node1: int, node2: int, active: bool = True) -> None:
         """Fügt eine Kante zwischen zwei Knoten hinzu."""
         self.clear_cache()
         self._data.add_edge(node1, node2, active)
 
-    def remove_edge(self, edge: tuple[str, str]) -> None:
+    def remove_edge(self, edge: tuple[int, int]) -> None:
         """Entfernt eine Kante zwischen zwei Knoten."""
         self.clear_cache()
         self._data.remove_edge(edge)
 
     def activate_edge(
-        self, node1: Union[str, Tuple[str, str]], node2: Optional[str] = None
+        self, node1: Union[int, Tuple[int, int]], node2: Optional[int] = None
     ) -> None:
         """Aktiviert eine Kante zwischen zwei Knoten."""
         self.clear_cache()
         self._data.active_edge(node1, node2)
 
     def deactivate_edge(
-        self, node1: Union[str, Tuple[str, str]], node2: Optional[str] = None
+        self, node1: Union[int, Tuple[int, int]], node2: Optional[int] = None
     ) -> None:
         """Deaktiviert eine Kante zwischen zwei Knoten."""
         self.clear_cache()
         self._data.deactivate_edge(node1, node2)
 
-    def is_edge_active(self, edge: tuple[str, str]) -> bool:
+    def is_edge_active(self, edge: tuple[int, int]) -> bool:
         """Überprüft, ob eine Kante aktiv ist."""
         return self._data.is_edge_active(edge)
 
-    def get_all_edges(self, test_active: bool = False) -> list[tuple[str, str]]:
+    def get_all_edges(self, test_active: bool = False) -> list[tuple[int, int]]:
         """Gibt alle Kanten des Graphen zurück."""
         if test_active:
             return self._data.all_edges_aktive
@@ -129,10 +129,10 @@ class Graph_Wrapper:
     def get_hull_points(self) -> list[shapely.Point]:
         return self._data.get_hull_points()
 
-    def get_hull_nodes(self) -> list[str]:
+    def get_hull_nodes(self) -> list[int]:
         return self._data.get_hull_nodes()
 
-    def get_hull_edges(self) -> list[tuple[str, str]]:
+    def get_hull_edges(self) -> list[tuple[int, int]]:
         if self.hull_edges == []:
             self.hull_edges = self._data.get_hull_edges()
         return self.hull_edges
@@ -143,32 +143,32 @@ class Graph_Wrapper:
         for edge in self.get_hull_edges():
             self.add_edge(edge[0], edge[1], True)
 
-    def get_triangles_for_node(self, node: str) -> list[str]:
+    def get_triangles_for_node(self, node: int) -> list[int]:
         """Gibt die Dreiecke des Graphen zurück."""
         return self._data.get_triangles_for_node(node)
 
     def get_triangles_for_edge(
-        self, edge: tuple[str, str]
-    ) -> list[tuple[str, str, str]]:
+        self, edge: tuple[int, int]
+    ) -> list[tuple[int, int, int]]:
         """Gibt die Dreiecke des Graphen zurück."""
         return self._data.get_triangles_for_edge(edge)
 
-    def get_all_triangles(self) -> list[tuple[str, str, str]]:
+    def get_all_triangles(self) -> list[tuple[int, int, int]]:
         """Gibt alle Dreiecke des Graphen zurück."""
         return self._data.get_all_triangles()
 
-    def flip_edge(self, edge: tuple[str, str]) -> bool:
+    def flip_edge(self, edge: tuple[int, int]) -> bool:
         self.clear_cache()
         return flip_edge.flip_edge(self._data, self._check, edge)
 
-    def move_node(self, node: str = "", distance: int = -1) -> bool:
+    def move_node(self, node: int = 0, distance: int = -1) -> bool:
         self.clear_cache()
         return move_node.move_node(self._data, node, distance)
 
-    def is_edge_in_graph(self, edge: tuple[str, str]) -> tuple[str, str]:
+    def is_edge_in_graph(self, edge: tuple[int, int]) -> tuple[int, int]:
         return self._data.is_edge_in_graph(edge)
 
-    def check_if_triangulation_with_degree_constraint(
+    def check_if_triangulation_with_degree_constrained(
         self, check_degree: bool = True, check_triangulation: bool = True
     ) -> bool:
         """Überprüft, ob der Graph eine Triangulation ist."""
@@ -183,7 +183,7 @@ class Graph_Wrapper:
         """Speichert den Graphen als JSON-Datei."""
         save_graph_as_json(self._data, filename)
 
-    def get_all_nodes_name(self) -> list[str]:
+    def get_all_nodes_name(self) -> list[int]:
         """Gibt alle Knoten des Graphen zurück."""
         return self._data.get_all_nodes_name()
 
@@ -191,24 +191,24 @@ class Graph_Wrapper:
         """Gibt die Anzahl der Kanten im Graphen zurück."""
         return self._data.number_edges_in_Triangulation
 
-    def get_node_from_point(self, point: shapely.Point) -> str:
+    def get_node_from_point(self, point: shapely.Point) -> int:
         return self._data.get_node_from_point(point)
 
-    def get_point_from_node(self, node: str) -> shapely.Point:
+    def get_point_from_node(self, node: int) -> shapely.Point:
         """Gibt den Punkt des Knotens zurück."""
         return self._data.get_point_from_node(node)
 
-    def check_node_for_degree(self, node: str) -> bool:
+    def check_node_for_degree(self, node: int) -> bool:
         """Überprüft, ob der Knoten die richtige Anzahl an Nachbarn hat."""
         return self._check.check_node_for_degree(node)
 
-    def get_edges_of_node(self, node: str) -> list[tuple[str, str]]:
+    def get_edges_of_node(self, node: int) -> list[tuple[int, int]]:
         """Gibt die Kanten des Graphen zurück."""
         return self._data.get_edges_for_node(node)
 
     def check_edge_interection_with_nodes(
         self,
-        edge: Union[tuple[str, str], shapely.LineString],
+        edge: Union[tuple[int, int], shapely.LineString],
         check_if_active: bool = True,
     ) -> bool:
         return self._check.check_edge_intersection_with_nodes(edge, check_if_active)
@@ -245,7 +245,7 @@ class Graph_Wrapper:
             if ((com in hull) or ((com[1], com[0]) in hull)) and ignore_hull:
                 self._data.remove_edge(com)
 
-    def get_degree_of_node(self, node: str) -> int:
+    def get_degree_of_node(self, node: int) -> int:
         """Gibt den Grad eines Knotens zurück."""
         if node not in self._data.nodes:
             raise ValueError(f"Node {node} does not exist in the graph.")
@@ -270,7 +270,7 @@ class Graph_Wrapper:
         ), f"Evaluation must be smaller then 1, but got {evaluation}."
         return evaluation
 
-    def exclude_edge_partition(self) -> list[tuple[str, str]]:
+    def exclude_edge_partition(self) -> list[tuple[int, int]]:
         return Exclude_Edge_Partition(self._data)()
 
     def clear_cache(self) -> None:
@@ -281,7 +281,7 @@ class Graph_Wrapper:
                     self.__dict__.pop(name, None)
 
     @cached_property
-    def impossible_edges(self) -> list[tuple[str, str]]:
+    def impossible_edges(self) -> list[tuple[int, int]]:
         """Gibt alle Kanten zurück, die nicht im Graphen vorhanden sind."""
         impossible_edges = []
         for node1, node2 in itertools.combinations(self.get_all_nodes_name(), 2):

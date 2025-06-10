@@ -14,10 +14,10 @@ class Exclude_Edge_Partition:
             if node not in self.hull_nodes
         ]
 
-    def __call__(self) -> list[tuple[str, str]]:
+    def __call__(self) -> list[tuple[int, int]]:
         return self.exclude_edge()
 
-    def __possible_half(self, poly_nodes: list[str], exclude_nodes: list[str]) -> bool:
+    def __possible_half(self, poly_nodes: list[int], exclude_nodes: list[int]) -> bool:
         polygon = shapely.geometry.Polygon(
             [self.data.get_point_from_node(node) for node in poly_nodes]
         )
@@ -42,7 +42,7 @@ class Exclude_Edge_Partition:
     def __triangulate_half(self) -> bool:
         return True
 
-    def exclude_edge(self) -> list[tuple[str, str]]:
+    def exclude_edge(self) -> list[tuple[int, int]]:
         edges = set()
         for com in itertools.combinations(self.hull_nodes, 2):
             if com in self.hull_edges or (com[1], com[0]) in self.hull_edges:

@@ -16,7 +16,7 @@ class Raw_Flips(Solver):
     def probability_check(self) -> bool:
         return self.PROBABILITY > random.random()
 
-    def choose_edge(self, node: str) -> tuple[str, str]:
+    def choose_edge(self, node: int) -> tuple[int, int]:
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
         edges = self.graph.get_edges_of_node(node)
@@ -64,12 +64,12 @@ class Raw_Flips(Solver):
             self.graph.get_number_edges_in_Triangulation() ** self.EXPONENT_ITERATIONS
         ):
             self.__do_flip()
-            if not self.graph.check_if_triangulation_with_degree_constraint(
+            if not self.graph.check_if_triangulation_with_degree_constrained(
                 check_degree=False
             ):
                 self.graph.show_and_save()
                 assert False, "Graph is not triangulated."
-            if self.graph.check_if_triangulation_with_degree_constraint():
+            if self.graph.check_if_triangulation_with_degree_constrained():
                 return {
                     "success": True,
                 }

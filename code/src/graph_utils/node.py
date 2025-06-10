@@ -6,16 +6,15 @@ import logging
 
 
 class Node:
-    def __init__(self, name: str, pos: tuple[int, int], degree: int = -1) -> None:
-        self.name = name
+    def __init__(self, pos: tuple[int, int], degree: int = -1) -> None:
         self.pos: tuple[int, int] = pos
         self.degree = degree
 
     def __str__(self) -> str:
-        return f"{self.name}\tp:({self.pos[0]}, {self.pos[1]})\td:{self.degree}"
+        return f"p:({self.pos[0]}, {self.pos[1]})\td:{self.degree}"
 
     def __repr__(self) -> str:
-        return f"Node({self.name}, {self.pos})"
+        return f"Node({self.pos})"
 
 
 def save_nodes_as_json(
@@ -43,10 +42,7 @@ def load_nodes_from_json(filename: str = graph_const.DEFAULT_FILE_PATH) -> list[
     """Lädt eine Liste von Knoten aus einer JSON-Datei."""
     with open(f"{graph_const.PREFIX_INSTANCE}{filename}", "r") as f:
         data = json.load(f)["nodes"]
-        nodes = [
-            Node(node["name"], tuple(node["pos"]), node.get("degree", -1))
-            for node in data
-        ]
+        nodes = [Node(tuple(node["pos"]), node.get("degree", -1)) for node in data]
     return nodes
 
 
@@ -71,7 +67,7 @@ def move_degree(
             node1.degree -= degree
             node2.degree += degree
             logging.info(
-                f"Moved {degree} degree from node {node1.name} to node {node2.name}"
+                f"Moved {degree} degree from node {node1.pos} to node {node2.pos}"
             )
             return nodes
         raise ValueError("No nodes with degree found")

@@ -8,7 +8,7 @@ class No_Solution_Error(Exception):
     pass
 
 
-def move_node(data: Data, node: str = "", distance: int = -1) -> bool:
+def move_node(data: Data, node: int = 0, distance: int = -1) -> bool:
     # if distance == -1: Global bewegen
     def global_move() -> tuple[shapely.Point, tuple[int, int]]:
         MULTIPLIER_MAX = 1.2

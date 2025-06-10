@@ -28,7 +28,7 @@ class Ortools(Solver):
     def constraint_intersection(self):
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
-        for edge, other_edge in self.graph.get_all_intersections(check_if_active=False):
+        for edge, other_edge in self.graph.get_all_intersections():
             self.model.AddBoolOr([self.vars[edge].Not(), self.vars[other_edge].Not()])
 
     def constraint_degree(self):

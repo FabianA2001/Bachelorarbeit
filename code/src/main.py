@@ -30,28 +30,7 @@ def get_solvers():
 
 
 def custom_points() -> list[Node]:
-    # nodes = [
-    #     Node("0", (9, 4)),
-    #     Node("1", (5, 7)),
-    #     Node("2", (13, 7)),
-    #     Node("3", (12, 5)),
-    #     Node("4", (7, 7)),
-    #     Node("5", (9, 6)),
-    #     Node("6", (10, 8)),
-    #     Node("7", (7, 9)),
-    #     Node("8", (8, 11)),
-    # ]
-    # nodes = [Node("0", (2, 2), 3),
-    #          Node("1", (2, 7), 2),
-    #          Node("2", (7, 7), 3),
-    #          Node("3", (7, 2), 2)]
-    nodes = [
-        Node("0", (7, 4)),
-        Node("1", (7, 7)),
-        Node("2", (10, 4)),
-        Node("3", (10, 6)),
-        Node("4", (9, 8)),
-    ]
+    nodes = []
     graph = Graph_Wrapper(nodes)
     solver = Random_Adder(graph)
     solver.solve(
@@ -78,7 +57,7 @@ def test_algo():
     solver.solve(
         {
             "timeout": -1,
-            "version": 0.1,
+            "version": 0.4,
         }
     )
     graph.show_and_save()

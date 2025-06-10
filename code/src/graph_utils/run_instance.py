@@ -57,7 +57,7 @@ class Run_Instance:
     ):
         solver = solver_type(_graph)
         solution: dict = solver.solve(parameter)
-        is_triangulation = _graph.check_if_triangulation_with_degree_constraint()
+        is_triangulation = _graph.check_if_triangulation_with_degree_constrained()
         result = solution["success"] and is_triangulation
         correct = possible == result
         if is_triangulation and not possible:

@@ -74,8 +74,7 @@ class PointEditor:
 
     def print_points(self):
         print("Gesetzte Punkte (Rasterkoordinaten):")
-        print(f" nodes = [{', '.join(f'Node("{name}", ({x}, {y}))' for name, (x, y) in zip(
-            [f"{i}" for i in range(len(self.points))], self.points))}]")
+        print(f" nodes=[{', '.join(f'({x}, {y})' for (x, y) in self.points)}]")
 
 
 if __name__ == "__main__":
