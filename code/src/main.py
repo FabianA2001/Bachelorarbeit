@@ -65,23 +65,23 @@ def custom_points() -> list[Node]:
 
 def test_algo():
     nodes = load_nodes_from_json("iterative_60_10/004_random.json")
-    # nodes = load_nodes_from_json("simple_70/000_random.json")
+    # nodes = load_nodes_from_json("simple_80/000_random.json")
     # nodes = load_nodes_from_json("simple_10/000_delaunay_flips.json")
     # nodes = load_nodes_from_json("test_algo.json")
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
     graph.name = "Test Algo"
-    # graph.add_all_possible_edges(default_for_active=True)
-    # print(graph.get_intersections_with_all_edges(("0", "4")))
+    # time_function(graph.add_all_possible_edges)(default_for_active=True)
+    # time_function(graph.get_all_intersections)()
     # print(*graph.get_all_edges(), sep="\n")
     solver = SAT(graph)
     solver.solve(
         {
             "timeout": -1,
-            "version": 0.4,
+            "version": 0.1,
         }
     )
-    graph.show_and_save(show=False, save=True)
+    graph.show_and_save()
 
 
 def move():

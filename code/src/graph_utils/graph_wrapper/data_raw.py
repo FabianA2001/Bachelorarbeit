@@ -3,6 +3,7 @@ from graph_utils import graph_const
 from graph_utils.node import Node
 import shapely
 from typing import Tuple, Union, Optional
+from functools import cached_property
 
 
 class Data_Raw(nx.Graph):
@@ -20,6 +21,7 @@ class Data_Raw(nx.Graph):
 
     def add_node(self, key: str, pos: tuple[int, int], degree: int) -> None:
         """Fügt einen Knoten zum Graphen hinzu."""
+        self.clear_cache()
         assert isinstance(pos, tuple), f"Erwarte Tuple, aber erhalte {type(pos)}, {pos}"
         super().add_node(key, pos=pos, degree=degree, point=shapely.geometry.Point(pos))
 
@@ -86,6 +88,7 @@ class Data_Raw(nx.Graph):
 
     def add_edge(self, node1: str, node2: str, active: bool = True) -> None:
         """Fügt eine Kante zwischen zwei Knoten hinzu."""
+        self.clear_cache()
         assert node1 in self and node2 in self
         super().add_edge(
             node1,
@@ -98,6 +101,7 @@ class Data_Raw(nx.Graph):
 
     def remove_edge(self, edge: tuple[str, str]) -> None:
         """Entfernt eine Kante zwischen zwei Knoten."""
+        self.clear_cache()
         node1, node2 = edge
         assert node1 in self and node2 in self
         if (node1, node2) in self.edges:
@@ -110,6 +114,7 @@ class Data_Raw(nx.Graph):
         self, node1: Union[str, Tuple[str, str]], node2: Optional[str] = None
     ) -> None:
         """Aktiviert eine Kante zwischen zwei Knoten."""
+        self.clear_cache()
         if node2 is None:
             if (
                 isinstance(node1, tuple)
@@ -130,6 +135,7 @@ class Data_Raw(nx.Graph):
         self, node1: Union[str, Tuple[str, str]], node2: Optional[str] = None
     ) -> None:
         """Deaktiviert eine Kante zwischen zwei Knoten."""
+        self.clear_cache()
         if node2 is None:
             if (
                 isinstance(node1, tuple)
@@ -189,3 +195,18 @@ class Data_Raw(nx.Graph):
         if edge not in self.edges:
             raise ValueError(f"Edge {edge} not found in graph.")
         return edge
+
+    def clear_cache(self):
+        """Leert den Cache der all_edges-Property."""
+        self.__dict__.pop("all_edges", None)
+        self.__dict__.pop("all_edges_aktive", None)
+
+    @cached_property
+    def all_edges(self) -> list[tuple[str, str]]:
+        """Gibt alle Kanten des Graphen zurück."""
+        return list(self.edges)
+
+    @cached_property
+    def all_edges_aktive(self) -> list[tuple[str, str]]:
+        """Gibt alle aktiven Kanten des Graphen zurück."""
+        return [edge for edge in self.edges if self.edges[edge].get("active", True)]

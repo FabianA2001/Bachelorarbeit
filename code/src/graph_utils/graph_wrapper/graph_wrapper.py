@@ -1,4 +1,5 @@
 from graph_utils import graph_const
+from functools import cached_property
 from graph_utils.node import Node
 import shapely
 from typing import Tuple, Union, Optional
@@ -36,6 +37,7 @@ class Graph_Wrapper:
         return self._data.get_aktive_graph()
 
     def add_node(self, key: str, pos: tuple[int, int], degree: int) -> None:
+        self.clear_cache()
         self._data.add_node(key, pos, degree)
 
     def check_for_intersection_except_corners(
@@ -68,9 +70,9 @@ class Graph_Wrapper:
         return self._check.get_intersections_with_all_edges(edge)
 
     def get_all_intersections(
-        self, check_if_active: bool = True, timeout_func=lambda: ...
+        self, timeout_func=lambda: ...
     ) -> set[tuple[tuple[str, str], tuple[str, str]]]:
-        return self._check.get_all_intersections(check_if_active, timeout_func)
+        return self._check.get_all_intersections(timeout_func)
 
     def get_all_intersections_n2(
         self, check_if_active: bool = True, timeout_func=lambda: ...
@@ -91,22 +93,26 @@ class Graph_Wrapper:
 
     def add_edge(self, node1: str, node2: str, active: bool = True) -> None:
         """Fügt eine Kante zwischen zwei Knoten hinzu."""
+        self.clear_cache()
         self._data.add_edge(node1, node2, active)
 
     def remove_edge(self, edge: tuple[str, str]) -> None:
         """Entfernt eine Kante zwischen zwei Knoten."""
+        self.clear_cache()
         self._data.remove_edge(edge)
 
     def activate_edge(
         self, node1: Union[str, Tuple[str, str]], node2: Optional[str] = None
     ) -> None:
         """Aktiviert eine Kante zwischen zwei Knoten."""
+        self.clear_cache()
         self._data.active_edge(node1, node2)
 
     def deactivate_edge(
         self, node1: Union[str, Tuple[str, str]], node2: Optional[str] = None
     ) -> None:
         """Deaktiviert eine Kante zwischen zwei Knoten."""
+        self.clear_cache()
         self._data.deactivate_edge(node1, node2)
 
     def is_edge_active(self, edge: tuple[str, str]) -> bool:
@@ -115,7 +121,10 @@ class Graph_Wrapper:
 
     def get_all_edges(self, test_active: bool = False) -> list[tuple[str, str]]:
         """Gibt alle Kanten des Graphen zurück."""
-        return self._data.get_all_edges(test_active)
+        if test_active:
+            return self._data.all_edges_aktive
+        else:
+            return self._data.all_edges
 
     def get_hull_points(self) -> list[shapely.Point]:
         return self._data.get_hull_points()
@@ -130,6 +139,7 @@ class Graph_Wrapper:
 
     def add_convex_hull(self) -> None:
         """Fügt den konvexen Rumpf der Punkte als Kante hinzu."""
+        self.clear_cache()
         for edge in self.get_hull_edges():
             self.add_edge(edge[0], edge[1], True)
 
@@ -148,9 +158,11 @@ class Graph_Wrapper:
         return self._data.get_all_triangles()
 
     def flip_edge(self, edge: tuple[str, str]) -> bool:
+        self.clear_cache()
         return flip_edge.flip_edge(self._data, self._check, edge)
 
     def move_node(self, node: str = "", distance: int = -1) -> bool:
+        self.clear_cache()
         return move_node.move_node(self._data, node, distance)
 
     def is_edge_in_graph(self, edge: tuple[str, str]) -> tuple[str, str]:
@@ -204,6 +216,7 @@ class Graph_Wrapper:
     def clear_all_edges(self) -> None:
         """Entfernt alle Kanten des Graphen."""
         logging.info("Clearing all edges in the graph.")
+        self.clear_cache()
         self._data.clear_edges()
 
     def number_of_correct_nodes(self) -> int:
@@ -221,6 +234,7 @@ class Graph_Wrapper:
     def add_all_possible_edges(
         self, default_for_active: bool = False, ignore_hull: bool = False
     ) -> None:
+        self.clear_cache()
         """Fügt alle möglichen Kanten zwischen den Knoten hinzu."""
         hull = self.get_hull_edges()
         combinations = list(itertools.combinations(self._data.nodes, 2))
@@ -258,3 +272,19 @@ class Graph_Wrapper:
 
     def exclude_edge_partition(self) -> list[tuple[str, str]]:
         return Exclude_Edge_Partition(self._data)()
+
+    def clear_cache(self) -> None:
+        """Leert alle gecachten Properties (cached_property) dieser Instanz."""
+        for cls in self.__class__.__mro__:
+            for name, attr in cls.__dict__.items():
+                if isinstance(attr, cached_property):
+                    self.__dict__.pop(name, None)
+
+    @cached_property
+    def impossible_edges(self) -> list[tuple[str, str]]:
+        """Gibt alle Kanten zurück, die nicht im Graphen vorhanden sind."""
+        impossible_edges = []
+        for note, note1 in itertools.combinations(self.get_all_nodes_name(), 2):
+            if self.check_edge_interection_with_nodes((note, note1), False):
+                impossible_edges.append((note, note1))
+        return impossible_edges

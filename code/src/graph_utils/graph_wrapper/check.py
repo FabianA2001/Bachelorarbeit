@@ -3,7 +3,6 @@ from typing import Union
 from graph_utils.graph_wrapper.data import Data
 from shapely.strtree import STRtree
 from itertools import combinations
-import logging
 
 
 class Check:
@@ -194,8 +193,7 @@ class Check:
         return [
             edge
             for edge in intersections
-            if edge in self.data.get_all_edges()
-            or (edge[1], edge[0]) in self.data.get_all_edges()
+            if edge in self.data.all_edges or (edge[1], edge[0]) in self.data.all_edges
         ]
 
     def check_if_triangulation_with_degree_constraint(
@@ -256,11 +254,10 @@ class Check:
         return intersections
 
     def get_all_intersections(
-        self, check_if_active: bool = True, timeout_func=lambda: ...
+        self, timeout_func=lambda: ...
     ) -> set[tuple[tuple[str, str], tuple[str, str]]]:
         """Gibt alle Kanten zurück, die sich schneiden."""
-        if check_if_active:
-            logging.warning("check_if_active is not implemented yet.")
+        """Es wird nicht getestet ob die Kanten aktiv sind oder garnicht möglich weil sie auf Knoten liegen."""
         nodes = self.data.get_all_nodes_name()
         intersections = set()
         for node1, node2 in combinations(range(len(nodes)), 2):
@@ -319,20 +316,7 @@ class Check:
                     )
                     intersections.add((min(inter, inter2), max(inter, inter2)))
 
-        result = set()
-        for edge1, edge2 in intersections:
-            if (
-                edge1 not in self.data.get_all_edges()
-                and (edge1[1], edge1[0]) not in self.data.get_all_edges()
-            ):
-                continue
-            if (
-                edge2 not in self.data.get_all_edges()
-                and (edge2[1], edge2[0]) not in self.data.get_all_edges()
-            ):
-                continue
-            result.add((edge1, edge2))
-        return result
+        return intersections
 
     def check_node_for_degree(self, node: str) -> bool:
         """Überprüft, ob der Knoten die richtige Anzahl an Nachbarn hat."""

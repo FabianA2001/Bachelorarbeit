@@ -29,8 +29,18 @@ class SAT(Solver):
         return self.edges[index - 1]
 
     def intersection_constraint(self):
-        intersection = self.graph.get_all_intersections(False, self.timeout_error)
+        intersection = self.graph.get_all_intersections(self.timeout_error)
         for edge, other_edge in intersection:
+            if (
+                edge in self.graph.impossible_edges
+                or (edge[1], edge[0]) in self.graph.impossible_edges
+            ):
+                continue
+            if (
+                other_edge in self.graph.impossible_edges
+                or (other_edge[1], other_edge[0]) in self.graph.impossible_edges
+            ):
+                continue
             self.solver.add_clause([-self.get_index(edge), -self.get_index(other_edge)])
         self.timeout_error()
 
@@ -127,7 +137,7 @@ class SAT(Solver):
             elif parameter.get("version") == 0.4:
                 self.degree_constraint()
                 self.set_hull_fix_constraint()
-                self.alle_edges_and_intersection_constraint()
+                time_function(self.alle_edges_and_intersection_constraint)()
 
             else:
                 raise ValueError(
@@ -144,7 +154,7 @@ class SAT(Solver):
             result = [None]
 
             if timeout == -1:
-                result[0] = self.solver.solve()
+                result[0] = time_function(self.solver.solve)()
             else:
                 logging.info("start solving")
 
