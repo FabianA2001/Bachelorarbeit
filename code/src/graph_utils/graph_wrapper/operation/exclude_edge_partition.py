@@ -6,11 +6,11 @@ import shapely
 class Exclude_Edge_Partition:
     def __init__(self, data: Data) -> None:
         self.data = data
-        self.hull_edges = self.data.get_hull_edges()
+        self.hull_edges = self.data.get_hull_edges
         self.hull_nodes = [edge[0] for edge in self.hull_edges]
         self.points = [
             self.data.get_point_from_node(node)
-            for node in self.data.get_all_nodes_name()
+            for node in self.data.get_all_nodes_name
             if node not in self.hull_nodes
         ]
 

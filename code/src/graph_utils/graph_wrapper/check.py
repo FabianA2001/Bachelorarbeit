@@ -146,7 +146,7 @@ class Check:
         self,
         edge: tuple[int, int],
     ) -> list[tuple[int, int]]:
-        nodes = self.data.get_all_nodes_name()
+        nodes = self.data.get_all_nodes_name
         node1 = nodes.index(edge[0])
         node2 = nodes.index(edge[1])
         intersections = set()
@@ -226,14 +226,14 @@ class Check:
         lokal_graph = self.data.get_aktive_graph()
         if check_triangulation:
             edges = lokal_graph.get_all_edges()
-            if len(edges) != self.data.number_edges_in_Triangulation:
+            if len(edges) != self.data.get_number_edges_triangulation:
                 return False
 
             lines = [lokal_graph.edges[edge].get("line") for edge in edges]
             if __check_edges_for_intersection(lines):
                 return False
         if check_degree:
-            for node in self.data.get_all_nodes_name():
+            for node in self.data.get_all_nodes_name:
                 if lokal_graph.nodes[node].get("degree") != lokal_graph.degree(node):
                     return False
         return True
@@ -264,7 +264,7 @@ class Check:
     ) -> set[tuple[tuple[int, int], tuple[int, int]]]:
         """Gibt alle Kanten zurück, die sich schneiden."""
         """Es wird nicht getestet ob die Kanten aktiv sind oder garnicht möglich weil sie auf Knoten liegen."""
-        nodes = self.data.get_all_nodes_name()
+        nodes = self.data.get_all_nodes_name
         intersections = set()
         for node1, node2 in combinations(range(len(nodes)), 2):
             timeout_func()
@@ -326,7 +326,7 @@ class Check:
 
     def check_node_for_degree(self, node: int) -> bool:
         """Überprüft, ob der Knoten die richtige Anzahl an Nachbarn hat."""
-        if node not in self.data.get_all_nodes_name():
+        if node not in self.data.get_all_nodes_name:
             raise ValueError(f"Node {node} is not in the graph.")
         if self.data.nodes[node].get("degree") != self.data.degree(node):
             return False
@@ -335,4 +335,4 @@ class Check:
     def check_degree_possible(self) -> bool:
         summ = sum(self.data.degree(node) for node in self.data.nodes)
         assert summ % 2 == 0, "Summe der Grade ist ungerade"
-        return summ / 2 == self.data.number_edges_in_Triangulation
+        return summ / 2 == self.data.get_number_edges_triangulation

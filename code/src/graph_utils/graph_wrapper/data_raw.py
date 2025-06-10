@@ -29,10 +29,6 @@ class Data_Raw(nx.Graph):
         )
         self.node_name += 1
 
-    def get_all_nodes_name(self) -> list[int]:
-        """Gibt alle Knoten des Graphen zurück."""
-        return list(self.nodes)
-
     def get_node_from_point(self, point: shapely.Point) -> int:
         """Gibt den Knoten zurück, der einen bestimmten Punkt repräsentiert."""
         if not isinstance(point, shapely.Point):
@@ -73,7 +69,7 @@ class Data_Raw(nx.Graph):
 
     def copy(self) -> "Data_Raw":
         nodes = []
-        for node in self.get_all_nodes_name():
+        for node in self.get_all_nodes_name:
             nodes.append(Node(self.nodes[node]["pos"], self.nodes[node]["degree"]))
         graph = Data_Raw(nodes)
         for edge in self.get_all_edges():
@@ -177,13 +173,6 @@ class Data_Raw(nx.Graph):
         lokal = self.get_aktive_graph()
         return lokal.degree(node)
 
-    def get_aktive_graph_nodes(self) -> list[Node]:
-        nodes = []
-        for node in self.get_all_nodes_name():
-            nodes.append(Node(self.nodes[node]["pos"], self.degree_aktive(node)))
-
-        return nodes
-
     def is_edge_in_graph(self, edge: tuple[int, int]) -> tuple[int, int]:
         if not isinstance(edge, tuple) or len(edge) != 2:
             raise ValueError(f"Erwarte Tuple aber erhalte {type(edge)}, {edge}")
@@ -200,8 +189,10 @@ class Data_Raw(nx.Graph):
 
     def clear_cache(self):
         """Leert den Cache der all_edges-Property."""
-        self.__dict__.pop("all_edges", None)
-        self.__dict__.pop("all_edges_aktive", None)
+        for cls in self.__class__.__mro__:
+            for name, attr in cls.__dict__.items():
+                if isinstance(attr, cached_property):
+                    self.__dict__.pop(name, None)
 
     @cached_property
     def all_edges(self) -> list[tuple[int, int]]:
@@ -212,3 +203,16 @@ class Data_Raw(nx.Graph):
     def all_edges_aktive(self) -> list[tuple[int, int]]:
         """Gibt alle aktiven Kanten des Graphen zurück."""
         return [edge for edge in self.edges if self.edges[edge].get("active", True)]
+
+    @cached_property
+    def get_all_nodes_name(self) -> list[int]:
+        """Gibt alle Knoten des Graphen zurück."""
+        return list(self.nodes)
+
+    @cached_property
+    def get_aktive_graph_nodes(self) -> list[Node]:
+        nodes = []
+        for node in self.get_all_nodes_name:
+            nodes.append(Node(self.nodes[node]["pos"], self.degree_aktive(node)))
+
+        return nodes

@@ -35,7 +35,7 @@ def move_node(data: Data, node: int = 0, distance: int = -1) -> bool:
         raise No_Solution_Error
 
     if node == "":
-        node = data.get_all_nodes_name()[random.randint(0, len(data.nodes) - 1)]
+        node = data.get_all_nodes_name[random.randint(0, len(data.nodes) - 1)]
     points = [attr["point"] for _, attr in data.nodes(data=True)]
     multipoint = shapely.geometry.MultiPoint(points)
 

@@ -85,7 +85,7 @@ class Graph_Wrapper:
         visualisation.show_and_save(
             self._data,
             self._check,
-            self._data.number_edges_in_Triangulation,
+            self._data.get_number_edges_triangulation,
             show=show,
             save=save,
             block=block,
@@ -127,14 +127,14 @@ class Graph_Wrapper:
             return self._data.all_edges
 
     def get_hull_points(self) -> list[shapely.Point]:
-        return self._data.get_hull_points()
+        return self._data.get_hull_points
 
     def get_hull_nodes(self) -> list[int]:
-        return self._data.get_hull_nodes()
+        return self._data.get_hull_nodes
 
     def get_hull_edges(self) -> list[tuple[int, int]]:
         if self.hull_edges == []:
-            self.hull_edges = self._data.get_hull_edges()
+            self.hull_edges = self._data.get_hull_edges
         return self.hull_edges
 
     def add_convex_hull(self) -> None:
@@ -155,7 +155,7 @@ class Graph_Wrapper:
 
     def get_all_triangles(self) -> list[tuple[int, int, int]]:
         """Gibt alle Dreiecke des Graphen zurück."""
-        return self._data.get_all_triangles()
+        return self._data.get_all_triangles
 
     def flip_edge(self, edge: tuple[int, int]) -> bool:
         self.clear_cache()
@@ -177,7 +177,7 @@ class Graph_Wrapper:
         )
 
     def get_aktive_graph_nodes(self) -> list[Node]:
-        return self._data.get_aktive_graph_nodes()
+        return self._data.get_aktive_graph_nodes
 
     def save_graph_as_json(self, filename: str = graph_const.DEFAULT_FILE_NAME) -> None:
         """Speichert den Graphen als JSON-Datei."""
@@ -185,11 +185,11 @@ class Graph_Wrapper:
 
     def get_all_nodes_name(self) -> list[int]:
         """Gibt alle Knoten des Graphen zurück."""
-        return self._data.get_all_nodes_name()
+        return self._data.get_all_nodes_name
 
     def get_number_edges_in_Triangulation(self) -> int:
         """Gibt die Anzahl der Kanten im Graphen zurück."""
-        return self._data.number_edges_in_Triangulation
+        return self._data.get_number_edges_triangulation
 
     def get_node_from_point(self, point: shapely.Point) -> int:
         return self._data.get_node_from_point(point)
