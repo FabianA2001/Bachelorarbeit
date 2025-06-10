@@ -331,3 +331,8 @@ class Check:
         if self.data.nodes[node].get("degree") != self.data.degree(node):
             return False
         return True
+
+    def check_degree_possible(self) -> bool:
+        summ = sum(self.data.degree(node) for node in self.data.nodes)
+        assert summ % 2 == 0, "Summe der Grade ist ungerade"
+        return summ / 2 == self.data.number_edges_in_Triangulation

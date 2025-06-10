@@ -273,6 +273,10 @@ class Graph_Wrapper:
     def exclude_edge_partition(self) -> list[tuple[int, int]]:
         return Exclude_Edge_Partition(self._data)()
 
+    def check_degree_possible(self) -> bool:
+        """Überprüft, ob der Graph eine Triangulation ist und ob die Knotengrade möglich sind."""
+        return self._check.check_degree_possible()
+
     def clear_cache(self) -> None:
         """Leert alle gecachten Properties (cached_property) dieser Instanz."""
         for cls in self.__class__.__mro__:
