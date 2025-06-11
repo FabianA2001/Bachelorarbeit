@@ -30,20 +30,38 @@ def get_solvers():
 
 
 def custom_points() -> list[Node]:
-    nodes = []
+    nodes = [
+        Node((0, 0), 3),
+        Node((1, 1), 3),
+        Node((1, 0), 2),
+        Node((0, 1), 2),
+    ]
+    nodes = [
+        Node((2, 2)),
+        Node((6, 3)),
+        Node((5, 4)),
+        Node((4, 5)),
+        Node((3, 6)),
+        Node((1, 8)),
+        Node((14, 8)),
+        Node((7, 1)),
+    ]
     graph = Graph_Wrapper(nodes)
-    solver = Random_Adder(graph)
-    solver.solve(
-        {
-            "timeout": -1,
-            "version": 0.1,
-        }
-    )
-    return graph.get_aktive_graph_nodes()
+    if True:
+        solver = Random_Adder(graph)
+        solver.solve(
+            {
+                "timeout": -1,
+                "version": 0.1,
+            }
+        )
+        return graph.get_aktive_graph_nodes()
+    else:
+        return nodes
 
 
 def test_algo():
-    nodes = load_nodes_from_json("iterative_60_10/004_random.json")
+    nodes = load_nodes_from_json("iterative_60_10/002_random.json")
     # nodes = load_nodes_from_json("simple_80/000_random.json")
     # nodes = load_nodes_from_json("simple_10/000_delaunay_flips.json")
     # nodes = load_nodes_from_json("test_algo.json")
@@ -57,7 +75,7 @@ def test_algo():
     solver.solve(
         {
             "timeout": -1,
-            "version": 0.4,
+            "version": 0.5,
         }
     )
     graph.show_and_save()

@@ -6,6 +6,7 @@ from pysat.card import CardEnc
 import logging
 import threading
 from utils import time_function
+import itertools
 
 
 class SAT(Solver):
@@ -25,7 +26,7 @@ class SAT(Solver):
             return self.edges_to_index[edge] + 1
         return self.edges_to_index[(edge[1], edge[0])] + 1
 
-    def get_edge(self, index) -> tuple[str, str]:
+    def get_edge(self, index) -> tuple[int, int]:
         return self.edges[index - 1]
 
     def intersection_constraint(self):
@@ -68,7 +69,7 @@ class SAT(Solver):
 
     def degree_constraint(self):
         for node in self.graph.get_all_nodes_name():
-            degree = self.graph.get_degree_of_node(node)
+            degree = self.graph.get_desired_degree_node(node)
             if degree == -1:
                 continue
             edges = self.graph.get_edges_of_node(node)
@@ -78,6 +79,16 @@ class SAT(Solver):
             self.solver.append_formula(cnf)
             if self.reach_timeout():
                 raise TimeoutError()
+
+    def degree_subset_constraint(self):
+        for node in self.graph.get_all_nodes_name():
+            degree = self.graph.get_desired_degree_node(node)
+            edges = [
+                self.get_index(edge) for edge in self.graph.get_edges_of_node(node)
+            ]
+            for subset in itertools.combinations(edges, len(edges) - (degree - 1)):
+                self.solver.add_clause(subset)
+                self.timeout_error()
 
     def set_hull_fix_constraint(self):
         hull_edges = self.graph.get_hull_edges()
@@ -138,11 +149,10 @@ class SAT(Solver):
                 self.degree_constraint()
                 self.set_hull_fix_constraint()
                 time_function(self.alle_edges_and_intersection_constraint)()
-
             else:
-                raise ValueError(
-                    f"Version {parameter.get('version')} is not supported for self solver."
-                )
+                time_function(self.degree_subset_constraint)()
+                self.set_hull_fix_constraint()
+                time_function(self.intersection_constraint)()
 
             if "timeout" not in parameter:
                 raise ValueError("Timeout parameter is missing.")

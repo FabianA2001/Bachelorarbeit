@@ -245,7 +245,7 @@ class Graph_Wrapper:
             if ((com in hull) or ((com[1], com[0]) in hull)) and ignore_hull:
                 self._data.remove_edge(com)
 
-    def get_degree_of_node(self, node: int) -> int:
+    def get_desired_degree_node(self, node: int) -> int:
         """Gibt den Grad eines Knotens zurück."""
         if node not in self._data.nodes:
             raise ValueError(f"Node {node} does not exist in the graph.")
@@ -255,7 +255,7 @@ class Graph_Wrapper:
         evaluation = 0.0
         number_of_nodes = len(self.get_all_nodes_name())
         for node in self.get_all_nodes_name():
-            sollGrad = self.get_degree_of_node(node)
+            sollGrad = self.get_desired_degree_node(node)
             echterGrad = self._data.degree_aktive(node)
             x = (sollGrad - min(abs(sollGrad - echterGrad), sollGrad)) / sollGrad
             evaluation += x
