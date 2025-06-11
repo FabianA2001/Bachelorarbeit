@@ -65,14 +65,10 @@ class Ortools(Solver):
             self.model.Maximize(sum(list(self.vars.values())))
             self.constraint_intersection()
             self.constraint_degree()
-        elif parameter["version"] == 0.2:
+        else:
             self.constraint_intersection()
             self.constraint_degree()
             self.constraint_number_edges(self.graph.get_number_edges_in_Triangulation())
-        else:
-            raise ValueError(
-                f"Version {parameter['version']} for OrTools not supported."
-            )
 
         solver = cp_model.CpSolver()
         # solver.parameters.log_search_progress = True  # Enable logging

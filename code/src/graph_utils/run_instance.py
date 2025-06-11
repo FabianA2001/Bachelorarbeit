@@ -292,7 +292,8 @@ class Run_Instance:
 
         while True:
             version = questionary.text(
-                "Version der Parameter (z.B. 0.1, 0.2, ...):", default="0.1"
+                "Version der Parameter (z.B. 0.1, 0.2, ...), 0.0 ist neuste:",
+                default="0.0",
             ).ask()
             try:
                 version = float(version)
