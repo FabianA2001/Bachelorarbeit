@@ -67,14 +67,16 @@ class SAT(Solver):
                     [-self.get_index(edge), -self.get_index(intersect)]
                 )
 
-    def degree_constraint(self):
+    def degree_constraint(self, exact_atleast=True):
         for node in self.graph.get_all_nodes_name():
             degree = self.graph.get_desired_degree_node(node)
             if degree == -1:
                 continue
             edges = self.graph.get_edges_of_node(node)
             cnf = self.formula_number_vars(
-                [self.get_index(edge) for edge in edges], degree
+                [self.get_index(edge) for edge in edges],
+                degree,
+                exact_atleast=exact_atleast,
             )
             self.solver.append_formula(cnf)
             if self.reach_timeout():
@@ -102,8 +104,7 @@ class SAT(Solver):
         if self.reach_timeout():
             raise TimeoutError()
 
-    # TODO subsets bilden und statt dieser Funktion nutzen FOTO(1)
-    def formula_number_vars(self, vars, n):
+    def formula_number_vars(self, vars, n, exact_atleast=True):
         # CNF-Formel erstellen
         cnf = CNF()
         # Cardinality Constraint: genau n Variablen aus "vars" sind True
@@ -115,7 +116,10 @@ class SAT(Solver):
             )
             + 1
         )
-        enc = CardEnc.equals(lits=vars, bound=n, top_id=used)
+        if exact_atleast:
+            enc = CardEnc.equals(lits=vars, bound=n, top_id=used)
+        else:
+            enc = CardEnc.atleast(lits=vars, bound=n, top_id=used)
         cnf.extend(enc.clauses)
         return cnf
         # TODO andere self solver testen, anstatt glucose42
@@ -149,8 +153,12 @@ class SAT(Solver):
                 self.degree_constraint()
                 self.set_hull_fix_constraint()
                 time_function(self.alle_edges_and_intersection_constraint)()
-            else:
+            elif parameter.get("version") == 0.5:
                 time_function(self.degree_subset_constraint)()
+                self.set_hull_fix_constraint()
+                time_function(self.intersection_constraint)()
+            else:
+                time_function(self.degree_constraint)(False)
                 self.set_hull_fix_constraint()
                 time_function(self.intersection_constraint)()
 
