@@ -78,6 +78,7 @@ def test_algo():
             "version": 0.2,
         }
     )
+    logging.info(f"evaluation: {graph.evaluate_graph()}")
     graph.show_and_save()
 
 

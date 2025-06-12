@@ -29,8 +29,20 @@ class Ortools(Solver):
     def constraint_intersection(self):
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
-        for edge, other_edge in self.graph.get_all_intersections():
+        intersection = self.graph.get_all_intersections(self.timeout_error)
+        for edge, other_edge in intersection:
+            if (
+                edge in self.graph.impossible_edges
+                or (edge[1], edge[0]) in self.graph.impossible_edges
+            ):
+                continue
+            if (
+                other_edge in self.graph.impossible_edges
+                or (other_edge[1], other_edge[0]) in self.graph.impossible_edges
+            ):
+                continue
             self.model.AddBoolOr([self.vars[edge].Not(), self.vars[other_edge].Not()])
+        self.timeout_error()
 
     def constraint_degree(self):
         if self.graph is None:
@@ -45,7 +57,7 @@ class Ortools(Solver):
                     summ += self.vars[(edge[1], edge[0])]
             self.model.Add(summ == degree)
 
-    def constraint_correct_number_edges(self, number_edges: int):
+    def constraint_set_number_edges(self, number_edges: int):
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
         if number_edges < 0:
@@ -95,7 +107,7 @@ class Ortools(Solver):
         if parameter["version"] == 0.1:
             self.constraint_intersection()
             self.constraint_degree()
-            self.constraint_correct_number_edges(
+            self.constraint_set_number_edges(
                 self.graph.get_number_edges_in_Triangulation()
             )
         else:
@@ -103,6 +115,9 @@ class Ortools(Solver):
                 logging.warning("Es sollte ein Timeout gesetzt werden.")
             time_function(self.constraint_intersection)()
             time_function(self.evaluation_direction)()
+            self.constraint_set_number_edges(
+                self.graph.get_number_edges_in_Triangulation()
+            )
             stop_after_first_solution = False
 
         solver = cp_model.CpSolver()
