@@ -72,10 +72,40 @@ Am Ende wird in~\eqref{eq:total_evaluation} ein Durchschnitt über alle Prozentu
 			\item nein ? zu 20\% zurückgeben
 			\item nächste kante wählen
 		\end{itemize}
+
+
 		Flipe Kante wie oben
 		wenn Gradbeschränkte Triangulation erfolgreich abbrechen
 	\end{itemize}
 \end{itemize}
+\begin{algorithm}[H]
+\caption{CHOOSE EDGE(\(v\))}
+\begin{algorithmic}[1]
+% \FOR{$k = 1$ \TO $K$}
+%     \FORALL{Knoten $v$}
+%         \IF{Grad von $v$ ist falsch}
+%             \STATE Berechne alle ausgehenden Kanten von $v$
+%             \FORALL{Kante $e$ von $v$}
+%                 \IF{zufällige Auswahl oder $e$ enthält Knoten mit falschem Grad}
+%                     \STATE \textbf{return} $e$
+%                 \ELSIF{mit Wahrscheinlichkeit 20\%}
+%                     \STATE \textbf{return} $e$
+%                 \ENDIF
+%             \ENDFOR
+%             \STATE Flipe die ausgewählte Kante wie oben beschrieben
+%             \IF{Triangulation erfüllt Gradbeschränkung}
+%                 \STATE \textbf{break}
+%             \ENDIF
+%         \ENDIF
+%     \ENDFOR
+% \ENDFOR
+\STATE \(E \gets \{ e \mid e \text{ ist ausgehende Kante von } v \}\)
+\WHILE{\(E \neq \emptyset\)}
+	\STATE  \(e \gets \) zufälliges Element aus \(E\)
+    % ... dein Code ...
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
 \subsection{OrTools mit Zielfunktion}
 \section{Solver}
 \subsection{OrTools}
