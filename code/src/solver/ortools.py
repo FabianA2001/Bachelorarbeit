@@ -104,7 +104,7 @@ class Ortools(Solver):
             self.model.Maximize(sum(list(self.vars.values())))
             self.constraint_intersection()
             self.constraint_degree()
-        if parameter["version"] == 0.1:
+        if parameter["version"] == 0.2:
             self.constraint_intersection()
             self.constraint_degree()
             self.constraint_set_number_edges(
