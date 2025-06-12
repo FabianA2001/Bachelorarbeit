@@ -88,6 +88,22 @@ class Ortools(Solver):
             evaluation += x
         self.model.Maximize(evaluation)
 
+    def degree_direction(self):
+        nodes = self.graph.get_all_nodes_name()
+        self.vars_int = {
+            node: self.model.NewIntVar(0, 30, f"degree_{node}") for node in nodes
+        }
+        for node in nodes:
+            desired_degree = self.graph.get_desired_degree_node(node)
+            degree = sum(
+                self.vars[(min(edge[0], edge[1]), max(edge[0], edge[1]))]
+                for edge in self.graph.get_edges_of_node(node)
+            )
+            self.model.Add(self.vars_int[node] >= degree - desired_degree)
+            self.model.Add(self.vars_int[node] >= desired_degree - degree)
+
+        self.model.Maximize(sum(self.vars_int.values()))
+
     def _actual_solver(self, parameter: dict) -> dict:
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
@@ -110,11 +126,20 @@ class Ortools(Solver):
             self.constraint_set_number_edges(
                 self.graph.get_number_edges_in_Triangulation()
             )
-        else:
+        if parameter["version"] == 0.3:
             if parameter["timeout"] == -1:
                 logging.warning("Es sollte ein Timeout gesetzt werden.")
             time_function(self.constraint_intersection)()
             time_function(self.evaluation_direction)()
+            self.constraint_set_number_edges(
+                self.graph.get_number_edges_in_Triangulation()
+            )
+            stop_after_first_solution = False
+        else:
+            if parameter["timeout"] == -1:
+                logging.warning("Es sollte ein Timeout gesetzt werden.")
+            time_function(self.constraint_intersection)()
+            time_function(self.degree_direction)()
             self.constraint_set_number_edges(
                 self.graph.get_number_edges_in_Triangulation()
             )

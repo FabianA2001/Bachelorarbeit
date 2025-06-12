@@ -75,7 +75,7 @@ def test_algo():
     solver.solve(
         {
             "timeout": 60,
-            "version": 0.3,
+            "version": 0.4,
         }
     )
     logging.info(f"evaluation: {graph.evaluate_graph()}")
