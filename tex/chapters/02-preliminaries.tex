@@ -28,6 +28,14 @@
 	Zusätzlich gibt es noch eine Funktion \(\degrees: \mathbb{Z}^2 \longrightarrow \mathbb{Z}\).
 	Diese gibt den Grad an welcher ein Knoten haben muss.
 \end{definition}
-\begin{definition}[Diagonale Flipp]
+\begin{definition}[Flipp]
+	Eine Operation bei der eine Kante entfernt und eine andere Hinzugefügt wird.
+	Hierbei dürfen nach der Operation die Triangulations Eigenschaften nicht verletzt sein.
+	Ein Flip wird durch die Funktion \(\flip:(\mathbb{Z}^2,\mathbb{Z}^2) \longrightarrow (\mathbb{Z}^2,\mathbb{Z}^2)\) definiert.
 
+\end{definition}
+\begin{definition}[Diagonale Flipp]
+	Ein Diagonaler Flipp hat die gleichen Eigenschaft wie ein Flipp.
+	Zusätzlich wird für die Kante \((b,c)\) die leeren Dreicke \(\triangle abc \) und  \(\triangle bcd \) gesucht und \((a,d)\) zurückgeben.
+	Er wird durch die Funktion \(\flipDio:(\mathbb{Z}^2,\mathbb{Z}^2) \longrightarrow (\mathbb{Z}^2,\mathbb{Z}^2) definiert\).
 \end{definition}
