@@ -71,11 +71,11 @@ def test_algo():
     # time_function(graph.add_all_possible_edges)(default_for_active=True)
     # time_function(graph.get_all_intersections)()
     # print(*graph.get_all_edges(), sep="\n")
-    solver = Ortools(graph)
+    solver = SAT(graph)
     solver.solve(
         {
             "timeout": 60,
-            "version": 0.4,
+            "version": 0.2,
         }
     )
     logging.info(f"evaluation: {graph.evaluate_graph()}")

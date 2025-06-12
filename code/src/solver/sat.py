@@ -176,7 +176,7 @@ class SAT(Solver):
                 logging.info("start solving")
 
                 def run_solver():
-                    result[0] = self.solver.solve_limited(  # type: ignore
+                    result[0] = time_function(self.solver.solve_limited)(  # type: ignore
                         expect_interrupt=True
                     )
 
