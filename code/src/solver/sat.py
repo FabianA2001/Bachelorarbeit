@@ -11,7 +11,6 @@ import itertools
 
 class SAT(Solver):
     NAME = "SAT"
-    # TODO Paper von Discord zur Intersection constraind
 
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
