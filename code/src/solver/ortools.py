@@ -2,6 +2,7 @@ from solver.solver import Solver
 from ortools.sat.python import cp_model
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
+from utils import time_function
 
 
 class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
@@ -53,20 +54,26 @@ class Ortools(Solver):
         self.model.Add(summ == number_edges)
 
     def evaluation_direction(self):
-        def abs(x):
-            return x if x >= 0 else -x
-
         evaluation = 0.0
         nodes = self.graph.get_all_nodes_name()
         for node in nodes:
             desired_degree = self.graph.get_desired_degree_node(node)
-            degree = sum(self.vars[edge] for edge in self.graph.get_edges_of_node(node))
-            x = (
-                desired_degree - min(abs(desired_degree - degree), desired_degree)
-            ) / desired_degree
+            degree = sum(
+                self.vars[(min(edge[0], edge[1]), max(edge[0], edge[1]))]
+                for edge in self.graph.get_edges_of_node(node)
+            )
+            # TODO Max Degree finden
+            diff = self.model.NewIntVar(-30, 30, "diff")
+            self.model.Add(diff == degree - desired_degree)
+
+            # Absolutwert: |diff|
+            abs_diff = self.model.NewIntVar(0, 30, "abs_diff")
+            self.model.AddAbsEquality(abs_diff, diff)
+            min_var = self.model.NewIntVar(0, 30, "min_var")
+            self.model.AddMinEquality(min_var, [abs_diff, desired_degree])
+            x = desired_degree - min_var
             assert x is not None, "Evaluation value cannot be None"
             evaluation += x
-        evaluation /= len(nodes)
         self.model.Maximize(evaluation)
 
     def _actual_solver(self, parameter: dict) -> dict:
@@ -74,7 +81,9 @@ class Ortools(Solver):
             raise ValueError("Graph is not set. Please set the graph before solving.")
         self.graph.add_all_possible_edges(default_for_active=False)
         self.vars = {
-            edge: self.model.NewBoolVar(f"edge_{edge[0]}_{edge[1]}")
+            (min(edge[0], edge[1]), max(edge[0], edge[1])): self.model.NewBoolVar(
+                f"edge_{edge[0]}_{edge[1]}"
+            )
             for edge in self.graph.get_all_edges()
         }
 
@@ -92,8 +101,8 @@ class Ortools(Solver):
         else:
             if parameter["timeout"] == -1:
                 logging.warning("Es sollte ein Timeout gesetzt werden.")
-            self.constraint_intersection()
-            self.evaluation_direction()
+            time_function(self.constraint_intersection)()
+            time_function(self.evaluation_direction)()
             stop_after_first_solution = False
 
         solver = cp_model.CpSolver()
@@ -106,8 +115,9 @@ class Ortools(Solver):
                 FirstSolutionStop(self.graph.get_number_edges_in_Triangulation()),
             )
         else:
-            status = solver.Solve(self.model)
+            status = time_function(solver.Solve)(self.model)
         # status = solver.Solve(self.model)
+        print(status)
         if not (status == cp_model.OPTIMAL or status == cp_model.FEASIBLE):
             logging.warning("No solution found.")
             return {

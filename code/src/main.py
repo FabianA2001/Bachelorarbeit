@@ -74,7 +74,7 @@ def test_algo():
     solver = Ortools(graph)
     solver.solve(
         {
-            "timeout": 30,
+            "timeout": 60,
             "version": 0.2,
         }
     )
@@ -102,7 +102,7 @@ def move():
         if solver2.solve(
             {
                 "timeout": 10,
-                "version": 0.1,
+                "version": 0.4,
             }
         ):
             break
