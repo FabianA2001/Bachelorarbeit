@@ -1,11 +1,81 @@
 \chapter{Content}
 
 \section{Instanzen Generation}
-\subsection{Delaunay}
-\subsection{Delaunay mit Flips}
-\subsection{Random Kanten}
+\subsection{Ja - Instanzen}
+\begin{itemize}
+	\item Random n Knoten Generieren
+	\item Triangulieren
+	\item Knoten mit Grad speichern
+\end{itemize}
+\subsubsection{Delaunay mit Flips}
+	\begin{itemize}
+		\item Delaunay mit scipy erstellen
+		\item k mal random Kante Diagonal Flippen
+		\begin{itemize}
+			\item alle Dreiecke finden an der kante
+			\begin{itemize}
+				\item Bei allen ausgehenden Kanten der beiden Knoten die Kanten finden welche einen gemeinsamen Knoten haben
+			\end{itemize}
+			\item Die beiden Dreicke die leer sind
+			\item Die Kante durch eine neue Kante ersetzen welche aus den beiden Knoten der Dreiecke besteht welche nicht an der alten Kante waren
+		\end{itemize}
+	\end{itemize}
+\subsubsection{Random Kanten}
+\begin{itemize}
+	\item Alle möglichen Kanten erstellen
+	\item Random Kanten auswählen
+	\item wenn diese keine Vorhande schneiden hinzufügen
+\end{itemize}
+\subsection{Nein - Instanzen}
+\begin{itemize}
+	\item Move Point liefert meistens nein Instanzen
+	\item Zwei Sollgrade von zwei Punkten Tauschen
+\end{itemize}
 \section{Heuristiken}
+\begin{itemize}
+	\item eine Triangulation erstellen
+	\item den sollGrad möglichst richtig
+	\item Werden mit folgender Formel bewertet
+\end{itemize}
+
+\begin{align}
+ \text{diff}_i &= \left| deg^*_G(i) - deg_G(i) \right| \label{eq:difference} \\
+e_i &= \left\{
+\begin{array}{ll}
+\frac{deg^*_G(i) - \text{diff}_i}{deg^*_G(i)} & deg^*_G(i) \geq \text{diff}_i \\
+0 & \, \textrm{sonst} \\
+\end{array}
+\right. \label{eq:evaluation}\\
+Q_G &= \sum_{i=0}^{n} \frac{e_i}{n} \label{eq:total_evaluation}
+\end{align}
+
+Die Formel liefert eine Evaluation (\(Q_G\)) für einen Graphen(\(G\)) mit \(n\) Knoten.
+Hierbei gibt \(deg^*_G(i)\) den gewünschten Grad an der stelle i an.
+Dazu passend gibt \(deg_G(i)\) den aktuellen Grad an.
+In der Brechnung~\eqref{eq:difference} wird die Difference zwischen dem gewünschten und aktuellen Grad berechnet.
+In~\eqref{eq:evaluation} wird diese Abweichung Prozentual bewertet.
+Am Ende wird in~\eqref{eq:total_evaluation} ein Durchschnitt über alle Prozentualen Werte gebildet.
+
 \subsection{Flips}
+\begin{itemize}
+	\item Diagonale Flips
+	\item k mal Wiederholen
+	\begin{itemize}
+		\item Alle Knoten durchgehen
+		\item wenn falscher Degree auswählen
+		\item alle ausgehenden Kanten berechnen
+		\item Kante Auswählen
+		\begin{itemize}
+			\item random Kante auswählen
+			\item gucken ob ein Knoten der Kante falschen Degree hat
+			\item ja ? zurückgeben
+			\item nein ? zu 20\% zurückgeben
+			\item nächste kante wählen
+		\end{itemize}
+		Flipe Kante wie oben
+		wenn Gradbeschränkte Triangulation erfolgreich abbrechen
+	\end{itemize}
+\end{itemize}
 \subsection{OrTools mit Zielfunktion}
 \section{Solver}
 \subsection{OrTools}
