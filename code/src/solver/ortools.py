@@ -74,14 +74,13 @@ class Ortools(Solver):
                 self.vars[(min(edge[0], edge[1]), max(edge[0], edge[1]))]
                 for edge in self.graph.get_edges_of_node(node)
             )
-            # TODO Max Degree finden
-            diff = self.model.NewIntVar(-30, 30, "diff")
+            max_degree = self.graph.get_max_degree
+            diff = self.model.NewIntVar(-max_degree, max_degree, "diff")
             self.model.Add(diff == degree - desired_degree)
 
-            # Absolutwert: |diff|
-            abs_diff = self.model.NewIntVar(0, 30, "abs_diff")
+            abs_diff = self.model.NewIntVar(0, max_degree, "abs_diff")
             self.model.AddAbsEquality(abs_diff, diff)
-            min_var = self.model.NewIntVar(0, 30, "min_var")
+            min_var = self.model.NewIntVar(0, max_degree, "min_var")
             self.model.AddMinEquality(min_var, [abs_diff, desired_degree])
             x = desired_degree - min_var
             assert x is not None, "Evaluation value cannot be None"
@@ -90,8 +89,10 @@ class Ortools(Solver):
 
     def degree_direction(self):
         nodes = self.graph.get_all_nodes_name()
+        max_degree = self.graph.get_max_degree
         self.vars_int = {
-            node: self.model.NewIntVar(0, 30, f"degree_{node}") for node in nodes
+            node: self.model.NewIntVar(0, max_degree, f"degree_{node}")
+            for node in nodes
         }
         for node in nodes:
             desired_degree = self.graph.get_desired_degree_node(node)
