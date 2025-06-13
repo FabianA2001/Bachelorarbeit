@@ -54,7 +54,7 @@ class Solver(ABC):
     def solve(self, parameter: dict) -> dict:
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
-        logging.info(f"{self.name} started.")
+        logging.info(f"Starting {self.name} with parameters: {parameter}")
         self.timeout = parameter["timeout"]
         self.start_time = time.time()
         if not self.graph.check_degree_possible():

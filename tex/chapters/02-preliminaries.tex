@@ -1,8 +1,30 @@
 \chapter{Preliminaries}
-If needed, you can write down definitions here, that you need in your thesis.
-For this, the definition-environment can be helpful
-\begin{definition}[Graph coloring]
-	A graph $G=(V,E)$ is $k$-colorable if there is a function $C: V\rightarrow \{1,\dots, k\}$ such that $C(u)\neq C(v)$ for any edge $\{u,v\}\in E$
-	
-	The \emph{chromatic number} of a graph $G$ is the smallest number $k$ such that $G$ is $k$-colorable.
+
+\begin{definition}[Überschneidung]
+	Zwei Kanten gelten als Schneidet wenn sie sich in der Ebene kreuzen.
+	Im Folgendem werden mit der Funktoin \(\intersection: ( \mathbb{Q}^2, \mathbb{Q}^2) \longrightarrow \{\mathbb{Q}^2\}\) alle Kanten angegeben, die die übergebene Kante schneiden.
+\end{definition}
+\begin{definition}[Triangulation]
+	Eine Triangulation einer Punktemenge \(P \in \mathbb{Q}^2\) ist ein Maximaler kreuzungsfreier Graph.
+	Das bedeutet man kann keine weiteren Kanten hinzufügen ohne das sich diese Schneiden.
+\end{definition}
+\begin{definition}[Grad]
+	Der Grad gibt die Anzahl der anliegenden Kanten an einem Knoten an.
+	Im folgenden wird er durch die Funktion \(\degree: \mathbb{Q}^2 \longrightarrow \mathbb{Q}\) angegeben.
+\end{definition}
+\begin{definition}[Gradbeschränkte Triangulation]
+	Die Gradbeschränkte Triangulation hat die gleichen Vorraussetzungen wie eine Triangulation.
+	Zusätzlich gibt es noch eine Funktion \(\degrees: \mathbb{Q}^2 \longrightarrow \mathbb{Q}\).
+	Diese gibt den Grad an welcher ein Knoten haben muss.
+\end{definition}
+\begin{definition}[Flipp]
+	Eine Operation bei der eine Kante entfernt und eine andere Hinzugefügt wird.
+	Hierbei dürfen nach der Operation die Triangulations Eigenschaften nicht verletzt sein.
+	Ein Flip wird durch die Funktion \(\flip:(\mathbb{Q}^2,\mathbb{Q}^2) \longrightarrow (\mathbb{Q}^2,\mathbb{Q}^2)\) definiert.
+
+\end{definition}
+\begin{definition}[Diagonale Flipp]
+	Ein Diagonaler Flipp hat die gleichen Eigenschaft wie ein Flipp.
+	Zusätzlich wird für die Kante \((b,c)\) die leeren Dreicke \(\triangle abc \) und  \(\triangle bcd \) gesucht und \((a,d)\) zurückgeben.
+	Er wird durch die Funktion \(\flipDio:(\mathbb{Q}^2,\mathbb{Q}^2) \longrightarrow (\mathbb{Q}^2,\mathbb{Q}^2) definiert\).
 \end{definition}

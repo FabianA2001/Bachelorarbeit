@@ -1,23 +1,116 @@
 \chapter{Content}
 
-From here, start your main content.
-You can always use new chapters if needed.
-Use proper environments for your content, e.g.\ theorem, definition, lemma, etc.
-Here are some examples.
+\section{Instanzen Generation}
+\subsection{Ja - Instanzen}
+\begin{itemize}
+	\item Random n Knoten Generieren
+	\item Triangulieren
+	\item Knoten mit Grad speichern
+\end{itemize}
+\subsubsection{Delaunay mit Flips}
+	\begin{itemize}
+		\item Delaunay mit scipy erstellen
+		\item k mal random Kante Diagonal Flippen
+		\begin{itemize}
+			\item alle Dreiecke finden an der kante
+			\begin{itemize}
+				\item Bei allen ausgehenden Kanten der beiden Knoten die Kanten finden welche einen gemeinsamen Knoten haben
+			\end{itemize}
+			\item Die beiden Dreicke die leer sind
+			\item Die Kante durch eine neue Kante ersetzen welche aus den beiden Knoten der Dreiecke besteht welche nicht an der alten Kante waren
+		\end{itemize}
+	\end{itemize}
+\subsubsection{Random Kanten}
+\begin{itemize}
+	\item Alle möglichen Kanten erstellen
+	\item Random Kanten auswählen
+	\item wenn diese keine Vorhande schneiden hinzufügen
+\end{itemize}
+\subsection{Nein - Instanzen}
+\begin{itemize}
+	\item Move Point liefert meistens nein Instanzen
+	\item Zwei Sollgrade von zwei Punkten Tauschen
+\end{itemize}
+\section{Heuristiken}
+\begin{itemize}
+	\item eine Triangulation erstellen
+	\item den sollGrad möglichst richtig
+	\item Werden mit folgender Formel bewertet
+\end{itemize}
 
+\begin{align}
+ \text{diff}_i &= \left| \degrees(i) - \degree(i) \right| \label{eq:difference} \\
+e_i &= \left\{
+\begin{array}{ll}
+\frac{\degrees(i) - \text{diff}_i}{\degrees(i)} & \degrees(i) \geq \text{diff}_i \\
+0 & \, \textrm{sonst} \\
+\end{array}
+\right. \label{eq:evaluation}\\
+Q_T &= \sum_{i=0}^{n} \frac{e_i}{n} \label{eq:total_evaluation}
+\end{align}
 
-\begin{theorem}
-	Every planar graph is 4-colorable.
-\end{theorem}
+Die Formel liefert eine Evaluation (\(Q_T\)) für einen Triangulation(\(T\)) mit \(n\) Knoten.
+Hierbei gibt \(\degrees(i)\) den gewünschten Grad an der stelle i an.
+Dazu passend gibt \(\degree(i)\) den aktuellen Grad an.
+In der Brechnung~\eqref{eq:difference} wird die Difference zwischen dem gewünschten und aktuellen Grad berechnet.
+In~\eqref{eq:evaluation} wird diese Abweichung Prozentual bewertet.
+Am Ende wird in~\eqref{eq:total_evaluation} ein Durchschnitt über alle Prozentualen Werte gebildet.
 
-\begin{lemma}
-	Every bipartite graph is 2-colorable.
-\end{lemma}
-\begin{corollary}
-	Every tree graph is 2-colorable.
-\end{corollary}
-Because graphs with at least one edge need at least two colors, we obtain the following theorem.
-
-\begin{theorem}
-	The chromatic number of every (non-trivial) bipartite graph is 2.
-\end{theorem}
+\subsection{Flips}
+\begin{itemize}
+	\item Diagonale Flips
+	\item k mal Wiederholen
+	\begin{itemize}
+		\item Alle Knoten durchgehen
+		\item wenn falscher Degree auswählen
+		\item alle ausgehenden Kanten berechnen
+		\item Kante Auswählen \cref{algo:choose_edge}
+		\item Flipe Kante wie oben
+		\item wenn Gradbeschränkte Triangulation erfolgreich abbrechen
+	\end{itemize}
+\end{itemize}
+\begin{algorithm}[H]
+	\caption{CHOOSE EDGE(\(v\))}
+	\label{algo:choose_edge}
+	\begin{algorithmic}[1]
+		\STATE \(E \gets \{ e \mid e \text{ ist ausgehende Kante von } v \}\)
+		\WHILE{\(E \neq \emptyset\)}
+			\STATE \(e \gets \) zufälliges Element aus \(E\)
+			\STATE \(E \gets E \setminus \{e\}\)
+			\STATE \(u \gets \text{Knoten von } e~\AND~v \neq u\)
+			\IF{\(\degree(u) \neq \degrees(u)\)}
+				\RETURN e
+			\ELSIF{zu 20 \%}
+				\RETURN e
+			\ENDIF
+		\ENDWHILE
+		\RETURN e
+	\end{algorithmic}
+\end{algorithm}
+\subsection{OrTools mit Zielfunktion}
+TODO infos über OrTools rausuchen
+\begin{itemize}
+	\item Solver von Google
+	\item Solver mit intersection Konstriend und Zielfunktion maximiere~\eqref{eq:evaluation}
+	\item erste Konstriend Kanten auf richtige Anzahl
+\end{itemize}
+Zunächst sei \(E\) die Menge aller Kanten und \(E_P\) die Menge aller möglicher Kanten. Also Kanten die keine Punkte schneiden.
+Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
+Diese Variable ist wahr wenn die Kante \(e\) in der Triangulation enthalten ist.
+Für den Überschneidungs Konstriend werden folgende Klauseln dem OrTools Modeln hinzugefügt.
+\[
+\neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E_P: e_2 \in \intersection(e_1) 
+\]
+\begin{itemize}
+	\item Zielfunktion ist maximiere \(Q_T\) aus~\eqref{eq:evaluation}
+	\item Teiler rausgenommen da für max nicht relevant
+	\item für die Difference, Betrag und min muss eine Integer Hilfsvarible eingeführt werden.
+\end{itemize}
+\begin{itemize}
+	\item Zweiter ansatz weniger Integer Variablen nutzen
+	\item Degree - sollDegree und sollDegree - Degree größer als Hilfsvarible
+	\item Summe maximieren
+\end{itemize}
+\section{Solver}
+\subsection{OrTools}
+\subsection{SAT}

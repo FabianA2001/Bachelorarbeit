@@ -11,7 +11,6 @@ import itertools
 
 class SAT(Solver):
     NAME = "SAT"
-    # TODO Paper von Discord zur Intersection constraind
 
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
@@ -177,7 +176,7 @@ class SAT(Solver):
                 logging.info("start solving")
 
                 def run_solver():
-                    result[0] = self.solver.solve_limited(  # type: ignore
+                    result[0] = time_function(self.solver.solve_limited)(  # type: ignore
                         expect_interrupt=True
                     )
 

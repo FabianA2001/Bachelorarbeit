@@ -14,23 +14,7 @@ Try to use existing abbreviations from related work if possible.
 
 Formel zwischen lagern:
 
-\begin{align}
- \text{diff}_i &= \left| deg^*_G(i) - deg_G(i) \right| \label{eq:difference} \\
-e_i &= \left\{
-\begin{array}{ll}
-\frac{deg^*_G(i) - \text{diff}_i}{deg^*_G(i)} & deg^*_G(i) \geq \text{diff}_i \\
-0 & \, \textrm{sonst} \\
-\end{array}
-\right. \label{eq:evaluation}\\
-Q_G &= \sum_{i=0}^{n} \frac{e_i}{n} \label{eq:total_evaluation}
-\end{align}
 
-Die Formel liefert eine Evaluation (\(Q_G\)) für einen Graphen(\(G\)) mit \(n\) Knoten.
-Hierbei gibt \(deg^*_G(i)\) den gewünschten Grad an der stelle i an.
-Dazu passend gibt \(deg_G(i)\) den aktuellen Grad an.
-In der Brechnung~\eqref{eq:difference} wird die Difference zwischen dem gewünschten und aktuellen Grad berechnet.
-In~\eqref{eq:evaluation} wird diese Abweichung Prozentual bewertet.
-Am Ende wird in~\eqref{eq:total_evaluation} ein Durchschnitt über alle Prozentualen Werte gebildet.
 
 
 
@@ -86,7 +70,7 @@ Hurtado et al.~\cite{Flipping_edges_in_triangulations} zeigten, dass jede Triang
 \[\frac{n-4}{2}\]
 flipbare Kanten besitzt, wobei \( n \) die Anzahl der Knoten bezeichnet.
 Laut der wissenschaftliche Arbeit \emph{Flips in planar graphs}~\cite{Flips_in_planar_graphs} lässt sich jede mögliche Triangulation in jede beliebige andere Triangulation überführen, indem die notwendigen Flips durchgeführt werden.
-Daraus folgt, dass, wenn eine \emph{degree-constrained triangulation} möglich ist, diese mit den nötigen Flips konstruiert werden kann.
+Daraus folgt, dass, wenn eine Gradbeschränkte Triangulation möglich ist, diese mit den nötigen Flips konstruiert werden kann.
 
 TODO überarbeiten
 \textbf{Sollte ich das später machen, hier die Sektion nennen}

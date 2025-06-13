@@ -300,3 +300,10 @@ class Graph_Wrapper:
             if self.check_edge_interection_with_nodes((node1, node2), False):
                 impossible_edges.append((min(node1, node2), node2))
         return impossible_edges
+
+    @cached_property
+    def get_max_degree(self) -> int:
+        """Gibt den maximalen Grad des Graphen zurück."""
+        return max(
+            self.get_desired_degree_node(node) for node in self.get_all_nodes_name()
+        )
