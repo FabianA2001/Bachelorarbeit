@@ -88,6 +88,7 @@ Am Ende wird in~\eqref{eq:total_evaluation} ein Durchschnitt über alle Prozentu
 	\end{algorithmic}
 \end{algorithm}
 \subsection{OrTools mit Zielfunktion}
+\label{sec:ortools_heu}
 TODO infos über OrTools rausuchen
 \begin{itemize}
 	\item Solver von Google
@@ -111,6 +112,57 @@ Für den Überschneidungs Konstriend werden folgende Klauseln dem OrTools Modeln
 	\item Degree - sollDegree und sollDegree - Degree größer als Hilfsvarible
 	\item Summe maximieren
 \end{itemize}
+
 \section{Solver}
+\begin{itemize}
+	\item Exakte Ergebnise Liefern die Triangulation und Gradbeschränkung erfüllen
+	\item alle Solver desten ob sum(degree) = 2* Kanten für Triangulation
+\end{itemize}
 \subsection{OrTools}
+\begin{itemize}
+	\item gleicher Solver jetzt mit Gradbeschränkung
+	\item Kanten Variblen und Intersection Konstriend wie in~\cref{sec:ortools_heu}
+	\item Zwei Grundansätze 
+	\begin{itemize}
+		\item Kanten Maximieren und dann nach Lösung abbrechen welche richtige Anzahl Kanten hat
+		\item Kanten Anzahl festsetzen und ohne Zielfunktion lösen
+	\end{itemize}	
+	\item Ansatz für die Gradbeschränkung
+	\item für jeden Knoten die summe der x für ausgehende Kanten varibalen gleich dem Sollgrad
+\end{itemize}	
 \subsection{SAT}
+TODO Rausfinden wie SAT degree gemacht wird
+\begin{itemize}
+	\item Alle möglichen Kanten als Bool Variable wie OrTools
+	\item Intersection Konstriend wie OrTools
+	\item Degree sat mit eingebauter Funktion(Infos raussuchen)
+	\begin{itemize}
+		\item Hilfsveriablen ab max(len(all\_vars), höchste var in solver) + 1
+	\end{itemize}
+	\item das waren Grundlagen jetzt Verbesserungen
+	\item Kanten Anzahl fest setzen
+	\item Convexe Hülle festsetzen
+	\item Intersection mit Algo Von Michael
+	\item Satformel aus Paper von Michael, Fekete und Phillip Alle Edges
+	\item Subset degree
+	\begin{itemize}
+		\item alle Knoten durchgehen
+		\item alle Kombinationen der größe len(enges) - (degree -1) bilden
+		\item als Klauseln hinzufügen
+		\item Als Bild erklären
+	\end{itemize}
+	\item Bei degree nicht genau degree sondern nur mindestens degree
+	\item muss reichen weil sonnst ein anderer Knoten nicht genügend Kanten bekommt
+	\item exclude Edges
+	\begin{itemize}
+		\item alle Kanten betrachten welche die Punkt menge teilen
+		\item testen ob anzahl kanten * 2 = sum(degree)
+	\end{itemize}
+\end{itemize}
+\section{Theoretische Mehrere Lösungen}
+TODO Wo soll das hin
+\begin{itemize}
+	\item 3 und 4 Knoten ist Gradbeschränkte Triangulation immer eindeutig
+	\item ab 8 bis unentlich gibt es mehrere Lösungen
+	\item instaze zeigen und erklären wie mehr Punkt hinzufügen
+\end{itemize}
