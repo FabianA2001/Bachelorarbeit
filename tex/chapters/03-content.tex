@@ -46,10 +46,10 @@ e_i &= \left\{
 0 & \, \textrm{sonst} \\
 \end{array}
 \right. \label{eq:evaluation}\\
-Q_G &= \sum_{i=0}^{n} \frac{e_i}{n} \label{eq:total_evaluation}
+Q_T &= \sum_{i=0}^{n} \frac{e_i}{n} \label{eq:total_evaluation}
 \end{align}
 
-Die Formel liefert eine Evaluation (\(Q_G\)) für einen Graphen(\(G\)) mit \(n\) Knoten.
+Die Formel liefert eine Evaluation (\(Q_T\)) für einen Triangulation(\(T\)) mit \(n\) Knoten.
 Hierbei gibt \(\degrees(i)\) den gewünschten Grad an der stelle i an.
 Dazu passend gibt \(\degree(i)\) den aktuellen Grad an.
 In der Brechnung~\eqref{eq:difference} wird die Difference zwischen dem gewünschten und aktuellen Grad berechnet.
@@ -92,15 +92,24 @@ TODO infos über OrTools rausuchen
 \begin{itemize}
 	\item Solver von Google
 	\item Solver mit intersection Konstriend und Zielfunktion maximiere~\eqref{eq:evaluation}
-	\item Alle möglichen Kanten hinzufügen
-	\begin{itemize}
-		\item schneiden keine Punkte
-	\end{itemize}
-	\item für alle Kanten eine Bool varibale erstellen
-	\item intersection Konstriend
-	\begin{itemize}
-		\item für alle kanten \(e\) werden folgende Clauseln hinzugefügt
-	\end{itemize}
+	\item erste Konstriend Kanten auf richtige Anzahl
+\end{itemize}
+Zunächst sei \(E\) die Menge aller Kanten und \(E_P\) die Menge aller möglicher Kanten. Also Kanten die keine Punkte schneiden.
+Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
+Diese Variable ist wahr wenn die Kante \(e\) in der Triangulation enthalten ist.
+Für den Überschneidungs Konstriend werden folgende Klauseln dem OrTools Modeln hinzugefügt.
+\[
+\neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E_P: e_2 \in \intersection(e_1) 
+\]
+\begin{itemize}
+	\item Zielfunktion ist maximiere \(Q_T\) aus~\eqref{eq:evaluation}
+	\item Teiler rausgenommen da für max nicht relevant
+	\item für die Difference, Betrag und min muss eine Integer Hilfsvarible eingeführt werden.
+\end{itemize}
+\begin{itemize}
+	\item Zweiter ansatz weniger Integer Variablen nutzen
+	\item Degree - sollDegree und sollDegree - Degree größer als Hilfsvarible
+	\item Summe maximieren
 \end{itemize}
 \section{Solver}
 \subsection{OrTools}
