@@ -110,6 +110,15 @@ class SAT(Solver):
         if self.reach_timeout():
             raise TimeoutError()
 
+    def exclude_edges_constraint(self):
+        self.aktive_constrinsts += "exclude_edges, "
+        for edge in self.graph.exclude_edge_partition():
+            if edge in self.graph.impossible_edges:
+                continue
+            index = self.get_index(edge)
+            # Setze die Kante als inaktiv
+            self.solver.add_clause([-index])
+
     def formula_number_vars(self, vars, n, exact_atleast=True):
         # CNF-Formel erstellen
         cnf = CNF()
@@ -163,11 +172,17 @@ class SAT(Solver):
                 time_function(self.degree_subset_constraint)()  # ---neu
                 self.set_hull_fix_constraint()
                 time_function(self.intersection_constraint)()
+            elif parameter.get("version") == 0.6:
+                time_function(self.degree_constraint)(False)  # ---neu
+                # Knoten müssen nur minimum Degree haben
+                self.set_hull_fix_constraint()
+                time_function(self.intersection_constraint)()
             else:
                 time_function(self.degree_constraint)(False)  # ---neu
                 # Knoten müssen nur minimum Degree haben
                 self.set_hull_fix_constraint()
                 time_function(self.intersection_constraint)()
+                time_function(self.exclude_edges_constraint)()
 
             if "timeout" not in parameter:
                 raise ValueError("Timeout parameter is missing.")
@@ -207,6 +222,7 @@ class SAT(Solver):
                 "info": self.aktive_constrinsts,
             }
         except TimeoutError:
+            logging.warning(f"{self.name} timed out.")
             return {
                 "success": False,
                 "info": self.aktive_constrinsts,

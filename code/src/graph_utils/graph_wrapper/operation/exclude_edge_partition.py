@@ -62,6 +62,6 @@ class Exclude_Edge_Partition:
             poly_nodes_1 = self.hull_nodes[index0 : index1 + 1]
             for half in [poly_nodes_0, poly_nodes_1]:
                 if not self.__possible_half(half, [com[0], com[1]]):
-                    edges.add(com)
+                    edges.add((min(com[0], com[1]), max(com[0], com[1])))
 
         return list(edges)
