@@ -30,13 +30,19 @@ class Exclude_Edge_Partition:
         nodes_in_polygon = [
             self.data.get_node_from_point(point) for point in points_in_polygon
         ]
-        nodes_in_polygon += poly_nodes
-        length = len(nodes_in_polygon)
-        for node in nodes_in_polygon:
+        all_nodes = poly_nodes + nodes_in_polygon
+        length = len(all_nodes)
+        degree_sum = 0
+        for node in all_nodes:
             if node in exclude_nodes:
                 continue
-            if self.data.nodes[node]["degree"] > length:
+            degree = self.data.nodes[node]["degree"]
+            if degree > length:
                 return False
+            degree_sum += degree
+        num_edges = 3 * len(all_nodes) - 3 - len(poly_nodes)
+        if degree_sum != 2 * num_edges:
+            return False
         return True
 
     def __triangulate_half(self) -> bool:

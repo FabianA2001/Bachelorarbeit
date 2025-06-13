@@ -13,6 +13,7 @@ from graph_utils import run_instance
 from utils import setup_logging
 import matplotlib.pyplot as plt
 import matplotlib._pylab_helpers
+from utils import time_function
 
 
 BENCHMARK_PATH = "./results/benchmark"
@@ -62,24 +63,25 @@ def custom_points() -> list[Node]:
 
 def test_algo():
     # nodes = load_nodes_from_json("iterative_60_10/004_random.json")
-    nodes = load_nodes_from_json("simple_80/000_random.json")
+    nodes = load_nodes_from_json("simple_100/000_random.json")
     # nodes = load_nodes_from_json("simple_10/000_delaunay_flips.json")
     # nodes = load_nodes_from_json("test_algo.json")
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
     graph.name = "Test Algo"
-    # time_function(graph.add_all_possible_edges)(default_for_active=True)
+    time_function(graph.add_all_possible_edges)(default_for_active=True)
+    print(len(time_function(graph.exclude_edge_partition)()))
     # time_function(graph.get_all_intersections)()
     # print(*graph.get_all_edges(), sep="\n")
-    solver = SAT(graph)
-    solver.solve(
-        {
-            "timeout": 60,
-            "version": 0.2,
-        }
-    )
-    logging.info(f"evaluation: {graph.evaluate_graph()}")
-    graph.show_and_save()
+    # solver = SAT(graph)
+    # solver.solve(
+    #     {
+    #         "timeout": 60,
+    #         "version": 0.2,
+    #     }
+    # )
+    # logging.info(f"evaluation: {graph.evaluate_graph()}")
+    # graph.show_and_save()
 
 
 def move():
