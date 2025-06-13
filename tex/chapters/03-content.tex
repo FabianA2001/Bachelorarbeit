@@ -101,9 +101,16 @@ Am Ende wird in~\eqref{eq:total_evaluation} ein Durchschnitt über alle Prozentu
 % \ENDFOR
 \STATE \(E \gets \{ e \mid e \text{ ist ausgehende Kante von } v \}\)
 \WHILE{\(E \neq \emptyset\)}
-	\STATE  \(e \gets \) zufälliges Element aus \(E\)
-    % ... dein Code ...
+	\STATE \(e \gets \) zufälliges Element aus \(E\)
+	\STATE \(E \gets E \setminus \{e\}\)
+	\STATE \(u \gets \text{Knoten von } e~\AND~v \neq u\)
+	\IF{\(\degree(u) \neq \degrees(u)\)}
+		\RETURN e
+	\ELSIF{zu 20 \%}
+		\RETURN e
+	\ENDIF
 \ENDWHILE
+\RETURN e
 \end{algorithmic}
 \end{algorithm}
 \subsection{OrTools mit Zielfunktion}
