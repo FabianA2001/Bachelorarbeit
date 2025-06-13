@@ -298,7 +298,7 @@ class Graph_Wrapper:
         impossible_edges = []
         for node1, node2 in itertools.combinations(self.get_all_nodes_name(), 2):
             if self.check_edge_interection_with_nodes((node1, node2), False):
-                impossible_edges.append((min(node1, node2), node2))
+                impossible_edges.append((min(node1, node2), max(node1, node2)))
         return impossible_edges
 
     @cached_property

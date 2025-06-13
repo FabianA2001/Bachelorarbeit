@@ -19,6 +19,7 @@ class SAT(Solver):
         self.edges = self.graph.get_all_edges()
         self.edges_to_index = {edge: i for i, edge in enumerate(self.edges)}
         self.all_vars = list(range(1, len(self.edges) + 1))
+        self.aktive_constrinsts = ""
 
     def get_index(self, edge) -> int:
         if edge in self.edges_to_index:
@@ -29,6 +30,7 @@ class SAT(Solver):
         return self.edges[index - 1]
 
     def intersection_constraint(self):
+        self.aktive_constrinsts += "intersection, "
         intersection = self.graph.get_all_intersections(self.timeout_error)
         for edge, other_edge in intersection:
             if (
@@ -45,6 +47,7 @@ class SAT(Solver):
         self.timeout_error()
 
     def alle_edges_constraint(self):
+        self.aktive_constrinsts += "add_Edges, "
         edges = self.graph.get_all_edges()
         for edge in edges:
             intersection = self.graph.get_intersections_with_all_edges(edge)
@@ -54,6 +57,7 @@ class SAT(Solver):
             )
 
     def alle_edges_and_intersection_constraint(self):
+        self.aktive_constrinsts += "add_Edges_and_intersection, "
         edges = self.graph.get_all_edges()
         for edge in edges:
             intersections = self.graph.get_intersections_with_all_edges(edge)
@@ -67,6 +71,7 @@ class SAT(Solver):
                 )
 
     def degree_constraint(self, exact_atleast=True):
+        self.aktive_constrinsts += f"Degree(exact_atleast:{exact_atleast}), "
         for node in self.graph.get_all_nodes_name():
             degree = self.graph.get_desired_degree_node(node)
             if degree == -1:
@@ -82,6 +87,7 @@ class SAT(Solver):
                 raise TimeoutError()
 
     def degree_subset_constraint(self):
+        self.aktive_constrinsts += "Degree_subset, "
         for node in self.graph.get_all_nodes_name():
             degree = self.graph.get_desired_degree_node(node)
             edges = [
@@ -92,6 +98,7 @@ class SAT(Solver):
                 self.timeout_error()
 
     def set_hull_fix_constraint(self):
+        self.aktive_constrinsts += "fix_hull, "
         hull_edges = self.graph.get_hull_edges()
         if len(hull_edges) == 0:
             return
@@ -102,6 +109,15 @@ class SAT(Solver):
             self.solver.add_clause([index])
         if self.reach_timeout():
             raise TimeoutError()
+
+    def exclude_edges_constraint(self):
+        self.aktive_constrinsts += "exclude_edges, "
+        for edge in self.graph.exclude_edge_partition():
+            if edge in self.graph.impossible_edges:
+                continue
+            index = self.get_index(edge)
+            # Setze die Kante als inaktiv
+            self.solver.add_clause([-index])
 
     def formula_number_vars(self, vars, n, exact_atleast=True):
         # CNF-Formel erstellen
@@ -141,25 +157,32 @@ class SAT(Solver):
                 self.degree_constraint()
             elif parameter.get("version") == 0.2:
                 time_function(self.intersection_constraint)()
-                self.set_hull_fix_constraint()
                 self.degree_constraint()
+                self.set_hull_fix_constraint()  # ---neu
             elif parameter.get("version") == 0.3:
                 time_function(self.intersection_constraint)()
                 self.degree_constraint()
                 self.set_hull_fix_constraint()
-                time_function(self.alle_edges_constraint)()
+                time_function(self.alle_edges_constraint)()  # ---neu
             elif parameter.get("version") == 0.4:
                 self.degree_constraint()
                 self.set_hull_fix_constraint()
-                time_function(self.alle_edges_and_intersection_constraint)()
+                time_function(self.alle_edges_and_intersection_constraint)()  # ---neu
             elif parameter.get("version") == 0.5:
-                time_function(self.degree_subset_constraint)()
+                time_function(self.degree_subset_constraint)()  # ---neu
+                self.set_hull_fix_constraint()
+                time_function(self.intersection_constraint)()
+            elif parameter.get("version") == 0.6:
+                time_function(self.degree_constraint)(False)  # ---neu
+                # Knoten müssen nur minimum Degree haben
                 self.set_hull_fix_constraint()
                 time_function(self.intersection_constraint)()
             else:
-                time_function(self.degree_constraint)(False)
+                time_function(self.degree_constraint)(False)  # ---neu
+                # Knoten müssen nur minimum Degree haben
                 self.set_hull_fix_constraint()
                 time_function(self.intersection_constraint)()
+                time_function(self.exclude_edges_constraint)()
 
             if "timeout" not in parameter:
                 raise ValueError("Timeout parameter is missing.")
@@ -196,8 +219,11 @@ class SAT(Solver):
 
             return {
                 "success": result[0],
+                "info": self.aktive_constrinsts,
             }
         except TimeoutError:
+            logging.warning(f"{self.name} timed out.")
             return {
                 "success": False,
+                "info": self.aktive_constrinsts,
             }

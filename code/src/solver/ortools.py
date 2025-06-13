@@ -25,10 +25,12 @@ class Ortools(Solver):
         super().__init__(graph)
         self.name = self.NAME
         self.model = cp_model.CpModel()
+        self.aktive_constrinsts = ""
 
     def constraint_intersection(self):
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
+        self.aktive_constrinsts += "intersection, "
         intersection = self.graph.get_all_intersections(self.timeout_error)
         for edge, other_edge in intersection:
             if (
@@ -45,6 +47,7 @@ class Ortools(Solver):
         self.timeout_error()
 
     def constraint_degree(self):
+        self.aktive_constrinsts += "degree, "
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
         for node in self.graph.get_all_nodes_name():
@@ -58,6 +61,7 @@ class Ortools(Solver):
             self.model.Add(summ == degree)
 
     def constraint_set_number_edges(self, number_edges: int):
+        self.aktive_constrinsts += "set_edges(int), "
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
         if number_edges < 0:
@@ -66,6 +70,7 @@ class Ortools(Solver):
         self.model.Add(summ == number_edges)
 
     def evaluation_direction(self):
+        self.aktive_constrinsts += "eval_direction, "
         evaluation = 0.0
         nodes = self.graph.get_all_nodes_name()
         for node in nodes:
@@ -88,6 +93,7 @@ class Ortools(Solver):
         self.model.Maximize(evaluation)
 
     def degree_direction(self):
+        self.aktive_constrinsts += "degree_direction, "
         nodes = self.graph.get_all_nodes_name()
         max_degree = self.graph.get_max_degree
         self.vars_int = {
@@ -163,10 +169,12 @@ class Ortools(Solver):
             logging.warning("No solution found.")
             return {
                 "success": False,
+                "info": self.aktive_constrinsts,
             }
         for edge, var in zip(self.graph.get_all_edges(), self.vars.values()):
             if solver.BooleanValue(var):
                 self.graph.activate_edge(edge)
         return {
             "success": True,
+            "info": self.aktive_constrinsts,
         }

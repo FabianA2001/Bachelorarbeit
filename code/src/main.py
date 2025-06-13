@@ -61,24 +61,22 @@ def custom_points() -> list[Node]:
 
 
 def test_algo():
+    PATH = "simple_70/000_random.json"
+    logging.info(f"Loading nodes from {PATH}")
     # nodes = load_nodes_from_json("iterative_60_10/004_random.json")
-    nodes = load_nodes_from_json("simple_80/000_random.json")
+    nodes = load_nodes_from_json(PATH)
     # nodes = load_nodes_from_json("simple_10/000_delaunay_flips.json")
     # nodes = load_nodes_from_json("test_algo.json")
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    graph.name = "Test Algo"
+    # graph.name = "Test Algo"
     # time_function(graph.add_all_possible_edges)(default_for_active=True)
+    # print(len(time_function(graph.exclude_edge_partition)()))
     # time_function(graph.get_all_intersections)()
     # print(*graph.get_all_edges(), sep="\n")
     solver = SAT(graph)
-    solver.solve(
-        {
-            "timeout": 60,
-            "version": 0.2,
-        }
-    )
-    logging.info(f"evaluation: {graph.evaluate_graph()}")
+    logging.info(f"solution found: {solver.solve({'timeout': -1, 'version': 0.7})}")
+    # logging.info(f"evaluation: {graph.evaluate_graph()}")
     graph.show_and_save()
 
 
