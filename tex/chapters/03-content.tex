@@ -64,56 +64,44 @@ Am Ende wird in~\eqref{eq:total_evaluation} ein Durchschnitt über alle Prozentu
 		\item Alle Knoten durchgehen
 		\item wenn falscher Degree auswählen
 		\item alle ausgehenden Kanten berechnen
-		\item Kante Auswählen
-		\begin{itemize}
-			\item random Kante auswählen
-			\item gucken ob ein Knoten der Kante falschen Degree hat
-			\item ja ? zurückgeben
-			\item nein ? zu 20\% zurückgeben
-			\item nächste kante wählen
-		\end{itemize}
-
-
-		Flipe Kante wie oben
-		wenn Gradbeschränkte Triangulation erfolgreich abbrechen
+		\item Kante Auswählen \cref{algo:choose_edge}
+		\item Flipe Kante wie oben
+		\item wenn Gradbeschränkte Triangulation erfolgreich abbrechen
 	\end{itemize}
 \end{itemize}
 \begin{algorithm}[H]
-\caption{CHOOSE EDGE(\(v\))}
-\begin{algorithmic}[1]
-% \FOR{$k = 1$ \TO $K$}
-%     \FORALL{Knoten $v$}
-%         \IF{Grad von $v$ ist falsch}
-%             \STATE Berechne alle ausgehenden Kanten von $v$
-%             \FORALL{Kante $e$ von $v$}
-%                 \IF{zufällige Auswahl oder $e$ enthält Knoten mit falschem Grad}
-%                     \STATE \textbf{return} $e$
-%                 \ELSIF{mit Wahrscheinlichkeit 20\%}
-%                     \STATE \textbf{return} $e$
-%                 \ENDIF
-%             \ENDFOR
-%             \STATE Flipe die ausgewählte Kante wie oben beschrieben
-%             \IF{Triangulation erfüllt Gradbeschränkung}
-%                 \STATE \textbf{break}
-%             \ENDIF
-%         \ENDIF
-%     \ENDFOR
-% \ENDFOR
-\STATE \(E \gets \{ e \mid e \text{ ist ausgehende Kante von } v \}\)
-\WHILE{\(E \neq \emptyset\)}
-	\STATE \(e \gets \) zufälliges Element aus \(E\)
-	\STATE \(E \gets E \setminus \{e\}\)
-	\STATE \(u \gets \text{Knoten von } e~\AND~v \neq u\)
-	\IF{\(\degree(u) \neq \degrees(u)\)}
+	\caption{CHOOSE EDGE(\(v\))}
+	\label{algo:choose_edge}
+	\begin{algorithmic}[1]
+		\STATE \(E \gets \{ e \mid e \text{ ist ausgehende Kante von } v \}\)
+		\WHILE{\(E \neq \emptyset\)}
+			\STATE \(e \gets \) zufälliges Element aus \(E\)
+			\STATE \(E \gets E \setminus \{e\}\)
+			\STATE \(u \gets \text{Knoten von } e~\AND~v \neq u\)
+			\IF{\(\degree(u) \neq \degrees(u)\)}
+				\RETURN e
+			\ELSIF{zu 20 \%}
+				\RETURN e
+			\ENDIF
+		\ENDWHILE
 		\RETURN e
-	\ELSIF{zu 20 \%}
-		\RETURN e
-	\ENDIF
-\ENDWHILE
-\RETURN e
-\end{algorithmic}
+	\end{algorithmic}
 \end{algorithm}
 \subsection{OrTools mit Zielfunktion}
+TODO infos über OrTools rausuchen
+\begin{itemize}
+	\item Solver von Google
+	\item Solver mit intersection Konstriend und Zielfunktion maximiere~\eqref{eq:evaluation}
+	\item Alle möglichen Kanten hinzufügen
+	\begin{itemize}
+		\item schneiden keine Punkte
+	\end{itemize}
+	\item für alle Kanten eine Bool varibale erstellen
+	\item intersection Konstriend
+	\begin{itemize}
+		\item für alle kanten \(e\) werden folgende Clauseln hinzugefügt
+	\end{itemize}
+\end{itemize}
 \section{Solver}
 \subsection{OrTools}
 \subsection{SAT}
