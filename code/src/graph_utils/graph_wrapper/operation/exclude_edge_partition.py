@@ -40,8 +40,11 @@ class Exclude_Edge_Partition:
             if degree >= length:
                 return False
             degree_sum += degree
+        for node in exclude_nodes:
+            degree = self.data.nodes[node]["degree"]
+            degree_sum += degree
         num_edges = 3 * len(all_nodes) - 3 - len(poly_nodes)
-        if degree_sum != 2 * num_edges:
+        if degree_sum < 2 * num_edges:
             return False
         return True
 
