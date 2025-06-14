@@ -191,12 +191,20 @@ class Graph_Wrapper:
         """Gibt die Anzahl der Kanten im Graphen zurück."""
         return self._data.get_number_edges_triangulation
 
+    def get_number_tris_in_Triangulation(self) -> int:
+        """Gibt die Anzahl der Dreiecke im Graphen zurück."""
+        return self._data.get_number_tris_triangulation
+
     def get_node_from_point(self, point: shapely.Point) -> int:
         return self._data.get_node_from_point(point)
 
     def get_point_from_node(self, node: int) -> shapely.Point:
         """Gibt den Punkt des Knotens zurück."""
         return self._data.get_point_from_node(node)
+
+    def get_pos_from_node(self, node: int) -> tuple[int, int]:
+        """Gibt die Position des Knotens zurück."""
+        return self._data.get_pos_from_node(node)
 
     def check_node_for_degree(self, node: int) -> bool:
         """Überprüft, ob der Knoten die richtige Anzahl an Nachbarn hat."""

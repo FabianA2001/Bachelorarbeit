@@ -1,4 +1,5 @@
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
+import shapely
 from solver.solver import Solver
 from pysat.solvers import Solver as SatSolver
 from pysat.formula import CNF
@@ -6,25 +7,53 @@ from pysat.card import CardEnc
 import logging
 import threading
 from utils import time_function
+import itertools
 
 
-class SAT(Solver):
+class SAT_TRI(Solver):
     NAME = "SAT"
 
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = self.NAME
         self.aktive_constrinsts = ""
+        self.graph.add_all_possible_edges(default_for_active=False)
         self.tris = self.graph.get_all_triangles()
+        self.tris_as_point = [
+            (
+                self.graph.get_point_from_node(node1),
+                self.graph.get_point_from_node(node2),
+                self.graph.get_point_from_node(node3),
+            )
+            for node1, node2, node3 in self.graph.get_all_triangles()
+        ]
         self.all_vars = list(range(1, len(self.tris) + 1))
         self.tri_to_index = {tri: i for i, tri in enumerate(self.tris)}
+        self.point_to_index = {tri: i for i, tri in enumerate(self.tris_as_point)}
 
-    def get_index(self, tri) -> int:
-        tri = tuple(sorted(tri))
-        return self.tri_to_index[tri] + 1
+    def get_index(self, tri_pos) -> int:
+        if not (isinstance(tri_pos, tuple) and len(tri_pos) == 3):
+            raise ValueError("tri_pos must be a tuple of length 3.")
+        if all(isinstance(x, int) for x in tri_pos):
+            tri = tuple(sorted(tri_pos))
+            return self.tri_to_index[tri] + 1
+        if all(isinstance(x, shapely.Point) for x in tri_pos):
+            return self.point_to_index[tri_pos] + 1
+        assert False, "tri_pos must be a tuple of length 2 or 3."
 
-    def get_edge(self, index) -> tuple[int, int]:
+    def get_tri(self, index) -> tuple[int, int]:
         return self.tris[index - 1]
+
+    @staticmethod
+    def triangles_intersect(
+        tri1: tuple[shapely.Point, shapely.Point, shapely.Point],
+        tri2: tuple[shapely.Point, shapely.Point, shapely.Point],
+    ) -> bool:
+        tri1_poly = shapely.Polygon(tri1)
+        tri2_poly = shapely.Polygon(tri2)
+        assert tri1_poly.is_valid, "Triangle 1 is not a valid polygon."
+        assert tri2_poly.is_valid, "Triangle 2 is not a valid polygon."
+        return tri1_poly.intersects(tri2_poly) and not tri1_poly.touches(tri2_poly)
 
     def atleast_tri_constraint(self, k: int):
         self.aktive_constrinsts += "atleast_tri_(int), "
@@ -38,6 +67,16 @@ class SAT(Solver):
             exact_atleast=False,
         )
         self.solver.append_formula(cnf)
+        self.timeout_error()
+
+    def intersection_constraint(self):
+        self.aktive_constrinsts += "intersection, "
+        for tri1, tri2 in itertools.combinations(self.tris_as_point, 2):
+            # for tri1, tri2 in [(self.tris_as_point[3], self.tris_as_point[0])]:
+            if self.triangles_intersect(tri1, tri2):
+                index1 = self.get_index(tri1)
+                index2 = self.get_index(tri2)
+                self.solver.add_clause([-index1, -index2])
         self.timeout_error()
 
     def formula_number_vars(self, vars, n, exact_atleast=True):
@@ -73,7 +112,10 @@ class SAT(Solver):
             if "version" not in parameter:
                 raise ValueError("Version parameter is missing.")
             if parameter.get("version") == 0.1:
-                pass
+                self.atleast_tri_constraint(
+                    self.graph.get_number_tris_in_Triangulation()
+                )
+                self.intersection_constraint()
             elif parameter.get("version") == 0.2:
                 pass
             else:
@@ -107,9 +149,13 @@ class SAT(Solver):
 
             model = self.solver.get_model()
             assert model is not None, "Model should not be None"
-            # for var in self.all_vars:
-            #     if var in model:
-            #         self.graph.activate_edge(self.get_edge(var))
+            for var in self.all_vars:
+                if var in model:
+                    tri = self.get_tri(var)
+                    for node1, node2 in itertools.combinations(tri, 2):
+                        self.graph.activate_edge((node1, node2))
+                        # print(f"Activating edge: {node1} - {node2}")
+                    # self.graph.activate_edge(self.get_edge(var))
 
             return {
                 "success": result[0],

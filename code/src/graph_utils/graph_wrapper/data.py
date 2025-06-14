@@ -67,6 +67,14 @@ class Data(Data_Raw):
         return 3 * n - 3 - k
 
     @cached_property
+    def get_number_tris_triangulation(self) -> int:
+        """Gibt die Anzahl der Kanten im Graphen zurück."""
+        k = len(self.get_hull_edges)
+        n = len(self.get_all_nodes_name)
+        # Aus Computational Geometry - Algorithms and Applications Seite 192
+        return 2 * n - 2 - k
+
+    @cached_property
     def get_all_triangles(self) -> list[tuple[int, int, int]]:
         """Gibt alle Dreiecke des Graphen zurück."""
         triangles = set()
