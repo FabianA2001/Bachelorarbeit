@@ -31,7 +31,7 @@ def flip_edge(data: Data, check: Check, edge: tuple[int, int]) -> bool:
                 show_and_save(
                     data,
                     check,
-                    data.number_edges_in_Triangulation,
+                    data.get_number_edges_triangulation,
                     show=True,
                     save=False,
                 )
@@ -65,7 +65,7 @@ def flip_edge(data: Data, check: Check, edge: tuple[int, int]) -> bool:
         show_and_save(
             data,
             check,
-            data.number_edges_in_Triangulation,
+            data.get_number_edges_triangulation,
             show=True,
             save=False,
         )
