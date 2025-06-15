@@ -19,6 +19,8 @@ class SAT_TRI(Solver):
         self.aktive_constrinsts = ""
         self.graph.add_all_possible_edges(default_for_active=False)
         self.tris = self.graph.get_all_triangles()
+        logging.warning("Dreiecke sind teilweise nicht leer, warten auf ccp für fix")
+        print(*self.tris, sep="\n")
         self.tris_as_point = [
             (
                 self.graph.get_point_from_node(node1),
