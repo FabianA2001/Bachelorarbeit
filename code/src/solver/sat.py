@@ -29,6 +29,17 @@ class SAT(Solver):
     def get_edge(self, index) -> tuple[int, int]:
         return self.edges[index - 1]
 
+    def number_edge_constraint(self):
+        self.aktive_constrinsts += "number edges, "
+        cnf = self.formula_number_vars(
+            self.all_vars,
+            self.graph.get_number_edges_in_Triangulation(),
+            exact_atleast=True,
+        )
+        self.solver.append_formula(cnf)
+        if self.reach_timeout():
+            raise TimeoutError()
+
     def intersection_constraint(self):
         self.aktive_constrinsts += "intersection, "
         intersection = self.graph.get_all_intersections(self.timeout_error)
@@ -154,17 +165,21 @@ class SAT(Solver):
                 raise ValueError("Version parameter is missing.")
             if parameter.get("version") == 0.1:
                 time_function(self.intersection_constraint)()
-                self.degree_constraint()
+                time_function(self.degree_constraint)()
+                time_function(self.number_edge_constraint)()
             elif parameter.get("version") == 0.2:
+                time_function(self.intersection_constraint)()
+                time_function(self.degree_constraint)()
+            elif parameter.get("version") == 0.3:
                 time_function(self.intersection_constraint)()
                 self.degree_constraint()
                 self.set_hull_fix_constraint()  # ---neu
-            elif parameter.get("version") == 0.3:
+            elif parameter.get("version") == 0.4:
                 time_function(self.intersection_constraint)()
                 self.degree_constraint()
                 self.set_hull_fix_constraint()
                 time_function(self.alle_edges_constraint)()  # ---neu
-            elif parameter.get("version") == 0.4:
+            elif parameter.get("version") == 0.5:
                 self.degree_constraint()
                 self.set_hull_fix_constraint()
                 time_function(self.alle_edges_and_intersection_constraint)()  # ---neu
@@ -172,7 +187,7 @@ class SAT(Solver):
                 time_function(self.degree_subset_constraint)()  # ---neu
                 self.set_hull_fix_constraint()
                 time_function(self.intersection_constraint)()
-            elif parameter.get("version") == 0.6:
+            elif parameter.get("version") == 0.7:
                 time_function(self.degree_constraint)(False)  # ---neu
                 # Knoten müssen nur minimum Degree haben
                 self.set_hull_fix_constraint()

@@ -66,8 +66,8 @@ def test_algo():
     # print(len(time_function(graph.exclude_edge_partition)()))
     # time_function(graph.get_all_intersections)()
     # print(*graph.get_all_edges(), sep="\n")
-    solver = SAT(graph)
-    logging.info(f"solution found: {solver.solve({'timeout': -1, 'version': 0.1})}")
+    solver = SAT_TRI(graph)
+    logging.info(f"solution found: {solver.solve({'timeout': -1, 'version': 0.2})}")
     # logging.info(f"evaluation: {graph.evaluate_graph()}")
     graph.show_and_save()
 
