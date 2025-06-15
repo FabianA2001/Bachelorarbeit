@@ -2,19 +2,19 @@
   "nodes": [
     {
       "pos": [0, 0],
-      "degree": 2
+      "degree": 0
     },
     {
       "pos": [1, 1],
-      "degree": 2
+      "degree": 0
     },
     {
       "pos": [1, 0],
-      "degree": 2
+      "degree": 0
     },
     {
       "pos": [0, 1],
-      "degree": 2
+      "degree": 0
     }
   ]
 }

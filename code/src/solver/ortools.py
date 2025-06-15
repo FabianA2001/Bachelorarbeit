@@ -50,7 +50,7 @@ class Ortools(Solver):
         self.aktive_constrinsts += "degree, "
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
-        for node in self.graph.get_all_nodes_name():
+        for node in self.graph.get_all_nodes():
             degree = self.graph._data.nodes[node]["degree"]
             summ = 0
             for edge in self.graph._data.edges(node):
@@ -72,7 +72,7 @@ class Ortools(Solver):
     def evaluation_direction(self):
         self.aktive_constrinsts += "eval_direction, "
         evaluation = 0.0
-        nodes = self.graph.get_all_nodes_name()
+        nodes = self.graph.get_all_nodes()
         for node in nodes:
             desired_degree = self.graph.get_desired_degree_node(node)
             degree = sum(
@@ -94,7 +94,7 @@ class Ortools(Solver):
 
     def degree_direction(self):
         self.aktive_constrinsts += "degree_direction, "
-        nodes = self.graph.get_all_nodes_name()
+        nodes = self.graph.get_all_nodes()
         max_degree = self.graph.get_max_degree
         self.vars_int = {
             node: self.model.NewIntVar(0, max_degree, f"degree_{node}")

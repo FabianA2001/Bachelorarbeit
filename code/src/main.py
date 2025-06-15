@@ -9,6 +9,7 @@ from solver.raw_flips import Raw_Flips
 from solver.iterative import Iterative
 from solver.random_adder import Random_Adder
 from solver.sat import SAT
+from solver.sat_tri import SAT_TRI
 from graph_utils import run_instance
 from utils import setup_logging
 import matplotlib.pyplot as plt
@@ -19,14 +20,7 @@ BENCHMARK_PATH = "./results/benchmark"
 
 
 def get_solvers():
-    return [
-        Raw_Flips,
-        Delaunay,
-        Iterative,
-        Ortools,
-        SAT,
-        Random_Adder,
-    ]
+    return [Raw_Flips, Delaunay, Iterative, Ortools, SAT, Random_Adder, SAT_TRI]
 
 
 def custom_points() -> list[Node]:
@@ -62,11 +56,9 @@ def custom_points() -> list[Node]:
 
 def test_algo():
     PATH = "simple_70/000_random.json"
+    PATH = "iterative_60_10/000_random.json"
     logging.info(f"Loading nodes from {PATH}")
-    # nodes = load_nodes_from_json("iterative_60_10/004_random.json")
     nodes = load_nodes_from_json(PATH)
-    # nodes = load_nodes_from_json("simple_10/000_delaunay_flips.json")
-    # nodes = load_nodes_from_json("test_algo.json")
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
     # graph.name = "Test Algo"
@@ -74,8 +66,8 @@ def test_algo():
     # print(len(time_function(graph.exclude_edge_partition)()))
     # time_function(graph.get_all_intersections)()
     # print(*graph.get_all_edges(), sep="\n")
-    solver = SAT(graph)
-    logging.info(f"solution found: {solver.solve({'timeout': -1, 'version': 0.7})}")
+    solver = SAT_TRI(graph)
+    logging.info(f"solution found: {solver.solve({'timeout': -1, 'version': 0.2})}")
     # logging.info(f"evaluation: {graph.evaluate_graph()}")
     graph.show_and_save()
 

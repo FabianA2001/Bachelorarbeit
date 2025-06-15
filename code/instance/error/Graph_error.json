@@ -1,29 +1,36 @@
 {
   "nodes": [
     {
-      "name": "2",
-      "pos": [6, 5],
-      "degree": 4
+      "pos": [2, 2],
+      "degree": 0
     },
     {
-      "name": "3",
-      "pos": [9, 3],
-      "degree": 4
+      "pos": [6, 3],
+      "degree": 0
     },
     {
-      "name": "5",
-      "pos": [9, 5],
-      "degree": 4
+      "pos": [5, 4],
+      "degree": 0
     },
     {
-      "name": "7",
-      "pos": [8, 6],
-      "degree": 3
+      "pos": [4, 5],
+      "degree": 0
     },
     {
-      "name": "8",
-      "pos": [2, 3],
-      "degree": 3
+      "pos": [3, 6],
+      "degree": 0
+    },
+    {
+      "pos": [1, 8],
+      "degree": 0
+    },
+    {
+      "pos": [14, 8],
+      "degree": 0
+    },
+    {
+      "pos": [7, 1],
+      "degree": 0
     }
   ]
 }
