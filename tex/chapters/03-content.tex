@@ -2,32 +2,41 @@
 
 \section{Instanzen Generation}
 \subsection{Ja - Instanzen}
-Bei den Ja-Instanzen handelt es sich um Punktmengen bei denen die \(\degrees\) Funktion Grade liefert welche eine Gradbeschränkte Triangulation ermöglichen. 
-Hierbei ist nicht bekannt wie viele mögliche Lösungen es gibt nur das es mindestens eine gibt.
-Der Generelle Ablauf fängt mit einer zufälligen Punktmenge an.
-Hierbei wird nur die Anzahl der Punkte vorgegeben.
-Danach wird mit einem klassischen Verfahren eine Triangulation erstellt.
-Von dieser werden dann die Grade und die Knoten gespeichert.
+Bei den Ja-Instanzen handelt es sich um Knotenmengen, bei denen die \(\degrees\)-Funktion Grade liefert, welche eine gradbeschränkte Triangulation ermöglichen. 
+Hierbei ist nicht bekannt, wie viele mögliche Lösungen existieren, sondern nur, dass es mindestens eine gibt.
+
+Der generelle Ablauf zur Erzeugung von Ja-Instanzen beginnt mit einer zufälligen Knotenmenge.
+Dabei wird lediglich die Anzahl der Knoten vorgegeben.
+Anschließend wird mit einem klassischen Triangulationsverfahren eine initiale Triangulation erstellt.
+Von dieser werden dann die Grade und die Knotenkoordinaten gespeichert, um sie als Eingabe für die zu testenden Algorithmen zu verwenden.
+
 \subsubsection{Delaunay mit zufälligen Flips}
-Das erste klassische Verfahren zur Grad bestimmung ist die Delaunay Triangulation in verbindung mit Flips.
-Die Delaunay Triangulation wurde im Kapitel~\ref{sec:delaunay_triangulation} bereits vorgestellt.
-Für die erstellung der Delaunay Triangulation wird die Bibliothek \texttt{scipy} genutzt.
-Auf dieser Triangulation werden dann \(k\) mal die in~\cref{def:flip} Definierten Flips durchgeführt.
-Für die durchführung eines Flips zufällig eine Kante \(e_0\) ausgewählt.
-Für diese Kante werden zunächst alle Dreiecke gesucht die diese Kante enthalten.
-Dies geschied in dem für die beiden Knoten \(x_{0.0}\) und \( x_{0.1}\) der Kante \(e_0\) alle ausgehende Kanten vergleichen werden.
-Sollte zwei dieser Kanten den gleichen Knoten  \(v\) haben muss das Tripel (\(x_{0.0}, x_{0.1}, v\)) ein Dreieck sein welches die Kante \(e_0\) enthält.
-Sollten am Ende mehr als zwei Dreicke gefunden werden, so müssen die beiden Dreicke ausgewählt werden welche leer sind. 
-Hierbei kann es nur zwei lerrer Dreicke geben da es in einer Triangulation nicht zu überschneidungen kommen darf.
-Von diesen beiden Dreicken (\(x_{0.0}, x_{0.1}, v_0\)) und (\(x_{0.0}, x_{0.1}, v_1\)) wird dann die Kante \(e_0\) durch die Kante bestehend aus \(v_0\) und \(v_1\) ersetzt.
-\subsubsection{Random Kanten}
-Bei der zweiten klassischen Triangulation werden zufällig Kanten hinzugefügt.
-Hierbei werden zunächst alle möglichen Kanten zwischen den Punkten erstellt.
-Bei diesem Schritt werden Kanten ausgeschlossen welche einen anderen Punkt schneiden.
-Diese Kanten werden dann in einer zufälligen Reinfolge betrachet.
-Bei der auswahl der finalen Kanten wird geprüft ob die Kante eine der zuvor ausgewählten Kanten schneidet.
-Sollte dies nicht der Fall sein wird die Kante ausgewählt.
-Dieses Verfahren ist maximal da wird alle möglichen Kanten betrachten.
+Das erste klassische Verfahren zur Gradbestimmung verwendet die Delaunay-Triangulation in Verbindung mit zufälligen Kantenflips.
+Die Delaunay-Triangulation wurde bereits im Kapitel~\cref{sec:delaunay_triangulation} vorgestellt.
+Für die Erstellung der Delaunay-Triangulation wird die Bibliothek \texttt{scipy} genutzt.
+
+Auf dieser Triangulation werden anschließend \(k\) zufällige Flips gemäß~\cref{def:flip} durchgeführt.
+Für jeden Flip wird zufällig eine Kante \(e_0\) ausgewählt.
+Für diese Kante werden zunächst alle Dreiecke gesucht, die diese Kante enthalten.
+Dies geschieht, indem für die beiden Knoten \(x_{0,0}\) und \(x_{0,1}\) der Kante \(e_0\) alle ausgehenden Kanten verglichen werden.
+Sollten zwei dieser Kanten den gleichen Knoten \(v\) haben, muss das Tripel (\(x_{0,0}, x_{0,1}, v\)) ein Dreieck bilden, welches die Kante \(e_0\) enthält.
+
+Sollten mehr als zwei Dreiecke gefunden werden, so müssen die beiden Dreiecke ausgewählt werden, welche leer sind (keine weiteren Knoten enthalten). 
+Da es in einer Triangulation nicht zu Überschneidungen kommen darf, kann es nur zwei leere Dreiecke geben.
+Aus diesen beiden Dreiecken (\(x_{0,0}, x_{0,1}, v_0\)) und (\(x_{0,0}, x_{0,1}, v_1\)) wird dann die Kante \(e_0\) entfernt und durch die neue Kante, bestehend aus \(v_0\) und \(v_1\), ersetzt.
+
+Dieser Prozess verändert die lokale Struktur der Triangulation und erzeugt so Knotenmengen mit unterschiedlichen Gradverteilungen, behält aber die Triangulationseigenschaft bei.
+
+\subsubsection{Zufällige Kantenerzeugung}
+Das zweite Verfahren zur Erzeugung von Ja-Instanzen basiert auf der zufälligen Auswahl von Kanten.
+Hierbei werden zunächst alle geometrisch möglichen Kanten zwischen den Punkten identifiziert.
+In diesem Schritt werden Kanten ausgeschlossen, welche durch andere Knoten der Knotenmenge verlaufen würden.
+
+Die verbleibenden gültigen Kanten werden dann in einer zufälligen Reihenfolge betrachtet.
+Bei der Auswahl der finalen Kanten wird für jede Kandidatenkante geprüft, ob sie eine der bereits ausgewählten Kanten schneidet.
+Nur wenn keine Schnitte entstehen, wird die Kante der Triangulation hinzugefügt.
+
+Dieses Verfahren ist maximal da alle möglichen Kanten betrachten wurden.
 
 \subsection{Nein - Instanzen}
 \begin{itemize}
