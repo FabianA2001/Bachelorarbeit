@@ -79,6 +79,20 @@ class SAT_TRI(Solver):
                 self.solver.add_clause([-index1, -index2])
         self.timeout_error()
 
+    def degree_constraint(self):
+        hull = self.graph.get_hull_nodes()
+        for node in self.graph.get_all_nodes():
+            tris = self.graph.get_triangles_from_node(node)
+            degree = self.graph.get_desired_degree_node(node)
+            if node in hull:
+                degree -= 1
+            cnf = self.formula_number_vars(
+                vars=[self.get_index(tri) for tri in tris],
+                n=degree,
+                exact_atleast=False,
+            )
+            self.solver.append_formula(cnf)
+
     def formula_number_vars(self, vars, n, exact_atleast=True):
         # CNF-Formel erstellen
         cnf = CNF()
@@ -116,6 +130,7 @@ class SAT_TRI(Solver):
                     self.graph.get_number_tris_in_Triangulation()
                 )
                 self.intersection_constraint()
+                self.degree_constraint()
             elif parameter.get("version") == 0.2:
                 pass
             else:

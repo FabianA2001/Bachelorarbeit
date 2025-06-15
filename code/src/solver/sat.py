@@ -72,7 +72,7 @@ class SAT(Solver):
 
     def degree_constraint(self, exact_atleast=True):
         self.aktive_constrinsts += f"Degree(exact_atleast:{exact_atleast}), "
-        for node in self.graph.get_all_nodes_name():
+        for node in self.graph.get_all_nodes():
             degree = self.graph.get_desired_degree_node(node)
             if degree == -1:
                 continue
@@ -88,7 +88,7 @@ class SAT(Solver):
 
     def degree_subset_constraint(self):
         self.aktive_constrinsts += "Degree_subset, "
-        for node in self.graph.get_all_nodes_name():
+        for node in self.graph.get_all_nodes():
             degree = self.graph.get_desired_degree_node(node)
             edges = [
                 self.get_index(edge) for edge in self.graph.get_edges_of_node(node)

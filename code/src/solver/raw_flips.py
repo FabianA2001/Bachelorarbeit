@@ -42,7 +42,7 @@ class Raw_Flips(Solver):
     ) -> bool:
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
-        nodes = self.graph.get_all_nodes_name()
+        nodes = self.graph.get_all_nodes()
         for node in nodes:
             if self.graph.check_node_for_degree(node):
                 continue

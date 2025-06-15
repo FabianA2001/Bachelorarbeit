@@ -56,7 +56,7 @@ def custom_points() -> list[Node]:
 
 def test_algo():
     PATH = "simple_70/000_random.json"
-    PATH = "iterative_60_10/000_random.json"
+    # PATH = "iterative_60_10/000_random.json"
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
