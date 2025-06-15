@@ -21,7 +21,7 @@ class Delaunay(Solver):
         ), "Graph is not empty. Please clear the graph before solving."
 
         # Implement Delaunay triangulation algorithm here
-        nodes_name = self.graph.get_all_nodes_name()
+        nodes_name = self.graph.get_all_nodes()
         nodes_as_pos = [self.graph._data.nodes[name].get("pos") for name in nodes_name]
         triangles = ScipyDelaunay(nodes_as_pos)
         for tri in triangles.simplices:

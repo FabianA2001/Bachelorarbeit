@@ -19,6 +19,8 @@ class SAT_TRI(Solver):
         self.aktive_constrinsts = ""
         self.graph.add_all_possible_edges(default_for_active=False)
         self.tris = self.graph.get_all_triangles()
+        logging.warning("Dreiecke sind teilweise nicht leer, warten auf ccp für fix")
+        print(*self.tris, sep="\n")
         self.tris_as_point = [
             (
                 self.graph.get_point_from_node(node1),
@@ -55,16 +57,12 @@ class SAT_TRI(Solver):
         assert tri2_poly.is_valid, "Triangle 2 is not a valid polygon."
         return tri1_poly.intersects(tri2_poly) and not tri1_poly.touches(tri2_poly)
 
-    def atleast_tri_constraint(self, k: int):
-        self.aktive_constrinsts += "atleast_tri_(int), "
-        if k < 1:
-            raise ValueError("k must be at least 1.")
-        if k > len(self.tris):
-            raise ValueError("k is larger than the number of triangles.")
+    def number_tri_constraint(self):
+        self.aktive_constrinsts += "number_tri, "
         cnf = self.formula_number_vars(
             vars=self.all_vars,
-            n=k,
-            exact_atleast=False,
+            n=self.graph.get_number_tris_in_Triangulation(),
+            exact_atleast=True,
         )
         self.solver.append_formula(cnf)
         self.timeout_error()
@@ -78,6 +76,21 @@ class SAT_TRI(Solver):
                 index2 = self.get_index(tri2)
                 self.solver.add_clause([-index1, -index2])
         self.timeout_error()
+
+    def degree_constraint(self):
+        self.aktive_constrinsts += "degree, "
+        hull = self.graph.get_hull_nodes()
+        for node in self.graph.get_all_nodes():
+            tris = self.graph.get_triangles_from_node(node)
+            degree = self.graph.get_desired_degree_node(node)
+            if node in hull:
+                degree -= 1
+            cnf = self.formula_number_vars(
+                vars=[self.get_index(tri) for tri in tris],
+                n=degree,
+                exact_atleast=False,
+            )
+            self.solver.append_formula(cnf)
 
     def formula_number_vars(self, vars, n, exact_atleast=True):
         # CNF-Formel erstellen
@@ -112,12 +125,12 @@ class SAT_TRI(Solver):
             if "version" not in parameter:
                 raise ValueError("Version parameter is missing.")
             if parameter.get("version") == 0.1:
-                self.atleast_tri_constraint(
-                    self.graph.get_number_tris_in_Triangulation()
-                )
-                self.intersection_constraint()
+                self.number_tri_constraint()
+                time_function(self.intersection_constraint)()
+                time_function(self.degree_constraint)()
             elif parameter.get("version") == 0.2:
-                pass
+                time_function(self.degree_constraint)()
+                time_function(self.intersection_constraint)()
             else:
                 pass
             if "timeout" not in parameter:

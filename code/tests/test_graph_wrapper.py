@@ -82,7 +82,7 @@ def test_get_triangles_for_node():
     graph = Graph_Wrapper(nodes)
     graph.add_convex_hull()
     graph.add_edge("A", "D")
-    triangles = graph.get_triangles_for_node("A")
+    triangles = graph.get_triangles_from_node("A")
     assert len(triangles) == 2
     assert ("A", "B", "D") in triangles
     assert ("A", "C", "D") in triangles

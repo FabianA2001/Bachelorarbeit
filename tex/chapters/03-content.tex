@@ -130,7 +130,7 @@ Für den Überschneidungs Konstriend werden folgende Klauseln dem OrTools Modeln
 	\item Ansatz für die Gradbeschränkung
 	\item für jeden Knoten die summe der x für ausgehende Kanten varibalen gleich dem Sollgrad
 \end{itemize}	
-\subsection{SAT}
+\subsection{SAT mit Kanten}
 TODO Rausfinden wie SAT degree gemacht wird
 \begin{itemize}
 	\item Alle möglichen Kanten als Bool Variable wie OrTools
@@ -158,6 +158,15 @@ TODO Rausfinden wie SAT degree gemacht wird
 		\item alle Kanten betrachten welche die Punkt menge teilen
 		\item testen ob anzahl kanten * 2 = sum(degree)
 	\end{itemize}
+\end{itemize}
+\section{SAT mit Dreicken}
+\begin{itemize}
+	\item Alle möglichen Dreicke erstellen
+	\item Spätere Verbesserung nur Leere Dreicke
+	\item jedes Dreieck als Bool Variable
+	\item Intersection Konstriend wie bei Kanten 
+	\item Degree normaler Knoten degree = sum(Dreicke)
+	\item Degree auf Convexe Hülle degree - 1 = sum (Dreicke)
 \end{itemize}
 \section{Theoretische Mehrere Lösungen}
 TODO Wo soll das hin

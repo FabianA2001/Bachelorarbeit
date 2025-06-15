@@ -143,7 +143,7 @@ class Graph_Wrapper:
         for edge in self.get_hull_edges():
             self.add_edge(edge[0], edge[1], True)
 
-    def get_triangles_for_node(self, node: int) -> list[int]:
+    def get_triangles_from_node(self, node: int) -> list[int]:
         """Gibt die Dreiecke des Graphen zurück."""
         return self._data.get_triangles_for_node(node)
 
@@ -183,7 +183,7 @@ class Graph_Wrapper:
         """Speichert den Graphen als JSON-Datei."""
         save_graph_as_json(self._data, filename)
 
-    def get_all_nodes_name(self) -> list[int]:
+    def get_all_nodes(self) -> list[int]:
         """Gibt alle Knoten des Graphen zurück."""
         return self._data.get_all_nodes_name
 
@@ -230,14 +230,14 @@ class Graph_Wrapper:
     def number_of_correct_nodes(self) -> int:
         """Gibt die Anzahl der Knoten im Graphen zurück."""
         counter = 0
-        for node in self.get_all_nodes_name():
+        for node in self.get_all_nodes():
             if self.check_node_for_degree(node):
                 counter += 1
         return counter
 
     def percentage_of_correct_nodes(self) -> float:
         """Gibt den Prozentsatz der Knoten im Graphen zurück, die die richtige Anzahl an Nachbarn haben."""
-        return self.number_of_correct_nodes() / len(self.get_all_nodes_name()) * 100
+        return self.number_of_correct_nodes() / len(self.get_all_nodes()) * 100
 
     def add_all_possible_edges(
         self, default_for_active: bool = False, ignore_hull: bool = False
@@ -261,14 +261,14 @@ class Graph_Wrapper:
 
     def get_degree_of_node(self, node: int) -> int:
         """Gibt den Grad eines Knotens zurück."""
-        if node not in self.get_all_nodes_name():
+        if node not in self.get_all_nodes():
             raise ValueError(f"Node {node} does not exist in the graph.")
         return self._data.degree(node)
 
     def evaluate_graph(self) -> float:
         evaluation = 0.0
-        number_of_nodes = len(self.get_all_nodes_name())
-        for node in self.get_all_nodes_name():
+        number_of_nodes = len(self.get_all_nodes())
+        for node in self.get_all_nodes():
             desired_degree = self.get_desired_degree_node(node)
             degree = self._data.degree_aktive(node)
             x = (
@@ -304,7 +304,7 @@ class Graph_Wrapper:
     def impossible_edges(self) -> list[tuple[int, int]]:
         """Gibt alle Kanten zurück, die nicht im Graphen vorhanden sind."""
         impossible_edges = []
-        for node1, node2 in itertools.combinations(self.get_all_nodes_name(), 2):
+        for node1, node2 in itertools.combinations(self.get_all_nodes(), 2):
             if self.check_edge_interection_with_nodes((node1, node2), False):
                 impossible_edges.append((min(node1, node2), max(node1, node2)))
         return impossible_edges
@@ -312,6 +312,4 @@ class Graph_Wrapper:
     @cached_property
     def get_max_degree(self) -> int:
         """Gibt den maximalen Grad des Graphen zurück."""
-        return max(
-            self.get_desired_degree_node(node) for node in self.get_all_nodes_name()
-        )
+        return max(self.get_desired_degree_node(node) for node in self.get_all_nodes())
