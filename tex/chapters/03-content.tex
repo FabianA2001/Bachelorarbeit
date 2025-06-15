@@ -8,7 +8,7 @@ Der Generelle Ablauf fängt mit einer zufälligen Punktmenge an.
 Hierbei wird nur die Anzahl der Punkte vorgegeben.
 Danach wird mit einem klassischen Verfahren eine Triangulation erstellt.
 Von dieser werden dann die Grade und die Knoten gespeichert.
-\subsubsection{Delaunay mit Flips}
+\subsubsection{Delaunay mit zufälligen Flips}
 Das erste klassische Verfahren zur Grad bestimmung ist die Delaunay Triangulation in verbindung mit Flips.
 Die Delaunay Triangulation wurde im Kapitel~\ref{sec:delaunay_triangulation} bereits vorgestellt.
 Für die erstellung der Delaunay Triangulation wird die Bibliothek \texttt{scipy} genutzt.
@@ -21,11 +21,14 @@ Sollten am Ende mehr als zwei Dreicke gefunden werden, so müssen die beiden Dre
 Hierbei kann es nur zwei lerrer Dreicke geben da es in einer Triangulation nicht zu überschneidungen kommen darf.
 Von diesen beiden Dreicken (\(x_{0.0}, x_{0.1}, v_0\)) und (\(x_{0.0}, x_{0.1}, v_1\)) wird dann die Kante \(e_0\) durch die Kante bestehend aus \(v_0\) und \(v_1\) ersetzt.
 \subsubsection{Random Kanten}
-\begin{itemize}
-	\item Alle möglichen Kanten erstellen
-	\item Random Kanten auswählen
-	\item wenn diese keine Vorhande schneiden hinzufügen
-\end{itemize}
+Bei der zweiten klassischen Triangulation werden zufällig Kanten hinzugefügt.
+Hierbei werden zunächst alle möglichen Kanten zwischen den Punkten erstellt.
+Bei diesem Schritt werden Kanten ausgeschlossen welche einen anderen Punkt schneiden.
+Diese Kanten werden dann in einer zufälligen Reinfolge betrachet.
+Bei der auswahl der finalen Kanten wird geprüft ob die Kante eine der zuvor ausgewählten Kanten schneidet.
+Sollte dies nicht der Fall sein wird die Kante ausgewählt.
+Dieses Verfahren ist maximal da wird alle möglichen Kanten betrachten.
+
 \subsection{Nein - Instanzen}
 \begin{itemize}
 	\item Move Point liefert meistens nein Instanzen
