@@ -129,8 +129,8 @@ class SAT_TRI(Solver):
                 self.atleast_tri_constraint(
                     self.graph.get_number_tris_in_Triangulation()
                 )
-                self.intersection_constraint()
-                self.degree_constraint()
+                time_function(self.intersection_constraint)()
+                time_function(self.degree_constraint)()
             elif parameter.get("version") == 0.2:
                 pass
             else:

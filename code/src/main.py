@@ -56,7 +56,7 @@ def custom_points() -> list[Node]:
 
 def test_algo():
     PATH = "simple_70/000_random.json"
-    # PATH = "iterative_60_10/000_random.json"
+    PATH = "iterative_60_10/001_random.json"
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
@@ -66,7 +66,7 @@ def test_algo():
     # print(len(time_function(graph.exclude_edge_partition)()))
     # time_function(graph.get_all_intersections)()
     # print(*graph.get_all_edges(), sep="\n")
-    solver = SAT_TRI(graph)
+    solver = SAT(graph)
     logging.info(f"solution found: {solver.solve({'timeout': -1, 'version': 0.1})}")
     # logging.info(f"evaluation: {graph.evaluate_graph()}")
     graph.show_and_save()
