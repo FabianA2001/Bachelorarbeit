@@ -1,30 +1,38 @@
 \chapter{Preliminaries}
 
 \begin{definition}[Überschneidung]
-	Zwei Kanten gelten als Schneidet wenn sie sich in der Ebene kreuzen.
-	Im Folgendem werden mit der Funktoin \(\intersection: ( \mathbb{Q}^2, \mathbb{Q}^2) \longrightarrow \{\mathbb{Q}^2\}\) alle Kanten angegeben, die die übergebene Kante schneiden.
+    Zwei Kanten gelten als überschneidend, wenn sie sich in der Ebene kreuzen.
+    Im Folgenden bezeichnet die Funktion \(\intersection: (\mathbb{Q}^2 \times \mathbb{Q}^2) \to \mathcal{P}(\mathbb{Q}^2 \times \mathbb{Q}^2)\) die Menge aller Kanten, die eine gegebene Kante schneiden.
 \end{definition}
+
 \begin{definition}[Triangulation]
-	Eine Triangulation einer Punktemenge \(P \in \mathbb{Q}^2\) ist ein Maximaler kreuzungsfreier Graph.
-	Das bedeutet man kann keine weiteren Kanten hinzufügen ohne das sich diese Schneiden.
+    Eine Triangulation einer Punktemenge \(P \subset \mathbb{Q}^2\) ist ein maximaler kreuzungsfreier Graph auf \(P\).
+    Das bedeutet, es können keine weiteren Kanten hinzugefügt werden, ohne dass sich Kanten schneiden.
 \end{definition}
+
 \begin{definition}[Grad]
-	Der Grad gibt die Anzahl der anliegenden Kanten an einem Knoten an.
-	Im folgenden wird er durch die Funktion \(\degree: \mathbb{Q}^2 \longrightarrow \mathbb{Q}\) angegeben.
+    Der Grad eines Knotens ist die Anzahl der anliegenden Kanten.
+    Im Folgenden wird er durch die Funktion \(\degree: \mathbb{Q}^2 \to \mathbb{N}\) angegeben.
 \end{definition}
+
 \begin{definition}[Gradbeschränkte Triangulation]
 	Die Gradbeschränkte Triangulation hat die gleichen Vorraussetzungen wie eine Triangulation.
 	Zusätzlich gibt es noch eine Funktion \(\degrees: \mathbb{Q}^2 \longrightarrow \mathbb{Q}\).
 	Diese gibt den Grad an welcher ein Knoten haben muss.
 \end{definition}
-\begin{definition}[Flipp]
-	Eine Operation bei der eine Kante entfernt und eine andere Hinzugefügt wird.
-	Hierbei dürfen nach der Operation die Triangulations Eigenschaften nicht verletzt sein.
-	Ein Flip wird durch die Funktion \(\flip:(\mathbb{Q}^2,\mathbb{Q}^2) \longrightarrow (\mathbb{Q}^2,\mathbb{Q}^2)\) definiert.
 
+\begin{definition}[Flip]
+    Ein Flip ist eine Operation, bei der eine Kante entfernt und eine andere hinzugefügt wird, sodass die Eigenschaften einer Triangulation erhalten bleiben.
+    Ein Flip wird durch die Funktion \(\flip: (\mathbb{Q}^2 \times \mathbb{Q}^2) \to (\mathbb{Q}^2 \times \mathbb{Q}^2)\) definiert.
 \end{definition}
-\begin{definition}[Diagonale Flipp]
-	Ein Diagonaler Flipp hat die gleichen Eigenschaft wie ein Flipp.
-	Zusätzlich wird für die Kante \((b,c)\) die leeren Dreicke \(\triangle abc \) und  \(\triangle bcd \) gesucht und \((a,d)\) zurückgeben.
-	Er wird durch die Funktion \(\flipDio:(\mathbb{Q}^2,\mathbb{Q}^2) \longrightarrow (\mathbb{Q}^2,\mathbb{Q}^2) definiert\).
+
+\begin{definition}[Diagonaler Flip]
+    Ein diagonaler Flip ist ein Flip, bei dem in einem konvexen Viereck\((a,b,c,d)\) die Diagonale \((a,c)\) durch die Diagonale \((b,d)\) ersetzt wird.
+    Er wird durch die Funktion \(\flipDiag: (\mathbb{Q}^2 \times \mathbb{Q}^2) \to (\mathbb{Q}^2 \times \mathbb{Q}^2)\) definiert.
+\end{definition}
+
+\begin{definition}[Konvexe Hülle mit Randpunkten]
+    Die konvexe Hülle einer Punktmenge ist die kleinste konvexe Menge, die alle Punkte enthält.
+    Die Randpunkte sind die Punkte, die auf dem Rand der konvexen Hülle liegen, einschließlich solcher, die nicht an einer Ecke liegen.
+    Die konvexe Hülle inklusive Randpunkte wird durch die Funktion \(\convexhull: \mathcal{P}(\mathbb{Q}^2) \to \mathcal{P}(\mathbb{Q}^2)\) definiert.
 \end{definition}
