@@ -152,6 +152,10 @@ class Run_Instance:
         if solvers:
             table = table[table["solver"].isin(solvers_name)]
 
+        # Kombiniere Instanz und Dateiname für die x-Achse
+        table["instance_file"] = table["instance"] + "/" + table["file"]
+        table = table.drop(columns=["instance", "file"])
+
         all_args = []
         for arg_list in outer_parameter.values():
             for arg in arg_list:
@@ -159,40 +163,7 @@ class Run_Instance:
 
         # Filter table to only include rows where args are in all_args
         table = table[table["args"].isin(all_args)]
-
-        # Create mapping from unique args to numbers, grouped by solver
-        solver_args_mapping = {}
-        for solver in solvers_name:
-            solver_table = table[table["solver"] == solver]
-            unique_args = solver_table["args"].drop_duplicates().tolist()
-            solver_args_mapping[solver] = {
-                str(args): (i + 1, args) for i, args in enumerate(unique_args)
-            }
-
-        legend = ""
-        legend += "\nArgs Legend Mapping (by Solver):"
-        legend += "\n" + "=" * 50
-        for solver, args_mapping in solver_args_mapping.items():
-            legend += f"\n{solver}:"
-            for args_dict_str, number_args in args_mapping.items():
-                number = number_args[0]
-                args_dict = number_args[1]
-                # Find the original args dict from the string representation
-                legend += f"\n|#{number}: {format_dictionary(args_dict, 2)}"
-        legend += "\n" + "=" * 50
-        logging.info(legend)
-
-        table["args_str"] = table.apply(
-            lambda row: f"{(solver_args_mapping[row['solver']][str(row['args'])])[0]}",
-            axis=1,
-        )
-
-        table["solver_args"] = table["solver"] + "-" + table["args_str"]
-        table = table.drop(columns=["solver", "args_str"])
-
-        # Kombiniere Instanz und Dateiname für die x-Achse
-        table["instance_file"] = table["instance"] + "/" + table["file"]
-        table = table.drop(columns=["instance", "file"])
+        table["args_str"] = table["args"].apply(lambda x: str(x))
 
         # --- Timeout-Filter: Behalte nur Zeilen mit maximalem Timeout pro solver/instance_file ---
         # Sonderfall: -1 zählt als höchster Wert
@@ -203,15 +174,47 @@ class Run_Instance:
 
         table["timeout_rank"] = timeout_rank(table["timeout"])
         idx = (
-            table.groupby(["instance_file", "solver_args"])["timeout_rank"].transform(
-                "max"
-            )
+            table.groupby(["instance_file", "solver", "args_str"])[
+                "timeout_rank"
+            ].transform("max")
             == table["timeout_rank"]
         )
         table = table[idx]
         table = table.drop(columns=["timeout_rank"])
 
+        # Create mapping from unique args to numbers, grouped by solver
+        solver_args_mapping = {}
+        for solver in solvers_name:
+            solver_table = table[table["solver"] == solver]
+            unique_args = solver_table["args"].drop_duplicates().tolist()
+            solver_args_mapping[solver] = {}
+            for i, args in enumerate(unique_args):
+                timeout = solver_table[solver_table["args"] == args]["timeout"].iloc[0]
+                solver_args_mapping[solver][str(args)] = (i + 1, args, timeout)
+
+        table["args_number"] = table.apply(
+            lambda row: f"{(solver_args_mapping[row['solver']][str(row['args'])])[0]}",
+            axis=1,
+        )
+
+        table["solver_args"] = table["solver"] + "-" + table["args_number"]
+        table = table.drop(columns=["solver", "args_number"])
+
         table = table.sort_values(by=["instance_file"])
+
+        legend = ""
+        legend += "\nArgs Legend Mapping (by Solver):"
+        legend += "\n" + "=" * 50
+        for solver, args_mapping in solver_args_mapping.items():
+            legend += f"\n\n{solver}:"
+            for args_dict_str, number_args in args_mapping.items():
+                number = number_args[0]
+                args_dict = number_args[1]
+                # Find the original args dict from the string representation
+                legend += f"\n|#{number} in {number_args[2]}s: {format_dictionary(args_dict, 2)}\n"
+        legend = legend[:-1]
+        legend += "\n" + "=" * 50
+        logging.info(legend)
 
         # self.create_plt(
         #     table=table,
