@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
 import time
+from utils import format_dictionary
 
 
 class TimeoutError(Exception):
@@ -51,22 +52,11 @@ class Solver(ABC):
         if self.reach_timeout():
             raise TimeoutError()
 
-    def format_parameter(self, dictionary: dict, indention=1) -> str:
-        """
-        Formats the parameters for logging.
-        """
-        result = ""
-        for key, value in dictionary.items():
-            if type(value) is dict:
-                value = self.format_parameter(value, indention + 1)
-            result += f"\n{'|' * indention}{key}: {value}"
-        return result
-
     def solve(self, parameter: dict) -> dict:
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
         logging.info(
-            f"Starting {self.name} with parameters: {self.format_parameter(parameter)}"
+            f"Starting {self.name} with parameters: {format_dictionary(parameter)}"
         )
         self.timeout = parameter["timeout"]
         self.start_time = time.time()

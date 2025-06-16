@@ -143,7 +143,17 @@ def run_instance_lokal():
                         fix_hull=True,
                     )
                 ),
-            }
+            },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    SAT_Parameter(
+                        add_allEdges_or_exclude_edges=True,
+                        intersection=True,
+                        degree_atleast=True,
+                    )
+                ),
+            },
         ]
     }
     ri = run_instance.Run_Instance(path_benchmark=BENCHMARK_PATH, solver=get_solvers())

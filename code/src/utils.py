@@ -52,3 +52,15 @@ def time_function(func):
         return result
 
     return wrapper
+
+
+def format_dictionary(dictionary: dict, indention=1) -> str:
+    """
+    Formats the parameters for logging.
+    """
+    result = ""
+    for key, value in dictionary.items():
+        if type(value) is dict:
+            value = format_dictionary(value, indention + 1)
+        result += f"\n{'|' * indention}{key}: {value}"
+    return result

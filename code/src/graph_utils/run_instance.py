@@ -127,8 +127,8 @@ class Run_Instance:
                 "solver": result["parameters"]["args"]["solver_name"],
                 "instance": result["parameters"]["args"]["instance_name"],
                 "file": result["parameters"]["args"]["file_name"],
-                "version": result["parameters"]["args"]["parameter"]["version"],
                 "correct": result["result"]["correct"],
+                "args": result["parameters"]["args"]["parameter"]["args"],
                 "evaluation": result["result"]["evaluation"],
                 "runtime": result["runtime"],
                 "timeout": result["parameters"]["args"]["parameter"]["timeout"],
@@ -146,20 +146,52 @@ class Run_Instance:
             table.loc[~table["correct"], "runtime"] = -1
             table = table.drop(columns=["correct"])
 
+        if instances:
+            table = table[table["instance"].isin(instances)]
+        solvers_name = [solver.NAME for solver in solvers]
+        if solvers:
+            table = table[table["solver"].isin(solvers_name)]
+
+        table["args_str"] = table["args"].apply(lambda x: str(x))
+        table["solver_args"] = table["solver"] + "-" + table["args_str"]
+        table = table.drop(columns=["solver", "args_str"])
+
+        # Kombiniere Instanz und Dateiname für die x-Achse
+        table["instance_file"] = table["instance"] + "/" + table["file"]
+        table = table.drop(columns=["instance", "file"])
+
+        # --- Timeout-Filter: Behalte nur Zeilen mit maximalem Timeout pro solver/instance_file ---
+        # Sonderfall: -1 zählt als höchster Wert
+
+        def timeout_rank(x):
+            # -1 wird als sehr großer Wert behandelt
+            return x.replace(-1, float("inf"))
+
+        table["timeout_rank"] = timeout_rank(table["timeout"])
+        idx = (
+            table.groupby(["instance_file", "solver_args"])["timeout_rank"].transform(
+                "max"
+            )
+            == table["timeout_rank"]
+        )
+        table = table[idx]
+        table = table.drop(columns=["timeout_rank"])
+
+        # table = table.sort_values(by=["instance_file"])
+        print(table)
+
         # self.create_plt(
         #     table=table,
         #     y="evaluation",
         #     block=False,
         #     instances=instances,
-        #     solvers=[solver.NAME for solver in solvers],
+        #     ,
         #     only_newest=only_newest,
         # )
         self.create_plt(
             table=table,
             y="runtime",
             block=block,
-            instances=instances,
-            solvers=[solver.NAME for solver in solvers],
         )
 
     def create_plt(
@@ -167,45 +199,13 @@ class Run_Instance:
         table,
         y: str,
         block: bool = False,
-        instances: list[str] = [],
-        solvers: list[str] = [],
     ):
-        if instances:
-            table = table[table["instance"].isin(instances)]
-        if solvers:
-            table = table[table["solver"].isin(solvers)]
-
-        # Kombiniere Instanz und Dateiname für die x-Achse
-
-        table["instance_file"] = table["instance"] + "/" + table["file"]
-
-        table["solver_version"] = table["solver"] + " v" + table["version"].astype(str)
-
-        # --- Timeout-Filter: Behalte nur Zeilen mit maximalem Timeout pro solver/instance_file ---
-        # Sonderfall: -1 zählt als höchster Wert
-        def timeout_rank(x):
-            # -1 wird als sehr großer Wert behandelt
-            return x.replace(-1, float("inf"))
-
-        table["timeout_rank"] = timeout_rank(table["timeout"])
-        idx = (
-            table.groupby(["solver_version", "instance_file"])[
-                "timeout_rank"
-            ].transform("max")
-            == table["timeout_rank"]
-        )
-        table = table[idx]
-        table = table.drop(columns=["timeout_rank"])
-
-        table = table.drop(columns=["version", "solver", "instance", "file"])
-        table = table.sort_values(by=["solver_version", "instance_file"])
-        print(table)
         plt.figure()
         sns.barplot(
             data=table,
             x="instance_file",
             y=y,
-            hue="solver_version",
+            hue="solver_args",
         )
         plt.title(f"{y.capitalize()} pro Instanz/File und Solver-Version")
         plt.xlabel("Instanz/Datei")
@@ -228,11 +228,7 @@ class Run_Instance:
                     list_parameter = outer_parameter[solver]
                 else:
                     logging.warning("No parameter found for solver, using default.")
-                    list_parameter = [
-                        {
-                            "timeout": self.DEFAULT_TIME,
-                        }
-                    ]
+                    list_parameter = [{"timeout": self.DEFAULT_TIME, "args": None}]
                 for parameter in list_parameter:
                     self.run_solver_on_instance(
                         solver_type=solver,
