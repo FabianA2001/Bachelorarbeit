@@ -115,8 +115,9 @@ class Run_Instance:
 
     def show_results(
         self,
-        instances: list[str] = [],
-        solvers: list[type[Solver]] = [],
+        instances: list[str],
+        solvers: list[type[Solver]],
+        outer_parameter: dict,
         ignore_correct: bool = False,
         block: bool = False,
         host: str = socket.gethostname(),
@@ -150,6 +151,14 @@ class Run_Instance:
         solvers_name = [solver.NAME for solver in solvers]
         if solvers:
             table = table[table["solver"].isin(solvers_name)]
+
+        all_args = []
+        for arg_list in outer_parameter.values():
+            for arg in arg_list:
+                all_args.append(arg["args"])
+
+        # Filter table to only include rows where args are in all_args
+        table = table[table["args"].isin(all_args)]
 
         # Create mapping from unique args to numbers
         unique_args = table["args"].drop_duplicates().tolist()
@@ -190,7 +199,6 @@ class Run_Instance:
         table = table.drop(columns=["timeout_rank"])
 
         table = table.sort_values(by=["instance_file"])
-        # print(table)
 
         # self.create_plt(
         #     table=table,
@@ -249,7 +257,7 @@ class Run_Instance:
                     )
         # from algbench import describe
         # describe(self.path_benchmark)
-        self.show_results(insts, solvers, ignore_correct)
+        self.show_results(insts, solvers, outer_parameter, ignore_correct)
 
     @staticmethod
     def get_selection(lit: list):
