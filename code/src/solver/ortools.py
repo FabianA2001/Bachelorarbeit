@@ -3,6 +3,17 @@ from ortools.sat.python import cp_model
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
 from utils import time_function
+from dataclasses import dataclass
+
+
+@dataclass
+class Parameter:
+    intersection: bool = False
+    degree: bool = False
+    number_edges: bool = False
+    evaluation_direction: bool = False
+    degree_direction: bool = False
+    maximize_edges: bool = False
 
 
 class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
@@ -112,6 +123,11 @@ class Ortools(Solver):
         self.model.Maximize(sum(self.vars_int.values()))
 
     def _actual_solver(self, parameter: dict) -> dict:
+        if not isinstance(parameter, dict):
+            raise TypeError("Parameter must be a dictionary.")
+
+        parameter_data: Parameter = Parameter(**(parameter["args"]))
+
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
         self.graph.add_all_possible_edges(default_for_active=False)
@@ -122,34 +138,32 @@ class Ortools(Solver):
             for edge in self.graph.get_all_edges()
         }
 
-        stop_after_first_solution = True
-        if parameter["version"] == 0.1:
+        # Apply constraints based on parameter_data
+        if parameter_data.maximize_edges:
             self.model.Maximize(sum(list(self.vars.values())))
+
+        if parameter_data.intersection:
             self.constraint_intersection()
+
+        if parameter_data.degree:
             self.constraint_degree()
-        if parameter["version"] == 0.2:
-            self.constraint_intersection()
-            self.constraint_degree()
+
+        if parameter_data.number_edges:
             self.constraint_set_number_edges(
                 self.graph.get_number_edges_in_Triangulation()
             )
-        if parameter["version"] == 0.3:
+
+        stop_after_first_solution = True
+        if parameter_data.evaluation_direction:
             if parameter["timeout"] == -1:
                 logging.warning("Es sollte ein Timeout gesetzt werden.")
-            time_function(self.constraint_intersection)()
             time_function(self.evaluation_direction)()
-            self.constraint_set_number_edges(
-                self.graph.get_number_edges_in_Triangulation()
-            )
             stop_after_first_solution = False
-        else:
+
+        if parameter_data.degree_direction:
             if parameter["timeout"] == -1:
                 logging.warning("Es sollte ein Timeout gesetzt werden.")
-            time_function(self.constraint_intersection)()
             time_function(self.degree_direction)()
-            self.constraint_set_number_edges(
-                self.graph.get_number_edges_in_Triangulation()
-            )
             stop_after_first_solution = False
 
         solver = cp_model.CpSolver()

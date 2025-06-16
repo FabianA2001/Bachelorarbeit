@@ -132,6 +132,7 @@ class SAT_TRI(Solver):
 
         try:
             parameter_data: Parameter = Parameter(**(parameter.get("args", {})))
+            self.setup(parameter_data)
 
             self.solver = SatSolver(name=parameter_data.solver_name)
             if not hasattr(self.solver, "interrupt"):

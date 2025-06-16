@@ -4,6 +4,7 @@ from graph_utils import generate
 from solver.delaunay import Delaunay
 from graph_utils.node import Node, load_nodes_from_json
 from solver.ortools import Ortools
+from solver.ortools import Parameter as Ortools_Parameter
 from solver.raw_flips import Raw_Flips
 from solver.iterative import Iterative
 from solver.random_adder import Random_Adder
@@ -26,7 +27,7 @@ def get_solvers():
 
 
 def get_parameters():
-    return [SAT_Parameter]
+    return [SAT_Parameter, Ortools_Parameter, SAT_TRI_Parameter]
 
 
 def custom_points() -> list[Node]:
@@ -58,6 +59,18 @@ def custom_points() -> list[Node]:
         return graph.get_aktive_graph_nodes()
     else:
         return nodes
+
+
+def ortools_algorithm(graph):
+    solver = Ortools(graph)
+    para = Ortools_Parameter(
+        intersection=True,
+        degree=True,
+        number_edges=True,
+    )
+    logging.info(
+        f"solution found: {solver.solve({'timeout': -1, 'args': asdict(para)})}"
+    )
 
 
 def sat_algorithm(graph):
@@ -94,6 +107,7 @@ def test_algo():
     graph = Graph_Wrapper(nodes)
     sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
+    # ortools_algorithm(graph)
     graph.show_and_save()
 
 
