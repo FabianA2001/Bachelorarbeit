@@ -49,6 +49,9 @@ class SAT(Solver):
         self.edges = self.graph.get_all_edges()
         self.edges_to_index = {edge: i for i, edge in enumerate(self.edges)}
         self.all_vars = list(range(1, len(self.edges) + 1))
+        logging.info(
+            f"Anzahl Kanten: {len(self.edges)}, Anzahl Variablen: {len(self.all_vars)}"
+        )
 
     def get_index(self, edge) -> int:
         if edge in self.edges_to_index:

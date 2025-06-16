@@ -80,6 +80,7 @@ def sat_algorithm(graph):
         intersection=True,
         degree_atleast=True,
         fix_hull=True,
+        # exclude_edges=True,
     )
     logging.info(
         f"solution found: {solver.solve({'timeout': -1, 'args': asdict(para)})}"
