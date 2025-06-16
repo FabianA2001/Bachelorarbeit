@@ -30,7 +30,7 @@ class SAT_TRI(Solver):
     def setup(self, parameter: Parameter):
         self.graph.add_all_possible_edges(default_for_active=False)
         if not parameter.add_allEdges_or_exlucde_edges:
-            edges = self.graph.exclude_edge_partition()
+            edges = self.graph.exclude_edge_partition
             for edge in edges:
                 try:
                     self.graph.remove_edge(edge)

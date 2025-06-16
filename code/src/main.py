@@ -76,7 +76,7 @@ def ortools_algorithm(graph):
 def sat_algorithm(graph):
     solver = SAT(graph)
     para = SAT_Parameter(
-        add_allEdges_or_exlucde_edges=True,
+        add_allEdges_or_exclude_edges=False,
         intersection=True,
         degree_atleast=True,
         fix_hull=True,
@@ -99,8 +99,8 @@ def sat_Tri_algorithm(graph):
 
 
 def test_algo():
-    PATH = "simple_70/000_random.json"
-    PATH = "iterative_60_10/000_random.json"
+    PATH = "simple_80/000_random.json"
+    # PATH = "iterative_60_10/000_random.json"
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()

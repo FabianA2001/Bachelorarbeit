@@ -48,7 +48,7 @@ def time_function(func):
         result = func(*args, **kwargs)
         end_time = time.time()
         elapsed_time = end_time - start_time
-        logging.info(f"Function {func.__name__} took {elapsed_time:.4f} seconds")
+        logging.info(f"Function {func.__name__:<40} took {elapsed_time:>8.4f} seconds")
         return result
 
     return wrapper

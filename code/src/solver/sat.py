@@ -18,7 +18,7 @@ sonnst aktiviert True den constrient
 @dataclass
 class Parameter:
     solver_name: str = "glucose3"
-    add_allEdges_or_exlucde_edges: bool = True
+    add_allEdges_or_exclude_edges: bool = True
     number_edges: bool = False
     intersection: bool = False
     all_edges: bool = False
@@ -39,8 +39,8 @@ class SAT(Solver):
 
     def setup(self, parameter: Parameter):
         self.graph.add_all_possible_edges(default_for_active=False)
-        if not parameter.add_allEdges_or_exlucde_edges:
-            edges = self.graph.exclude_edge_partition()
+        if not parameter.add_allEdges_or_exclude_edges:
+            edges = self.graph.exclude_edge_partition
             for edge in edges:
                 try:
                     self.graph.remove_edge(edge)
@@ -53,7 +53,9 @@ class SAT(Solver):
     def get_index(self, edge) -> int:
         if edge in self.edges_to_index:
             return self.edges_to_index[edge] + 1
-        return self.edges_to_index[(edge[1], edge[0])] + 1
+        if (edge[1], edge[0]) in self.edges_to_index:
+            return self.edges_to_index[(edge[1], edge[0])] + 1
+        return -1
 
     def get_edge(self, index) -> tuple[int, int]:
         return self.edges[index - 1]
@@ -71,17 +73,11 @@ class SAT(Solver):
     def intersection_constraint(self):
         intersection = self.graph.get_all_intersections(self.timeout_error)
         for edge, other_edge in intersection:
-            if (
-                edge in self.graph.impossible_edges
-                or (edge[1], edge[0]) in self.graph.impossible_edges
-            ):
+            edge_index = self.get_index(edge)
+            other_edge_index = self.get_index(other_edge)
+            if edge_index == -1 or other_edge_index == -1:
                 continue
-            if (
-                other_edge in self.graph.impossible_edges
-                or (other_edge[1], other_edge[0]) in self.graph.impossible_edges
-            ):
-                continue
-            self.solver.add_clause([-self.get_index(edge), -self.get_index(other_edge)])
+            self.solver.add_clause([-edge_index, -other_edge_index])
         self.timeout_error()
 
     def alle_edges_constraint(self):
@@ -144,7 +140,7 @@ class SAT(Solver):
             raise TimeoutError()
 
     def exclude_edges_constraint(self):
-        for edge in self.graph.exclude_edge_partition():
+        for edge in self.graph.exclude_edge_partition:
             if edge in self.graph.impossible_edges:
                 continue
             index = self.get_index(edge)
@@ -186,23 +182,23 @@ class SAT(Solver):
                 )
             self.setup(parameter_data)
             if parameter_data.number_edges:
-                self.number_edge_constraint()
+                time_function(self.number_edge_constraint)()
             if parameter_data.intersection:
-                self.intersection_constraint()
+                time_function(self.intersection_constraint)()
             if parameter_data.all_edges:
-                self.alle_edges_constraint()
+                time_function(self.alle_edges_constraint)()
             if parameter_data.intersection_and_all_edges:
-                self.alle_edges_and_intersection_constraint()
+                time_function(self.alle_edges_and_intersection_constraint)()
             if parameter_data.degree_exact:
-                self.degree_constraint(exact_atleast=True)
+                time_function(self.degree_constraint)(exact_atleast=True)
             if parameter_data.degree_atleast:
-                self.degree_constraint(exact_atleast=False)
+                time_function(self.degree_constraint)(exact_atleast=False)
             if parameter_data.degree_subset:
-                self.degree_subset_constraint()
+                time_function(self.degree_subset_constraint)()
             if parameter_data.fix_hull:
-                self.set_hull_fix_constraint()
+                time_function(self.set_hull_fix_constraint)()
             if parameter_data.exclude_edges:
-                self.exclude_edges_constraint()
+                time_function(self.exclude_edges_constraint)()
 
             if "timeout" not in parameter:
                 raise ValueError("Timeout parameter is missing.")

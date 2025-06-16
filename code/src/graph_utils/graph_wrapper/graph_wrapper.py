@@ -286,9 +286,6 @@ class Graph_Wrapper:
         ), f"Evaluation must be smaller then 1, but got {evaluation}."
         return evaluation
 
-    def exclude_edge_partition(self) -> list[tuple[int, int]]:
-        return Exclude_Edge_Partition(self._data)()
-
     def check_degree_possible(self) -> bool:
         """Überprüft, ob der Graph eine Triangulation ist und ob die Knotengrade möglich sind."""
         return self._check.check_degree_possible()
@@ -313,3 +310,7 @@ class Graph_Wrapper:
     def get_max_degree(self) -> int:
         """Gibt den maximalen Grad des Graphen zurück."""
         return max(self.get_desired_degree_node(node) for node in self.get_all_nodes())
+
+    @cached_property
+    def exclude_edge_partition(self) -> list[tuple[int, int]]:
+        return Exclude_Edge_Partition(self._data)()

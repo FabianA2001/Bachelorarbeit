@@ -51,10 +51,23 @@ class Solver(ABC):
         if self.reach_timeout():
             raise TimeoutError()
 
+    def format_parameter(self, dictionary: dict, indention=1) -> str:
+        """
+        Formats the parameters for logging.
+        """
+        result = ""
+        for key, value in dictionary.items():
+            if type(value) is dict:
+                value = self.format_parameter(value, indention + 1)
+            result += f"\n{'|' * indention}{key}: {value}"
+        return result
+
     def solve(self, parameter: dict) -> dict:
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
-        logging.info(f"Starting {self.name} with parameters: {parameter}")
+        logging.info(
+            f"Starting {self.name} with parameters: {self.format_parameter(parameter)}"
+        )
         self.timeout = parameter["timeout"]
         self.start_time = time.time()
         if not self.graph.check_degree_possible():
