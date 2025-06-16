@@ -133,17 +133,17 @@ def create_instance():
 def run_instance_lokal():
     outer_parameter = {
         SAT: [
-            {
-                "timeout": -1,
-                "args": asdict(
-                    SAT_Parameter(
-                        add_allEdges_or_exclude_edges=True,
-                        intersection=True,
-                        degree_atleast=True,
-                        fix_hull=True,
-                    )
-                ),
-            },
+            # {
+            #     "timeout": -1,
+            #     "args": asdict(
+            #         SAT_Parameter(
+            #             add_allEdges_or_exclude_edges=True,
+            #             intersection=True,
+            #             degree_atleast=True,
+            #             fix_hull=True,
+            #         )
+            #     ),
+            # },
             {
                 "timeout": -1,
                 "args": asdict(
@@ -166,14 +166,14 @@ def run_instance_lokal():
                     )
                 ),
             },
-            {
-                "timeout": 30,
-                "args": asdict(
-                    Ortools_Parameter(
-                        intersection=True, degree=True, evaluation_direction=True
-                    )
-                ),
-            },
+            # {
+            #     "timeout": 30,
+            #     "args": asdict(
+            #         Ortools_Parameter(
+            #             intersection=True, degree=True, evaluation_direction=True
+            #         )
+            #     ),
+            # },
         ],
     }
     ri = run_instance.Run_Instance(path_benchmark=BENCHMARK_PATH, solver=get_solvers())

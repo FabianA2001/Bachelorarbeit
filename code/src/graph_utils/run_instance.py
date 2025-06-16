@@ -184,23 +184,28 @@ class Run_Instance:
 
         # Create mapping from unique args to numbers, grouped by solver
         solver_args_mapping = {}
+        solver_args_multiple = {}
         for solver in solvers_name:
             solver_table = table[table["solver"] == solver]
             unique_args = solver_table["args"].drop_duplicates().tolist()
             solver_args_mapping[solver] = {}
+            solver_args_multiple[solver] = len(unique_args) > 1
             for i, args in enumerate(unique_args):
                 timeout = solver_table[solver_table["args"] == args]["timeout"].iloc[0]
                 solver_args_mapping[solver][str(args)] = (i + 1, args, timeout)
 
-        table["args_number"] = table.apply(
-            lambda row: f"{(solver_args_mapping[row['solver']][str(row['args'])])[0]}",
-            axis=1,
-        )
+        def get_solver_args(row):
+            solver = row["solver"]
+            if solver_args_multiple[solver]:
+                number = (solver_args_mapping[solver][str(row["args"])])[0]
+                return f"{solver}-{number}"
+            else:
+                return solver
 
-        table["solver_args"] = table["solver"] + "-" + table["args_number"]
-        table = table.drop(columns=["solver", "args_number"])
+        table["solver_args"] = table.apply(get_solver_args, axis=1)
+        table = table.drop(columns=["solver"])
 
-        table = table.sort_values(by=["instance_file"])
+        table = table.sort_values(by=["instance_file", "solver_args"])
 
         legend = ""
         legend += "\nArgs Legend Mapping (by Solver):"
