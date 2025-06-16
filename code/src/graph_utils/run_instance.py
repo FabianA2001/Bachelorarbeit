@@ -169,17 +169,18 @@ class Run_Instance:
                 str(args): (i + 1, args) for i, args in enumerate(unique_args)
             }
 
-        # Print the mapping to console, grouped by solver
-        print("\nArgs Legend Mapping (by Solver):")
-        print("=" * 50)
+        legend = ""
+        legend += "\nArgs Legend Mapping (by Solver):"
+        legend += "\n" + "=" * 50
         for solver, args_mapping in solver_args_mapping.items():
-            print(f"\n{solver}:")
+            legend += f"\n{solver}:"
             for args_dict_str, number_args in args_mapping.items():
                 number = number_args[0]
                 args_dict = number_args[1]
                 # Find the original args dict from the string representation
-                print(f"  #{number}: {format_dictionary(args_dict)}")
-        print("=" * 50)
+                legend += f"\n|#{number}: {format_dictionary(args_dict, 2)}"
+        legend += "\n" + "=" * 50
+        logging.info(legend)
 
         table["args_str"] = table.apply(
             lambda row: f"{(solver_args_mapping[row['solver']][str(row['args'])])[0]}",

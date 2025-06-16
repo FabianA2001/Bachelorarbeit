@@ -165,7 +165,15 @@ def run_instance_lokal():
                         number_edges=True,
                     )
                 ),
-            }
+            },
+            {
+                "timeout": 30,
+                "args": asdict(
+                    Ortools_Parameter(
+                        intersection=True, degree=True, evaluation_direction=True
+                    )
+                ),
+            },
         ],
     }
     ri = run_instance.Run_Instance(path_benchmark=BENCHMARK_PATH, solver=get_solvers())
