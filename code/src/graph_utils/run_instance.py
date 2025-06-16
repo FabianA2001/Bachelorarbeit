@@ -134,8 +134,6 @@ class Run_Instance:
                 "timeout": result["parameters"]["args"]["parameter"]["timeout"],
             },
         )
-        # filter nach Host
-        # table = table.sort_values(by=["solver", "instance", "file"])
         # Filter nach Host, falls host angegeben ist
         if host:
             table = table[table["host"] == host]
@@ -177,7 +175,7 @@ class Run_Instance:
         table = table[idx]
         table = table.drop(columns=["timeout_rank"])
 
-        # table = table.sort_values(by=["instance_file"])
+        table = table.sort_values(by=["instance_file"])
         print(table)
 
         # self.create_plt(
