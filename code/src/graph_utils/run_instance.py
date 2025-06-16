@@ -11,6 +11,7 @@ import seaborn as sns
 import pandas as pd
 import socket
 import questionary
+from utils import format_dictionary
 
 
 class Run_Instance:
@@ -150,7 +151,20 @@ class Run_Instance:
         if solvers:
             table = table[table["solver"].isin(solvers_name)]
 
-        table["args_str"] = table["args"].apply(lambda x: str(x))
+        # Create mapping from unique args to numbers
+        unique_args = table["args"].drop_duplicates().tolist()
+        args_mapping = {str(args): i + 1 for i, args in enumerate(unique_args)}
+
+        # Print the mapping to console
+        print("\nArgs Legend Mapping:")
+        print("=" * 50)
+        for args_dict, number in args_mapping.items():
+            print(
+                f"#{number}: {format_dictionary(unique_args[args_mapping[str(args_dict)] - 1])}"
+            )
+        print("=" * 50)
+
+        table["args_str"] = table["args"].apply(lambda x: f"{args_mapping[str(x)]}")
         table["solver_args"] = table["solver"] + "-" + table["args_str"]
         table = table.drop(columns=["solver", "args_str"])
 
@@ -176,7 +190,7 @@ class Run_Instance:
         table = table.drop(columns=["timeout_rank"])
 
         table = table.sort_values(by=["instance_file"])
-        print(table)
+        # print(table)
 
         # self.create_plt(
         #     table=table,
