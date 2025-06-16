@@ -126,7 +126,9 @@ class Ortools(Solver):
         if not isinstance(parameter, dict):
             raise TypeError("Parameter must be a dictionary.")
 
-        parameter_data: Parameter = Parameter(**(parameter["args"]))
+        args = parameter.get("args", None)
+        assert args is not None, "Args must be provided in the parameter dictionary."
+        parameter_data: Parameter = Parameter(**(args))
 
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")

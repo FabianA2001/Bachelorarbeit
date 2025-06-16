@@ -131,15 +131,29 @@ def create_instance():
 
 
 def run_instance_lokal():
-    logging.warning("Parameter für ri ist nicht implementiert.")
+    outer_parameter = {
+        SAT: [
+            {
+                "timeout": -1,
+                "args": asdict(
+                    SAT_Parameter(
+                        add_allEdges_or_exclude_edges=True,
+                        intersection=True,
+                        degree_atleast=True,
+                        fix_hull=True,
+                    )
+                ),
+            }
+        ]
+    }
     ri = run_instance.Run_Instance(path_benchmark=BENCHMARK_PATH, solver=get_solvers())
-    ri.select()
+    # ri.select(outer_parameter)
     # ri.show_triangulation_from_instance(
     #     algorithm_name="Random",
     #     instance_name="simple_30",
     #     instance_file_name="001_delaunay"
     # )
-    # ri.run_default()
+    ri.run_default(outer_parameter)
 
 
 def block_plt():
@@ -148,9 +162,9 @@ def block_plt():
 
 
 def main():
-    test_algo()
+    # test_algo()
     # create_instance()
-    # run_instance_lokal()
+    run_instance_lokal()
 
 
 if __name__ == "__main__":

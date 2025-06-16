@@ -21,7 +21,7 @@ class Parameter:
 
 
 class SAT_TRI(Solver):
-    NAME = "SAT"
+    NAME = "SAT_TRI"
 
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
@@ -131,7 +131,11 @@ class SAT_TRI(Solver):
             raise TypeError("Parameter must be a dictionary.")
 
         try:
-            parameter_data: Parameter = Parameter(**(parameter.get("args", {})))
+            args = parameter.get("args", None)
+            assert (
+                args is not None
+            ), "Args must be provided in the parameter dictionary."
+            parameter_data: Parameter = Parameter(**(args))
             self.setup(parameter_data)
 
             self.solver = SatSolver(name=parameter_data.solver_name)

@@ -116,7 +116,6 @@ class Run_Instance:
         self,
         instances: list[str] = [],
         solvers: list[type[Solver]] = [],
-        only_newest: bool = True,
         ignore_correct: bool = False,
         block: bool = False,
         host: str = socket.gethostname(),
@@ -161,7 +160,6 @@ class Run_Instance:
             block=block,
             instances=instances,
             solvers=[solver.NAME for solver in solvers],
-            only_newest=only_newest,
         )
 
     def create_plt(
@@ -171,7 +169,6 @@ class Run_Instance:
         block: bool = False,
         instances: list[str] = [],
         solvers: list[str] = [],
-        only_newest: bool = True,
     ):
         if instances:
             table = table[table["instance"].isin(instances)]
@@ -181,16 +178,6 @@ class Run_Instance:
         # Kombiniere Instanz und Dateiname für die x-Achse
 
         table["instance_file"] = table["instance"] + "/" + table["file"]
-        if only_newest:
-            table["version_num"] = table["version"].astype(float)
-            idx = (
-                table.groupby(["solver", "instance_file"])["version_num"].transform(
-                    "max"
-                )
-                == table["version_num"]
-            )
-            table = table[idx]
-            table = table.drop(columns=["version_num"])
 
         table["solver_version"] = table["solver"] + " v" + table["version"].astype(str)
 
@@ -220,10 +207,7 @@ class Run_Instance:
             y=y,
             hue="solver_version",
         )
-        plt.title(
-            f"{y.capitalize()} pro Instanz/File und Solver-Version"
-            + (" (nur neueste Version)" if only_newest else "")
-        )
+        plt.title(f"{y.capitalize()} pro Instanz/File und Solver-Version")
         plt.xlabel("Instanz/Datei")
         plt.ylabel(y.capitalize())
         plt.xticks(rotation=90)
@@ -235,20 +219,29 @@ class Run_Instance:
         self,
         insts: list[str],
         solvers: list[type[Solver]],
-        parameter: dict,
-        only_newest: bool = True,
+        outer_parameter: dict,
         ignore_correct: bool = False,
     ):
         for inst in insts:
             for solver in solvers:
-                self.run_solver_on_instance(
-                    solver_type=solver,
-                    instance_name=inst,
-                    parameter=parameter,
-                )
+                if solver in outer_parameter:
+                    list_parameter = outer_parameter[solver]
+                else:
+                    logging.warning("No parameter found for solver, using default.")
+                    list_parameter = [
+                        {
+                            "timeout": self.DEFAULT_TIME,
+                        }
+                    ]
+                for parameter in list_parameter:
+                    self.run_solver_on_instance(
+                        solver_type=solver,
+                        instance_name=inst,
+                        parameter=parameter,
+                    )
         # from algbench import describe
         # describe(self.path_benchmark)
-        self.show_results(insts, solvers, only_newest, ignore_correct)
+        self.show_results(insts, solvers, ignore_correct)
 
     @staticmethod
     def get_selection(lit: list):
@@ -262,7 +255,7 @@ class Run_Instance:
             print("Bitte wähle mindestens einen Wert aus.")
         return [str(i) for i in selected_inst]
 
-    def select(self):
+    def select(self, outer_parameter: dict):
         # Fragen nach Instanzen
         instances = self.get_instances()
         instances_names = sorted(list(instances.keys()))
@@ -271,43 +264,6 @@ class Run_Instance:
         # Frage nach Solver
         solvers = self.get_selection(list(self.solvers_dict.keys()))
         solvers = [self.solvers_dict[i] for i in solvers]
-
-        # Frage nach Timeout, Standard ist -1 Sekunden
-        while True:
-            timeout = questionary.text(
-                "Timeout in Sekunden angeben (-1 = kein Timeout):", default="-1"
-            ).ask()
-            try:
-                timeout = int(timeout)
-            except ValueError:
-                print("Bitte eine gültige Zahl eingeben.")
-                continue
-            if timeout < -1:
-                print("Timeout muss größer oder gleich -1 sein.")
-                continue
-            elif timeout == 0:
-                print("Timeout kann nicht 0 sein, bitte -1 für kein Timeout verwenden.")
-                continue
-            break
-
-        while True:
-            version = questionary.text(
-                "Version der Parameter (z.B. 0.1, 0.2, ...), 0.0 ist neuste:",
-                default="0.0",
-            ).ask()
-            try:
-                version = float(version)
-            except ValueError:
-                print("Bitte eine gültige Zahl eingeben.")
-                continue
-            if version < 0:
-                print("Version muss größer oder gleich 0 sein.")
-                continue
-            break
-
-        only_new = questionary.confirm(
-            "Nur die neuste Version anzeigen?", default=True
-        ).ask()
 
         ignore_correct = not questionary.confirm(
             "Ergebnisse mit falschen Triangulationen als -1 Darstellen?", default=True
@@ -322,28 +278,18 @@ class Run_Instance:
                 {
                     "instances": insts,
                     "solvers": [solver.NAME for solver in solvers],
-                    "timeout": timeout,
-                    "version": version,
-                    "only_new": only_new,
                     "ignore_correct": ignore_correct,
                 }
             )
 
-        parameter = {"timeout": timeout, "version": version}
+        self.run(insts, solvers, outer_parameter, ignore_correct)
 
-        self.run(insts, solvers, parameter, only_new, ignore_correct)
-
-    def run_default(self):
+    def run_default(self, outer_parameter: dict):
         data = self.load_default()
-        parameter = {
-            "timeout": data.get("timeout", self.DEFAULT_TIME),
-            "version": data.get("version", 0.1),
-        }
         self.run(
             data.get("instances", []),
             [self.solvers_dict[i] for i in data.get("solvers", [])],
-            parameter,
-            only_newest=data.get("only_new", True),
+            outer_parameter=outer_parameter,
             ignore_correct=data.get("ignore_correct", True),
         )
 

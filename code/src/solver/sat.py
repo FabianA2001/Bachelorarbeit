@@ -174,7 +174,9 @@ class SAT(Solver):
         if not isinstance(parameter, dict):
             raise TypeError("Parameter must be a dictionary.")
 
-        parameter_data: Parameter = Parameter(**(parameter["args"]))
+        args = parameter.get("args", None)
+        assert args is not None, "Parameter 'args' must be provided in the dictionary."
+        parameter_data: Parameter = Parameter(**(args))
 
         try:
             self.solver = SatSolver(name=parameter_data.solver_name)
