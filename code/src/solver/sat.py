@@ -7,6 +7,27 @@ import logging
 import threading
 from utils import time_function
 import itertools
+from dataclasses import dataclass
+
+"""
+wenn ein or im Name ist True das erste und False das zweite
+sonnst aktiviert True den constrient
+"""
+
+
+@dataclass
+class Parameter:
+    solver_name: str = "glucose3"
+    add_allEdges_or_exlucde_edges: bool = True
+    number_edges: bool = False
+    intersection: bool = False
+    all_edges: bool = False
+    intersection_and_all_edges: bool = False
+    degree_exact: bool = False
+    degree_atleast: bool = False
+    degree_subset: bool = False
+    fix_hull: bool = False
+    exclude_edges: bool = False
 
 
 class SAT(Solver):
@@ -15,11 +36,19 @@ class SAT(Solver):
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = self.NAME
+
+    def setup(self, parameter: Parameter):
         self.graph.add_all_possible_edges(default_for_active=False)
+        if not parameter.add_allEdges_or_exlucde_edges:
+            edges = self.graph.exclude_edge_partition()
+            for edge in edges:
+                try:
+                    self.graph.remove_edge(edge)
+                except ValueError:
+                    pass
         self.edges = self.graph.get_all_edges()
         self.edges_to_index = {edge: i for i, edge in enumerate(self.edges)}
         self.all_vars = list(range(1, len(self.edges) + 1))
-        self.aktive_constrinsts = ""
 
     def get_index(self, edge) -> int:
         if edge in self.edges_to_index:
@@ -30,7 +59,6 @@ class SAT(Solver):
         return self.edges[index - 1]
 
     def number_edge_constraint(self):
-        self.aktive_constrinsts += "number edges, "
         cnf = self.formula_number_vars(
             self.all_vars,
             self.graph.get_number_edges_in_Triangulation(),
@@ -41,7 +69,6 @@ class SAT(Solver):
             raise TimeoutError()
 
     def intersection_constraint(self):
-        self.aktive_constrinsts += "intersection, "
         intersection = self.graph.get_all_intersections(self.timeout_error)
         for edge, other_edge in intersection:
             if (
@@ -58,7 +85,6 @@ class SAT(Solver):
         self.timeout_error()
 
     def alle_edges_constraint(self):
-        self.aktive_constrinsts += "add_Edges, "
         edges = self.graph.get_all_edges()
         for edge in edges:
             intersection = self.graph.get_intersections_with_all_edges(edge)
@@ -68,7 +94,6 @@ class SAT(Solver):
             )
 
     def alle_edges_and_intersection_constraint(self):
-        self.aktive_constrinsts += "add_Edges_and_intersection, "
         edges = self.graph.get_all_edges()
         for edge in edges:
             intersections = self.graph.get_intersections_with_all_edges(edge)
@@ -82,7 +107,6 @@ class SAT(Solver):
                 )
 
     def degree_constraint(self, exact_atleast=True):
-        self.aktive_constrinsts += f"Degree(exact_atleast:{exact_atleast}), "
         for node in self.graph.get_all_nodes():
             degree = self.graph.get_desired_degree_node(node)
             if degree == -1:
@@ -98,7 +122,6 @@ class SAT(Solver):
                 raise TimeoutError()
 
     def degree_subset_constraint(self):
-        self.aktive_constrinsts += "Degree_subset, "
         for node in self.graph.get_all_nodes():
             degree = self.graph.get_desired_degree_node(node)
             edges = [
@@ -109,7 +132,6 @@ class SAT(Solver):
                 self.timeout_error()
 
     def set_hull_fix_constraint(self):
-        self.aktive_constrinsts += "fix_hull, "
         hull_edges = self.graph.get_hull_edges()
         if len(hull_edges) == 0:
             return
@@ -122,7 +144,6 @@ class SAT(Solver):
             raise TimeoutError()
 
     def exclude_edges_constraint(self):
-        self.aktive_constrinsts += "exclude_edges, "
         for edge in self.graph.exclude_edge_partition():
             if edge in self.graph.impossible_edges:
                 continue
@@ -154,50 +175,34 @@ class SAT(Solver):
         if not isinstance(parameter, dict):
             raise TypeError("Parameter must be a dictionary.")
 
+        parameter_data: Parameter = Parameter(**(parameter["args"]))
+
         try:
-            self.solver = SatSolver(name="glucose3")
+            self.solver = SatSolver(name=parameter_data.solver_name)
             if not hasattr(self.solver, "interrupt"):
                 raise RuntimeError(
                     "The solver does not support interruption. "
                     "Please use a different solver that supports this feature."
                 )
-            if "version" not in parameter:
-                raise ValueError("Version parameter is missing.")
-            if parameter.get("version") == 0.1:
-                time_function(self.intersection_constraint)()
-                time_function(self.degree_constraint)()
-                time_function(self.number_edge_constraint)()
-            elif parameter.get("version") == 0.2:
-                time_function(self.intersection_constraint)()
-                time_function(self.degree_constraint)()
-            elif parameter.get("version") == 0.3:
-                time_function(self.intersection_constraint)()
-                self.degree_constraint()
-                self.set_hull_fix_constraint()  # ---neu
-            elif parameter.get("version") == 0.4:
-                time_function(self.intersection_constraint)()
-                self.degree_constraint()
+            self.setup(parameter_data)
+            if parameter_data.number_edges:
+                self.number_edge_constraint()
+            if parameter_data.intersection:
+                self.intersection_constraint()
+            if parameter_data.all_edges:
+                self.alle_edges_constraint()
+            if parameter_data.intersection_and_all_edges:
+                self.alle_edges_and_intersection_constraint()
+            if parameter_data.degree_exact:
+                self.degree_constraint(exact_atleast=True)
+            if parameter_data.degree_atleast:
+                self.degree_constraint(exact_atleast=False)
+            if parameter_data.degree_subset:
+                self.degree_subset_constraint()
+            if parameter_data.fix_hull:
                 self.set_hull_fix_constraint()
-                time_function(self.alle_edges_constraint)()  # ---neu
-            elif parameter.get("version") == 0.5:
-                self.degree_constraint()
-                self.set_hull_fix_constraint()
-                time_function(self.alle_edges_and_intersection_constraint)()  # ---neu
-            elif parameter.get("version") == 0.5:
-                time_function(self.degree_subset_constraint)()  # ---neu
-                self.set_hull_fix_constraint()
-                time_function(self.intersection_constraint)()
-            elif parameter.get("version") == 0.7:
-                time_function(self.degree_constraint)(False)  # ---neu
-                # Knoten müssen nur minimum Degree haben
-                self.set_hull_fix_constraint()
-                time_function(self.intersection_constraint)()
-            else:
-                time_function(self.degree_constraint)(False)  # ---neu
-                # Knoten müssen nur minimum Degree haben
-                self.set_hull_fix_constraint()
-                time_function(self.intersection_constraint)()
-                time_function(self.exclude_edges_constraint)()
+            if parameter_data.exclude_edges:
+                self.exclude_edges_constraint()
 
             if "timeout" not in parameter:
                 raise ValueError("Timeout parameter is missing.")
@@ -234,11 +239,9 @@ class SAT(Solver):
 
             return {
                 "success": result[0],
-                "info": self.aktive_constrinsts,
             }
         except TimeoutError:
             logging.warning(f"{self.name} timed out.")
             return {
                 "success": False,
-                "info": self.aktive_constrinsts,
             }

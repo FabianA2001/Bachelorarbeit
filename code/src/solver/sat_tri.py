@@ -8,6 +8,16 @@ import logging
 import threading
 from utils import time_function
 import itertools
+from dataclasses import dataclass
+
+
+@dataclass
+class Parameter:
+    solver_name: str = "glucose3"
+    add_allEdges_or_exlucde_edges: bool = True
+    number_tri: bool = False
+    intersection: bool = False
+    degree: bool = False
 
 
 class SAT_TRI(Solver):
@@ -16,11 +26,19 @@ class SAT_TRI(Solver):
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = self.NAME
-        self.aktive_constrinsts = ""
+
+    def setup(self, parameter: Parameter):
         self.graph.add_all_possible_edges(default_for_active=False)
+        if not parameter.add_allEdges_or_exlucde_edges:
+            edges = self.graph.exclude_edge_partition()
+            for edge in edges:
+                try:
+                    self.graph.remove_edge(edge)
+                except ValueError:
+                    pass
+
         self.tris = self.graph.get_all_triangles()
         logging.warning("Dreiecke sind teilweise nicht leer, warten auf ccp für fix")
-        print(*self.tris, sep="\n")
         self.tris_as_point = [
             (
                 self.graph.get_point_from_node(node1),
@@ -58,7 +76,6 @@ class SAT_TRI(Solver):
         return tri1_poly.intersects(tri2_poly) and not tri1_poly.touches(tri2_poly)
 
     def number_tri_constraint(self):
-        self.aktive_constrinsts += "number_tri, "
         cnf = self.formula_number_vars(
             vars=self.all_vars,
             n=self.graph.get_number_tris_in_Triangulation(),
@@ -68,7 +85,6 @@ class SAT_TRI(Solver):
         self.timeout_error()
 
     def intersection_constraint(self):
-        self.aktive_constrinsts += "intersection, "
         for tri1, tri2 in itertools.combinations(self.tris_as_point, 2):
             # for tri1, tri2 in [(self.tris_as_point[3], self.tris_as_point[0])]:
             if self.triangles_intersect(tri1, tri2):
@@ -78,7 +94,6 @@ class SAT_TRI(Solver):
         self.timeout_error()
 
     def degree_constraint(self):
-        self.aktive_constrinsts += "degree, "
         hull = self.graph.get_hull_nodes()
         for node in self.graph.get_all_nodes():
             tris = self.graph.get_triangles_from_node(node)
@@ -116,23 +131,24 @@ class SAT_TRI(Solver):
             raise TypeError("Parameter must be a dictionary.")
 
         try:
-            self.solver = SatSolver(name="glucose3")
+            parameter_data: Parameter = Parameter(**(parameter.get("args", {})))
+
+            self.solver = SatSolver(name=parameter_data.solver_name)
             if not hasattr(self.solver, "interrupt"):
                 raise RuntimeError(
                     "The solver does not support interruption. "
                     "Please use a different solver that supports this feature."
                 )
-            if "version" not in parameter:
-                raise ValueError("Version parameter is missing.")
-            if parameter.get("version") == 0.1:
+
+            if parameter_data.number_tri:
                 self.number_tri_constraint()
+
+            if parameter_data.intersection:
                 time_function(self.intersection_constraint)()
+
+            if parameter_data.degree:
                 time_function(self.degree_constraint)()
-            elif parameter.get("version") == 0.2:
-                time_function(self.degree_constraint)()
-                time_function(self.intersection_constraint)()
-            else:
-                pass
+
             if "timeout" not in parameter:
                 raise ValueError("Timeout parameter is missing.")
 
@@ -172,11 +188,9 @@ class SAT_TRI(Solver):
 
             return {
                 "success": result[0],
-                "info": self.aktive_constrinsts,
             }
         except TimeoutError:
             logging.warning(f"{self.name} timed out.")
             return {
                 "success": False,
-                "info": self.aktive_constrinsts,
             }

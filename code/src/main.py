@@ -1,5 +1,4 @@
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from graph_utils.node import move_degree
 import logging
 from graph_utils import generate
 from solver.delaunay import Delaunay
@@ -9,11 +8,14 @@ from solver.raw_flips import Raw_Flips
 from solver.iterative import Iterative
 from solver.random_adder import Random_Adder
 from solver.sat import SAT
+from solver.sat import Parameter as SAT_Parameter
 from solver.sat_tri import SAT_TRI
+from solver.sat_tri import Parameter as SAT_TRI_Parameter
 from graph_utils import run_instance
 from utils import setup_logging
 import matplotlib.pyplot as plt
 import matplotlib._pylab_helpers
+from dataclasses import asdict
 
 
 BENCHMARK_PATH = "./results/benchmark"
@@ -21,6 +23,10 @@ BENCHMARK_PATH = "./results/benchmark"
 
 def get_solvers():
     return [Raw_Flips, Delaunay, Iterative, Ortools, SAT, Random_Adder, SAT_TRI]
+
+
+def get_parameters():
+    return [SAT_Parameter]
 
 
 def custom_points() -> list[Node]:
@@ -54,6 +60,31 @@ def custom_points() -> list[Node]:
         return nodes
 
 
+def sat_algorithm(graph):
+    solver = SAT(graph)
+    para = SAT_Parameter(
+        add_allEdges_or_exlucde_edges=True,
+        intersection=True,
+        degree_atleast=True,
+        fix_hull=True,
+    )
+    logging.info(
+        f"solution found: {solver.solve({'timeout': -1, 'args': asdict(para)})}"
+    )
+
+
+def sat_Tri_algorithm(graph):
+    solver = SAT_TRI(graph)
+    para = SAT_TRI_Parameter(
+        add_allEdges_or_exlucde_edges=True,
+        intersection=True,
+        degree=True,
+    )
+    logging.info(
+        f"solution found: {solver.solve({'timeout': -1, 'args': asdict(para)})}"
+    )
+
+
 def test_algo():
     PATH = "simple_70/000_random.json"
     PATH = "iterative_60_10/000_random.json"
@@ -61,48 +92,9 @@ def test_algo():
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    # graph.name = "Test Algo"
-    # time_function(graph.add_all_possible_edges)(default_for_active=True)
-    # print(len(time_function(graph.exclude_edge_partition)()))
-    # time_function(graph.get_all_intersections)()
-    # print(*graph.get_all_edges(), sep="\n")
-    solver = SAT_TRI(graph)
-    logging.info(f"solution found: {solver.solve({'timeout': -1, 'version': 0.2})}")
-    # logging.info(f"evaluation: {graph.evaluate_graph()}")
+    sat_algorithm(graph)
+    # sat_Tri_algorithm(graph)
     graph.show_and_save()
-
-
-def move():
-    nodes = generate.gen_nodes(30, 4000, 4000)
-    graph = Graph_Wrapper(nodes)
-    solver = Delaunay(graph)
-    solver.solve(
-        {
-            "timeout": 10,
-            "version": 0.1,
-        }
-    )
-
-    graph.show_and_save(show=False)
-    graph.name = "Delaunay"
-    nodes2 = graph.get_aktive_graph_nodes()
-    for _ in range(40):
-        nodes2 = move_degree(nodes2, 1, 1, 2)
-        graph2 = Graph_Wrapper(nodes2)
-        solver2 = Ortools(graph2)
-        if solver2.solve(
-            {
-                "timeout": 10,
-                "version": 0.4,
-            }
-        ):
-            break
-    else:
-        print("No solution found after 100 iterations")
-        graph2.show_and_save()
-        return
-    graph2.save_graph_as_json("moved_delaune.json")
-    graph2.show_and_save()
 
 
 def create_instance():
@@ -124,6 +116,7 @@ def create_instance():
 
 
 def run_instance_lokal():
+    logging.warning("Parameter für ri ist nicht implementiert.")
     ri = run_instance.Run_Instance(path_benchmark=BENCHMARK_PATH, solver=get_solvers())
     ri.select()
     # ri.show_triangulation_from_instance(
