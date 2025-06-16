@@ -144,16 +144,16 @@ def run_instance_lokal():
                     )
                 ),
             },
-            # {
-            #     "timeout": -1,
-            #     "args": asdict(
-            #         SAT_Parameter(
-            #             add_allEdges_or_exclude_edges=True,
-            #             intersection=True,
-            #             degree_atleast=True,
-            #         )
-            #     ),
-            # },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    SAT_Parameter(
+                        add_allEdges_or_exclude_edges=True,
+                        intersection=True,
+                        degree_atleast=True,
+                    )
+                ),
+            },
         ],
         Ortools: [
             {

@@ -160,20 +160,32 @@ class Run_Instance:
         # Filter table to only include rows where args are in all_args
         table = table[table["args"].isin(all_args)]
 
-        # Create mapping from unique args to numbers
-        unique_args = table["args"].drop_duplicates().tolist()
-        args_mapping = {str(args): i + 1 for i, args in enumerate(unique_args)}
+        # Create mapping from unique args to numbers, grouped by solver
+        solver_args_mapping = {}
+        for solver in solvers_name:
+            solver_table = table[table["solver"] == solver]
+            unique_args = solver_table["args"].drop_duplicates().tolist()
+            solver_args_mapping[solver] = {
+                str(args): (i + 1, args) for i, args in enumerate(unique_args)
+            }
 
-        # Print the mapping to console
-        print("\nArgs Legend Mapping:")
+        # Print the mapping to console, grouped by solver
+        print("\nArgs Legend Mapping (by Solver):")
         print("=" * 50)
-        for args_dict, number in args_mapping.items():
-            print(
-                f"#{number}: {format_dictionary(unique_args[args_mapping[str(args_dict)] - 1])}"
-            )
+        for solver, args_mapping in solver_args_mapping.items():
+            print(f"\n{solver}:")
+            for args_dict_str, number_args in args_mapping.items():
+                number = number_args[0]
+                args_dict = number_args[1]
+                # Find the original args dict from the string representation
+                print(f"  #{number}: {format_dictionary(args_dict)}")
         print("=" * 50)
 
-        table["args_str"] = table["args"].apply(lambda x: f"{args_mapping[str(x)]}")
+        table["args_str"] = table.apply(
+            lambda row: f"{(solver_args_mapping[row['solver']][str(row['args'])])[0]}",
+            axis=1,
+        )
+
         table["solver_args"] = table["solver"] + "-" + table["args_str"]
         table = table.drop(columns=["solver", "args_str"])
 
