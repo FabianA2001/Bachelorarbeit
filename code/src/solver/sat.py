@@ -215,12 +215,12 @@ class SAT(Solver):
             result = [None]
 
             if timeout == -1:
-                result[0] = time_function(self.solver.solve)()
+                result[0] = self.time_solver(self.solver.solve)()
             else:
                 logging.info("start solving")
 
                 def run_solver():
-                    result[0] = time_function(self.solver.solve_limited)(  # type: ignore
+                    result[0] = self.time_solver(self.solver.solve_limited)(  # type: ignore
                         expect_interrupt=True
                     )
 

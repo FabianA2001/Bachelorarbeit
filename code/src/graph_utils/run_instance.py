@@ -68,6 +68,7 @@ class Run_Instance:
 
         return {
             "correct": correct,
+            "time_solver": solver.solver_time,
             "evaluation": _graph.evaluate_graph(),
             "triangulation": _graph.get_all_edges(True),
         }
@@ -133,7 +134,8 @@ class Run_Instance:
                 "args": result["parameters"]["args"]["parameter"]["args"],
                 "evaluation": result["result"]["evaluation"],
                 "runtime": result["runtime"],
-                "timeout": result["parameters"]["args"]["parameter"]["timeout"],
+                # "timeout": result["parameters"]["args"]["parameter"]["timeout"],
+                "timeout": result["result"]["solver_time"],
             },
         )
         # Filter nach Host, falls host angegeben ist
