@@ -261,7 +261,8 @@ def test_get_all_intersections():
 
 
 def test_exclude_edges():
-    PATH = "simple_20/003_delaunay_flips.json"
+    PATH = "simple_10/003_delaunay_flips.json"
+    # PATH = "simple_80/001_random.json"
     nodes = load_nodes_from_json(PATH)
     outer_graph = Graph_Wrapper(nodes)
     outer_graph.add_convex_hull()
@@ -285,5 +286,4 @@ def test_exclude_edges():
             continue
 
         graph.show_and_save()
-        assert False, f"Solver should not find a solution with excluded edge {edge}."
         assert False, f"Solver should not find a solution with excluded edge {edge}."

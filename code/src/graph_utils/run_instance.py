@@ -149,9 +149,9 @@ class Run_Instance:
                 "correct": result["result"]["correct"],
                 "args": result["parameters"]["args"]["parameter"]["args"],
                 "evaluation": result["result"]["evaluation"],
-                "runtime": result["runtime"],
-                # "timeout": result["parameters"]["args"]["parameter"]["timeout"],
-                "timeout": result["result"]["time_solver"],
+                "timeout": result["parameters"]["args"]["parameter"]["timeout"],
+                # "runtime": result["runtime"],
+                "runtime": result["result"]["time_solver"],
             },
         )
         # Filter nach Host, falls host angegeben ist
