@@ -37,7 +37,7 @@ class Exclude_Edge_Partition:
             if node in exclude_nodes:
                 continue
             degree = self.data.nodes[node]["degree"]
-            if degree >= length - 1:
+            if degree > length - 1:
                 return False
             degree_sum += degree
         for node in exclude_nodes:
