@@ -76,11 +76,11 @@ def ortools_algorithm(graph):
 def sat_algorithm(graph):
     solver = SAT(graph)
     para = SAT_Parameter(
-        add_allEdges_or_exclude_edges=False,
+        add_allEdges_or_exclude_edges=True,
         intersection=True,
         degree_atleast=True,
-        fix_hull=True,
-        # exclude_edges=True,
+        # fix_hull=True,
+        exclude_edges=True,
     )
     logging.info(
         f"solution found: {solver.solve({'timeout': -1, 'args': asdict(para)})}"
@@ -100,7 +100,8 @@ def sat_Tri_algorithm(graph):
 
 
 def test_algo():
-    PATH = "simple_80/000_random.json"
+    # PATH = "simple_80/004_random.json"
+    PATH = "simple_10/003_delaunay_flips.json"
     # PATH = "iterative_60_10/000_random.json"
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
@@ -151,6 +152,7 @@ def run_instance_lokal():
                         add_allEdges_or_exclude_edges=True,
                         intersection=True,
                         degree_atleast=True,
+                        exclude_edges=True,
                     )
                 ),
             },
@@ -177,8 +179,8 @@ def run_instance_lokal():
         ],
     }
     ri = run_instance.Run_Instance(path_benchmark=BENCHMARK_PATH, solver=get_solvers())
-    # ri.select(outer_parameter)
-    ri.run_default(outer_parameter)
+    ri.select(outer_parameter)
+    # ri.run_default(outer_parameter)
     # ri.show_triangulation_from_instance(
     #     algorithm_name="Random",
     #     instance_name="simple_30",
@@ -192,9 +194,9 @@ def block_plt():
 
 
 def main():
-    # test_algo()
+    test_algo()
     # create_instance()
-    run_instance_lokal()
+    # run_instance_lokal()
 
 
 if __name__ == "__main__":
