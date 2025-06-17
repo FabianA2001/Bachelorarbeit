@@ -19,7 +19,7 @@ import matplotlib._pylab_helpers
 from dataclasses import asdict
 
 
-BENCHMARK_PATH = "./results/benchmark"
+BENCHMARK_PATH = "./benchmark"
 
 
 def get_solvers():
@@ -138,7 +138,15 @@ def run_instance_lokal():
                 "timeout": -1,
                 "args": asdict(
                     SAT_Parameter(
-                        add_allEdges_or_exclude_edges=True,
+                        intersection=True,
+                        degree_atleast=True,
+                    )
+                ),
+            },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    SAT_Parameter(
                         intersection=True,
                         degree_atleast=True,
                         exclude_edges=True,
@@ -149,10 +157,9 @@ def run_instance_lokal():
                 "timeout": -1,
                 "args": asdict(
                     SAT_Parameter(
-                        add_allEdges_or_exclude_edges=True,
+                        add_allEdges_or_exclude_edges=False,
                         intersection=True,
                         degree_atleast=True,
-                        exclude_edges=True,
                     )
                 ),
             },
@@ -194,9 +201,9 @@ def block_plt():
 
 
 def main():
-    test_algo()
+    # test_algo()
     # create_instance()
-    # run_instance_lokal()
+    run_instance_lokal()
 
 
 if __name__ == "__main__":

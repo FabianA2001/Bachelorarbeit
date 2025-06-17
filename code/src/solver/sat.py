@@ -170,41 +170,42 @@ class SAT(Solver):
         return cnf
         # TODO andere self solver testen, anstatt glucose42
 
+    def pre_solve(self, parameter_data: Parameter) -> None:
+        self.solver = SatSolver(name=parameter_data.solver_name)
+        if not hasattr(self.solver, "interrupt"):
+            raise RuntimeError(
+                "The solver does not support interruption. "
+                "Please use a different solver that supports this feature."
+            )
+        self.setup(parameter_data)
+        if parameter_data.number_edges:
+            time_function(self.number_edge_constraint)()
+        if parameter_data.intersection:
+            time_function(self.intersection_constraint)()
+        if parameter_data.all_edges:
+            time_function(self.alle_edges_constraint)()
+        if parameter_data.intersection_and_all_edges:
+            time_function(self.alle_edges_and_intersection_constraint)()
+        if parameter_data.degree_exact:
+            time_function(self.degree_constraint)(exact_atleast=True)
+        if parameter_data.degree_atleast:
+            time_function(self.degree_constraint)(exact_atleast=False)
+        if parameter_data.degree_subset:
+            time_function(self.degree_subset_constraint)()
+        if parameter_data.fix_hull:
+            time_function(self.set_hull_fix_constraint)()
+        if parameter_data.exclude_edges:
+            time_function(self.exclude_edges_constraint)()
+
     def _actual_solver(self, parameter: dict) -> dict:
         if not isinstance(parameter, dict):
             raise TypeError("Parameter must be a dictionary.")
-
         args = parameter.get("args", None)
         assert args is not None, "Parameter 'args' must be provided in the dictionary."
         parameter_data: Parameter = Parameter(**(args))
 
         try:
-            self.solver = SatSolver(name=parameter_data.solver_name)
-            if not hasattr(self.solver, "interrupt"):
-                raise RuntimeError(
-                    "The solver does not support interruption. "
-                    "Please use a different solver that supports this feature."
-                )
-            self.setup(parameter_data)
-            if parameter_data.number_edges:
-                time_function(self.number_edge_constraint)()
-            if parameter_data.intersection:
-                time_function(self.intersection_constraint)()
-            if parameter_data.all_edges:
-                time_function(self.alle_edges_constraint)()
-            if parameter_data.intersection_and_all_edges:
-                time_function(self.alle_edges_and_intersection_constraint)()
-            if parameter_data.degree_exact:
-                time_function(self.degree_constraint)(exact_atleast=True)
-            if parameter_data.degree_atleast:
-                time_function(self.degree_constraint)(exact_atleast=False)
-            if parameter_data.degree_subset:
-                time_function(self.degree_subset_constraint)()
-            if parameter_data.fix_hull:
-                time_function(self.set_hull_fix_constraint)()
-            if parameter_data.exclude_edges:
-                time_function(self.exclude_edges_constraint)()
-
+            self.time_pre_solve(self.pre_solve)(parameter_data)
             if "timeout" not in parameter:
                 raise ValueError("Timeout parameter is missing.")
 
@@ -215,12 +216,12 @@ class SAT(Solver):
             result = [None]
 
             if timeout == -1:
-                result[0] = time_function(self.solver.solve)()
+                result[0] = self.time_solver(self.solver.solve)()
             else:
                 logging.info("start solving")
 
                 def run_solver():
-                    result[0] = time_function(self.solver.solve_limited)(  # type: ignore
+                    result[0] = self.time_solver(self.solver.solve_limited)(  # type: ignore
                         expect_interrupt=True
                     )
 

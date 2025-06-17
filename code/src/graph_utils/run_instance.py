@@ -56,8 +56,20 @@ class Run_Instance:
         host: str,
         _graph: Graph_Wrapper,
     ):
-        solver = solver_type(_graph)
-        solution: dict = solver.solve(parameter)
+        try:
+            solver = solver_type(_graph)
+            solution: dict = solver.solve(parameter)
+        except Exception as e:
+            logging.error(
+                f"Error while solving {instance_name} - {solver_name} - {file_name} with {format_dictionary(parameter)}\n error:{e}"
+            )
+            return {
+                "correct": False,
+                "time_solver": -1,
+                "evaluation": 0.0,
+                "triangulation": [],
+            }
+
         is_triangulation = _graph.check_if_triangulation_with_degree_constrained()
         result = solution["success"] and is_triangulation
         correct = possible == result
@@ -68,6 +80,7 @@ class Run_Instance:
 
         return {
             "correct": correct,
+            "time_solver": solver.solve_time,
             "evaluation": _graph.evaluate_graph(),
             "triangulation": _graph.get_all_edges(True),
         }
@@ -133,7 +146,8 @@ class Run_Instance:
                 "args": result["parameters"]["args"]["parameter"]["args"],
                 "evaluation": result["result"]["evaluation"],
                 "runtime": result["runtime"],
-                "timeout": result["parameters"]["args"]["parameter"]["timeout"],
+                # "timeout": result["parameters"]["args"]["parameter"]["timeout"],
+                "timeout": result["result"]["time_solver"],
             },
         )
         # Filter nach Host, falls host angegeben ist
