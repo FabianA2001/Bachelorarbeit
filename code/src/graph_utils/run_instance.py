@@ -1,16 +1,18 @@
-import os
-from graph_utils import graph_const
-from solver.solver import Solver
 import json
+import logging
+import os
+import socket
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import questionary
+import seaborn as sns
+from algbench import Benchmark, read_as_pandas
+
+from graph_utils import graph_const
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from graph_utils.node import load_nodes_from_json
-import logging
-from algbench import Benchmark, read_as_pandas
-import matplotlib.pyplot as plt
-import seaborn as sns
-import pandas as pd
-import socket
-import questionary
+from solver.solver import Solver
 from utils import format_dictionary
 
 
@@ -66,6 +68,7 @@ class Run_Instance:
             return {
                 "correct": False,
                 "time_solver": -1,
+                "time_pre_solver": -1,
                 "evaluation": 0.0,
                 "triangulation": [],
             }
@@ -80,6 +83,7 @@ class Run_Instance:
 
         return {
             "correct": correct,
+            "time_pre_solver": solver.time_pre_solve,
             "time_solver": solver.solve_time,
             "evaluation": _graph.evaluate_graph(),
             "triangulation": _graph.get_all_edges(True),
