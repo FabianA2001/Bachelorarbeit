@@ -134,17 +134,17 @@ def create_instance():
 def run_instance_lokal():
     outer_parameter = {
         SAT: [
-            # {
-            #     "timeout": -1,
-            #     "args": asdict(
-            #         SAT_Parameter(
-            #             add_allEdges_or_exclude_edges=True,
-            #             intersection=True,
-            #             degree_atleast=True,
-            #             fix_hull=True,
-            #         )
-            #     ),
-            # },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    SAT_Parameter(
+                        add_allEdges_or_exclude_edges=True,
+                        intersection=True,
+                        degree_atleast=True,
+                        exclude_edges=True,
+                    )
+                ),
+            },
             {
                 "timeout": -1,
                 "args": asdict(
