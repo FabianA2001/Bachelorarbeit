@@ -62,5 +62,5 @@ def format_dictionary(dictionary: dict, indention=1) -> str:
     for key, value in dictionary.items():
         if type(value) is dict:
             value = format_dictionary(value, indention + 1)
-        result += f"\n{'|' * indention}{(key+":")[:35]:<35} {value}"
+        result += f"\n{'|' * indention}{(key+':')[:35]:<35} {value}"
     return result

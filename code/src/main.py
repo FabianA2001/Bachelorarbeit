@@ -133,17 +133,6 @@ def create_instance():
 def run_instance_lokal():
     outer_parameter = {
         SAT: [
-            # {
-            #     "timeout": -1,
-            #     "args": asdict(
-            #         SAT_Parameter(
-            #             add_allEdges_or_exclude_edges=True,
-            #             intersection=True,
-            #             degree_atleast=True,
-            #             fix_hull=True,
-            #         )
-            #     ),
-            # },
             {
                 "timeout": -1,
                 "args": asdict(
@@ -151,6 +140,17 @@ def run_instance_lokal():
                         add_allEdges_or_exclude_edges=True,
                         intersection=True,
                         degree_atleast=True,
+                    )
+                ),
+            },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    SAT_Parameter(
+                        add_allEdges_or_exclude_edges=True,
+                        intersection=True,
+                        degree_atleast=True,
+                        exclude_edges=True,
                     )
                 ),
             },
@@ -177,8 +177,8 @@ def run_instance_lokal():
         ],
     }
     ri = run_instance.Run_Instance(path_benchmark=BENCHMARK_PATH, solver=get_solvers())
-    # ri.select(outer_parameter)
-    ri.run_default(outer_parameter)
+    ri.select(outer_parameter)
+    # ri.run_default(outer_parameter)
     # ri.show_triangulation_from_instance(
     #     algorithm_name="Random",
     #     instance_name="simple_30",
