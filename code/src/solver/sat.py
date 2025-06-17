@@ -206,6 +206,14 @@ class SAT(Solver):
 
         try:
             self.time_pre_solve(self.pre_solve)(parameter_data)
+            try:
+                for edge in parameter.get("debug_set_edges", []):
+                    self.solver.add_clause([self.get_index(edge)])
+            except Exception as e:
+                logging.warning(
+                    f"Debug set edges failed([{e}]), continuing without them."
+                )
+
             if "timeout" not in parameter:
                 raise ValueError("Timeout parameter is missing.")
 

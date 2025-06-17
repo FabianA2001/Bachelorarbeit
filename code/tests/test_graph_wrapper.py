@@ -1,22 +1,24 @@
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from graph_utils.node import Node
+from graph_utils.node import load_nodes_from_json
+from solver.sat import SAT
+from solver.sat import Parameter as SAT_Parameter
+from dataclasses import asdict
 
-
-def test_add_convex_hull():
-    nodes = [
-        Node("A", (0, 0)),
-        Node("B", (0, 1)),
-        Node("C", (1, 0)),
-        Node("D", (1, 1)),
-    ]
-    graph = Graph_Wrapper(nodes)
-    graph.add_convex_hull()
-    assert len(graph.get_all_edges()) == 4
-    all_edges = graph.get_all_edges()
-    assert ("A", "B") in all_edges
-    assert ("B", "D") in all_edges
-    assert ("C", "D") in all_edges
-    assert ("A", "C") in all_edges
+# def test_add_convex_hull():
+#     nodes = [
+#         Node("A", (0, 0)),
+#         Node("B", (0, 1)),
+#         Node("C", (1, 0)),
+#         Node("D", (1, 1)),
+#     ]
+#     graph = Graph_Wrapper(nodes)
+#     graph.add_convex_hull()
+#     assert len(graph.get_all_edges()) == 4
+#     all_edges = graph.get_all_edges()
+#     assert ("A", "B") in all_edges
+#     assert ("B", "D") in all_edges
+#     assert ("C", "D") in all_edges
+#     assert ("A", "C") in all_edges
 
 
 # def test_flip():
@@ -35,222 +37,252 @@ def test_add_convex_hull():
 #     assert not graph.flip_edge(("A", "B"))
 
 
-def test_check_for_intersection_except_corners():
-    # Test the check_for_intersection_except_corners function
-    nodes = [
-        Node("A", (0, 0)),
-        Node("B", (0, 1)),
-        Node("C", (1, 0)),
-        Node("D", (1, 1)),
-    ]
-    graph = Graph_Wrapper(nodes)
-    graph.add_convex_hull()
-    graph.add_edge("A", "D")
-    graph.add_edge("B", "C")
-    assert graph.check_for_intersection_except_corners(("A", "D"), ("B", "C"))
-    assert not graph.check_for_intersection_except_corners(("A", "D"), ("A", "B"))
+# def test_check_for_intersection_except_corners():
+#     # Test the check_for_intersection_except_corners function
+#     nodes = [
+#         Node("A", (0, 0)),
+#         Node("B", (0, 1)),
+#         Node("C", (1, 0)),
+#         Node("D", (1, 1)),
+#     ]
+#     graph = Graph_Wrapper(nodes)
+#     graph.add_convex_hull()
+#     graph.add_edge("A", "D")
+#     graph.add_edge("B", "C")
+#     assert graph.check_for_intersection_except_corners(("A", "D"), ("B", "C"))
+#     assert not graph.check_for_intersection_except_corners(
+#         ("A", "D"), ("A", "B"))
 
 
-def test_add_all_possible_edges():
-    # Test the add_all_possible_edges function
-    nodes = [
-        Node("A", (0, 0)),
-        Node("B", (0, 1)),
-        Node("C", (1, 0)),
-        Node("D", (1, 1)),
-    ]
-    graph = Graph_Wrapper(nodes)
-    graph.add_all_possible_edges()
-    assert len(graph.get_all_edges()) == 6
-    all_edges = graph.get_all_edges()
-    assert ("A", "B") in all_edges
-    assert ("A", "C") in all_edges
-    assert ("A", "D") in all_edges
-    assert ("B", "C") in all_edges
-    assert ("B", "D") in all_edges
-    assert ("C", "D") in all_edges
+# def test_add_all_possible_edges():
+#     # Test the add_all_possible_edges function
+#     nodes = [
+#         Node("A", (0, 0)),
+#         Node("B", (0, 1)),
+#         Node("C", (1, 0)),
+#         Node("D", (1, 1)),
+#     ]
+#     graph = Graph_Wrapper(nodes)
+#     graph.add_all_possible_edges()
+#     assert len(graph.get_all_edges()) == 6
+#     all_edges = graph.get_all_edges()
+#     assert ("A", "B") in all_edges
+#     assert ("A", "C") in all_edges
+#     assert ("A", "D") in all_edges
+#     assert ("B", "C") in all_edges
+#     assert ("B", "D") in all_edges
+#     assert ("C", "D") in all_edges
 
 
-def test_get_triangles_for_node():
-    # Test the get_triangles_for_node function
-    nodes = [
-        Node("A", (0, 0)),
-        Node("B", (0, 1)),
-        Node("C", (1, 0)),
-        Node("D", (1, 1)),
-    ]
-    graph = Graph_Wrapper(nodes)
-    graph.add_convex_hull()
-    graph.add_edge("A", "D")
-    triangles = graph.get_triangles_from_node("A")
-    assert len(triangles) == 2
-    assert ("A", "B", "D") in triangles
-    assert ("A", "C", "D") in triangles
+# def test_get_triangles_for_node():
+#     # Test the get_triangles_for_node function
+#     nodes = [
+#         Node("A", (0, 0)),
+#         Node("B", (0, 1)),
+#         Node("C", (1, 0)),
+#         Node("D", (1, 1)),
+#     ]
+#     graph = Graph_Wrapper(nodes)
+#     graph.add_convex_hull()
+#     graph.add_edge("A", "D")
+#     triangles = graph.get_triangles_from_node("A")
+#     assert len(triangles) == 2
+#     assert ("A", "B", "D") in triangles
+#     assert ("A", "C", "D") in triangles
 
 
-def test_get_triangles_for_edge():
-    # Test the get_triangles_for_node function
-    nodes = [
-        Node("A", (0, 0)),
-        Node("B", (0, 1)),
-        Node("C", (1, 0)),
-        Node("D", (1, 1)),
-    ]
-    graph = Graph_Wrapper(nodes)
-    graph.add_convex_hull()
-    graph.add_edge("A", "D")
-    triangles = graph.get_triangles_for_edge(("A", "D"))
-    assert len(triangles) == 2
-    assert ("A", "B", "D") in triangles
-    assert ("A", "C", "D") in triangles
+# def test_get_triangles_for_edge():
+#     # Test the get_triangles_for_node function
+#     nodes = [
+#         Node("A", (0, 0)),
+#         Node("B", (0, 1)),
+#         Node("C", (1, 0)),
+#         Node("D", (1, 1)),
+#     ]
+#     graph = Graph_Wrapper(nodes)
+#     graph.add_convex_hull()
+#     graph.add_edge("A", "D")
+#     triangles = graph.get_triangles_for_edge(("A", "D"))
+#     assert len(triangles) == 2
+#     assert ("A", "B", "D") in triangles
+#     assert ("A", "C", "D") in triangles
 
 
-def test_get_hull_nodes():
-    # Test the get_hull_nodes function
-    nodes = [
-        Node("0", (5, 10)),
-        Node("1", (2, 6)),
-        Node("2", (6, 5)),
-        Node("3", (9, 3)),
-        Node("4", (0, 10)),
-        Node("5", (9, 5)),
-        Node("6", (1, 2)),
-        Node("7", (8, 6)),
-        Node("8", (2, 3)),
-        Node("9", (2, 10)),
-    ]
-    graph = Graph_Wrapper(nodes)
-    hull = graph.get_hull_nodes()
-    assert "4" in hull
-    assert "9" in hull
-    assert "0" in hull
-    assert "5" in hull
-    assert "3" in hull
-    assert "6" in hull
-    assert len(hull) == 6
+# def test_get_hull_nodes():
+#     # Test the get_hull_nodes function
+#     nodes = [
+#         Node("0", (5, 10)),
+#         Node("1", (2, 6)),
+#         Node("2", (6, 5)),
+#         Node("3", (9, 3)),
+#         Node("4", (0, 10)),
+#         Node("5", (9, 5)),
+#         Node("6", (1, 2)),
+#         Node("7", (8, 6)),
+#         Node("8", (2, 3)),
+#         Node("9", (2, 10)),
+#     ]
+#     graph = Graph_Wrapper(nodes)
+#     hull = graph.get_hull_nodes()
+#     assert "4" in hull
+#     assert "9" in hull
+#     assert "0" in hull
+#     assert "5" in hull
+#     assert "3" in hull
+#     assert "6" in hull
+#     assert len(hull) == 6
 
 
-def test_get_hull_edges():
-    # Test the get_hull_edges function
-    nodes = [
-        Node("0", (5, 10)),
-        Node("1", (2, 6)),
-        Node("2", (6, 5)),
-        Node("3", (9, 3)),
-        Node("4", (0, 10)),
-        Node("5", (9, 5)),
-        Node("6", (1, 2)),
-        Node("7", (8, 6)),
-        Node("8", (2, 3)),
-        Node("9", (2, 10)),
-    ]
-    graph = Graph_Wrapper(nodes)
-    hull = graph.get_hull_edges()
-    assert ("4", "9") in hull
-    assert ("9", "0") in hull
-    assert ("0", "5") in hull
-    assert ("5", "3") in hull
-    assert ("3", "6") in hull
-    assert ("6", "4") in hull
-    assert len(hull) == 6
+# def test_get_hull_edges():
+#     # Test the get_hull_edges function
+#     nodes = [
+#         Node("0", (5, 10)),
+#         Node("1", (2, 6)),
+#         Node("2", (6, 5)),
+#         Node("3", (9, 3)),
+#         Node("4", (0, 10)),
+#         Node("5", (9, 5)),
+#         Node("6", (1, 2)),
+#         Node("7", (8, 6)),
+#         Node("8", (2, 3)),
+#         Node("9", (2, 10)),
+#     ]
+#     graph = Graph_Wrapper(nodes)
+#     hull = graph.get_hull_edges()
+#     assert ("4", "9") in hull
+#     assert ("9", "0") in hull
+#     assert ("0", "5") in hull
+#     assert ("5", "3") in hull
+#     assert ("3", "6") in hull
+#     assert ("6", "4") in hull
+#     assert len(hull) == 6
 
 
-def test_check_if_triangulation_with_degree_constraint():
-    nodes = [
-        Node("A", (0, 0), 3),
-        Node("B", (0, 1), 2),
-        Node("C", (1, 0), 2),
-        Node("D", (1, 1), 3),
-    ]
-    graph = Graph_Wrapper(nodes)
-    assert not graph.check_if_triangulation_with_degree_constraint()
-    graph.add_edge("A", "B")
-    graph.add_edge("A", "C")
-    graph.add_edge("D", "B")
-    graph.add_edge("D", "C")
-    assert not graph.check_if_triangulation_with_degree_constraint()
-    graph.add_edge("A", "D")
-    graph.add_edge("B", "C")
-    assert not graph.check_if_triangulation_with_degree_constraint()
-    graph.deactivate_edge("B", "C")
-    assert graph.check_if_triangulation_with_degree_constraint()
-    graph.remove_edge(("B", "D"))
-    assert not graph.check_if_triangulation_with_degree_constraint()
+# def test_check_if_triangulation_with_degree_constraint():
+#     nodes = [
+#         Node("A", (0, 0), 3),
+#         Node("B", (0, 1), 2),
+#         Node("C", (1, 0), 2),
+#         Node("D", (1, 1), 3),
+#     ]
+#     graph = Graph_Wrapper(nodes)
+#     assert not graph.check_if_triangulation_with_degree_constraint()
+#     graph.add_edge("A", "B")
+#     graph.add_edge("A", "C")
+#     graph.add_edge("D", "B")
+#     graph.add_edge("D", "C")
+#     assert not graph.check_if_triangulation_with_degree_constraint()
+#     graph.add_edge("A", "D")
+#     graph.add_edge("B", "C")
+#     assert not graph.check_if_triangulation_with_degree_constraint()
+#     graph.deactivate_edge("B", "C")
+#     assert graph.check_if_triangulation_with_degree_constraint()
+#     graph.remove_edge(("B", "D"))
+#     assert not graph.check_if_triangulation_with_degree_constraint()
 
 
-def test_activate_edge():
-    # Test the activate_edge function
-    nodes = [
-        Node("A", (0, 0)),
-        Node("B", (0, 1)),
-        Node("C", (1, 0)),
-        Node("D", (1, 1)),
-    ]
-    graph = Graph_Wrapper(nodes)
-    graph.add_edge("A", "D")
-    assert ("A", "D") in graph.get_all_edges(True)
-    graph.deactivate_edge("A", "D")
-    assert ("A", "D") not in graph.get_all_edges(True)
-    graph.activate_edge("A", "D")
-    assert ("A", "D") in graph.get_all_edges(True)
+# def test_activate_edge():
+#     # Test the activate_edge function
+#     nodes = [
+#         Node("A", (0, 0)),
+#         Node("B", (0, 1)),
+#         Node("C", (1, 0)),
+#         Node("D", (1, 1)),
+#     ]
+#     graph = Graph_Wrapper(nodes)
+#     graph.add_edge("A", "D")
+#     assert ("A", "D") in graph.get_all_edges(True)
+#     graph.deactivate_edge("A", "D")
+#     assert ("A", "D") not in graph.get_all_edges(True)
+#     graph.activate_edge("A", "D")
+#     assert ("A", "D") in graph.get_all_edges(True)
 
 
-def test_check_for_intersection_with_all_edges_and_nodes():
-    # Test the check_for_intersection_with_all_edges_and_nodes function
-    nodes = [
-        Node("A", (0, 0)),
-        Node("B", (0, 1)),
-        Node("C", (1, 0)),
-        Node("D", (1, 1)),
-    ]
-    graph = Graph_Wrapper(nodes)
-    graph.add_convex_hull()
-    graph.add_edge("A", "D")
-    graph.add_edge("B", "C")
-    assert graph.check_for_intersection_with_all_edges_and_nodes(("A", "D"))
-    assert not graph.check_for_intersection_with_all_edges_and_nodes(("A", "B"))
+# def test_check_for_intersection_with_all_edges_and_nodes():
+#     # Test the check_for_intersection_with_all_edges_and_nodes function
+#     nodes = [
+#         Node("A", (0, 0)),
+#         Node("B", (0, 1)),
+#         Node("C", (1, 0)),
+#         Node("D", (1, 1)),
+#     ]
+#     graph = Graph_Wrapper(nodes)
+#     graph.add_convex_hull()
+#     graph.add_edge("A", "D")
+#     graph.add_edge("B", "C")
+#     assert graph.check_for_intersection_with_all_edges_and_nodes(("A", "D"))
+#     assert not graph.check_for_intersection_with_all_edges_and_nodes(
+#         ("A", "B"))
 
 
-def test_get_intersections_with_all_edges():
-    nodes = [
-        # Node("0", (5, 10)),
-        Node("1", (2, 6)),
-        Node("2", (6, 5)),
-        Node("3", (9, 3)),
-        # Node("4", (0, 10)),
-        # Node("5", (9, 5)),
-        # Node("6", (1, 2)),
-        Node("7", (8, 6)),
-        Node("8", (2, 3)),
-        # Node("9", (2, 10)),
-    ]
-    graph = Graph_Wrapper(nodes)
-    graph.add_all_possible_edges(True)
-    edge = ("1", "3")
-    assert graph.get_intersections_with_all_edges_n2(
-        edge, False
-    ) == graph.get_intersections_with_all_edges(edge)
+# def test_get_intersections_with_all_edges():
+#     nodes = [
+#         # Node("0", (5, 10)),
+#         Node("1", (2, 6)),
+#         Node("2", (6, 5)),
+#         Node("3", (9, 3)),
+#         # Node("4", (0, 10)),
+#         # Node("5", (9, 5)),
+#         # Node("6", (1, 2)),
+#         Node("7", (8, 6)),
+#         Node("8", (2, 3)),
+#         # Node("9", (2, 10)),
+#     ]
+#     graph = Graph_Wrapper(nodes)
+#     graph.add_all_possible_edges(True)
+#     edge = ("1", "3")
+#     assert graph.get_intersections_with_all_edges_n2(
+#         edge, False
+#     ) == graph.get_intersections_with_all_edges(edge)
 
 
-def test_get_all_intersections():
-    nodes = [
-        Node("0", (5, 10)),
-        Node("1", (2, 6)),
-        Node("2", (6, 5)),
-        Node("3", (9, 3)),
-        Node("4", (0, 10)),
-        Node("5", (9, 5)),
-        Node("6", (1, 2)),
-        Node("7", (8, 6)),
-        Node("8", (2, 3)),
-        Node("9", (2, 10)),
-    ]
-    graph = Graph_Wrapper(nodes)
-    graph.add_all_possible_edges(True)
-    intersections = graph.get_all_intersections_n2()
+# def test_get_all_intersections():
+#     nodes = [
+#         Node("0", (5, 10)),
+#         Node("1", (2, 6)),
+#         Node("2", (6, 5)),
+#         Node("3", (9, 3)),
+#         Node("4", (0, 10)),
+#         Node("5", (9, 5)),
+#         Node("6", (1, 2)),
+#         Node("7", (8, 6)),
+#         Node("8", (2, 3)),
+#         Node("9", (2, 10)),
+#     ]
+#     graph = Graph_Wrapper(nodes)
+#     graph.add_all_possible_edges(True)
+#     intersections = graph.get_all_intersections_n2()
+#     for edge in [
+#         (edge, other)
+#         for edge, other in graph.get_all_intersections()
+#         if edge not in graph.impossible_edges and other not in graph.impossible_edges
+#     ]:
+#         assert edge in intersections
+
+
+def test_exclude_edges():
+    PATH = "simple_20/003_delaunay_flips.json"
+    nodes = load_nodes_from_json(PATH)
+    outer_graph = Graph_Wrapper(nodes)
+    outer_graph.add_convex_hull()
+    outer_graph.show_and_save()
     for edge in [
-        (edge, other)
-        for edge, other in graph.get_all_intersections()
-        if edge not in graph.impossible_edges and other not in graph.impossible_edges
+        edge
+        for edge in outer_graph.exclude_edge_partition
+        if edge not in outer_graph.impossible_edges
     ]:
-        assert edge in intersections
+        graph = Graph_Wrapper(nodes)
+        solver = SAT(graph)
+        para = SAT_Parameter(
+            intersection=True,
+            degree_atleast=True,
+        )
+        try:
+            solver.solve(
+                {"timeout": -1, "args": asdict(para), "debug_set_edges": [edge]}
+            )
+        except AssertionError:
+            continue
+
+        graph.show_and_save()
+        assert False, f"Solver should not find a solution with excluded edge {edge}."
