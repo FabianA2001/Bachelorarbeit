@@ -102,10 +102,4 @@ class Exclude_Edge_Partition:
                     edges.add((min(com[0], com[1]), max(com[0], com[1])))
                     continue
 
-            if not self.__degree_split_possible(
-                poly_nodes_0, poly_nodes_1, com[0], com[1]
-            ):
-                edges.add((min(com[0], com[1]), max(com[0], com[1])))
-                continue
-
         return list(edges)
