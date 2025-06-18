@@ -66,10 +66,10 @@ def ortools_algorithm(graph):
     para = Ortools_Parameter(
         intersection=True,
         degree=True,
-        number_edges=True,
+        degree_direction=True,
     )
     logging.info(
-        f"solution found: {solver.solve({'timeout': -1, 'args': asdict(para)})}"
+        f"solution found: {solver.solve({'timeout': 30, 'args': asdict(para)})}"
     )
 
 
@@ -100,16 +100,16 @@ def sat_Tri_algorithm(graph):
 
 
 def test_algo():
-    # PATH = "simple_80/004_random.json"
-    PATH = "simple_10/003_delaunay_flips.json"
+    PATH = "simple_70/004_random.json"
+    # PATH = "simple_10/003_delaunay_flips.json"
     # PATH = "iterative_60_10/000_random.json"
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    sat_algorithm(graph)
+    # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
-    # ortools_algorithm(graph)
+    ortools_algorithm(graph)
     graph.show_and_save()
 
 
@@ -139,7 +139,9 @@ def run_instance_lokal():
                 "args": asdict(
                     SAT_Parameter(
                         intersection=True,
-                        degree_atleast=True,
+                        # degree_atleast=True,
+                        fix_hull=True,
+                        degree_subset=True,
                     )
                 ),
             },
@@ -149,20 +151,30 @@ def run_instance_lokal():
                     SAT_Parameter(
                         intersection=True,
                         degree_atleast=True,
-                        exclude_edges=True,
+                        fix_hull=True,
                     )
                 ),
             },
-            {
-                "timeout": -1,
-                "args": asdict(
-                    SAT_Parameter(
-                        add_allEdges_or_exclude_edges=False,
-                        intersection=True,
-                        degree_atleast=True,
-                    )
-                ),
-            },
+            # {
+            #     "timeout": -1,
+            #     "args": asdict(
+            #         SAT_Parameter(
+            #             intersection=True,
+            #             degree_atleast=True,
+            #             exclude_edges=True,
+            #         )
+            #     ),
+            # },
+            # {
+            #     "timeout": -1,
+            #     "args": asdict(
+            #         SAT_Parameter(
+            #             add_allEdges_or_exclude_edges=False,
+            #             intersection=True,
+            #             degree_atleast=True,
+            #         )
+            #     ),
+            # },
         ],
         Ortools: [
             # {

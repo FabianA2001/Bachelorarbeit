@@ -1,5 +1,5 @@
 {
-  "instances": ["simple_80"],
-  "solvers": ["Ortools"],
-  "ignore_correct": true
+  "instances": ["simple_40"],
+  "solvers": ["SAT"],
+  "ignore_correct": false
 }

@@ -1,14 +1,16 @@
-from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-import shapely
-from solver.solver import Solver
-from pysat.solvers import Solver as SatSolver
-from pysat.formula import CNF
-from pysat.card import CardEnc
+import itertools
 import logging
 import threading
-from utils import time_function
-import itertools
 from dataclasses import dataclass
+
+import shapely
+from pysat.card import CardEnc
+from pysat.formula import CNF
+from pysat.solvers import Solver as SatSolver
+
+from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
+from solver.solver import Solver
+from utils import time_function
 
 
 @dataclass
@@ -164,12 +166,12 @@ class SAT_TRI(Solver):
             result = [None]
 
             if timeout == -1:
-                result[0] = time_function(self.solver.solve)()
+                result[0] = self.time_solver(self.solver.solve)()
             else:
                 logging.info("start solving")
 
                 def run_solver():
-                    result[0] = time_function(self.solver.solve_limited)(  # type: ignore
+                    result[0] = self.time_solver(self.solver.solve_limited)(  # type: ignore
                         expect_interrupt=True
                     )
 
