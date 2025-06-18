@@ -1,9 +1,11 @@
-from solver.solver import Solver
-from ortools.sat.python import cp_model
-from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
-from utils import time_function
 from dataclasses import dataclass
+
+from ortools.sat.python import cp_model
+
+from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
+from solver.solver import Solver
+from utils import time_function
 
 
 @dataclass
@@ -122,16 +124,7 @@ class Ortools(Solver):
 
         self.model.Maximize(sum(self.vars_int.values()))
 
-    def _actual_solver(self, parameter: dict) -> dict:
-        if not isinstance(parameter, dict):
-            raise TypeError("Parameter must be a dictionary.")
-
-        args = parameter.get("args", None)
-        assert args is not None, "Args must be provided in the parameter dictionary."
-        parameter_data: Parameter = Parameter(**(args))
-
-        if self.graph is None:
-            raise ValueError("Graph is not set. Please set the graph before solving.")
+    def pre_solve(self, parameter_data: Parameter, timeout: int) -> bool:
         self.graph.add_all_possible_edges(default_for_active=False)
         self.vars = {
             (min(edge[0], edge[1]), max(edge[0], edge[1])): self.model.NewBoolVar(
@@ -157,28 +150,42 @@ class Ortools(Solver):
 
         stop_after_first_solution = True
         if parameter_data.evaluation_direction:
-            if parameter["timeout"] == -1:
+            if timeout == -1:
                 logging.warning("Es sollte ein Timeout gesetzt werden.")
             time_function(self.evaluation_direction)()
             stop_after_first_solution = False
 
         if parameter_data.degree_direction:
-            if parameter["timeout"] == -1:
+            if timeout == -1:
                 logging.warning("Es sollte ein Timeout gesetzt werden.")
             time_function(self.degree_direction)()
             stop_after_first_solution = False
 
+        return stop_after_first_solution
+
+    def _actual_solver(self, parameter: dict) -> dict:
+        if not isinstance(parameter, dict):
+            raise TypeError("Parameter must be a dictionary.")
+
+        args = parameter.get("args", None)
+        assert args is not None, "Args must be provided in the parameter dictionary."
+        parameter_data: Parameter = Parameter(**(args))
+
+        if self.graph is None:
+            raise ValueError("Graph is not set. Please set the graph before solving.")
+        stop_after_first_solution = self.pre_solve(parameter_data, parameter["timeout"])
         solver = cp_model.CpSolver()
         # solver.parameters.log_search_progress = True  # Enable logging
         solver.parameters.max_time_in_seconds = self.get_remaining_time()
         logging.info("Start solving...")
+
         if stop_after_first_solution:
-            status = solver.Solve(
+            status = self.time_solver(solver.Solve)(
                 self.model,
                 FirstSolutionStop(self.graph.get_number_edges_in_Triangulation()),
             )
         else:
-            status = time_function(solver.Solve)(self.model)
+            status = self.time_solver(solver.Solve)(self.model)
         # status = solver.Solve(self.model)
         print(status)
         if not (status == cp_model.OPTIMAL or status == cp_model.FEASIBLE):

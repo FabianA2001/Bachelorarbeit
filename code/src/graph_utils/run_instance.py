@@ -239,14 +239,11 @@ class Run_Instance:
         legend += "\n" + "=" * 50
         logging.info(legend)
 
-        # self.create_plt(
-        #     table=table,
-        #     y="evaluation",
-        #     block=False,
-        #     instances=instances,
-        #     ,
-        #     only_newest=only_newest,
-        # )
+        self.create_plt(
+            table=table,
+            y="evaluation",
+            block=False,
+        )
         self.create_plt(
             table=table,
             y="runtime",
@@ -280,23 +277,30 @@ class Run_Instance:
         solvers: list[type[Solver]],
         outer_parameter: dict,
         ignore_correct: bool = False,
+        host: str = socket.gethostname(),
+        run: bool = True,
+        show: bool = True,
     ):
-        for inst in insts:
-            for solver in solvers:
-                if solver in outer_parameter:
-                    list_parameter = outer_parameter[solver]
-                else:
-                    logging.warning("No parameter found for solver, using default.")
-                    list_parameter = [{"timeout": self.DEFAULT_TIME, "args": None}]
-                for parameter in list_parameter:
-                    self.run_solver_on_instance(
-                        solver_type=solver,
-                        instance_name=inst,
-                        parameter=parameter,
-                    )
+        if run:
+            for inst in insts:
+                for solver in solvers:
+                    if solver in outer_parameter:
+                        list_parameter = outer_parameter[solver]
+                    else:
+                        logging.warning("No parameter found for solver, using default.")
+                        list_parameter = [{"timeout": self.DEFAULT_TIME, "args": None}]
+                    for parameter in list_parameter:
+                        self.run_solver_on_instance(
+                            solver_type=solver,
+                            instance_name=inst,
+                            parameter=parameter,
+                        )
         # from algbench import describe
         # describe(self.path_benchmark)
-        self.show_results(insts, solvers, outer_parameter, ignore_correct)
+        if show:
+            self.show_results(
+                insts, solvers, outer_parameter, ignore_correct, host=host
+            )
 
     @staticmethod
     def get_selection(lit: list):
@@ -310,7 +314,13 @@ class Run_Instance:
             print("Bitte wähle mindestens einen Wert aus.")
         return [str(i) for i in selected_inst]
 
-    def select(self, outer_parameter: dict):
+    def select(
+        self,
+        outer_parameter: dict,
+        host=socket.gethostname(),
+        run: bool = True,
+        show: bool = True,
+    ):
         # Fragen nach Instanzen
         instances = self.get_instances()
         instances_names = sorted(list(instances.keys()))
@@ -337,15 +347,32 @@ class Run_Instance:
                 }
             )
 
-        self.run(insts, solvers, outer_parameter, ignore_correct)
+        self.run(
+            insts,
+            solvers,
+            outer_parameter,
+            ignore_correct,
+            host=host,
+            run=run,
+            show=show,
+        )
 
-    def run_default(self, outer_parameter: dict):
+    def run_default(
+        self,
+        outer_parameter: dict,
+        host=socket.gethostname(),
+        run: bool = True,
+        show: bool = True,
+    ):
         data = self.load_default()
         self.run(
             data.get("instances", []),
             [self.solvers_dict[i] for i in data.get("solvers", [])],
             outer_parameter=outer_parameter,
             ignore_correct=data.get("ignore_correct", True),
+            host=host,
+            run=run,
+            show=show,
         )
 
     def show_triangulation_from_instance(

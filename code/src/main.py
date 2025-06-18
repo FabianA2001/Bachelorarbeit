@@ -1,23 +1,23 @@
-from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
-from graph_utils import generate
-from solver.delaunay import Delaunay
+from dataclasses import asdict
+
+import matplotlib._pylab_helpers
+import matplotlib.pyplot as plt
+
+from graph_utils import generate, run_instance
+from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from graph_utils.node import Node, load_nodes_from_json
+from solver.delaunay import Delaunay
+from solver.iterative import Iterative
 from solver.ortools import Ortools
 from solver.ortools import Parameter as Ortools_Parameter
-from solver.raw_flips import Raw_Flips
-from solver.iterative import Iterative
 from solver.random_adder import Random_Adder
+from solver.raw_flips import Raw_Flips
 from solver.sat import SAT
 from solver.sat import Parameter as SAT_Parameter
 from solver.sat_tri import SAT_TRI
 from solver.sat_tri import Parameter as SAT_TRI_Parameter
-from graph_utils import run_instance
 from utils import setup_logging
-import matplotlib.pyplot as plt
-import matplotlib._pylab_helpers
-from dataclasses import asdict
-
 
 BENCHMARK_PATH = "./benchmark"
 
@@ -165,29 +165,30 @@ def run_instance_lokal():
             },
         ],
         Ortools: [
-            {
-                "timeout": -1,
-                "args": asdict(
-                    Ortools_Parameter(
-                        intersection=True,
-                        degree=True,
-                        number_edges=True,
-                    )
-                ),
-            },
             # {
-            #     "timeout": 30,
+            #     "timeout": -1,
             #     "args": asdict(
             #         Ortools_Parameter(
-            #             intersection=True, degree=True, evaluation_direction=True
+            #             intersection=True,
+            #             degree=True,
+            #             number_edges=True,
             #         )
             #     ),
             # },
+            {
+                "timeout": 30,
+                "args": asdict(
+                    Ortools_Parameter(
+                        intersection=True, degree=True, evaluation_direction=True
+                    )
+                ),
+            },
         ],
     }
     ri = run_instance.Run_Instance(path_benchmark=BENCHMARK_PATH, solver=get_solvers())
     ri.select(outer_parameter)
-    # ri.run_default(outer_parameter)
+    # ri.select(outer_parameter, host="DESKTOP-L2QBIO4", run=False)
+    # ri.run_default(outer_parameter, host="DESKTOP-L2QBIO4", run=False)
     # ri.show_triangulation_from_instance(
     #     algorithm_name="Random",
     #     instance_name="simple_30",
