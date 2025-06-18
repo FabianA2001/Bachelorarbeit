@@ -57,6 +57,7 @@ class Ortools(Solver):
             ):
                 continue
             self.model.AddBoolOr([self.vars[edge].Not(), self.vars[other_edge].Not()])
+            # TODO At most one
         self.timeout_error()
 
     def constraint_degree(self):

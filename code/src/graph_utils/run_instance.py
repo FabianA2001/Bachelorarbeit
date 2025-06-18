@@ -15,6 +15,8 @@ from graph_utils.node import load_nodes_from_json
 from solver.solver import Solver
 from utils import format_dictionary
 
+# TODO in eigenes Projekt
+
 
 class Run_Instance:
     DEFAULT_TIME = 30  # Default timeout for solvers in seconds
