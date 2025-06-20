@@ -48,7 +48,19 @@ def time_function(func):
         result = func(*args, **kwargs)
         end_time = time.time()
         elapsed_time = end_time - start_time
-        logging.info(f"Function {func.__name__} took {elapsed_time:.4f} seconds")
+        logging.info(f"Function {func.__name__:<40} took {elapsed_time:>8.4f} seconds")
         return result
 
     return wrapper
+
+
+def format_dictionary(dictionary: dict, indention=1) -> str:
+    """
+    Formats the parameters for logging.
+    """
+    result = ""
+    for key, value in dictionary.items():
+        if type(value) is dict:
+            value = format_dictionary(value, indention + 1)
+        result += f"\n{'|' * indention}{(key+':')[:35]:<35} {value}"
+    return result

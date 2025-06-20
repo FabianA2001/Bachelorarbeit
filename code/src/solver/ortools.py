@@ -1,8 +1,21 @@
-from solver.solver import Solver
-from ortools.sat.python import cp_model
-from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
+from dataclasses import dataclass
+
+from ortools.sat.python import cp_model
+
+from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
+from solver.solver import Solver
 from utils import time_function
+
+
+@dataclass
+class Parameter:
+    intersection: bool = False
+    degree: bool = False
+    number_edges: bool = False
+    evaluation_direction: bool = False
+    degree_direction: bool = False
+    maximize_edges: bool = False
 
 
 class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
@@ -44,6 +57,7 @@ class Ortools(Solver):
             ):
                 continue
             self.model.AddBoolOr([self.vars[edge].Not(), self.vars[other_edge].Not()])
+            # TODO At most one
         self.timeout_error()
 
     def constraint_degree(self):
@@ -111,9 +125,7 @@ class Ortools(Solver):
 
         self.model.Maximize(sum(self.vars_int.values()))
 
-    def _actual_solver(self, parameter: dict) -> dict:
-        if self.graph is None:
-            raise ValueError("Graph is not set. Please set the graph before solving.")
+    def pre_solve(self, parameter_data: Parameter, timeout: int) -> bool:
         self.graph.add_all_possible_edges(default_for_active=False)
         self.vars = {
             (min(edge[0], edge[1]), max(edge[0], edge[1])): self.model.NewBoolVar(
@@ -122,47 +134,59 @@ class Ortools(Solver):
             for edge in self.graph.get_all_edges()
         }
 
-        stop_after_first_solution = True
-        if parameter["version"] == 0.1:
+        # Apply constraints based on parameter_data
+        if parameter_data.maximize_edges:
             self.model.Maximize(sum(list(self.vars.values())))
+
+        if parameter_data.intersection:
             self.constraint_intersection()
+
+        if parameter_data.degree:
             self.constraint_degree()
-        if parameter["version"] == 0.2:
-            self.constraint_intersection()
-            self.constraint_degree()
+
+        if parameter_data.number_edges:
             self.constraint_set_number_edges(
                 self.graph.get_number_edges_in_Triangulation()
             )
-        if parameter["version"] == 0.3:
-            if parameter["timeout"] == -1:
+
+        stop_after_first_solution = True
+        if parameter_data.evaluation_direction:
+            if timeout == -1:
                 logging.warning("Es sollte ein Timeout gesetzt werden.")
-            time_function(self.constraint_intersection)()
             time_function(self.evaluation_direction)()
-            self.constraint_set_number_edges(
-                self.graph.get_number_edges_in_Triangulation()
-            )
-            stop_after_first_solution = False
-        else:
-            if parameter["timeout"] == -1:
-                logging.warning("Es sollte ein Timeout gesetzt werden.")
-            time_function(self.constraint_intersection)()
-            time_function(self.degree_direction)()
-            self.constraint_set_number_edges(
-                self.graph.get_number_edges_in_Triangulation()
-            )
             stop_after_first_solution = False
 
+        if parameter_data.degree_direction:
+            if timeout == -1:
+                logging.warning("Es sollte ein Timeout gesetzt werden.")
+            time_function(self.degree_direction)()
+            stop_after_first_solution = False
+
+        return stop_after_first_solution
+
+    def _actual_solver(self, parameter: dict) -> dict:
+        if not isinstance(parameter, dict):
+            raise TypeError("Parameter must be a dictionary.")
+
+        args = parameter.get("args", None)
+        assert args is not None, "Args must be provided in the parameter dictionary."
+        parameter_data: Parameter = Parameter(**(args))
+
+        if self.graph is None:
+            raise ValueError("Graph is not set. Please set the graph before solving.")
+        stop_after_first_solution = self.pre_solve(parameter_data, parameter["timeout"])
         solver = cp_model.CpSolver()
         # solver.parameters.log_search_progress = True  # Enable logging
         solver.parameters.max_time_in_seconds = self.get_remaining_time()
         logging.info("Start solving...")
+
         if stop_after_first_solution:
-            status = solver.Solve(
+            status = self.time_solver(solver.Solve)(
                 self.model,
                 FirstSolutionStop(self.graph.get_number_edges_in_Triangulation()),
             )
         else:
-            status = time_function(solver.Solve)(self.model)
+            status = self.time_solver(solver.Solve)(self.model)
         # status = solver.Solve(self.model)
         print(status)
         if not (status == cp_model.OPTIMAL or status == cp_model.FEASIBLE):

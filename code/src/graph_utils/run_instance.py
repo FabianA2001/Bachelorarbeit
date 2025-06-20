@@ -1,16 +1,21 @@
-import os
-from graph_utils import graph_const
-from solver.solver import Solver
 import json
+import logging
+import os
+import socket
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import questionary
+import seaborn as sns
+from algbench import Benchmark, read_as_pandas
+
+from graph_utils import graph_const
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from graph_utils.node import load_nodes_from_json
-import logging
-from algbench import Benchmark, read_as_pandas
-import matplotlib.pyplot as plt
-import seaborn as sns
-import pandas as pd
-import socket
-import questionary
+from solver.solver import Solver
+from utils import format_dictionary
+
+# TODO in eigenes Projekt
 
 
 class Run_Instance:
@@ -55,8 +60,21 @@ class Run_Instance:
         host: str,
         _graph: Graph_Wrapper,
     ):
-        solver = solver_type(_graph)
-        solution: dict = solver.solve(parameter)
+        try:
+            solver = solver_type(_graph)
+            solution: dict = solver.solve(parameter)
+        except Exception as e:
+            logging.error(
+                f"Error while solving {instance_name} - {solver_name} - {file_name} with {format_dictionary(parameter)}\n error:{e}"
+            )
+            return {
+                "correct": False,
+                "time_solver": -1,
+                "time_pre_solver": -1,
+                "evaluation": 0.0,
+                "triangulation": [],
+            }
+
         is_triangulation = _graph.check_if_triangulation_with_degree_constrained()
         result = solution["success"] and is_triangulation
         correct = possible == result
@@ -67,6 +85,8 @@ class Run_Instance:
 
         return {
             "correct": correct,
+            "time_pre_solver": solver.pre_solve_time,
+            "time_solver": solver.solve_time,
             "evaluation": _graph.evaluate_graph(),
             "triangulation": _graph.get_all_edges(True),
         }
@@ -114,9 +134,9 @@ class Run_Instance:
 
     def show_results(
         self,
-        instances: list[str] = [],
-        solvers: list[type[Solver]] = [],
-        only_newest: bool = True,
+        instances: list[str],
+        solvers: list[type[Solver]],
+        outer_parameter: dict,
         ignore_correct: bool = False,
         block: bool = False,
         host: str = socket.gethostname(),
@@ -128,15 +148,14 @@ class Run_Instance:
                 "solver": result["parameters"]["args"]["solver_name"],
                 "instance": result["parameters"]["args"]["instance_name"],
                 "file": result["parameters"]["args"]["file_name"],
-                "version": result["parameters"]["args"]["parameter"]["version"],
                 "correct": result["result"]["correct"],
+                "args": result["parameters"]["args"]["parameter"]["args"],
                 "evaluation": result["result"]["evaluation"],
-                "runtime": result["runtime"],
                 "timeout": result["parameters"]["args"]["parameter"]["timeout"],
+                # "runtime": result["runtime"],
+                "runtime": result["result"]["time_solver"],
             },
         )
-        # filter nach Host
-        # table = table.sort_values(by=["solver", "instance", "file"])
         # Filter nach Host, falls host angegeben ist
         if host:
             table = table[table["host"] == host]
@@ -147,62 +166,35 @@ class Run_Instance:
             table.loc[~table["correct"], "runtime"] = -1
             table = table.drop(columns=["correct"])
 
-        # self.create_plt(
-        #     table=table,
-        #     y="evaluation",
-        #     block=False,
-        #     instances=instances,
-        #     solvers=[solver.NAME for solver in solvers],
-        #     only_newest=only_newest,
-        # )
-        self.create_plt(
-            table=table,
-            y="runtime",
-            block=block,
-            instances=instances,
-            solvers=[solver.NAME for solver in solvers],
-            only_newest=only_newest,
-        )
-
-    def create_plt(
-        self,
-        table,
-        y: str,
-        block: bool = False,
-        instances: list[str] = [],
-        solvers: list[str] = [],
-        only_newest: bool = True,
-    ):
         if instances:
             table = table[table["instance"].isin(instances)]
+        solvers_name = [solver.NAME for solver in solvers]
         if solvers:
-            table = table[table["solver"].isin(solvers)]
+            table = table[table["solver"].isin(solvers_name)]
 
         # Kombiniere Instanz und Dateiname für die x-Achse
-
         table["instance_file"] = table["instance"] + "/" + table["file"]
-        if only_newest:
-            table["version_num"] = table["version"].astype(float)
-            idx = (
-                table.groupby(["solver", "instance_file"])["version_num"].transform(
-                    "max"
-                )
-                == table["version_num"]
-            )
-            table = table[idx]
-            table = table.drop(columns=["version_num"])
+        table = table.drop(columns=["instance", "file"])
 
-        table["solver_version"] = table["solver"] + " v" + table["version"].astype(str)
+        all_args = []
+        for arg_list in outer_parameter.values():
+            for arg in arg_list:
+                all_args.append(arg["args"])
+
+        # Filter table to only include rows where args are in all_args
+        table = table[table["args"].isin(all_args)]
+        table["args_str"] = table["args"].apply(lambda x: str(x))
 
         # --- Timeout-Filter: Behalte nur Zeilen mit maximalem Timeout pro solver/instance_file ---
         # Sonderfall: -1 zählt als höchster Wert
+
         def timeout_rank(x):
             # -1 wird als sehr großer Wert behandelt
             return x.replace(-1, float("inf"))
 
         table["timeout_rank"] = timeout_rank(table["timeout"])
         idx = (
-            table.groupby(["solver_version", "instance_file"])[
+            table.groupby(["instance_file", "solver", "args_str"])[
                 "timeout_rank"
             ].transform("max")
             == table["timeout_rank"]
@@ -210,20 +202,70 @@ class Run_Instance:
         table = table[idx]
         table = table.drop(columns=["timeout_rank"])
 
-        table = table.drop(columns=["version", "solver", "instance", "file"])
-        table = table.sort_values(by=["solver_version", "instance_file"])
-        print(table)
+        # Create mapping from unique args to numbers, grouped by solver
+        solver_args_mapping = {}
+        solver_args_multiple = {}
+        for solver in solvers_name:
+            solver_table = table[table["solver"] == solver]
+            unique_args = solver_table["args"].drop_duplicates().tolist()
+            solver_args_mapping[solver] = {}
+            solver_args_multiple[solver] = len(unique_args) > 1
+            for i, args in enumerate(unique_args):
+                timeout = solver_table[solver_table["args"] == args]["timeout"].iloc[0]
+                solver_args_mapping[solver][str(args)] = (i + 1, args, timeout)
+
+        def get_solver_args(row):
+            solver = row["solver"]
+            if solver_args_multiple[solver]:
+                number = (solver_args_mapping[solver][str(row["args"])])[0]
+                return f"{solver}-{number}"
+            else:
+                return solver
+
+        table["solver_args"] = table.apply(get_solver_args, axis=1)
+        table = table.drop(columns=["solver"])
+
+        table = table.sort_values(by=["instance_file", "solver_args"])
+
+        legend = ""
+        legend += "\nArgs Legend Mapping (by Solver):"
+        legend += "\n" + "=" * 50
+        for solver, args_mapping in solver_args_mapping.items():
+            legend += f"\n\n{solver}:"
+            for args_dict_str, number_args in args_mapping.items():
+                number = number_args[0]
+                args_dict = number_args[1]
+                # Find the original args dict from the string representation
+                legend += f"\n|#{number} in {number_args[2]}s: {format_dictionary(args_dict, 2)}\n"
+        legend = legend[:-1]
+        legend += "\n" + "=" * 50
+        logging.info(legend)
+
+        self.create_plt(
+            table=table,
+            y="evaluation",
+            block=False,
+        )
+        self.create_plt(
+            table=table,
+            y="runtime",
+            block=block,
+        )
+
+    def create_plt(
+        self,
+        table,
+        y: str,
+        block: bool = False,
+    ):
         plt.figure()
         sns.barplot(
             data=table,
             x="instance_file",
             y=y,
-            hue="solver_version",
+            hue="solver_args",
         )
-        plt.title(
-            f"{y.capitalize()} pro Instanz/File und Solver-Version"
-            + (" (nur neueste Version)" if only_newest else "")
-        )
+        plt.title(f"{y.capitalize()} pro Instanz/File und Solver-Version")
         plt.xlabel("Instanz/Datei")
         plt.ylabel(y.capitalize())
         plt.xticks(rotation=90)
@@ -235,20 +277,32 @@ class Run_Instance:
         self,
         insts: list[str],
         solvers: list[type[Solver]],
-        parameter: dict,
-        only_newest: bool = True,
+        outer_parameter: dict,
         ignore_correct: bool = False,
+        host: str = socket.gethostname(),
+        run: bool = True,
+        show: bool = True,
     ):
-        for inst in insts:
-            for solver in solvers:
-                self.run_solver_on_instance(
-                    solver_type=solver,
-                    instance_name=inst,
-                    parameter=parameter,
-                )
+        if run:
+            for inst in insts:
+                for solver in solvers:
+                    if solver in outer_parameter:
+                        list_parameter = outer_parameter[solver]
+                    else:
+                        logging.warning("No parameter found for solver, using default.")
+                        list_parameter = [{"timeout": self.DEFAULT_TIME, "args": None}]
+                    for parameter in list_parameter:
+                        self.run_solver_on_instance(
+                            solver_type=solver,
+                            instance_name=inst,
+                            parameter=parameter,
+                        )
         # from algbench import describe
         # describe(self.path_benchmark)
-        self.show_results(insts, solvers, only_newest, ignore_correct)
+        if show:
+            self.show_results(
+                insts, solvers, outer_parameter, ignore_correct, host=host
+            )
 
     @staticmethod
     def get_selection(lit: list):
@@ -262,7 +316,13 @@ class Run_Instance:
             print("Bitte wähle mindestens einen Wert aus.")
         return [str(i) for i in selected_inst]
 
-    def select(self):
+    def select(
+        self,
+        outer_parameter: dict,
+        host=socket.gethostname(),
+        run: bool = True,
+        show: bool = True,
+    ):
         # Fragen nach Instanzen
         instances = self.get_instances()
         instances_names = sorted(list(instances.keys()))
@@ -271,43 +331,6 @@ class Run_Instance:
         # Frage nach Solver
         solvers = self.get_selection(list(self.solvers_dict.keys()))
         solvers = [self.solvers_dict[i] for i in solvers]
-
-        # Frage nach Timeout, Standard ist -1 Sekunden
-        while True:
-            timeout = questionary.text(
-                "Timeout in Sekunden angeben (-1 = kein Timeout):", default="-1"
-            ).ask()
-            try:
-                timeout = int(timeout)
-            except ValueError:
-                print("Bitte eine gültige Zahl eingeben.")
-                continue
-            if timeout < -1:
-                print("Timeout muss größer oder gleich -1 sein.")
-                continue
-            elif timeout == 0:
-                print("Timeout kann nicht 0 sein, bitte -1 für kein Timeout verwenden.")
-                continue
-            break
-
-        while True:
-            version = questionary.text(
-                "Version der Parameter (z.B. 0.1, 0.2, ...), 0.0 ist neuste:",
-                default="0.0",
-            ).ask()
-            try:
-                version = float(version)
-            except ValueError:
-                print("Bitte eine gültige Zahl eingeben.")
-                continue
-            if version < 0:
-                print("Version muss größer oder gleich 0 sein.")
-                continue
-            break
-
-        only_new = questionary.confirm(
-            "Nur die neuste Version anzeigen?", default=True
-        ).ask()
 
         ignore_correct = not questionary.confirm(
             "Ergebnisse mit falschen Triangulationen als -1 Darstellen?", default=True
@@ -322,29 +345,36 @@ class Run_Instance:
                 {
                     "instances": insts,
                     "solvers": [solver.NAME for solver in solvers],
-                    "timeout": timeout,
-                    "version": version,
-                    "only_new": only_new,
                     "ignore_correct": ignore_correct,
                 }
             )
 
-        parameter = {"timeout": timeout, "version": version}
+        self.run(
+            insts,
+            solvers,
+            outer_parameter,
+            ignore_correct,
+            host=host,
+            run=run,
+            show=show,
+        )
 
-        self.run(insts, solvers, parameter, only_new, ignore_correct)
-
-    def run_default(self):
+    def run_default(
+        self,
+        outer_parameter: dict,
+        host=socket.gethostname(),
+        run: bool = True,
+        show: bool = True,
+    ):
         data = self.load_default()
-        parameter = {
-            "timeout": data.get("timeout", self.DEFAULT_TIME),
-            "version": data.get("version", 0.1),
-        }
         self.run(
             data.get("instances", []),
             [self.solvers_dict[i] for i in data.get("solvers", [])],
-            parameter,
-            only_newest=data.get("only_new", True),
+            outer_parameter=outer_parameter,
             ignore_correct=data.get("ignore_correct", True),
+            host=host,
+            run=run,
+            show=show,
         )
 
     def show_triangulation_from_instance(

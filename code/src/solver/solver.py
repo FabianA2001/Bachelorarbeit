@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
 import time
+from utils import format_dictionary
 
 
 class TimeoutError(Exception):
@@ -23,6 +24,8 @@ class Solver(ABC):
         self.success = False
         self.start_time = None
         self.timeout = -1  # Default timeout value, can be overridden
+        self.solve_time = -1.0
+        self.pre_solve_time = -1.0
 
     def __str__(self) -> str:
         return self.name
@@ -51,10 +54,46 @@ class Solver(ABC):
         if self.reach_timeout():
             raise TimeoutError()
 
+    def time_solver(self, func):
+        """
+        Decorator to time a solver function.
+        """
+
+        def wrapper(*args, **kwargs):
+            start_time = time.time()
+            result = func(*args, **kwargs)
+            elapsed_time = time.time() - start_time
+            self.solve_time = elapsed_time
+            logging.info(
+                f"Function {func.__name__:<40} took {elapsed_time:>8.4f} seconds"
+            )
+            return result
+
+        return wrapper
+
+    def time_pre_solve(self, func):
+        """
+        Decorator to time a solver function.
+        """
+
+        def wrapper(*args, **kwargs):
+            start_time = time.time()
+            result = func(*args, **kwargs)
+            elapsed_time = time.time() - start_time
+            self.pre_solve_time = elapsed_time
+            logging.info(
+                f"Function {func.__name__:<40} took {elapsed_time:>8.4f} seconds"
+            )
+            return result
+
+        return wrapper
+
     def solve(self, parameter: dict) -> dict:
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
-        logging.info(f"Starting {self.name} with parameters: {parameter}")
+        logging.info(
+            f"Starting {self.name} with parameters: {format_dictionary(parameter)}"
+        )
         self.timeout = parameter["timeout"]
         self.start_time = time.time()
         if not self.graph.check_degree_possible():

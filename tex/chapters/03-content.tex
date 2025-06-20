@@ -2,7 +2,7 @@
 
 \section{Instanzen Generation}
 \subsection{Ja - Instanzen}
-Bei den Ja-Instanzen handelt es sich um Knotenmengen, bei denen die \(\degrees\)-Funktion Grade liefert, welche eine gradbeschränkte Triangulation ermöglichen. 
+Bei den Ja-Instanzen handelt es sich um Knotenmengen, bei denen die \(\degrees\)-Funktion Grade liefert, welche eine gradbeschränkte Triangulation ermöglichen.
 Hierbei ist nicht bekannt, wie viele mögliche Lösungen existieren, sondern nur, dass es mindestens eine gibt.
 
 Der generelle Ablauf zur Erzeugung von Ja-Instanzen beginnt mit einer zufälligen Knotenmenge.
@@ -21,7 +21,7 @@ Für diese Kante werden zunächst alle Dreiecke gesucht, die diese Kante enthalt
 Dies geschieht, indem für die beiden Knoten \(x_{0,0}\) und \(x_{0,1}\) der Kante \(e_0\) alle ausgehenden Kanten verglichen werden.
 Sollten zwei dieser Kanten den gleichen Knoten \(v\) haben, muss das Tripel (\(x_{0,0}, x_{0,1}, v\)) ein Dreieck bilden, welches die Kante \(e_0\) enthält.
 
-Sollten mehr als zwei Dreiecke gefunden werden, so müssen die beiden Dreiecke ausgewählt werden, welche leer sind (keine weiteren Knoten enthalten). 
+Sollten mehr als zwei Dreiecke gefunden werden, so müssen die beiden Dreiecke ausgewählt werden, welche leer sind (keine weiteren Knoten enthalten).
 Da es in einer Triangulation nicht zu Überschneidungen kommen darf, kann es nur zwei leere Dreiecke geben.
 Aus diesen beiden Dreiecken (\(x_{0,0}, x_{0,1}, v_0\)) und (\(x_{0,0}, x_{0,1}, v_1\)) wird dann die Kante \(e_0\) entfernt und durch die neue Kante, bestehend aus \(v_0\) und \(v_1\), ersetzt.
 
@@ -112,7 +112,7 @@ Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
 Diese Variable ist wahr wenn die Kante \(e\) in der Triangulation enthalten ist.
 Für den Überschneidungs Konstriend werden folgende Klauseln dem OrTools Modeln hinzugefügt.
 \[
-\neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E_P: e_2 \in \intersection(e_1) 
+\neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E_P: e_2 \in \intersection(e_1)
 \]
 \begin{itemize}
 	\item Zielfunktion ist maximiere \(Q_T\) aus~\eqref{eq:evaluation}
@@ -134,14 +134,14 @@ Für den Überschneidungs Konstriend werden folgende Klauseln dem OrTools Modeln
 \begin{itemize}
 	\item gleicher Solver jetzt mit Gradbeschränkung
 	\item Kanten Variblen und Intersection Konstriend wie in~\cref{sec:ortools_heu}
-	\item Zwei Grundansätze 
+	\item Zwei Grundansätze
 	\begin{itemize}
 		\item Kanten Maximieren und dann nach Lösung abbrechen welche richtige Anzahl Kanten hat
 		\item Kanten Anzahl festsetzen und ohne Zielfunktion lösen
-	\end{itemize}	
+	\end{itemize}
 	\item Ansatz für die Gradbeschränkung
 	\item für jeden Knoten die summe der x für ausgehende Kanten varibalen gleich dem Sollgrad
-\end{itemize}	
+\end{itemize}
 \subsection{SAT mit Kanten}
 TODO Rausfinden wie SAT degree gemacht wird
 \begin{itemize}
@@ -171,12 +171,12 @@ TODO Rausfinden wie SAT degree gemacht wird
 		\item testen ob anzahl kanten * 2 = sum(degree)
 	\end{itemize}
 \end{itemize}
-\section{SAT mit Dreicken}
+\subsection{SAT mit Dreicken}
 \begin{itemize}
 	\item Alle möglichen Dreicke erstellen
 	\item Spätere Verbesserung nur Leere Dreicke
 	\item jedes Dreieck als Bool Variable
-	\item Intersection Konstriend wie bei Kanten 
+	\item Intersection Konstriend wie bei Kanten
 	\item Degree normaler Knoten degree = sum(Dreicke)
 	\item Degree auf Convexe Hülle degree - 1 = sum (Dreicke)
 \end{itemize}
