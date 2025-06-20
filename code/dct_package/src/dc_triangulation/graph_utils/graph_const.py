@@ -1,4 +1,5 @@
 """Graph"""
+
 DEFAULT_NAME = "Graph"
 FIGURES_PREFIX = "figures/"
 NODE_SIZE = 200
@@ -17,8 +18,6 @@ GEN_HEIGHT = 10
 
 """"Node"""
 DEFAULT_FILE_NAME = "current"
-PREFIX_INSTANCE = "instance/"
-DEFAULT_FILE_PATH = f"{PREFIX_INSTANCE}{DEFAULT_FILE_NAME}"
 
 
 """Result"""

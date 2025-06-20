@@ -11,11 +11,8 @@ from algbench import Benchmark, read_as_pandas
 
 from ..solver.solver import Solver
 from ..utils import format_dictionary
-from . import graph_const
 from .graph_wrapper.graph_wrapper import Graph_Wrapper
 from .node import load_nodes_from_json
-
-# TODO in eigenes Projekt
 
 
 class Run_Instance:
@@ -30,10 +27,11 @@ class Run_Instance:
         pd.set_option("display.max_columns", None)
         pd.set_option("display.width", 200)
 
+    # TODO PATH nutzen
     @staticmethod
     def get_instances() -> dict[str, dict[str, str]]:
         """Lädt alle Ordner aus dem graph_const.INSTANCES_DIR Verzeichnis."""
-        instances_dir = graph_const.PREFIX_INSTANCE
+        instances_dir = "hier ändern"
         instances = {}
         inst_names = [
             folder
@@ -109,14 +107,12 @@ class Run_Instance:
     ):
         instance = self.get_instances()
         if instance_name not in instance.keys():
-            raise ValueError(
-                f"Instance {instance_name} not found in {graph_const.PREFIX_INSTANCE}"
-            )
+            raise ValueError(f"Instance {instance_name} not found in {'hier ändern'}")
         instance = instance[instance_name]
 
         for file_name, file_path in instance.items():
             nodes = load_nodes_from_json(file_path)
-            with open(f"{graph_const.PREFIX_INSTANCE}{file_path}", "r") as f:
+            with open(f"{'hier ändern'}{file_path}", "r") as f:
                 possible = json.load(f)["possible"]
             graph = Graph_Wrapper(nodes)
             self.benchmark.add(

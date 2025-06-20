@@ -19,9 +19,9 @@ class Node:
 
 
 def save_nodes_as_json(
-    Nodes: list[Node], filename: str = graph_const.DEFAULT_FILE_NAME
+    Nodes: list[Node], path: str, filename: str = graph_const.DEFAULT_FILE_NAME
 ) -> None:
-    path = f"{graph_const.PREFIX_INSTANCE}{filename}"
+    path = f"{path}{filename}"
     """Speichert eine Liste von Knoten in einer JSON-Datei."""
     # Erstelle den Ordner, falls er nicht existiert
     path_list = path.split("/")

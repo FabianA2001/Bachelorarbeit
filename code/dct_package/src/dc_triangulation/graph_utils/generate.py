@@ -69,6 +69,7 @@ class Generate_Instance:
         self.width = width
         self.height = height
 
+    # TODO Path nutzen
     def generate(self) -> None:
         if self.file_name == "":
             raise ValueError("lokal_name is not set.")
@@ -81,7 +82,7 @@ class Generate_Instance:
             number = str(i).zfill(3)
             graph.save_graph_as_json(f"{self.name}/{number}_{self.file_name}.json")
             if possible is not None:
-                path = f"{graph_const.PREFIX_INSTANCE}{self.name}/{number}_{self.file_name}.json"
+                path = f"{'hier ändern'}{self.name}/{number}_{self.file_name}.json"
                 with open(path, "r") as f:
                     data = json.load(f)
                 data["possible"] = possible

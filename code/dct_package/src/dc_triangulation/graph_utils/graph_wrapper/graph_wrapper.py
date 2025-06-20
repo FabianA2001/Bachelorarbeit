@@ -178,9 +178,11 @@ class Graph_Wrapper:
     def get_aktive_graph_nodes(self) -> list[Node]:
         return self._data.get_aktive_graph_nodes
 
-    def save_graph_as_json(self, filename: str = graph_const.DEFAULT_FILE_NAME) -> None:
+    def save_graph_as_json(
+        self, path: str, filename: str = graph_const.DEFAULT_FILE_NAME
+    ) -> None:
         """Speichert den Graphen als JSON-Datei."""
-        save_graph_as_json(self._data, filename)
+        save_graph_as_json(self._data, path, filename)
 
     def get_all_nodes(self) -> list[int]:
         """Gibt alle Knoten des Graphen zurück."""
