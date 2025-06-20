@@ -6,6 +6,7 @@
 **/.degree-constrained-triangulation/
 **/degree_constrained_triangulation.egg-info
 !TEX/figures/*
+**/build/
 
 code/src/stupid_hostname.py
 
