@@ -1,7 +1,9 @@
-from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from solver.solver import Solver
-import shapely
 import itertools
+
+import shapely
+
+from ..graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
+from .solver import Solver
 
 
 class Iterative(Solver):

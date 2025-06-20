@@ -1,7 +1,8 @@
-from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from solver.solver import Solver
-from solver.delaunay import Delaunay
 import random
+
+from ..graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
+from ..solver.delaunay import Delaunay
+from .solver import Solver
 
 
 class Raw_Flips(Solver):
@@ -21,7 +22,7 @@ class Raw_Flips(Solver):
             raise ValueError("Graph is not set. Please set the graph before solving.")
         edges = self.graph.get_edges_of_node(node)
         if len(edges) == 0:
-            self.graph.show_and_save(show=False)
+            self.graph.show_and_save(save=".")
             assert len(edges) > 0, "No edges found for node: {}".format(node)
         while len(edges) > 0:
             edge = random.choice(edges)
@@ -67,7 +68,7 @@ class Raw_Flips(Solver):
             if not self.graph.check_if_triangulation_with_degree_constrained(
                 check_degree=False
             ):
-                self.graph.show_and_save()
+                self.graph.show_and_save(save=".")
                 assert False, "Graph is not triangulated."
             if self.graph.check_if_triangulation_with_degree_constrained():
                 return {

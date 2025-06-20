@@ -9,11 +9,11 @@ import questionary
 import seaborn as sns
 from algbench import Benchmark, read_as_pandas
 
-from graph_utils import graph_const
-from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from graph_utils.node import load_nodes_from_json
-from solver.solver import Solver
-from utils import format_dictionary
+from ..solver.solver import Solver
+from ..utils import format_dictionary
+from . import graph_const
+from .graph_wrapper.graph_wrapper import Graph_Wrapper
+from .node import load_nodes_from_json
 
 # TODO in eigenes Projekt
 

@@ -1,6 +1,6 @@
-from graph_utils import graph_const
-from graph_utils.node import save_nodes_as_json
-from graph_utils.graph_wrapper.data import Data
+from .. import graph_const
+from ..node import save_nodes_as_json
+from .data import Data
 
 
 def save_graph_as_json(

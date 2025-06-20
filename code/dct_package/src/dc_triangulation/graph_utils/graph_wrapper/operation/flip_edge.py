@@ -1,7 +1,8 @@
 import shapely
-from graph_utils.graph_wrapper.data import Data
-from graph_utils.graph_wrapper.visualisation import show_and_save
-from graph_utils.graph_wrapper.check import Check
+
+from ..check import Check
+from ..data import Data
+from ..visualisation import show_and_save
 
 
 def flip_edge(data: Data, check: Check, edge: tuple[int, int]) -> bool:
@@ -33,7 +34,8 @@ def flip_edge(data: Data, check: Check, edge: tuple[int, int]) -> bool:
                     check,
                     data.get_number_edges_triangulation,
                     show=True,
-                    save=False,
+                    save="",
+                    block=True,
                 )
 
                 raise ValueError("Zu viele Iterationen in reduce_to_two_tri.")
@@ -67,7 +69,8 @@ def flip_edge(data: Data, check: Check, edge: tuple[int, int]) -> bool:
             check,
             data.get_number_edges_triangulation,
             show=True,
-            save=False,
+            save="",
+            block=True,
         )
 
     assert len(triangles) == 2, f"Edge {edge} is not a diagonal.\n{triangles}"

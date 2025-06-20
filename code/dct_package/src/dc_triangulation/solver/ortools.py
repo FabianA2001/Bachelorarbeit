@@ -3,9 +3,9 @@ from dataclasses import dataclass
 
 from ortools.sat.python import cp_model
 
-from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from solver.solver import Solver
-from utils import time_function
+from ..graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
+from ..utils import time_function
+from .solver import Solver
 
 
 @dataclass

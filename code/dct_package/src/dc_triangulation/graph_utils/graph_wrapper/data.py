@@ -1,9 +1,11 @@
-from graph_utils.node import Node
-import shapely
 import itertools
 import math
-from graph_utils.graph_wrapper.data_raw import Data_Raw
 from functools import cached_property
+
+import shapely
+
+from ..node import Node
+from .data_raw import Data_Raw
 
 
 class Data(Data_Raw):

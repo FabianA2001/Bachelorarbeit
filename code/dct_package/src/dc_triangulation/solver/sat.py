@@ -1,13 +1,15 @@
-from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from solver.solver import Solver
-from pysat.solvers import Solver as SatSolver
-from pysat.formula import CNF
-from pysat.card import CardEnc
+import itertools
 import logging
 import threading
-from utils import time_function
-import itertools
 from dataclasses import dataclass
+
+from pysat.card import CardEnc
+from pysat.formula import CNF
+from pysat.solvers import Solver as SatSolver
+
+from ..graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
+from ..utils import time_function
+from .solver import Solver
 
 """
 wenn ein or im Name ist True das erste und False das zweite

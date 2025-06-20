@@ -1,19 +1,21 @@
-import networkx as nx
-import matplotlib.pyplot as plt
-from graph_utils import graph_const
 import logging
-from graph_utils.graph_wrapper.data import Data
-from graph_utils.graph_wrapper.file_system import save_graph_as_json
-from graph_utils.graph_wrapper.check import Check
+
+import matplotlib.pyplot as plt
+import networkx as nx
+
+from .. import graph_const
+from .check import Check
+from .data import Data
+from .file_system import save_graph_as_json
 
 
 def show_and_save(
     data: Data,
     check: Check,
     number_edges_in_Triangulation: int,
-    show: bool = True,
-    save: bool = True,
-    block: bool = False,
+    show: bool,
+    save: str,
+    block: bool,
 ) -> None:
     """Zeichnet den Graphen mit den festgelegten Positionen und Farben."""
     logging.info("starte show_and_save")
@@ -65,7 +67,7 @@ def show_and_save(
     )
     plt.title("Graph mit festen Koordinaten")
     if save:
-        plt.savefig(f"{graph_const.FIGURES_PREFIX}{data.name}.pdf")
+        plt.savefig(f"{save}/{data.name}.pdf")
     if show:
         logging.info("show Graph")
         plt.show(block=block)

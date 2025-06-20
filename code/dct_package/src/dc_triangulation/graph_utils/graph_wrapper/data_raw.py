@@ -1,9 +1,11 @@
-import networkx as nx
-from graph_utils import graph_const
-from graph_utils.node import Node
-import shapely
-from typing import Tuple, Union, Optional
 from functools import cached_property
+from typing import Optional, Tuple, Union
+
+import networkx as nx
+import shapely
+
+from .. import graph_const
+from ..node import Node
 
 
 class Data_Raw(nx.Graph):

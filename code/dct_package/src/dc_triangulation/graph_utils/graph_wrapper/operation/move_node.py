@@ -1,7 +1,9 @@
-import shapely
 import logging
 import random
-from graph_utils.graph_wrapper.data import Data
+
+import shapely
+
+from ..data import Data
 
 
 class No_Solution_Error(Exception):

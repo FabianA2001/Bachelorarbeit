@@ -1,14 +1,14 @@
-from random import randint
-from graph_utils.node import Node
-from graph_utils import graph_const
-from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from solver.delaunay import Delaunay
-from solver.random_adder import Random_Adder
-from random import choice
-from abc import ABC, abstractmethod
-from typing import Optional
 import json
 import math
+from abc import ABC, abstractmethod
+from random import choice, randint
+from typing import Optional
+
+from ..solver.delaunay import Delaunay
+from ..solver.random_adder import Random_Adder
+from . import graph_const
+from .graph_wrapper.graph_wrapper import Graph_Wrapper
+from .node import Node
 
 
 def gen_nodes(

@@ -1,20 +1,19 @@
-from graph_utils import graph_const
-from functools import cached_property
-from graph_utils.node import Node
-import shapely
-from typing import Tuple, Union, Optional
-from graph_utils.graph_wrapper.data import Data
-from graph_utils.graph_wrapper.data_raw import Data_Raw
-from graph_utils.graph_wrapper.check import Check
-from graph_utils.graph_wrapper import visualisation
-from graph_utils.graph_wrapper.operation import flip_edge
-from graph_utils.graph_wrapper.operation import move_node
-from graph_utils.graph_wrapper.operation.exclude_edge_partition import (
-    Exclude_Edge_Partition,
-)
-from graph_utils.graph_wrapper.file_system import save_graph_as_json
 import itertools
 import logging
+from functools import cached_property
+from typing import Optional, Tuple, Union
+
+import shapely
+
+from .. import graph_const
+from ..node import Node
+from . import visualisation
+from .check import Check
+from .data import Data
+from .data_raw import Data_Raw
+from .file_system import save_graph_as_json
+from .operation import flip_edge, move_node
+from .operation.exclude_edge_partition import Exclude_Edge_Partition
 
 
 class Graph_Wrapper:
@@ -80,7 +79,7 @@ class Graph_Wrapper:
         return self._check.get_all_intersections_n2(check_if_active, timeout_func)
 
     def show_and_save(
-        self, show: bool = True, save: bool = True, block: bool = False
+        self, show: bool = True, save: str = "", block: bool = True
     ) -> None:
         visualisation.show_and_save(
             self._data,
@@ -278,12 +277,12 @@ class Graph_Wrapper:
 
         evaluation /= number_of_nodes
 
-        assert (
-            evaluation >= 0
-        ), f"Evaluation must be non-negative, but got {evaluation}."
-        assert (
-            evaluation <= 1
-        ), f"Evaluation must be smaller then 1, but got {evaluation}."
+        assert evaluation >= 0, (
+            f"Evaluation must be non-negative, but got {evaluation}."
+        )
+        assert evaluation <= 1, (
+            f"Evaluation must be smaller then 1, but got {evaluation}."
+        )
         return evaluation
 
     def check_degree_possible(self) -> bool:

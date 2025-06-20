@@ -8,9 +8,9 @@ from pysat.card import CardEnc
 from pysat.formula import CNF
 from pysat.solvers import Solver as SatSolver
 
-from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from solver.solver import Solver
-from utils import time_function
+from ..graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
+from ..solver.solver import Solver
+from ..utils import time_function
 
 
 @dataclass
@@ -134,9 +134,9 @@ class SAT_TRI(Solver):
 
         try:
             args = parameter.get("args", None)
-            assert (
-                args is not None
-            ), "Args must be provided in the parameter dictionary."
+            assert args is not None, (
+                "Args must be provided in the parameter dictionary."
+            )
             parameter_data: Parameter = Parameter(**(args))
             self.setup(parameter_data)
 

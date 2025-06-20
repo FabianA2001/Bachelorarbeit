@@ -1,7 +1,9 @@
-from solver.solver import Solver
-from scipy.spatial import Delaunay as ScipyDelaunay
-from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 import logging
+
+from scipy.spatial import Delaunay as ScipyDelaunay
+
+from ..graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
+from .solver import Solver
 
 
 class Delaunay(Solver):
@@ -16,9 +18,9 @@ class Delaunay(Solver):
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
 
-        assert (
-            self.graph.get_all_edges() == []
-        ), "Graph is not empty. Please clear the graph before solving."
+        assert self.graph.get_all_edges() == [], (
+            "Graph is not empty. Please clear the graph before solving."
+        )
 
         # Implement Delaunay triangulation algorithm here
         nodes_name = self.graph.get_all_nodes()

@@ -2,7 +2,7 @@ import itertools
 
 import shapely
 
-from graph_utils.graph_wrapper.data import Data
+from ..data import Data
 
 
 class Exclude_Edge_Partition:

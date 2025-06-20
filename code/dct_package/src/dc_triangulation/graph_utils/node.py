@@ -1,8 +1,9 @@
-from graph_utils import graph_const
 import json
+import logging
 import os
 import random
-import logging
+
+from . import graph_const
 
 
 class Node:
@@ -38,9 +39,9 @@ def save_nodes_as_json(
         json.dump(data, f, indent=4)
 
 
-def load_nodes_from_json(filename: str = graph_const.DEFAULT_FILE_PATH) -> list[Node]:
+def load_nodes_from_json(filename: str) -> list[Node]:
     """Lädt eine Liste von Knoten aus einer JSON-Datei."""
-    with open(f"{graph_const.PREFIX_INSTANCE}{filename}", "r") as f:
+    with open(f"{filename}", "r") as f:
         data = json.load(f)["nodes"]
         nodes = [Node(tuple(node["pos"]), node.get("degree", -1)) for node in data]
     return nodes

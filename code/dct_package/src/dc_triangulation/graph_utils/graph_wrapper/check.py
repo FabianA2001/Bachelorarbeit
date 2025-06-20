@@ -1,8 +1,10 @@
-import shapely
-from typing import Union
-from graph_utils.graph_wrapper.data import Data
-from shapely.strtree import STRtree
 from itertools import combinations
+from typing import Union
+
+import shapely
+from shapely.strtree import STRtree
+
+from .data import Data
 
 
 class Check:
