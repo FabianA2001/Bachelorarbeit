@@ -3,10 +3,11 @@ from dataclasses import asdict
 
 import matplotlib._pylab_helpers
 import matplotlib.pyplot as plt
-
 from graph_utils import generate, run_instance
 from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from graph_utils.node import Node, load_nodes_from_json
+from utils import setup_logging
+
 from solver.delaunay import Delaunay
 from solver.iterative import Iterative
 from solver.ortools import Ortools
@@ -17,7 +18,6 @@ from solver.sat import SAT
 from solver.sat import Parameter as SAT_Parameter
 from solver.sat_tri import SAT_TRI
 from solver.sat_tri import Parameter as SAT_TRI_Parameter
-from utils import setup_logging
 
 BENCHMARK_PATH = "./benchmark"
 
@@ -210,7 +210,7 @@ def run_instance_lokal():
 
 def block_plt():
     while matplotlib._pylab_helpers.Gcf.get_all_fig_managers():
-        plt.pause(0.1)  # Kleine Pause, um GUI nicht zu blockieren
+        plt.pause(3)  # Kleine Pause, um GUI nicht zu blockieren
 
 
 def main():

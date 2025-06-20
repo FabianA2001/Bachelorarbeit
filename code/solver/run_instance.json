@@ -1,0 +1,9 @@
+{
+    "instances": [
+        "simple_10"
+    ],
+    "solvers": [
+        "SAT"
+    ],
+    "ignore_correct": false
+}

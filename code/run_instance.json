@@ -1,5 +1,0 @@
-{
-  "instances": ["simple_40"],
-  "solvers": ["SAT"],
-  "ignore_correct": false
-}
