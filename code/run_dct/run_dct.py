@@ -1,4 +1,5 @@
 import logging
+import os
 from dataclasses import asdict
 
 from dc_triangulation import (
@@ -96,18 +97,22 @@ def sat_Tri_algorithm(graph):
     )
 
 
-def test_algo():
-    PATH = "../instance/simple_70/004_random.json"
+def run_algo():
+    PATH = os.path.join(
+        os.path.dirname(__file__), "instance", "simple_30", "000_delaunay.json"
+    )
     # PATH = "simple_10/003_delaunay_flips.json"
     # PATH = "iterative_60_10/000_random.json"
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    sat_algorithm(graph)
+    print(graph.exclude_edge_partition)
+    print(len(graph.exclude_edge_partition))
+    # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
-    graph.show_and_save()
+    # graph.show_and_save()
 
 
 def create_instance():
@@ -129,5 +134,5 @@ def create_instance():
 
 
 if __name__ == "__main__":
-    test_algo()
+    run_algo()
     # create_instance()

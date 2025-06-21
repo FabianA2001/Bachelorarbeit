@@ -1,9 +1,13 @@
+import os
 from dataclasses import asdict
 
-from graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from graph_utils.node import Node, load_nodes_from_json
-from solver.sat import SAT
-from solver.sat import Parameter as SAT_Parameter
+from dc_triangulation import (
+    SAT,
+    Graph_Wrapper,
+    Node,
+    SAT_Parameter,
+    load_nodes_from_json,
+)
 
 
 def test_add_convex_hull():
@@ -261,12 +265,12 @@ def test_get_all_intersections():
 
 
 def test_exclude_edges():
-    PATH = "simple_10/003_delaunay_flips.json"
-    # PATH = "simple_80/001_random.json"
+    PATH = os.path.join(os.path.dirname(__file__), "instance", "10_delaunay_flips.json")
+    # PATH = os.path.join(os.path.dirname(__file__), "instance", "50_delaunay_flips.json")
+    # PATH = os.path.join(os.path.dirname(__file__), "instance", "80_random.json")
     nodes = load_nodes_from_json(PATH)
     outer_graph = Graph_Wrapper(nodes)
     outer_graph.add_convex_hull()
-    outer_graph.show_and_save()
     for edge in [
         edge
         for edge in outer_graph.exclude_edge_partition

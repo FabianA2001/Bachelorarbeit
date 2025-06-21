@@ -60,24 +60,27 @@ class Exclude_Edge_Partition:
             for node in nodes1
             if node != a and node != b
         )
+        nodes2 = self.find_nodes_in_polygon(poly2_nodes)
         degree_sum_2 = sum(
             self.data.nodes[node]["degree"]
-            for node in poly2_nodes
+            for node in nodes2
             if node != a and node != b
         )
-        nodes2 = self.find_nodes_in_polygon(poly2_nodes)
-        neighbors_a = len([node for node in self.data.neighbors(a) if node in nodes1])
-        neighbors_b = len([node for node in self.data.neighbors(b) if node in nodes2])
-        neighbors = neighbors_a + neighbors_b
+        num_edges_1 = 3 * len(nodes1) - 3 - len(poly1_nodes)
+        num_edges_2 = 3 * len(nodes2) - 3 - len(poly2_nodes)
 
-        edges_1 = (degree_sum_1 + neighbors + 2) // 2
-        edges_2 = (
+        y1 = 2 * num_edges_1 - degree_sum_1 - 2
+        y2 = (
             degree_sum_2
             + self.data.nodes[a]["degree"]
             + self.data.nodes[b]["degree"]
-            - neighbors
-        ) // 2
-        if edges_1 + edges_2 - 1 != self.data.get_number_edges_triangulation:
+            - 2 * num_edges_2
+        )
+        if y1 == y2:
+            assert y1 >= 0, "y1 and y2 must be non-negative"
+            assert (
+                y1 <= self.data.nodes[a]["degree"] + self.data.nodes[b]["degree"] - 2
+            ), "y1 and y2 must be less than the sum of the degrees of a and b minus 2"
             return False
 
         return True
@@ -97,9 +100,15 @@ class Exclude_Edge_Partition:
 
             poly_nodes_0 = self.hull_nodes[index1:] + self.hull_nodes[: index0 + 1]
             poly_nodes_1 = self.hull_nodes[index0 : index1 + 1]
-            for half in [poly_nodes_0, poly_nodes_1]:
-                if not self.__possible_half(half, [com[0], com[1]]):
-                    edges.add((min(com[0], com[1]), max(com[0], com[1])))
-                    continue
+            # for half in [poly_nodes_0, poly_nodes_1]:
+            #     if not self.__possible_half(half, [com[0], com[1]]):
+            #         edges.add((min(com[0], com[1]), max(com[0], com[1])))
+            #         continue
+
+            if not self.__degree_split_possible(
+                poly_nodes_0, poly_nodes_1, com[0], com[1]
+            ):
+                edges.add((min(com[0], com[1]), max(com[0], com[1])))
+                continue
 
         return list(edges)
