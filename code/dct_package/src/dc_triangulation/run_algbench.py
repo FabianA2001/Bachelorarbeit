@@ -5,33 +5,59 @@ import socket
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import questionary
 import seaborn as sns
 from algbench import Benchmark, read_as_pandas
 
-from ..solver.solver import Solver
-from ..utils import format_dictionary
-from .graph_wrapper.graph_wrapper import Graph_Wrapper
-from .node import load_nodes_from_json
+from .graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
+from .graph_utils.node import load_nodes_from_json
+from .solver.solver import Solver
+from .utils import format_dictionary
+
+"""
+        insts: list[str],
+        solvers: list[type[Solver]],
+        outer_parameter: dict,
+        ignore_correct: bool = False,
+        host: str = socket.gethostname(),
+        run: bool = True,
+        show: bool = True,
+
+"""
 
 
-class Run_Instance:
+class Run_Algbench:
     DEFAULT_TIME = 30  # Default timeout for solvers in seconds
+    DEFAULT_BENCHMARK_PATH = "./benchmark"
 
-    def __init__(self, path_benchmark: str, solver: list) -> None:
-        self.path_benchmark = path_benchmark
+    def __init__(
+        self,
+        inst_path: str,
+        outer_parameter: dict,
+        ignore_correct: bool = False,
+        host: str = socket.gethostname(),
+        path_benchmark: str = "",
+    ) -> None:
+        self.inst_path = inst_path
+        self.instances = self.get_instances(self.inst_path)
+        print(format_dictionary(self.instances))
+        self.outer_parameter = outer_parameter
+        self.solvers = [solver for solver in self.outer_parameter.keys()]
+        self.ignore_correct = ignore_correct
+        self.host = host
+        if path_benchmark == "":
+            self.path_benchmark = self.DEFAULT_BENCHMARK_PATH
+        else:
+            self.path_benchmark = path_benchmark
+
         self.benchmark = Benchmark(self.path_benchmark)
-        self.benchmark.capture_logger("my_alg", logging.INFO)
-        self.solvers_dict = {i.NAME: i for i in solver}
         pd.set_option("display.max_rows", None)
         pd.set_option("display.max_columns", None)
         pd.set_option("display.width", 200)
 
-    # TODO PATH nutzen
     @staticmethod
-    def get_instances() -> dict[str, dict[str, str]]:
+    def get_instances(path) -> dict[str, dict[str, str]]:
         """Lädt alle Ordner aus dem graph_const.INSTANCES_DIR Verzeichnis."""
-        instances_dir = "hier ändern"
+        instances_dir = path
         instances = {}
         inst_names = [
             folder
@@ -41,7 +67,7 @@ class Run_Instance:
         for inst_name in inst_names:
             inst_dir = os.path.join(instances_dir, inst_name)
             instances[inst_name] = {
-                file.replace(".json", ""): os.path.join(inst_name, file)
+                file.replace(".json", ""): os.path.join(path, inst_name, file)
                 for file in os.listdir(inst_dir)
                 if file.endswith(".json")
             }
@@ -89,30 +115,17 @@ class Run_Instance:
             "triangulation": _graph.get_all_edges(True),
         }
 
-    def save_default(self, data: dict):
-        with open("./run_instance.json", "w") as f:
-            json.dump(data, f, indent=4)
-
-    def load_default(self) -> dict:
-        """Lädt die Standardinstanzen und -solver aus der run_instance.json Datei."""
-        with open("./run_instance.json", "r") as f:
-            data = json.load(f)
-        return data
-
     def run_solver_on_instance(
         self,
         solver_type: type[Solver],
         instance_name: str,
         parameter: dict,
     ):
-        instance = self.get_instances()
-        if instance_name not in instance.keys():
-            raise ValueError(f"Instance {instance_name} not found in {'hier ändern'}")
-        instance = instance[instance_name]
+        instance = self.instances[instance_name]
 
         for file_name, file_path in instance.items():
             nodes = load_nodes_from_json(file_path)
-            with open(f"{'hier ändern'}{file_path}", "r") as f:
+            with open(file_path, "r") as f:
                 possible = json.load(f)["possible"]
             graph = Graph_Wrapper(nodes)
             self.benchmark.add(
@@ -128,14 +141,8 @@ class Run_Instance:
             )
         self.benchmark.compress()
 
-    def show_results(
+    def show(
         self,
-        instances: list[str],
-        solvers: list[type[Solver]],
-        outer_parameter: dict,
-        ignore_correct: bool = False,
-        block: bool = False,
-        host: str = socket.gethostname(),
     ):
         table = read_as_pandas(
             self.path_benchmark,
@@ -153,27 +160,25 @@ class Run_Instance:
             },
         )
         # Filter nach Host, falls host angegeben ist
-        if host:
-            table = table[table["host"] == host]
-            table = table.drop(columns=["host"])
+        table = table[table["host"] == self.host]
+        table = table.drop(columns=["host"])
 
-        if not ignore_correct:
+        if not self.ignore_correct:
             # Setze runtime auf -1, wenn correct False ist
             table.loc[~table["correct"], "runtime"] = -1
             table = table.drop(columns=["correct"])
 
-        if instances:
-            table = table[table["instance"].isin(instances)]
-        solvers_name = [solver.NAME for solver in solvers]
-        if solvers:
-            table = table[table["solver"].isin(solvers_name)]
+        if self.instances:
+            table = table[table["instance"].isin(self.instances)]
+        solvers_name = [solver.NAME for solver in self.solvers]
+        table = table[table["solver"].isin(solvers_name)]
 
         # Kombiniere Instanz und Dateiname für die x-Achse
         table["instance_file"] = table["instance"] + "/" + table["file"]
         table = table.drop(columns=["instance", "file"])
 
         all_args = []
-        for arg_list in outer_parameter.values():
+        for arg_list in self.outer_parameter.values():
             for arg in arg_list:
                 all_args.append(arg["args"])
 
@@ -245,7 +250,7 @@ class Run_Instance:
         self.create_plt(
             table=table,
             y="runtime",
-            block=block,
+            block=True,
         )
 
     def create_plt(
@@ -271,147 +276,19 @@ class Run_Instance:
 
     def run(
         self,
-        insts: list[str],
-        solvers: list[type[Solver]],
-        outer_parameter: dict,
-        ignore_correct: bool = False,
-        host: str = socket.gethostname(),
-        run: bool = True,
-        show: bool = True,
     ):
-        if run:
-            for inst in insts:
-                for solver in solvers:
-                    if solver in outer_parameter:
-                        list_parameter = outer_parameter[solver]
-                    else:
-                        logging.warning("No parameter found for solver, using default.")
-                        list_parameter = [{"timeout": self.DEFAULT_TIME, "args": None}]
-                    for parameter in list_parameter:
-                        self.run_solver_on_instance(
-                            solver_type=solver,
-                            instance_name=inst,
-                            parameter=parameter,
-                        )
+        for inst in self.instances.keys():
+            for solver in self.solvers:
+                if solver in self.outer_parameter:
+                    list_parameter = self.outer_parameter[solver]
+                else:
+                    logging.warning("No parameter found for solver, using default.")
+                    list_parameter = [{"timeout": self.DEFAULT_TIME, "args": None}]
+                for parameter in list_parameter:
+                    self.run_solver_on_instance(
+                        solver_type=solver,
+                        instance_name=inst,
+                        parameter=parameter,
+                    )
         # from algbench import describe
         # describe(self.path_benchmark)
-        if show:
-            self.show_results(
-                insts, solvers, outer_parameter, ignore_correct, host=host
-            )
-
-    @staticmethod
-    def get_selection(lit: list):
-        selected_inst = []
-        while True:
-            selected_inst = questionary.checkbox(
-                "Wähle eine oder mehrere Optionen:", choices=lit
-            ).ask()
-            if selected_inst:
-                break
-            print("Bitte wähle mindestens einen Wert aus.")
-        return [str(i) for i in selected_inst]
-
-    def select(
-        self,
-        outer_parameter: dict,
-        host=socket.gethostname(),
-        run: bool = True,
-        show: bool = True,
-    ):
-        # Fragen nach Instanzen
-        instances = self.get_instances()
-        instances_names = sorted(list(instances.keys()))
-        insts = self.get_selection(instances_names)
-
-        # Frage nach Solver
-        solvers = self.get_selection(list(self.solvers_dict.keys()))
-        solvers = [self.solvers_dict[i] for i in solvers]
-
-        ignore_correct = not questionary.confirm(
-            "Ergebnisse mit falschen Triangulationen als -1 Darstellen?", default=True
-        ).ask()
-
-        # Frage, ob speichern, Standard ist Nein
-        save = questionary.confirm(
-            "Auswahl als Standard speichern?", default=True
-        ).ask()
-        if save:
-            self.save_default(
-                {
-                    "instances": insts,
-                    "solvers": [solver.NAME for solver in solvers],
-                    "ignore_correct": ignore_correct,
-                }
-            )
-
-        self.run(
-            insts,
-            solvers,
-            outer_parameter,
-            ignore_correct,
-            host=host,
-            run=run,
-            show=show,
-        )
-
-    def run_default(
-        self,
-        outer_parameter: dict,
-        host=socket.gethostname(),
-        run: bool = True,
-        show: bool = True,
-    ):
-        data = self.load_default()
-        self.run(
-            data.get("instances", []),
-            [self.solvers_dict[i] for i in data.get("solvers", [])],
-            outer_parameter=outer_parameter,
-            ignore_correct=data.get("ignore_correct", True),
-            host=host,
-            run=run,
-            show=show,
-        )
-
-    def show_triangulation_from_instance(
-        self,
-        instance_name: str,
-        algorithm_name: str,
-        instance_file_name: str,
-        host=socket.gethostname(),
-    ):
-        table = read_as_pandas(
-            self.path_benchmark,
-            lambda result: {
-                "host": result["env"]["hostname"],
-                "solver": result["parameters"]["args"]["solver_name"],
-                "instance": result["parameters"]["args"]["instance_name"],
-                "file": result["parameters"]["args"]["file_name"],
-                "tri": result["result"]["triangulation"],
-            },
-        )
-
-        table = table[
-            (table["instance"] == instance_name)
-            & (table["solver"] == algorithm_name)
-            & (table["file"] == instance_file_name)
-            & (table["host"] == host)
-        ]
-
-        print(table)  # oder weitere Verarbeitung
-        nodes = load_nodes_from_json(f"{instance_name}/{instance_file_name}.json")
-        graph = Graph_Wrapper(nodes)
-        if table.empty:
-            logging.error(
-                f"No results found for {instance_name} - {algorithm_name} - {instance_file_name} on host {host}"
-            )
-            return
-        triangulation = table.iloc[0]["tri"]
-        if triangulation is None:
-            logging.error(
-                f"No triangulation found for {instance_name} - {algorithm_name} - {instance_file_name} on host {host}"
-            )
-            return
-        for edge in triangulation:
-            graph.add_edge(edge[0], edge[1], active=True)
-        graph.show_and_save()
