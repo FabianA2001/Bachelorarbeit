@@ -25,6 +25,7 @@ from .utils import format_dictionary
 """
 
 
+# TODO sollte aus dem Packet ausgelagert werden, verschieben bis es stört
 class Run_Algbench:
     DEFAULT_TIME = 30  # Default timeout for solvers in seconds
     DEFAULT_BENCHMARK_PATH = "./benchmark"
