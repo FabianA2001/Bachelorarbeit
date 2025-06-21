@@ -39,7 +39,6 @@ class Run_Algbench:
     ) -> None:
         self.inst_path = inst_path
         self.instances = self.get_instances(self.inst_path)
-        print(format_dictionary(self.instances))
         self.outer_parameter = outer_parameter
         self.solvers = [solver for solver in self.outer_parameter.keys()]
         self.ignore_correct = ignore_correct
