@@ -104,13 +104,11 @@ class Data(Data_Raw):
         nodes = self.get_hull_points
         nodes = sorted_nodes(nodes)
         edges = []
+
         for i in range(len(nodes)):
-            edges.append(
-                (
-                    self.get_node_from_point(nodes[i]),
-                    self.get_node_from_point(nodes[(i + 1) % len(nodes)]),
-                )
-            )
+            node1 = self.get_node_from_point(nodes[i])
+            node2 = self.get_node_from_point(nodes[(i + 1) % len(nodes)])
+            edges.append((min(node1, node2), max(node1, node2)))
         return edges
 
     @cached_property

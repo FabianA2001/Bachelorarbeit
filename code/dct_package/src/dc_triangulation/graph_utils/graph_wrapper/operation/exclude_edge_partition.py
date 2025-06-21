@@ -6,10 +6,15 @@ from ..data import Data
 
 
 class Exclude_Edge_Partition:
-    def __init__(self, data: Data) -> None:
+    def __init__(
+        self,
+        data: Data,
+        impossible_edges: list[tuple[int, int]],
+    ) -> None:
         self.data = data
         self.hull_edges = self.data.get_hull_edges
-        self.hull_nodes = [edge[0] for edge in self.hull_edges]
+        self.hull_nodes = self.data.get_hull_nodes
+        self.impossible = impossible_edges
         self.points = [
             self.data.get_point_from_node(node)
             for node in self.data.get_all_nodes_name
@@ -24,9 +29,9 @@ class Exclude_Edge_Partition:
             [self.data.get_point_from_node(node) for node in poly_nodes]
         )
         if not polygon.is_valid:
-            return poly_nodes
+            return []
         if polygon.is_empty:
-            return poly_nodes
+            return []
         points_in_polygon = [point for point in self.points if polygon.contains(point)]
         # Add the exterior points
         return [self.data.get_node_from_point(point) for point in points_in_polygon]
@@ -54,13 +59,13 @@ class Exclude_Edge_Partition:
     def __degree_split_possible(
         self, poly1_nodes: list[int], poly2_nodes: list[int], a: int, b: int
     ) -> bool:
-        nodes1 = self.find_nodes_in_polygon(poly1_nodes)
+        nodes1 = self.find_nodes_in_polygon(poly1_nodes) + poly1_nodes
         degree_sum_1 = sum(
             self.data.nodes[node]["degree"]
             for node in nodes1
             if node != a and node != b
         )
-        nodes2 = self.find_nodes_in_polygon(poly2_nodes)
+        nodes2 = self.find_nodes_in_polygon(poly2_nodes) + poly2_nodes
         degree_sum_2 = sum(
             self.data.nodes[node]["degree"]
             for node in nodes2
@@ -76,8 +81,8 @@ class Exclude_Edge_Partition:
             + self.data.nodes[b]["degree"]
             - 2 * num_edges_2
         )
-        if y1 == y2:
-            assert y1 >= 0, "y1 and y2 must be non-negative"
+        if y1 != y2:
+            assert y1 >= 0, f"y1 and y2 must be non-negative for {a, b} split"
             assert (
                 y1 <= self.data.nodes[a]["degree"] + self.data.nodes[b]["degree"] - 2
             ), "y1 and y2 must be less than the sum of the degrees of a and b minus 2"
@@ -91,7 +96,10 @@ class Exclude_Edge_Partition:
     def exclude_edge(self) -> list[tuple[int, int]]:
         edges = set()
         for com in itertools.combinations(self.hull_nodes, 2):
-            if com in self.hull_edges or (com[1], com[0]) in self.hull_edges:
+            com = tuple(sorted(com))
+            if com in self.impossible:
+                continue
+            if com in self.hull_edges:
                 continue
             index0 = self.hull_nodes.index(com[0])
             index1 = self.hull_nodes.index(com[1])
@@ -100,10 +108,10 @@ class Exclude_Edge_Partition:
 
             poly_nodes_0 = self.hull_nodes[index1:] + self.hull_nodes[: index0 + 1]
             poly_nodes_1 = self.hull_nodes[index0 : index1 + 1]
-            # for half in [poly_nodes_0, poly_nodes_1]:
-            #     if not self.__possible_half(half, [com[0], com[1]]):
-            #         edges.add((min(com[0], com[1]), max(com[0], com[1])))
-            #         continue
+            for half in [poly_nodes_0, poly_nodes_1]:
+                if not self.__possible_half(half, [com[0], com[1]]):
+                    edges.add((min(com[0], com[1]), max(com[0], com[1])))
+                    continue
 
             if not self.__degree_split_possible(
                 poly_nodes_0, poly_nodes_1, com[0], com[1]

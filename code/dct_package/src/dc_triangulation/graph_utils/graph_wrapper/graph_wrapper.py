@@ -314,4 +314,4 @@ class Graph_Wrapper:
 
     @cached_property
     def exclude_edge_partition(self) -> list[tuple[int, int]]:
-        return Exclude_Edge_Partition(self._data)()
+        return Exclude_Edge_Partition(self._data, self.impossible_edges)()

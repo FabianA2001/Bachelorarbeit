@@ -155,11 +155,11 @@ def test_get_hull_edges():
     graph = Graph_Wrapper(nodes)
     hull = graph.get_hull_edges()
     assert (4, 9) in hull
-    assert (9, 0) in hull
+    assert (0, 9) in hull
     assert (0, 5) in hull
-    assert (5, 3) in hull
+    assert (3, 5) in hull
     assert (3, 6) in hull
-    assert (6, 4) in hull
+    assert (4, 6) in hull
     assert len(hull) == 6
 
 
@@ -265,12 +265,14 @@ def test_get_all_intersections():
 
 
 def test_exclude_edges():
-    PATH = os.path.join(os.path.dirname(__file__), "instance", "10_delaunay_flips.json")
-    # PATH = os.path.join(os.path.dirname(__file__), "instance", "50_delaunay_flips.json")
+    # PATH = os.path.join(os.path.dirname(__file__), "instance", "10_delaunay_flips.json")
+    PATH = os.path.join(os.path.dirname(__file__), "instance", "50_delaunay_flips.json")
     # PATH = os.path.join(os.path.dirname(__file__), "instance", "80_random.json")
     nodes = load_nodes_from_json(PATH)
     outer_graph = Graph_Wrapper(nodes)
     outer_graph.add_convex_hull()
+    outer_graph.add_edge(13, 29)
+    outer_graph.show_and_save(show=False, save=".")
     for edge in [
         edge
         for edge in outer_graph.exclude_edge_partition

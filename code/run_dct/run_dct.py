@@ -107,6 +107,7 @@ def run_algo():
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
+
     print(graph.exclude_edge_partition)
     print(len(graph.exclude_edge_partition))
     # sat_algorithm(graph)
