@@ -99,12 +99,18 @@ def sat_Tri_algorithm(graph):
 
 def run_algo():
     PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_30", "000_delaunay.json"
+        os.path.dirname(__file__), "instance", "simple_40", "000_delaunay_flips.json"
     )
-    # PATH = "simple_10/003_delaunay_flips.json"
-    # PATH = "iterative_60_10/000_random.json"
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
+    nodes = [
+        Node((2, 0), 3),
+        Node((0, 2), 2),
+        Node((4, 0), 3),
+        Node((7, 0), 3),
+        Node((4, 3), 5),
+        Node((6, 2), 2),
+    ]
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
 
@@ -113,7 +119,9 @@ def run_algo():
     # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
-    # graph.show_and_save()
+    graph.add_convex_hull()
+    graph.add_edge(0, 5)
+    graph.show_and_save(show=False, save=".")
 
 
 def create_instance():
