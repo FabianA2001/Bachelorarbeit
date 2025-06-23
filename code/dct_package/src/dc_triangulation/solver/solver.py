@@ -18,6 +18,7 @@ class Solver(ABC):
     """
 
     NAME = "Solver"
+    LOGGER_NAME = "solver_logger"
 
     def __init__(self, graph: Graph_Wrapper) -> None:
         self.name = self.NAME
@@ -27,6 +28,14 @@ class Solver(ABC):
         self.timeout = -1  # Default timeout value, can be overridden
         self.solve_time = -1.0
         self.pre_solve_time = -1.0
+        self.logger = self._initialize_logger()
+
+    def _initialize_logger(self) -> logging.Logger:
+        """
+        Initialize a logger with the solver's name.
+        """
+        logger = logging.getLogger(self.LOGGER_NAME)
+        return logger
 
     def __str__(self) -> str:
         return self.name
@@ -47,7 +56,7 @@ class Solver(ABC):
             raise ValueError("Solver has not started yet.")
         elapsed_time = time.time() - self.start_time
         if elapsed_time > self.timeout:
-            logging.warning(f"{self.name} timed out after {elapsed_time:.2f} seconds.")
+            self.logger.warning(f"Timed out after {elapsed_time:.2f} seconds.")
             return True
         return False
 
@@ -65,7 +74,7 @@ class Solver(ABC):
             result = func(*args, **kwargs)
             elapsed_time = time.time() - start_time
             self.solve_time = elapsed_time
-            logging.info(
+            self.logger.info(
                 f"Function {func.__name__:<40} took {elapsed_time:>8.4f} seconds"
             )
             return result
@@ -82,7 +91,7 @@ class Solver(ABC):
             result = func(*args, **kwargs)
             elapsed_time = time.time() - start_time
             self.pre_solve_time = elapsed_time
-            logging.info(
+            self.logger.info(
                 f"Function {func.__name__:<40} took {elapsed_time:>8.4f} seconds"
             )
             return result
@@ -92,15 +101,13 @@ class Solver(ABC):
     def solve(self, parameter: dict) -> dict:
         if not isinstance(self.graph, Graph_Wrapper):
             raise ValueError("Graph is not set. Please set the graph before solving.")
-        logging.info(
+        self.logger.info(
             f"Starting {self.name} with parameters: {format_dictionary(parameter)}"
         )
         self.timeout = parameter["timeout"]
         self.start_time = time.time()
         if not self.graph.check_degree_possible():
-            logging.warning(
-                f"{self.name} failed: Graph does not meet degree constraints."
-            )
+            self.logger.warning("Failed: Graph does not meet degree constraints.")
             return {
                 "success": False,
             }
@@ -108,7 +115,7 @@ class Solver(ABC):
         self.graph.name = self.name
 
         solution = self._actual_solver(parameter)
-        logging.info(f"{self.name} completed.")
+        self.logger.info("Completed.")
         return solution
 
     @abstractmethod

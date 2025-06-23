@@ -1,4 +1,3 @@
-import logging
 from dataclasses import dataclass
 
 from ortools.sat.python import cp_model
@@ -27,7 +26,7 @@ class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
     def on_solution_callback(self):
         if self.ObjectiveValue() >= self.goal:
             self.StopSearch()  # Stop after the first solution
-        # logging.info(
+        # self.logger.info(
         #     f"Anzahl Kanten bei dieser Lösung: {self.ObjectiveValue()}")
 
 
@@ -152,13 +151,13 @@ class Ortools(Solver):
         stop_after_first_solution = True
         if parameter_data.evaluation_direction:
             if timeout == -1:
-                logging.warning("Es sollte ein Timeout gesetzt werden.")
+                self.logger.warning("Es sollte ein Timeout gesetzt werden.")
             time_function(self.evaluation_direction)()
             stop_after_first_solution = False
 
         if parameter_data.degree_direction:
             if timeout == -1:
-                logging.warning("Es sollte ein Timeout gesetzt werden.")
+                self.logger.warning("Es sollte ein Timeout gesetzt werden.")
             time_function(self.degree_direction)()
             stop_after_first_solution = False
 
@@ -178,7 +177,7 @@ class Ortools(Solver):
         solver = cp_model.CpSolver()
         # solver.parameters.log_search_progress = True  # Enable logging
         solver.parameters.max_time_in_seconds = self.get_remaining_time()
-        logging.info("Start solving...")
+        self.logger.info("Start solving...")
 
         if stop_after_first_solution:
             status = self.time_solver(solver.Solve)(
@@ -190,7 +189,7 @@ class Ortools(Solver):
         # status = solver.Solve(self.model)
         print(status)
         if not (status == cp_model.OPTIMAL or status == cp_model.FEASIBLE):
-            logging.warning("No solution found.")
+            self.logger.warning("No solution found.")
             return {
                 "success": False,
                 "info": self.aktive_constrinsts,
@@ -201,4 +200,5 @@ class Ortools(Solver):
         return {
             "success": True,
             "info": self.aktive_constrinsts,
+        }
         }

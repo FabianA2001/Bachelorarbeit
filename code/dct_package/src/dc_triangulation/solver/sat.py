@@ -1,5 +1,4 @@
 import itertools
-import logging
 import threading
 from dataclasses import dataclass
 
@@ -51,7 +50,7 @@ class SAT(Solver):
         self.edges = self.graph.get_all_edges()
         self.edges_to_index = {edge: i for i, edge in enumerate(self.edges)}
         self.all_vars = list(range(1, len(self.edges) + 1))
-        logging.info(
+        self.logger.info(
             f"Anzahl Kanten: {len(self.edges)}, Anzahl Variablen: {len(self.all_vars)}"
         )
 
@@ -212,7 +211,7 @@ class SAT(Solver):
                 for edge in parameter.get("debug_set_edges", []):
                     self.solver.add_clause([self.get_index(edge)])
             except Exception as e:
-                logging.warning(
+                self.logger.warning(
                     f"Debug set edges failed([{e}]), continuing without them."
                 )
 
@@ -228,7 +227,7 @@ class SAT(Solver):
             if timeout == -1:
                 result[0] = self.time_solver(self.solver.solve)()
             else:
-                logging.info("start solving")
+                self.logger.info("start solving")
 
                 def run_solver():
                     result[0] = self.time_solver(self.solver.solve_limited)(  # type: ignore
@@ -253,7 +252,7 @@ class SAT(Solver):
                 "success": result[0],
             }
         except TimeoutError:
-            logging.warning(f"{self.name} timed out.")
+            self.logger.warning(f"{self.name} timed out.")
             return {
                 "success": False,
             }

@@ -1,5 +1,4 @@
 import itertools
-import logging
 import threading
 from dataclasses import dataclass
 
@@ -40,7 +39,9 @@ class SAT_TRI(Solver):
                     pass
 
         self.tris = self.graph.get_all_triangles()
-        logging.warning("Dreiecke sind teilweise nicht leer, warten auf ccp für fix")
+        self.logger.warning(
+            "Dreiecke sind teilweise nicht leer, warten auf ccp für fix"
+        )
         self.tris_as_point = [
             (
                 self.graph.get_point_from_node(node1),
@@ -168,7 +169,7 @@ class SAT_TRI(Solver):
             if timeout == -1:
                 result[0] = self.time_solver(self.solver.solve)()
             else:
-                logging.info("start solving")
+                self.logger.info("start solving")
 
                 def run_solver():
                     result[0] = self.time_solver(self.solver.solve_limited)(  # type: ignore
@@ -197,7 +198,7 @@ class SAT_TRI(Solver):
                 "success": result[0],
             }
         except TimeoutError:
-            logging.warning(f"{self.name} timed out.")
+            self.logger.warning(f"{self.name} timed out.")
             return {
                 "success": False,
             }
