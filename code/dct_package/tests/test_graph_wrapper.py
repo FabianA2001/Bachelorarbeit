@@ -265,14 +265,14 @@ def test_get_all_intersections():
 
 
 def test_exclude_edges():
-    # PATH = os.path.join(os.path.dirname(__file__), "instance", "10_delaunay_flips.json")
-    PATH = os.path.join(os.path.dirname(__file__), "instance", "50_delaunay_flips.json")
+    PATH = os.path.join(os.path.dirname(__file__), "instance", "10_delaunay_flips.json")
+    # PATH = os.path.join(os.path.dirname(__file__), "instance", "50_delaunay_flips.json")
     # PATH = os.path.join(os.path.dirname(__file__), "instance", "80_random.json")
     nodes = load_nodes_from_json(PATH)
     outer_graph = Graph_Wrapper(nodes)
     outer_graph.add_convex_hull()
     outer_graph.add_edge(13, 29)
-    outer_graph.show_and_save(show=False, save=".")
+    # outer_graph.show_and_save(show=False, save=".")
     for edge in [
         edge
         for edge in outer_graph.exclude_edge_partition
@@ -293,3 +293,6 @@ def test_exclude_edges():
 
         graph.show_and_save()
         assert False, f"Solver should not find a solution with excluded edge {edge}."
+
+
+test_exclude_edges()

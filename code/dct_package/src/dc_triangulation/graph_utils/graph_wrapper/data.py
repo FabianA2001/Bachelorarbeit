@@ -85,24 +85,25 @@ class Data(Data_Raw):
                 triangles.add(tri)
         return list(triangles)
 
+    @staticmethod
+    def sorted_nodes_clock_wise(nodes: list[shapely.Point]) -> list[shapely.Point]:
+        """Sortiert die Punkte im Uhrzeigersinn."""
+        # Berechne den Schwerpunkt (Centroid) der Punkte
+        center = shapely.geometry.MultiPoint(nodes).centroid
+
+        # Berechne den Winkel jedes Punktes relativ zum Schwerpunkt
+        def angle_from_center(point: shapely.Point) -> float:
+            dx = point.x - center.x
+            dy = point.y - center.y
+            return math.atan2(dy, dx)  # Winkel in Bogenmaß
+
+        # Sortiere die Punkte basierend auf den Winkeln im Uhrzeigersinn
+        return sorted(nodes, key=angle_from_center, reverse=True)
+
     @cached_property
     def get_hull_edges(self) -> list[tuple[int, int]]:
-        def sorted_nodes(nodes: list[shapely.Point]) -> list[shapely.Point]:
-            """Sortiert die Punkte im Uhrzeigersinn."""
-            # Berechne den Schwerpunkt (Centroid) der Punkte
-            center = shapely.geometry.MultiPoint(nodes).centroid
-
-            # Berechne den Winkel jedes Punktes relativ zum Schwerpunkt
-            def angle_from_center(point: shapely.Point) -> float:
-                dx = point.x - center.x
-                dy = point.y - center.y
-                return math.atan2(dy, dx)  # Winkel in Bogenmaß
-
-            # Sortiere die Punkte basierend auf den Winkeln im Uhrzeigersinn
-            return sorted(nodes, key=angle_from_center, reverse=True)
-
         nodes = self.get_hull_points
-        nodes = sorted_nodes(nodes)
+        nodes = self.sorted_nodes_clock_wise(nodes)
         edges = []
 
         for i in range(len(nodes)):
@@ -127,3 +128,10 @@ class Data(Data_Raw):
     @cached_property
     def get_hull_nodes(self) -> list[int]:
         return [self.get_node_from_point(node) for node in self.get_hull_points]
+
+    @cached_property
+    def get_hull_nodes_sorted(self) -> list[int]:
+        return [
+            self.get_node_from_point(node)
+            for node in self.sorted_nodes_clock_wise(self.get_hull_points)
+        ]

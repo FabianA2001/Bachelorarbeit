@@ -13,7 +13,7 @@ class Exclude_Edge_Partition:
     ) -> None:
         self.data = data
         self.hull_edges = self.data.get_hull_edges
-        self.hull_nodes = self.data.get_hull_nodes
+        self.hull_nodes = self.data.get_hull_nodes_sorted
         self.impossible = impossible_edges
         self.points = [
             self.data.get_point_from_node(node)
