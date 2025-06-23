@@ -1,28 +1,13 @@
-[project]
-name = "degree-constrained-triangulation"
-version = "0.1.0"
-description = "A project for the bachelor thesis."
-authors = [
-    { name = "Fabian Alich", email = "f.alich@tu-bs.de" }
+[build-system]
+requires = [
+    "conan>=2.0.0",
+    "setuptools",
+    "scikit-build>=0.17.3",
+    "skbuild-conan@git+https://github.com/d-krupke/skbuild-conan",  # latest version for testing
+    "cmake>=3.23",
+    "ninja",
 ]
-dependencies = [
-    "matplotlib",
-    "networkx",
-    "ortools",
-    "shapely",
-    "scipy",
-    "seaborn",
-    "python-sat",
-    "algbench",
-    "questionary"
-]
-[project.optional-dependencies]
-dev = [
-    "pre-commit",
-    "pytest",
-    "scalene",
-    "streamlit",
-]
+build-backend = "setuptools.build_meta"
 
 
 
