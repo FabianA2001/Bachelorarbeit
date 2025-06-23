@@ -102,20 +102,20 @@ def run_algo():
     )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
-    nodes = [
-        Node((2, 0), 3),
-        Node((0, 2), 2),
-        Node((4, 0), 3),
-        Node((7, 0), 3),
-        Node((4, 3), 5),
-        Node((6, 2), 2),
-    ]
+    # nodes = [
+    #     Node((2, 0), 3),
+    #     Node((0, 2), 2),
+    #     Node((4, 0), 3),
+    #     Node((7, 0), 3),
+    #     Node((4, 3), 5),
+    #     Node((6, 2), 2),
+    # ]
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
 
-    # print(graph.exclude_edge_partition)
-    # print(len(graph.exclude_edge_partition))
-    sat_algorithm(graph)
+    print(graph.exclude_edge_partition)
+    print(len(graph.exclude_edge_partition))
+    # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # graph.add_convex_hull()

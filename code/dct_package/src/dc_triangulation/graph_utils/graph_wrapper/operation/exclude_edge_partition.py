@@ -113,11 +113,19 @@ class Exclude_Edge_Partition:
                     edges.add((min(com[0], com[1]), max(com[0], com[1])))
                     continue
 
-            # TODO liefert keine Ergebnis
-            # if not self.__degree_split_possible(
-            #     poly_nodes_0, poly_nodes_1, com[0], com[1]
-            # ):
-            #     edges.add((min(com[0], com[1]), max(com[0], com[1])))
-            #     continue
+        # TODO liefert keine Ergebnis
+        # if not self.__degree_split_possible(
+        #     poly_nodes_0, poly_nodes_1, com[0], com[1]
+        # ):
+        #     edges.add((min(com[0], com[1]), max(com[0], com[1])))
+        #     continue
+
+        for node1, node2, node3 in zip(
+            self.hull_nodes,
+            self.hull_nodes[1:] + self.hull_nodes[:-1],
+            self.hull_nodes[2:] + self.hull_nodes[:-2],
+        ):
+            if self.data.nodes[node2]["degree"] != 2:
+                edges.add((min(node1, node3), max(node1, node3)))
 
         return list(edges)
