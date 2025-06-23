@@ -152,13 +152,13 @@ class Ortools(Solver):
         if parameter_data.evaluation_direction:
             if timeout == -1:
                 self.logger.warning("Es sollte ein Timeout gesetzt werden.")
-            time_function(self.evaluation_direction)()
+            time_function(self.evaluation_direction, self.logger)()
             stop_after_first_solution = False
 
         if parameter_data.degree_direction:
             if timeout == -1:
                 self.logger.warning("Es sollte ein Timeout gesetzt werden.")
-            time_function(self.degree_direction)()
+            time_function(self.degree_direction, self.logger)()
             stop_after_first_solution = False
 
         return stop_after_first_solution
@@ -200,5 +200,4 @@ class Ortools(Solver):
         return {
             "success": True,
             "info": self.aktive_constrinsts,
-        }
         }

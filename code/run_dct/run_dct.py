@@ -74,7 +74,6 @@ def ortools_algorithm(graph):
 def sat_algorithm(graph):
     solver = SAT(graph)
     para = SAT_Parameter(
-        add_allEdges_or_exclude_edges=True,
         intersection=True,
         degree_atleast=True,
         fix_hull=True,
@@ -114,13 +113,13 @@ def run_algo():
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
 
-    print(graph.exclude_edge_partition)
-    print(len(graph.exclude_edge_partition))
-    # sat_algorithm(graph)
+    # print(graph.exclude_edge_partition)
+    # print(len(graph.exclude_edge_partition))
+    sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
-    graph.add_convex_hull()
-    graph.add_edge(0, 5)
+    # graph.add_convex_hull()
+    # graph.add_edge(0, 5)
     graph.show_and_save(show=False, save=".")
 
 

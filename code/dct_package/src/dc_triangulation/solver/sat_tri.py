@@ -152,10 +152,10 @@ class SAT_TRI(Solver):
                 self.number_tri_constraint()
 
             if parameter_data.intersection:
-                time_function(self.intersection_constraint)()
+                time_function(self.intersection_constraint, self.logger)()
 
             if parameter_data.degree:
-                time_function(self.degree_constraint)()
+                time_function(self.degree_constraint, self.logger)()
 
             if "timeout" not in parameter:
                 raise ValueError("Timeout parameter is missing.")

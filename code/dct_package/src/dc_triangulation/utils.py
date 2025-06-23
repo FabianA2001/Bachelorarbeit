@@ -1,5 +1,6 @@
 import logging
 import time
+from typing import Optional
 
 start_time = time.time()
 
@@ -38,7 +39,7 @@ def setup_logging():
     logger.addHandler(file_handler)
 
 
-def time_function(func):
+def time_function(func, logger: Optional[logging.Logger] = None):
     """
     Decorator to time a function.
     """
@@ -48,7 +49,14 @@ def time_function(func):
         result = func(*args, **kwargs)
         end_time = time.time()
         elapsed_time = end_time - start_time
-        logging.info(f"Function {func.__name__:<40} took {elapsed_time:>8.4f} seconds")
+        if logger is None:
+            logging.info(
+                f"Function {func.__name__:<40} took {elapsed_time:>8.4f} seconds"
+            )
+        else:
+            logger.info(
+                f"Function {func.__name__:<40} took {elapsed_time:>8.4f} seconds"
+            )
         return result
 
     return wrapper
@@ -62,5 +70,5 @@ def format_dictionary(dictionary: dict, indention=1) -> str:
     for key, value in dictionary.items():
         if type(value) is dict:
             value = format_dictionary(value, indention + 1)
-        result += f"\n{'|' * indention}{(key+':')[:35]:<35} {value}"
+        result += f"\n{'|' * indention}{(key + ':')[:35]:<35} {value}"
     return result

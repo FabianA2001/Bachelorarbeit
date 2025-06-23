@@ -50,6 +50,7 @@ class Run_Algbench:
             self.path_benchmark = path_benchmark
 
         self.benchmark = Benchmark(self.path_benchmark)
+        self.benchmark.capture_logger(Solver.LOGGER_NAME)
         pd.set_option("display.max_rows", None)
         pd.set_option("display.max_columns", None)
         pd.set_option("display.width", 200)
@@ -290,5 +291,3 @@ class Run_Algbench:
                         instance_name=inst,
                         parameter=parameter,
                     )
-        # from algbench import describe
-        # describe(self.path_benchmark)

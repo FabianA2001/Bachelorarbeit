@@ -16,16 +16,6 @@ if __name__ == "__main__":
                 ),
             },
         ],
-        # Ortools: [
-        #     {
-        #         "timeout": 30,
-        #         "args": asdict(
-        #             Ortools_Parameter(
-        #                 intersection=True, degree=True, evaluation_direction=True
-        #             )
-        #         ),
-        #     },
-        # ],
     }
 
     ri = Run_Algbench(inst_path=path, outer_parameter=outer_parameter)

@@ -180,23 +180,23 @@ class SAT(Solver):
             )
         self.setup(parameter_data)
         if parameter_data.number_edges:
-            time_function(self.number_edge_constraint)()
+            time_function(self.number_edge_constraint, self.logger)()
         if parameter_data.intersection:
-            time_function(self.intersection_constraint)()
+            time_function(self.intersection_constraint, self.logger)()
         if parameter_data.all_edges:
-            time_function(self.alle_edges_constraint)()
+            time_function(self.alle_edges_constraint, self.logger)()
         if parameter_data.intersection_and_all_edges:
-            time_function(self.alle_edges_and_intersection_constraint)()
+            time_function(self.alle_edges_and_intersection_constraint, self.logger)()
         if parameter_data.degree_exact:
-            time_function(self.degree_constraint)(exact_atleast=True)
+            time_function(self.degree_constraint, self.logger)(exact_atleast=True)
         if parameter_data.degree_atleast:
-            time_function(self.degree_constraint)(exact_atleast=False)
+            time_function(self.degree_constraint, self.logger)(exact_atleast=False)
         if parameter_data.degree_subset:
-            time_function(self.degree_subset_constraint)()
+            time_function(self.degree_subset_constraint, self.logger)()
         if parameter_data.fix_hull:
-            time_function(self.set_hull_fix_constraint)()
+            time_function(self.set_hull_fix_constraint, self.logger)()
         if parameter_data.exclude_edges:
-            time_function(self.exclude_edges_constraint)()
+            time_function(self.exclude_edges_constraint, self.logger)()
 
     def _actual_solver(self, parameter: dict) -> dict:
         if not isinstance(parameter, dict):
