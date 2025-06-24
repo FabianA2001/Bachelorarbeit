@@ -75,13 +75,14 @@ class SAT(Solver):
             raise TimeoutError()
 
     def intersection_constraint(self):
-        intersection = self.graph.get_all_intersections(self.timeout_error)
-        for edge, other_edge in intersection:
-            edge_index = self.get_index(edge)
-            other_edge_index = self.get_index(other_edge)
-            if edge_index == -1 or other_edge_index == -1:
-                continue
-            self.solver.add_clause([-edge_index, -other_edge_index])
+        intersection_all = self.graph.get_all_intersections(self.timeout_error)
+        for edge, intersections in intersection_all.items():
+            for intersection in intersections:
+                edge_index = self.get_index(edge)
+                other_edge_index = self.get_index(intersection)
+                if edge_index == -1 or other_edge_index == -1:
+                    continue
+                self.solver.add_clause([-edge_index, -other_edge_index])
         self.timeout_error()
 
     def alle_edges_constraint(self):

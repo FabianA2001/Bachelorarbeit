@@ -43,20 +43,25 @@ class Ortools(Solver):
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
         self.aktive_constrinsts += "intersection, "
-        intersection = self.graph.get_all_intersections(self.timeout_error)
-        for edge, other_edge in intersection:
+        all_intersections = self.graph.get_all_intersections(self.timeout_error)
+        for edge, intersections in all_intersections.items():
             if (
-                edge in self.graph.impossible_edges
-                or (edge[1], edge[0]) in self.graph.impossible_edges
-            ):
+                min(edge[0], edge[1]),
+                max(edge[0], edge[1]),
+            ) in self.graph.impossible_edges:
                 continue
-            if (
-                other_edge in self.graph.impossible_edges
-                or (other_edge[1], other_edge[0]) in self.graph.impossible_edges
-            ):
-                continue
-            self.model.AddBoolOr([self.vars[edge].Not(), self.vars[other_edge].Not()])
-            # TODO At most one
+            for intersection in intersections:
+                if (
+                    (
+                        min(intersection[0], intersection[1]),
+                        max(intersection[0], intersection[1]),
+                    )
+                ) in self.graph.impossible_edges:
+                    continue
+                self.model.AddBoolOr(
+                    [self.vars[edge].Not(), self.vars[intersection].Not()]
+                )
+                # TODO At most one
         self.timeout_error()
 
     def constraint_degree(self):
