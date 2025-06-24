@@ -7,7 +7,7 @@ option(CXX "enable C++ compilation" ON)
 if(CXX)
   enable_language(CXX)
 endif()
-project(cgal_skbuild_conan_example CXX) # Feel free to add more project
+project(degree-constrained-triangulation CXX) # Feel free to add more project
                                         # information
 set(CMAKE_CXX_STANDARD 17) # Using C++-17 (most features with good support at
                            # 2022)
