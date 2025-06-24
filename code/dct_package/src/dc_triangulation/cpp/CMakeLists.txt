@@ -5,6 +5,7 @@ find_package(CGAL REQUIRED)
 find_package(fmt REQUIRED)
 
 pybind11_add_module(_cgal_bindings ./_cgal_bindings.cpp)
+pybind11_add_module(_cgal_bindings ./_intersection.cpp)
 target_link_libraries(_cgal_bindings PUBLIC fmt::fmt CGAL::CGAL)
 
 # enable compilation warnings

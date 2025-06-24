@@ -142,5 +142,5 @@ def create_instance():
 
 
 if __name__ == "__main__":
-    # run_algo()
+    run_algo()
     # create_instance()
