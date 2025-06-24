@@ -17,6 +17,7 @@ from dc_triangulation import (
     SAT_TRI_Parameter,
     generate,
     load_nodes_from_json,
+    time_function,
 )
 
 
@@ -98,37 +99,23 @@ def sat_Tri_algorithm(graph):
 
 def run_algo():
     PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_40", "000_delaunay_flips.json"
+        os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
     )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
-    # nodes = [
-    #     Node((2, 0), 3),
-    #     Node((0, 2), 2),
-    #     Node((4, 0), 3),
-    #     Node((7, 0), 3),
-    #     Node((4, 3), 5),
-    #     Node((6, 2), 2),
-    # ]
-    nodes = [
-        Node((0, 0), 3),
-        Node((1, 1), 3),
-        Node((1, 0), 2),
-        Node((0, 1), 2),
-    ]
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    x = graph.get_all_intersections_cpp()
-    # x = graph.get_all_intersections()
-    for i, y in x.items():
-        logging.info(f"Intersection {i}: {y}")
+    cpp = time_function(graph.get_all_intersections_cpp)()
+    py = time_function(graph.get_all_intersections)()
+    assert cpp == py, (
+        "Intersection results differ between C++ and Python implementations"
+    )
 
     # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
-    graph.add_convex_hull()
     # graph.add_edge(0, 5)
-    graph.show_and_save(show=False, save=".")
+    # graph.show_and_save(show=False, save=".")
 
 
 def create_instance():

@@ -265,14 +265,13 @@ class Check:
 
     def get_all_intersections(
         self, timeout_func=lambda: ...
-    ) -> dict[tuple[int, int], set[tuple[int, int]]]:
+    ) -> dict[tuple[int, int], list[tuple[int, int]]]:
         """Gibt alle Kanten zurück, die sich schneiden."""
         """Es wird nicht getestet ob die Kanten aktiv sind oder garnicht möglich weil sie auf Knoten liegen."""
         nodes = self.data.get_all_nodes_name
         result = {}
         for node1, node2 in combinations(range(len(nodes)), 2):
             edge1 = (min(nodes[node1], nodes[node2]), max(nodes[node1], nodes[node2]))
-            result[edge1] = set()
             timeout_func()
             for current_node in range(len(nodes)):
                 if current_node == node1 or current_node == node2:
@@ -325,7 +324,9 @@ class Check:
                         nodes[min(current_node, remaining_node)],
                         nodes[max(current_node, remaining_node)],
                     )
-                    result[edge1].add(edge2)
+                    if edge1 not in result:
+                        result[edge1] = []
+                    result[edge1].append(edge2)
 
         return result
 

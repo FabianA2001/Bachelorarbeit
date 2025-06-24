@@ -72,7 +72,7 @@ class Graph_Wrapper:
     # Testet nicht für impossible edges
     def get_all_intersections(
         self, timeout_func=lambda: ...
-    ) -> dict[tuple[int, int], set[tuple[int, int]]]:
+    ) -> dict[tuple[int, int], list[tuple[int, int]]]:
         return self._check.get_all_intersections(timeout_func)
 
     def get_all_intersections_n2(

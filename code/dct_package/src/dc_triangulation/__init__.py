@@ -13,7 +13,7 @@ from .solver.sat import Parameter as SAT_Parameter
 from .solver.sat_tri import SAT_TRI
 from .solver.sat_tri import Parameter as SAT_TRI_Parameter
 from .solver.solver import Solver
-from .utils import format_dictionary, setup_logging
+from .utils import format_dictionary, setup_logging, time_function
 
 setup_logging()
 
@@ -40,4 +40,5 @@ __all__ = [
     "Point",
     "Polygon",
     "PolygonWithHoles",
+    time_function,
 ]
