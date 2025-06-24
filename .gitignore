@@ -9,6 +9,8 @@
 **/build/
 **/instance/error
 **/.conan/
+*pyd
+CMakeUserPresets.json
 
 code/src/stupid_hostname.py
 **/error/
