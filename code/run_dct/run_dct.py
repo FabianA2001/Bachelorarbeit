@@ -118,14 +118,17 @@ def run_algo():
     ]
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    print(*graph.get_all_intersections_cpp(False), sep="\n")
+    x = graph.get_all_intersections_cpp()
+    # x = graph.get_all_intersections()
+    for i, y in x.items():
+        logging.info(f"Intersection {i}: {y}")
 
     # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
-    # graph.add_convex_hull()
+    graph.add_convex_hull()
     # graph.add_edge(0, 5)
-    # graph.show_and_save(show=False, save=".")
+    graph.show_and_save(show=False, save=".")
 
 
 def create_instance():
