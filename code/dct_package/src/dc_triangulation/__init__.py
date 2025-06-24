@@ -1,3 +1,4 @@
+from ._cgal_bindings import FieldNumber, Point, Polygon, PolygonWithHoles
 from .graph_utils import generate
 from .graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from .graph_utils.node import Node, load_nodes_from_json, save_nodes_as_json
@@ -36,4 +37,8 @@ __all__ = [
     "generate",
     "format_dictionary",
     "Run_Algbench",
+    "FieldNumber",
+    "Point",
+    "Polygon",
+    "PolygonWithHoles",
 ]

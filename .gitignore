@@ -8,6 +8,7 @@
 !TEX/figures/*
 **/build/
 **/instance/error
+**/.conan/
 
 code/src/stupid_hostname.py
 
