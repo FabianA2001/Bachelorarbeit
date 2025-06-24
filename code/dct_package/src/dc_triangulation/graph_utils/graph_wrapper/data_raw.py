@@ -78,6 +78,7 @@ class Data_Raw(nx.Graph):
             graph.add_edge(edge[0], edge[1], self.edges[edge].get("active"))
         return graph
 
+    # TODO löschen um sicher cache zu nutzen
     def get_all_edges(self, test_active: bool = False) -> list[tuple[int, int]]:
         """Gibt alle Kanten des Graphen zurück."""
         all_edges = list(self.edges)

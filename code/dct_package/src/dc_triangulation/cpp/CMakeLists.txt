@@ -5,8 +5,8 @@ find_package(CGAL REQUIRED)
 find_package(fmt REQUIRED)
 
 pybind11_add_module(_cgal_bindings ./_cgal_bindings.cpp)
-pybind11_add_module(_cgal_bindings ./_intersection.cpp)
 target_link_libraries(_cgal_bindings PUBLIC fmt::fmt CGAL::CGAL)
+pybind11_add_module(_intersection_bindings ./_intersection.cpp)
 
 # enable compilation warnings
 target_compile_options(
@@ -18,3 +18,4 @@ target_compile_definitions(_cgal_bindings
 # build` how the package will look like and if the module is moved to the right
 # location.
 install(TARGETS _cgal_bindings DESTINATION ./src/dc_triangulation/cpp)
+install(TARGETS _intersection_bindings DESTINATION ./src/dc_triangulation/cpp)

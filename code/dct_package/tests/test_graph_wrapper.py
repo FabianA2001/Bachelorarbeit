@@ -255,13 +255,16 @@ def test_get_all_intersections():
     ]
     graph = Graph_Wrapper(nodes)
     graph.add_all_possible_edges(True)
-    intersections = graph.get_all_intersections_n2()
-    for edge in [
-        (edge, other)
-        for edge, other in graph.get_all_intersections()
-        if edge not in graph.impossible_edges and other not in graph.impossible_edges
-    ]:
-        assert edge in intersections
+    intersections_n2 = graph.get_all_intersections_n2(check_if_active=False)
+    intersections_all = graph.get_all_intersections()
+    for edge, intersections in intersections_all.items():
+        if edge in graph.impossible_edges:
+            continue
+        assert edge in intersections_n2.keys()
+        for intersection in intersections:
+            if intersection in graph.impossible_edges:
+                continue
+            assert intersection in intersections_n2[edge]
 
 
 def test_exclude_edges():

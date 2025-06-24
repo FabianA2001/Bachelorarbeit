@@ -113,14 +113,12 @@ def run_algo():
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
 
-    print(graph.exclude_edge_partition)
-    print(len(graph.exclude_edge_partition))
     # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # graph.add_convex_hull()
     # graph.add_edge(0, 5)
-    graph.show_and_save(show=False, save=".")
+    # graph.show_and_save(show=False, save=".")
 
 
 def create_instance():

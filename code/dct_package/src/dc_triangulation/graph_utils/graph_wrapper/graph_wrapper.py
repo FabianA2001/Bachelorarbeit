@@ -5,6 +5,7 @@ from typing import Optional, Tuple, Union
 
 import shapely
 
+from ...cpp.cpp_bindings import cpp_all_intersection
 from .. import graph_const
 from ..node import Node
 from . import visualisation
@@ -68,15 +69,25 @@ class Graph_Wrapper:
     ) -> list[tuple[int, int]]:
         return self._check.get_intersections_with_all_edges(edge)
 
+    # Testet nicht für impossible edges
     def get_all_intersections(
         self, timeout_func=lambda: ...
-    ) -> set[tuple[tuple[int, int], tuple[int, int]]]:
+    ) -> dict[tuple[int, int], set[tuple[int, int]]]:
         return self._check.get_all_intersections(timeout_func)
 
     def get_all_intersections_n2(
         self, check_if_active: bool = True, timeout_func=lambda: ...
-    ) -> set[tuple[tuple[int, int], tuple[int, int]]]:
+    ) -> dict[tuple[int, int], set[tuple[int, int]]]:
         return self._check.get_all_intersections_n2(check_if_active, timeout_func)
+
+    def get_all_intersections_cpp(
+        self, check_if_active: bool = True
+    ) -> dict[tuple[int, int], set[tuple[int, int]]]:
+        if check_if_active:
+            edges = self._data.all_edges_aktive
+        else:
+            edges = self._data.all_edges
+        return cpp_all_intersection(edges)
 
     def show_and_save(
         self, show: bool = True, save: str = "", block: bool = True

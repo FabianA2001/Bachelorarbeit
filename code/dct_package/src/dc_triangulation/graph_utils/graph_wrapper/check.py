@@ -242,9 +242,14 @@ class Check:
 
     def get_all_intersections_n2(
         self, check_if_active: bool = True, timeout_func=lambda: ...
-    ) -> set[tuple[tuple[int, int], tuple[int, int]]]:
-        intersections = set()
+    ) -> dict[tuple[int, int], set[tuple[int, int]]]:
+        result = {}
         for edge1 in self.data.get_all_edges():
+            edge1 = (
+                min(edge1[0], edge1[1]),
+                max(edge1[0], edge1[1]),
+            )
+            result[edge1] = set()
             for edge2 in self.data.get_all_edges():
                 if edge1 == edge2:
                     continue
@@ -253,22 +258,21 @@ class Check:
                 if not self.data.edges[edge2].get("active") and check_if_active:
                     continue
                 if self.check_for_intersection_except_corners(edge1, edge2):
-                    intersections.add(
-                        (
-                            min(min(edge1, edge2), max(edge1, edge2)),
-                            max(min(edge1, edge2), max(edge1, edge2)),
-                        )
+                    result[edge1].add(
+                        (min(edge2[0], edge2[1]), max(edge2[0], edge2[1]))
                     )
-        return intersections
+        return result
 
     def get_all_intersections(
         self, timeout_func=lambda: ...
-    ) -> set[tuple[tuple[int, int], tuple[int, int]]]:
+    ) -> dict[tuple[int, int], set[tuple[int, int]]]:
         """Gibt alle Kanten zurück, die sich schneiden."""
         """Es wird nicht getestet ob die Kanten aktiv sind oder garnicht möglich weil sie auf Knoten liegen."""
         nodes = self.data.get_all_nodes_name
-        intersections = set()
+        result = {}
         for node1, node2 in combinations(range(len(nodes)), 2):
+            edge1 = (min(nodes[node1], nodes[node2]), max(nodes[node1], nodes[node2]))
+            result[edge1] = set()
             timeout_func()
             for current_node in range(len(nodes)):
                 if current_node == node1 or current_node == node2:
@@ -317,14 +321,13 @@ class Check:
                     ):
                         continue
 
-                    inter = (nodes[min(node1, node2)], nodes[max(node1, node2)])
-                    inter2 = (
+                    edge2 = (
                         nodes[min(current_node, remaining_node)],
                         nodes[max(current_node, remaining_node)],
                     )
-                    intersections.add((min(inter, inter2), max(inter, inter2)))
+                    result[edge1].add(edge2)
 
-        return intersections
+        return result
 
     def check_node_for_degree(self, node: int) -> bool:
         """Überprüft, ob der Knoten die richtige Anzahl an Nachbarn hat."""
