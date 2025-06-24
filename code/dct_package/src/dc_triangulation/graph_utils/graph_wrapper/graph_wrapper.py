@@ -5,7 +5,7 @@ from typing import Optional, Tuple, Union
 
 import shapely
 
-from ...cpp.cpp_bindings import cpp_all_intersection
+from ...cpp._intersection_bindings import intersection
 from .. import graph_const
 from ..node import Node
 from . import visualisation
@@ -83,11 +83,8 @@ class Graph_Wrapper:
     def get_all_intersections_cpp(
         self, check_if_active: bool = True
     ) -> dict[tuple[int, int], set[tuple[int, int]]]:
-        if check_if_active:
-            edges = self._data.all_edges_aktive
-        else:
-            edges = self._data.all_edges
-        return cpp_all_intersection(edges)
+        poss = [self.get_pos_from_node(edge) for edge in self.get_all_nodes()]
+        return intersection(poss)
 
     def show_and_save(
         self, show: bool = True, save: str = "", block: bool = True
