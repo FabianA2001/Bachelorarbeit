@@ -55,11 +55,11 @@ intersection(const std::vector<int>&  indices,const std::vector<std::pair<int, i
                 point_pairs[node2],
                 point_pairs[current_node]
             );
-            for (int remaining_node = current_node+1; current_node < point_pairs.size(); ++current_node) {
+            for (int remaining_node = current_node+1; remaining_node < point_pairs.size(); ++remaining_node) {
                 if (
                     remaining_node == node1
                     || remaining_node == node2
-                    || (node1, node2) < (current_node, remaining_node)
+                    || std::tie(node1, node2) < std::tie(current_node, remaining_node)
                 ){
                     continue;  // Skip the nodes that form the edge or already processed
                 }
