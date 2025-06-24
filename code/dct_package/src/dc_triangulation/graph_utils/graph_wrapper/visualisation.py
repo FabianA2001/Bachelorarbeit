@@ -26,7 +26,7 @@ def show_and_save(
         logging.error(
             f"Anzahl der Kanten in der Triangulation stimmt nicht überein.\nEs sollten {number_edges_in_Triangulation} sein, aber es sind {num_active_edges}."
         )
-        save_graph_as_json(data, ",", f"error/{data.name}_error.json")
+        save_graph_as_json(data, "error/", f"/{data.name}_error.json")
 
     pos = nx.get_node_attributes(local_graph, "pos")
     degrees = nx.get_node_attributes(local_graph, "degree")

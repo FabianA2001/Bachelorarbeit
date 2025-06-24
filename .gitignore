@@ -11,7 +11,7 @@
 **/.conan/
 
 code/src/stupid_hostname.py
-
+**/error/
 .DS_Store
 
 profile.html
