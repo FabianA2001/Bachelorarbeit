@@ -110,8 +110,15 @@ def run_algo():
     #     Node((4, 3), 5),
     #     Node((6, 2), 2),
     # ]
+    nodes = [
+        Node((0, 0), 3),
+        Node((1, 1), 3),
+        Node((1, 0), 2),
+        Node((0, 1), 2),
+    ]
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
+    print(*graph.get_all_intersections_cpp(False), sep="\n")
 
     # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)

@@ -1,30 +1,22 @@
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>  // For automatic conversion between STL and Python types
+#define python 0
+
+#if python
+    #include <pybind11/pybind11.h>
+    #include <pybind11/stl.h>  // For automatic conversion between STL and Python types
+#endif
+
 #include <vector>
 #include <utility>  // For std::pair
 #include <map>
 #include <set>
 
-template <typename T>
-void combine_recursive(const std::vector<T>& input, int r, int start,
-                       std::vector<T>& current, std::vector<std::vector<T>>& result) {
-    if (current.size() == r) {
-        result.push_back(current);
-        return;
-    }
-
-    for (int i = start; i < input.size(); ++i) {
-        current.push_back(input[i]);
-        combine_recursive(input, r, i + 1, current, result);
-        current.pop_back();
-    }
-}
 
 template <typename T>
-std::vector<std::vector<T>> combinations(const std::vector<T>& input, int r) {
+std::vector<std::vector<T>> two_combinations(const std::vector<T>& input) {
     std::vector<std::vector<T>> result;
-    std::vector<T> current;
-    combine_recursive(input, r, 0, current, result);
+
+    // add implemntation
+
     return result;
 }
 
@@ -45,16 +37,25 @@ intersection(const std::vector<std::pair<int, int>>& point_pairs) {
     // Placeholder for intersection logic
     // Create a result map to return
     std::map<std::pair<int, int>, std::set<std::pair<int, int>>> result;
-    
-    std::vector<std::vector<std::pair<int, int>>> combs = combinations(point_pairs, 2);
+   
+    auto combinations = two_combinations(point_pairs); 
     
     return result;
 }
 
+#if python
 PYBIND11_MODULE(_intersection_bindings, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
 
     // Exposing the intersection function to Python
     m.def("intersection", &intersection, "Function that processes a list of point pairs and returns intersection map",
           pybind11::arg("point_pairs"));
+}
+#endif
+
+int main(){
+    const std::vector<std::pair<int, int>> points = {
+        {0, 0}, {1, 1}, {1, 0}, {0, 1}
+    };
+    auto x = intersection(points);
 }

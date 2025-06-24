@@ -84,6 +84,7 @@ class Graph_Wrapper:
         self, check_if_active: bool = True
     ) -> dict[tuple[int, int], set[tuple[int, int]]]:
         poss = [self.get_pos_from_node(edge) for edge in self.get_all_nodes()]
+        # print(str(poss).replace(")", "}").replace("(", "{"))
         return intersection(poss)
 
     def show_and_save(
