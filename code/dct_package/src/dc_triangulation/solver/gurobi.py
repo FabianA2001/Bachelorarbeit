@@ -90,10 +90,8 @@ class Gurobi(Solver):
             if node in hull:
                 degree -= 1
             # Sum of all triangle variables containing this node must be <= degree
-            self.model.addConstr(
-                sum(self.vars[tri] for tri in tris) <= degree,
-                name=f"degree_{node}",
-            )
+            summ = sum(self.vars[tri] for tri in tris)
+            self.model.addConstr(summ == degree)  # type: ignore[reportCallIssue]
 
     def _actual_solver(self, parameter: dict) -> dict:
         if not isinstance(parameter, dict):
@@ -104,10 +102,25 @@ class Gurobi(Solver):
 
         try:
             self.model = Model()
+            self.model.setParam("OutputFlag", 0)  # Suppress Gurobi output
             self.setup(parameter_data)
             self.time_pre_solve(self.pre_solve)(parameter_data)
+
+            # Solve the optimization model
+            self.model.optimize()
+
+            success = False
+            # Check if solution was found
+            if self.model.status == GRB.OPTIMAL:
+                success = True
+                for tri, var in self.vars.items():
+                    if var.X > 0.5:  # Variable is active (binary variable close to 1)
+                        for i in range(3):
+                            node1, node2 = tri[i], tri[(i + 1) % 3]
+                            edge = (min(node1, node2), max(node1, node2))
+                            self.graph.activate_edge(edge)
             return {
-                "success": False,
+                "success": success,
             }
         except TimeoutError:
             self.logger.warning(f"{self.name} timed out.")

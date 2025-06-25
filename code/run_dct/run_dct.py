@@ -111,7 +111,7 @@ def gurobi_algorithm(graph):
 
 def run_algo():
     PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_10", "000_delaunay_flips.json"
+        os.path.dirname(__file__), "instance", "simple_20", "000_delaunay.json"
     )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
