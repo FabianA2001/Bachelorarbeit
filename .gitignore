@@ -9,7 +9,8 @@
 **/build/
 **/instance/error
 **/.conan/
-*pyd
+*.pyd
+*.so
 *.exe
 CMakeUserPresets.json
 
