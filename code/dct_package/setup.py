@@ -16,11 +16,10 @@ setup(  # https://scikit-build.readthedocs.io/en/latest/usage.html#setup-options
         "seaborn",
         "python-sat",
         "algbench",
-        "questionary",
-        "pre-commit",
         "pytest",
         "scalene",
         "streamlit",
+        "gurobipy",
     ],  # Python Dependencies
     conan_requirements=["fmt/[>=10.0.0]", "cgal/[>=5.6]"],  # C++ Dependencies
     cmake_minimum_required_version="3.23",
