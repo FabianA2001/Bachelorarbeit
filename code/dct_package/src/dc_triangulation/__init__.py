@@ -3,6 +3,8 @@ from .graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from .graph_utils.node import Node, load_nodes_from_json, save_nodes_as_json
 from .run_algbench import Run_Algbench
 from .solver.delaunay import Delaunay
+from .solver.gurobi import Gurobi
+from .solver.gurobi import Parameter as Gurobi_Parameter
 from .solver.iterative import Iterative
 from .solver.ortools import Ortools
 from .solver.ortools import Parameter as Ortools_Parameter
@@ -36,9 +38,7 @@ __all__ = [
     "generate",
     "format_dictionary",
     "Run_Algbench",
-    "FieldNumber",
-    "Point",
-    "Polygon",
-    "PolygonWithHoles",
-    time_function,
+    "time_function",
+    "Gurobi",
+    "Gurobi_Parameter",
 ]
