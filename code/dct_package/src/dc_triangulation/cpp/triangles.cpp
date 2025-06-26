@@ -25,9 +25,31 @@ TriangleToTrianglesMap triangles_intersection(const std::vector<Triangle_as_Node
 
                 CGAL::Triangle_2<CGAL::Exact_predicates_inexact_constructions_kernel> cgal_other_triangle(op1, op2, op3);
 
-                // Check if the triangles intersect
+                // Check if the triangles properly intersect (not just touch)
+                // We need to verify that the triangles have overlapping interiors
                 if (CGAL::do_intersect(cgal_triangle, cgal_other_triangle)) {
-                    result[triangles.at(i)].push_back(triangles.at(j));
+                    // Additional check: ensure it's not just touching at boundaries
+                    // Check if any vertex of one triangle is inside the other triangle
+                    bool proper_intersection = false;
+                    
+                    // Check if any vertex of triangle j is inside triangle i
+                    if (cgal_triangle.has_on_positive_side(op1) || 
+                        cgal_triangle.has_on_positive_side(op2) || 
+                        cgal_triangle.has_on_positive_side(op3)) {
+                        proper_intersection = true;
+                    }
+                    
+                    // Check if any vertex of triangle i is inside triangle j
+                    if (!proper_intersection && 
+                        (cgal_other_triangle.has_on_positive_side(p1) || 
+                         cgal_other_triangle.has_on_positive_side(p2) || 
+                         cgal_other_triangle.has_on_positive_side(p3))) {
+                        proper_intersection = true;
+                    }
+                    
+                    if (proper_intersection) {
+                        result[triangles.at(i)].push_back(triangles.at(j));
+                    }
                 }
             }
         }
