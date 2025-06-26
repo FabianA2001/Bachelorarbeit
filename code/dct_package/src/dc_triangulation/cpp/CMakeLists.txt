@@ -8,7 +8,7 @@ if(BUILD_PYTHON_BINDINGS)
     # Python bindings using pybind11
     cpmaddpackage("gh:pybind/pybind11@2.13.6") # pybind11, essential
     
-    pybind11_add_module(_cpp_bindings _intersection.cpp bindings.cpp  intersection.h)
+    pybind11_add_module(_cpp_bindings bindings.cpp intersection.cpp intersection.h triangles.cpp)
     
     # enable compilation warnings
     target_compile_options(
@@ -22,7 +22,7 @@ if(BUILD_PYTHON_BINDINGS)
     install(TARGETS _cpp_bindings DESTINATION ./src/dc_triangulation/cpp)
 else()
     # Native C++ executable
-    add_executable(main_executable main.cpp  _intersection.cpp)
+    add_executable(main_executable main.cpp  intersection.cpp triangles.cpp)
     target_link_libraries(main_executable PUBLIC CGAL::CGAL)
     
     # enable compilation warnings
