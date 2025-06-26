@@ -21,6 +21,6 @@ setup(  # https://scikit-build.readthedocs.io/en/latest/usage.html#setup-options
         "streamlit",
         "gurobipy",
     ],  # Python Dependencies
-    conan_requirements=["fmt/[>=10.0.0]", "cgal/[>=5.6]"],  # C++ Dependencies
+    conan_requirements=["cgal/[>=5.6]"],  # C++ Dependencies
     cmake_minimum_required_version="3.23",
 )

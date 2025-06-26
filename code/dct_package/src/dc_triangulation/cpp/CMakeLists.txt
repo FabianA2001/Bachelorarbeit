@@ -1,21 +1,34 @@
 # Created by the script cgal_create_cmake_script This is the CMake script for
 # compiling a CGAL application.
-cpmaddpackage("gh:pybind/pybind11@2.13.6") # pybind11, essential
+
 find_package(CGAL REQUIRED)
-find_package(fmt REQUIRED)
 
-pybind11_add_module(_cgal_bindings ./_cgal_bindings.cpp)
-target_link_libraries(_cgal_bindings PUBLIC fmt::fmt CGAL::CGAL)
-pybind11_add_module(_intersection_bindings ./_intersection.cpp)
 
-# enable compilation warnings
-target_compile_options(
-  _cgal_bindings PRIVATE "$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall>")
-target_compile_definitions(_cgal_bindings
-                           PRIVATE PYBIND11_DETAILED_ERROR_MESSAGES)
-
-# move the compiled module to this folder. You can check with `python setup.py
-# build` how the package will look like and if the module is moved to the right
-# location.
-install(TARGETS _cgal_bindings DESTINATION ./src/dc_triangulation/cpp)
-install(TARGETS _intersection_bindings DESTINATION ./src/dc_triangulation/cpp)
+if(BUILD_PYTHON_BINDINGS)
+    # Python bindings using pybind11
+    cpmaddpackage("gh:pybind/pybind11@2.13.6") # pybind11, essential
+    
+    pybind11_add_module(_cpp_bindings _intersection.cpp bindings.cpp  intersection.h)
+    
+    # enable compilation warnings
+    target_compile_options(
+      _cpp_bindings PRIVATE "$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall>")
+    target_compile_definitions(_cpp_bindings
+                               PRIVATE PYBIND11_DETAILED_ERROR_MESSAGES)
+    
+    # move the compiled module to this folder. You can check with `python setup.py
+    # build` how the package will look like and if the module is moved to the right
+    # location.
+    install(TARGETS _cpp_bindings DESTINATION ./src/dc_triangulation/cpp)
+else()
+    # Native C++ executable
+    add_executable(main_executable main.cpp  _intersection.cpp)
+    target_link_libraries(main_executable PUBLIC CGAL::CGAL)
+    
+    # enable compilation warnings
+    target_compile_options(
+      main_executable PRIVATE "$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall>")
+    
+    # Install the executable
+    install(TARGETS main_executable DESTINATION .)
+endif()

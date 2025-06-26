@@ -5,7 +5,7 @@ from typing import Optional, Tuple, Union
 
 import shapely
 
-from ...cpp._intersection_bindings import intersection as intersection_cpp_extern
+from ...cpp._cpp_bindings import intersection as intersection_cpp_extern
 from .. import graph_const
 from ..node import Node
 from . import visualisation

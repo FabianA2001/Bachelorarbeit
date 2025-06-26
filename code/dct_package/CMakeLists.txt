@@ -3,6 +3,7 @@
 # be used just to build a C++-library.
 cmake_minimum_required(VERSION 3.23)
 option(CXX "enable C++ compilation" ON)
+option(BUILD_PYTHON_BINDINGS "Build Python bindings (OFF = native executable)" ON)
 
 if(CXX)
   enable_language(CXX)
@@ -24,7 +25,6 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # Check out https://github.com/cpm-cmake/CPM.cmake
 include(./cmake/CPM.cmake) # Package manager for simple requirements.
 
-# cpmaddpackage("gh:fmtlib/fmt#9.1.0") # fmt for nice strings
 
 # Define the rest of the project ~~~~~~~~~~~~~~~
 add_subdirectory(src)
