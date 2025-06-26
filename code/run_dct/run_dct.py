@@ -31,24 +31,25 @@ def get_parameters():
 
 
 def custom_points() -> list[Node]:
-    nodes = [
-        Node((0, 0), 3),
-        Node((1, 1), 3),
-        Node((1, 0), 2),
-        Node((0, 1), 2),
-    ]
-    nodes = [
-        Node((2, 2)),
-        Node((6, 3)),
-        Node((5, 4)),
-        Node((4, 5)),
-        Node((3, 6)),
-        Node((1, 8)),
-        Node((14, 8)),
-        Node((7, 1)),
-    ]
-    graph = Graph_Wrapper(nodes)
     if True:
+        return [
+            Node((0, 0), 3),
+            Node((1, 1), 3),
+            Node((1, 0), 2),
+            Node((0, 1), 2),
+        ]
+    else:
+        nodes = [
+            Node((2, 2)),
+            Node((6, 3)),
+            Node((5, 4)),
+            Node((4, 5)),
+            Node((3, 6)),
+            Node((1, 8)),
+            Node((14, 8)),
+            Node((7, 1)),
+        ]
+        graph = Graph_Wrapper(nodes)
         solver = Random_Adder(graph)
         solver.solve(
             {
@@ -57,8 +58,6 @@ def custom_points() -> list[Node]:
             }
         )
         return graph.get_aktive_graph_nodes()
-    else:
-        return nodes
 
 
 def ortools_algorithm(graph):
@@ -111,12 +110,14 @@ def gurobi_algorithm(graph):
 
 def run_algo():
     PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_20", "000_delaunay.json"
+        os.path.dirname(__file__), "instance", "simple_30", "000_delaunay.json"
     )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
+    # graph.add_all_possible_edges(default_for_active=True)
+    # print(*graph.get_all_triangles(), sep="\n")
 
     # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)

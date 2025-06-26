@@ -64,9 +64,17 @@ class Gurobi(Solver):
         tri2: tuple[shapely.Point, shapely.Point, shapely.Point],
     ) -> bool:
         tri1_poly = shapely.Polygon(tri1)
+        if not tri1_poly.is_valid:
+            tri1_poly = shapely.LineString(tri1)
         tri2_poly = shapely.Polygon(tri2)
-        assert tri1_poly.is_valid, "Triangle 1 is not a valid polygon."
-        assert tri2_poly.is_valid, "Triangle 2 is not a valid polygon."
+        if not tri2_poly.is_valid:
+            tri2_poly = shapely.LineString(tri2)
+        assert isinstance(tri1_poly, shapely.Polygon) or isinstance(
+            tri1_poly, shapely.LineString
+        )
+        assert isinstance(tri2_poly, shapely.Polygon) or isinstance(
+            tri2_poly, shapely.LineString
+        )
         return tri1_poly.intersects(tri2_poly) and not tri1_poly.touches(tri2_poly)
 
     def intersection_constraint(self):
@@ -119,6 +127,9 @@ class Gurobi(Solver):
                             node1, node2 = tri[i], tri[(i + 1) % 3]
                             edge = (min(node1, node2), max(node1, node2))
                             self.graph.activate_edge(edge)
+
+            if not success:
+                self.logger.warning(f"{self.name} did not find an optimal solution.")
             return {
                 "success": success,
             }

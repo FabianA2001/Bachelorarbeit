@@ -29,6 +29,29 @@ class Data(Data_Raw):
                 triangles.append(tuple(sorted([node, u, v])))
         return triangles
 
+    def get_empty_triangles_for_node(self, node: int) -> list[int]:
+        """Gibt die leeren Dreiecke des Graphen zurück."""
+        multipoint = self.get_multi_nodes
+        triangles = []
+        neighbors = set(self[node])
+        for u, v in itertools.combinations(neighbors, 2):
+            if not self.has_edge(u, v):
+                continue
+            poly = shapely.Polygon(
+                [
+                    self.get_point_from_node(node),
+                    self.get_point_from_node(u),
+                    self.get_point_from_node(v),
+                ]
+            )
+            intersect = poly.intersection(multipoint)
+            assert isinstance(intersect, shapely.geometry.MultiPoint)
+            if len(intersect.geoms) == 3:
+                # Wenn das Polygon nicht mit den Punkten des Graphen schneidet,
+                # dann ist es ein leeres Dreieck
+                triangles.append(tuple(sorted([node, u, v])))
+        return triangles
+
     def get_triangles_for_edge(
         self, edge: tuple[int, int], check_active: bool = True
     ) -> list[tuple[int, int, int]]:
@@ -85,6 +108,15 @@ class Data(Data_Raw):
                 triangles.add(tri)
         return list(triangles)
 
+    @cached_property
+    def get_all_empty_triangles(self) -> list[tuple[int, int, int]]:
+        """Gibt alle Dreiecke des Graphen zurück."""
+        triangles = set()
+        for node in self.get_all_nodes_name:
+            for tri in self.get_empty_triangles_for_node(node):
+                triangles.add(tri)
+        return list(triangles)
+
     @staticmethod
     def sorted_nodes_clock_wise(nodes: list[shapely.Point]) -> list[shapely.Point]:
         """Sortiert die Punkte im Uhrzeigersinn."""
@@ -135,3 +167,9 @@ class Data(Data_Raw):
             self.get_node_from_point(node)
             for node in self.sorted_nodes_clock_wise(self.get_hull_points)
         ]
+
+    @cached_property
+    def get_multi_nodes(self) -> shapely.MultiPoint:
+        """Gibt die Punkte des Graphen zurück."""
+        points = [attr["point"] for _, attr in self.nodes(data=True)]
+        return shapely.geometry.MultiPoint(points)

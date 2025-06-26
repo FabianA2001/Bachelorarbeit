@@ -152,7 +152,7 @@ class Graph_Wrapper:
 
     def get_triangles_from_node(self, node: int) -> list[int]:
         """Gibt die Dreiecke des Graphen zurück."""
-        return self._data.get_triangles_for_node(node)
+        return self._data.get_empty_triangles_for_node(node)
 
     def get_triangles_for_edge(
         self, edge: tuple[int, int]
@@ -162,7 +162,10 @@ class Graph_Wrapper:
 
     def get_all_triangles(self) -> list[tuple[int, int, int]]:
         """Gibt alle Dreiecke des Graphen zurück."""
-        return self._data.get_all_triangles
+        assert len(self._data.edges) >= 3, (
+            "Graph must have at least 3 edges to form triangles."
+        )
+        return self._data.get_all_empty_triangles
 
     def flip_edge(self, edge: tuple[int, int]) -> bool:
         self.clear_cache()
