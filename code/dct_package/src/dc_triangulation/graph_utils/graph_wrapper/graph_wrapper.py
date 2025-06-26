@@ -6,6 +6,7 @@ from typing import Optional, Tuple, Union
 import shapely
 
 from ...cpp._cpp_bindings import intersection as intersection_cpp_extern
+from ...cpp._cpp_bindings import triangles_intersection
 from .. import graph_const
 from ..node import Node
 from . import visualisation
@@ -84,6 +85,18 @@ class Graph_Wrapper:
         poss = [self.get_pos_from_node(edge) for edge in self.get_all_nodes()]
         # print(str(poss).replace(")", "}").replace("(", "{"))
         x = intersection_cpp_extern(self.get_all_nodes(), poss)
+        return x
+
+    def get_all_triangles_intersections_cpp(
+        self,
+    ) -> dict[tuple[int, int, int], set[tuple[int, int, int]]]:
+        """Gibt alle Dreiecksintersektionen zurück."""
+        triangles = self.get_all_triangles()
+        triangles_pos = [
+            [self.get_pos_from_node(node) for node in triangle]
+            for triangle in triangles
+        ]
+        x = triangles_intersection(triangles, triangles_pos)
         return x
 
     def show_and_save(
