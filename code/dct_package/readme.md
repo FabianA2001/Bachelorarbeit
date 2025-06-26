@@ -10,5 +10,14 @@ Wenn der cpp code verändert wird wieder `python setup.py develop`
 ### CPP
 
 1. `conan install . --build=missing -of . -s build_type=Debug`
-2. `cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug -DBUILD_PYTHON_BINDINGS=Off -DCMAKE_TOOLCHAIN_FILE=build/Debug/generators/conan_toolchain.cmake`
+2. MacOS: `cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug -DBUILD_PYTHON_BINDINGS=Off -DCMAKE_TOOLCHAIN_FILE=build/Debug/generators/conan_toolchain.cmake`
+   
+   Windows: `cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug -DBUILD_PYTHON_BINDINGS=Off -DCMAKE_TOOLCHAIN_FILE="build/generators/conan_toolchain.cmake"`
+
 3. `cmake --build build`
+4. Path Excutable:
+ 
+    Windows: `"./build/src/dc_triangulation/cpp/Debug/main_executable.exe"`
+    
+    MacOs: `./build/src/dc_triangulation/cpp/main_executable`
+

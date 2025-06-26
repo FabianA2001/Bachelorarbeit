@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug -DBUILD_PYTHON_BINDINGS=Off -DCMAKE_TOOLCHAIN_FILE=build/Debug/generators/conan_toolchain.cmake
 
 cmake --build build
