@@ -9,7 +9,7 @@ if(BUILD_PYTHON_BINDINGS)
     cpmaddpackage("gh:pybind/pybind11@2.13.6") # pybind11, essential
     
     pybind11_add_module(_cpp_bindings bindings.cpp intersection.cpp intersection.h triangles.cpp)
-    
+    target_link_libraries(_cpp_bindings PUBLIC CGAL::CGAL) 
     # enable compilation warnings
     target_compile_options(
       _cpp_bindings PRIVATE "$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall>")
