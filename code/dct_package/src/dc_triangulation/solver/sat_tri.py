@@ -39,9 +39,6 @@ class SAT_TRI(Solver):
                     pass
 
         self.tris = self.graph.get_all_triangles()
-        self.logger.warning(
-            "Dreiecke sind teilweise nicht leer, warten auf ccp für fix"
-        )
         self.tris_as_point = [
             (
                 self.graph.get_point_from_node(node1),

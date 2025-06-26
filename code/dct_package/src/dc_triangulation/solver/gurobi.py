@@ -30,9 +30,6 @@ class Gurobi(Solver):
     def setup(self, parameter: Parameter):
         self.graph.add_all_possible_edges(default_for_active=False)
         self.triangle = time_function(self.graph.get_all_triangles, self.logger)()
-        self.logger.warning(
-            "Dreiecke sind teilweise nicht leer, warten auf ccp für fix"
-        )
         self.vars = {}
         for tri in self.triangle:
             if not isinstance(tri, tuple) or len(tri) != 3:
