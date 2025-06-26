@@ -1,4 +1,3 @@
-import itertools
 from dataclasses import dataclass
 
 import shapely
@@ -78,10 +77,11 @@ class Gurobi(Solver):
         if not self.triangle:
             raise ValueError("No triangles found in the graph.")
 
-        for tri1, tri2 in itertools.combinations(self.triangle, 2):
-            if self.triangles_intersect(
-                self.tris_as_point[tri1], self.tris_as_point[tri2]
-            ):
+        for (
+            tri1,
+            intersection,
+        ) in self.graph.get_all_triangles_intersections_cpp().items():
+            for tri2 in intersection:
                 self.model.addConstr(
                     self.vars[tri1] + self.vars[tri2] <= 1,
                     name=f"intersection_{tri1}_{tri2}",

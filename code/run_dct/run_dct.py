@@ -117,7 +117,8 @@ def run_algo():
     nodes = custom_points()
     graph = Graph_Wrapper(nodes)
     graph.add_all_possible_edges(default_for_active=False)
-    print(*graph.get_all_triangles_intersections_cpp(), sep="\n")
+    x = graph.get_all_triangles_intersections_cpp()
+    print(x)
     # print(*graph.get_all_intersections_cpp(), sep="\n")
 
     # sat_algorithm(graph)
