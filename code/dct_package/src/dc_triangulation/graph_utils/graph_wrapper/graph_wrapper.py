@@ -96,26 +96,25 @@ class Graph_Wrapper:
             [self.get_pos_from_node(node) for node in triangle]
             for triangle in triangles
         ]
-        print(str(triangles).replace(")", "}").replace("(", "{"))
-        print(
-            str(
-                [
-                    str(pos)
-                    .replace(")", "}")
-                    .replace("(", "{")
-                    .replace("]", "}")
-                    .replace("[", "{")
-                    for pos in triangles_pos
-                ]
-            )
-            .replace(")", "}")
-            .replace("(", "{")
-            .replace("]", "}")
-            .replace("[", "{")
-            .replace("'", "")
-        )
-        x = triangles_intersection(triangles, triangles_pos)
-        return x
+        # print(str(triangles).replace(")", "}").replace("(", "{"))
+        # print(
+        #     str(
+        #         [
+        #             str(pos)
+        #             .replace(")", "}")
+        #             .replace("(", "{")
+        #             .replace("]", "}")
+        #             .replace("[", "{")
+        #             for pos in triangles_pos
+        #         ]
+        #     )
+        #     .replace(")", "}")
+        #     .replace("(", "{")
+        #     .replace("]", "}")
+        #     .replace("[", "{")
+        #     .replace("'", "")
+        # )
+        return triangles_intersection(triangles, triangles_pos)
 
     def show_and_save(
         self, show: bool = True, save: str = "", block: bool = True

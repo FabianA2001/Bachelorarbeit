@@ -114,20 +114,20 @@ def run_algo():
     )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
-    nodes = custom_points()
+    # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    graph.add_all_possible_edges(default_for_active=False)
-    x = graph.get_all_triangles_intersections_cpp()
-    print(x)
+    # graph.add_all_possible_edges(default_for_active=True)
+    # x = graph.get_all_triangles_intersections_cpp()
+    # print(x)
     # print(*graph.get_all_intersections_cpp(), sep="\n")
 
-    # sat_algorithm(graph)
+    sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # gurobi_algorithm(graph)
 
     # graph.add_edge(0, 5)
-    # graph.show_and_save()
+    graph.show_and_save()
 
 
 def create_instance():

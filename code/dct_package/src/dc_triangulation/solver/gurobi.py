@@ -80,7 +80,9 @@ class Gurobi(Solver):
         for (
             tri1,
             intersection,
-        ) in self.graph.get_all_triangles_intersections_cpp().items():
+        ) in time_function(
+            self.graph.get_all_triangles_intersections_cpp, self.logger
+        )().items():
             for tri2 in intersection:
                 self.model.addConstr(
                     self.vars[tri1] + self.vars[tri2] <= 1,
@@ -112,7 +114,7 @@ class Gurobi(Solver):
             self.time_pre_solve(self.pre_solve)(parameter_data)
 
             # Solve the optimization model
-            self.model.optimize()
+            self.time_solver(self.model.optimize)()
 
             success = False
             # Check if solution was found
