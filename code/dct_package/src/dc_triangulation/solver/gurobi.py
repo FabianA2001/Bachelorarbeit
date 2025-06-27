@@ -47,6 +47,7 @@ class Gurobi(Solver):
         }
 
     def pre_solve(self, parameter: Parameter):
+        self.setup(parameter)
         if not self.triangle:
             raise ValueError("No triangles found in the graph.")
         if parameter.intersection:
@@ -110,7 +111,6 @@ class Gurobi(Solver):
         try:
             self.model = Model()
             self.model.setParam("OutputFlag", 0)  # Suppress Gurobi output
-            self.setup(parameter_data)
             self.time_pre_solve(self.pre_solve)(parameter_data)
 
             # Solve the optimization model
