@@ -83,13 +83,14 @@ def flip_edge(data: Data, check: Check, edge: tuple[int, int]) -> bool:
         if edge[0] != node and edge[1] != node:
             b = node
     edges = data.get_all_edges()
-    if (a, b) in edges or (b, a) in edges:
+    other_edge = (min(a, b), max(a, b))
+    if other_edge in edges:
         return False
 
-    data.add_edge(a, b, True)
+    data.add_edge(other_edge[0], other_edge[1], True)
     data.deactivate_edge(edge)
-    if check.check_for_intersection_with_all_edges_and_nodes((a, b), True):
-        data.remove_edge((a, b))
+    if check.check_for_intersection_with_all_edges_and_nodes(other_edge, True):
+        data.remove_edge(other_edge)
         data.active_edge(edge)
         # logging.warning(
         #     f"({a},{b}) würde mit einer anderen Kante schneiden.")

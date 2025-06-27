@@ -106,7 +106,8 @@ class Solver(ABC):
         )
         self.timeout = parameter["timeout"]
         self.start_time = time.time()
-        if not self.graph.check_degree_possible():
+        ignore_degree = parameter.get("ignore_degree", False)
+        if not ignore_degree and (not self.graph.check_degree_possible()):
             self.logger.warning("Failed: Graph does not meet degree constraints.")
             return {
                 "success": False,

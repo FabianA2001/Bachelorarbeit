@@ -57,6 +57,7 @@ class Generate_Instance:
         number_instances: int,
         nodes_gen: Generate_Instance_ABC_Nodes,
         edges_gen: Generate_Instance_ABC_Edges,
+        path: str = "",
         width: int = graph_const.GEN_WIDTH,
         height: int = graph_const.GEN_HEIGHT,
     ) -> None:
@@ -66,10 +67,10 @@ class Generate_Instance:
         self.number_instances = number_instances
         self.nodes_gen = nodes_gen
         self.edges_gen = edges_gen
+        self.path = path
         self.width = width
         self.height = height
 
-    # TODO Path nutzen
     def generate(self) -> None:
         if self.file_name == "":
             raise ValueError("lokal_name is not set.")
@@ -80,9 +81,11 @@ class Generate_Instance:
             graph = Graph_Wrapper(nodes)
             graph, possible = self.edges_gen.generate_instance(graph)
             number = str(i).zfill(3)
-            graph.save_graph_as_json(f"{self.name}/{number}_{self.file_name}.json")
+            graph.save_graph_as_json(
+                path=self.path, filename=f"{self.name}/{number}_{self.file_name}.json"
+            )
             if possible is not None:
-                path = f"{'hier ändern'}{self.name}/{number}_{self.file_name}.json"
+                path = f"{self.path}/{self.name}/{number}_{self.file_name}.json"
                 with open(path, "r") as f:
                     data = json.load(f)
                 data["possible"] = possible
@@ -102,7 +105,7 @@ class Generate_Edges_Delaunay_Flips(Generate_Instance_ABC_Edges):
         solver.solve(
             {
                 "timeout": 60,
-                "version": 0.1,
+                "ignore_degree": True,
             }
         )
         for _ in range(self.number_flips):
@@ -122,7 +125,7 @@ class Generate_Edges_Delaunay(Generate_Instance_ABC_Edges):
         solver.solve(
             {
                 "timeout": -1,
-                "version": 0.1,
+                "ignore_degree": True,
             }
         )
         return (graph, True)
@@ -136,7 +139,7 @@ class Generate_Edges_Random(Generate_Instance_ABC_Edges):
         solver.solve(
             {
                 "timeout": -1,
-                "version": 0.1,
+                "ignore_degree": True,
             }
         )
         return (graph, True)
@@ -145,7 +148,7 @@ class Generate_Edges_Random(Generate_Instance_ABC_Edges):
 class Generate_Nodes_Iterativ(Generate_Instance_ABC_Nodes):
     def __init__(self, step: int, number_instance: int) -> None:
         self.step = step
-        self.round = number_instance
+        self.round = number_instance - 1
 
     def generate_nodes(
         self,

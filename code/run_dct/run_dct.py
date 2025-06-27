@@ -119,10 +119,9 @@ def run_algo():
     # x = graph.get_all_triangles_intersections_cpp()
     # print(x)
     # print(*graph.get_all_intersections_cpp(), sep="\n")
-
     # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
-    ortools_algorithm(graph)
+    # ortools_algorithm(graph)
     # gurobi_algorithm(graph)
 
     # graph.add_edge(0, 5)
@@ -130,23 +129,24 @@ def run_algo():
 
 
 def create_instance():
-    NAME = "simple_100"
-    FILE_NAME = "random"
-    NUMBER_INSTANCE = 5
-    NUMBER_NODES = 100
-    # STEP = 10
+    NAME = "iterative_80_5"
+    FILE_NAME = "delaunay"
+    NUMBER_INSTANCE = 6
+    NUMBER_NODES = 80
+    STEP = 10
     generate.Generate_Instance(
         NAME,
         FILE_NAME,
         NUMBER_NODES,
         NUMBER_INSTANCE,
-        generate.Generate_Nodes_Random(),
-        generate.Generate_Edges_Random(),
+        generate.Generate_Nodes_Iterativ(STEP, NUMBER_INSTANCE),
+        generate.Generate_Edges_Delaunay(),
+        path="instance",
         width=10000,
         height=10000,
     ).generate()
 
 
 if __name__ == "__main__":
-    run_algo()
-    # create_instance()
+    # run_algo()
+    create_instance()
