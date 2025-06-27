@@ -58,10 +58,7 @@ class Ortools(Solver):
                     )
                 ) in self.graph.impossible_edges:
                     continue
-                self.model.AddBoolOr(
-                    [self.vars[edge].Not(), self.vars[intersection].Not()]
-                )
-                # TODO At most one
+                self.model.add_at_most_one(self.vars[edge], self.vars[intersection])
         self.timeout_error()
 
     def constraint_degree(self):
@@ -178,7 +175,9 @@ class Ortools(Solver):
 
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
-        stop_after_first_solution = self.pre_solve(parameter_data, parameter["timeout"])
+        stop_after_first_solution = self.time_pre_solve(self.pre_solve)(
+            parameter_data, parameter["timeout"]
+        )
         solver = cp_model.CpSolver()
         # solver.parameters.log_search_progress = True  # Enable logging
         solver.parameters.max_time_in_seconds = self.get_remaining_time()

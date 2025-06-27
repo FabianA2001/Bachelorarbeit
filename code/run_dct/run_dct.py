@@ -65,7 +65,6 @@ def ortools_algorithm(graph):
     para = Ortools_Parameter(
         intersection=True,
         degree=True,
-        degree_direction=True,
     )
     logging.info(
         f"solution found: {solver.solve({'timeout': 30, 'args': asdict(para)})}"
@@ -121,9 +120,9 @@ def run_algo():
     # print(x)
     # print(*graph.get_all_intersections_cpp(), sep="\n")
 
-    sat_algorithm(graph)
+    # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
-    # ortools_algorithm(graph)
+    ortools_algorithm(graph)
     # gurobi_algorithm(graph)
 
     # graph.add_edge(0, 5)
