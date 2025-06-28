@@ -147,7 +147,15 @@ OrTools erlaubt keine \emph{min}-Funktion in Formeln. Deshalb wird die Funktion 
 Auch hierfür wird eine Integer-Hilfsvariable benötigt, welche das Minimum speichert.
 Diese überarbeitete Formel wird in die Zielfunktion zur Maximierung eingefügt.
 
-
+TODO glaube das ist einfach nur abs das ist glaube nicht gleichwertig.
+Es gibt auch eine zweite Zielfunktion welche weniger Integer-Hilfsvariablen verwendet.
+Für jeden Knoten wird bei dieser Zielfunktion nur eine Integer-Hilfsvariable \(j_i\) und keine besonderen Funktionen verwendet.
+Für jeden Knoten \(i\) muss die Hilfsvariable \(j_i\) nur folgende Bedingung erfüllen:
+\begin{align*}
+	j_i &\geq \degrees(i) - \degree(i) \\
+	j_i &\geq \degree(i) - \degrees(i) 
+\end{align*}
+Die Summe aus \(j_i\) wird dann als Zielfunktion maximiert.
 
 
 
@@ -157,17 +165,28 @@ Diese überarbeitete Formel wird in die Zielfunktion zur Maximierung eingefügt.
 	\item alle Solver desten ob sum(degree) = 2* Kanten für Triangulation
 \end{itemize}
 \subsection{OrTools}
-\begin{itemize}
-	\item gleicher Solver jetzt mit Gradbeschränkung
-	\item Kanten Variblen und Intersection Konstriend wie in~\cref{sec:ortools_heu}
-	\item Zwei Grundansätze
-	\begin{itemize}
-		\item Kanten Maximieren und dann nach Lösung abbrechen welche richtige Anzahl Kanten hat
-		\item Kanten Anzahl festsetzen und ohne Zielfunktion lösen
-	\end{itemize}
-	\item Ansatz für die Gradbeschränkung
-	\item für jeden Knoten die summe der x für ausgehende Kanten varibalen gleich dem Sollgrad
-\end{itemize}
+% \begin{itemize}
+% 	\item gleicher Solver jetzt mit Gradbeschränkung
+% 	\item Kanten Variblen und Intersection Konstriend wie in~\cref{sec:ortools_heu}
+% 	\item Zwei Grundansätze
+% 	\begin{itemize}
+% 		\item Kanten Maximieren und dann nach Lösung abbrechen welche richtige Anzahl Kanten hat
+% 		\item Kanten Anzahl festsetzen und ohne Zielfunktion lösen
+% 	\end{itemize}
+% 	\item Ansatz für die Gradbeschränkung
+% 	\item für jeden Knoten die summe der x für ausgehende Kanten varibalen gleich dem Sollgrad
+% \end{itemize}
+Für ein exaktes Ergebnis wird ebenfalls der OrTools-Solver von Google genutzt.
+Die Überschneidungsbeschränkung wird wie in~\cref{sec:ortools_heu} implementiert.
+Es wird jedoch keine Zielfunktion verwendet. Stattdessen wird eine Gradbeschränkung an den Solver übergeben.
+Diese beschränkt die Summe der booleschen Variablen \(x_e\) für alle ausgehenden Kanten eines Knotens \(i\) auf den Sollgrad \(\degrees(i)\).
+
+Eine weitere Möglichkeit besteht darin, als Zielfunktion die Summe der booleschen Variablen \(x_e\) zu maximieren.
+In diesem Fall wird die Anzahl der Kanten maximiert, die in der Triangulation enthalten sind.
+Da die Anzahl der Kanten in einer Triangulation allerdings bekannt sind, kann die Lösung abgebrochen werden, sobald die Anzahl der Kanten erreicht wurde.
+
+
+
 \subsection{SAT mit Kanten}
 TODO Rausfinden wie SAT degree gemacht wird
 Zunächst sei \(E\) die Menge aller Kanten und \(E_P\) die Menge aller möglicher Kanten. Also Kanten die keine Punkte schneiden.
@@ -207,7 +226,7 @@ Für den Überschneidungs Konstriend werden folgende Klauseln dem OrTools Modeln
 \subsection{SAT/Gurobi mit Dreicken}
 \begin{itemize}
 	\item Alle möglichen Dreicke erstellen
-	\item Spätere Verbesserung nur Leere Dreicke
+	\item Spätere Verbesserung nur Leere Dreiecke
 	\item jedes Dreieck als Bool Variable
 	\item Intersection Konstriend wie bei Kanten
 	\item Degree normaler Knoten degree = sum(Dreicke)
