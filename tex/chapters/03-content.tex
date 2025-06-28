@@ -110,42 +110,42 @@ Nach jedem Flip wird überprüft, ob die Gradbeschränkung für alle Knoten erf�
 \subsection{OrTools mit Zielfunktion}
 \label{sec:ortools_heu}
 TODO infos über OrTools rausuchen
-\begin{itemize}
-	\item Solver von Google
-	\item Solver mit intersection Konstriend und Zielfunktion maximiere~\eqref{eq:evaluation}
-	\item erste Konstriend Kanten auf richtige Anzahl
-	\item Zielfunktion ist maximiere \(Q_T\) aus~\eqref{eq:evaluation}
-	\item Teiler rausgenommen da für max nicht relevant
-	\item für die Difference, Betrag und min muss eine Integer Hilfsvarible eingeführt werden.
-	\item Zweiter ansatz weniger Integer Variablen nutzen
-	\item Degree - sollDegree und sollDegree - Degree größer als Hilfsvarible
-	\item Summe maximieren
-\end{itemize}
+% \begin{itemize}
+% 	\item Solver von Google
+% 	\item Solver mit intersection Konstriend und Zielfunktion maximiere~\eqref{eq:evaluation}
+% 	\item erste Konstriend Kanten auf richtige Anzahl
+% 	\item Zielfunktion ist maximiere \(Q_T\) aus~\eqref{eq:evaluation}
+% 	\item Teiler rausgenommen da für max nicht relevant
+% 	\item für die Difference, Betrag und min muss eine Integer Hilfsvarible eingeführt werden.
+% 	\item Zweiter ansatz weniger Integer Variablen nutzen
+% 	\item Degree - sollDegree und sollDegree - Degree größer als Hilfsvarible
+% 	\item Summe maximieren
+% \end{itemize}
 
-Bei dieser Heuristik wird der OrTools-Solver von Google verwendet, um eine gradbeschränkte Triangulation zu finden.
-Der Vorteil an diesem Solver ist das nur einige Beschränkungen vorgegeben werden müssen und dieser dann eine Lösung sucht.
-In diesem Fall wird ein Überschneidungs Beschränkung vorgegeben und eine Zielfunktion welche die Evaluation~\eqref{eq:total_evaluation} maximiert.
+Bei dieser Heuristik wird der OrTools-Solver von Google verwendet.
+Der Vorteil dieses Solvers ist, dass nur wenige Beschränkungen vorgegeben werden müssen. Der Solver sucht dann eigenständig eine Lösung.
+In diesem Fall wird eine Überschneidungsbeschränkung vorgegeben. Zusätzlich wird eine Zielfunktion definiert, welche die Evaluation~\eqref{eq:total_evaluation} maximiert.
 
-Der erste Schritt ist die Definition der Kantenvariablen.
-Dabei wird für jede Kante \(e\) eine Bool Variable \(x_e\) erstellt.
-Anschließend wird für die Überschneidungs Beschränkung die \emph{add\_at\_most\_one} Funktion von OrTools verwendet.
-Diese wird dann mit folgenden Variablen Paaren aufgerufen:
+Im ersten Schritt werden die Kantenvariablen definiert.
+Für jede Kante \(e\) wird eine boolesche Variable \(x_e\) erstellt.
+Für die Überschneidungsbeschränkung wird die Funktion \emph{add\_at\_most\_one} von OrTools verwendet.
+Diese Funktion wird mit den folgenden Variablenpaaren aufgerufen.
 \[
-	( x_{e_1}, x_{e_2}) \hspace{3cm} \forall e_1, e_2 \in E_P: e_2 \in \intersection(e_1)
+	( x_{e_1}, x_{e_2}) \hspace{3cm} \forall e_1, e_2 \in E_P. e_2 \in \intersection(e_1)
 \]
 
-Für die Zielfunktion wird eine zu Gleichung~\eqref{eq:total_evaluation} ähnliche Funktion erstellt.
-Zunächst werden die Teiler in~\eqref{eq:total_evaluation} und~\eqref{eq:evaluation} entfernt, da diese für die Maximierung nicht relevant sind.
-Da OrTools keine Betragsfunktion in Formeln erlaubt muss die Funktion \emph{AddAbsEquality} genutzt werden.
-Für diese wird allerdings eine Integer Hilfsvariable benötigt, welche den Betrag der Difference aus~\eqref{eq:difference} speichert.
-Auch eine Fallunterscheidung für~\eqref{eq:evaluation} ist nicht möglich.
-Die Variablen \(e_i\) werden daher durch folgende Formel berechnet:
+Für die Zielfunktion wird eine Funktion erstellt, die der Gleichung~\eqref{eq:total_evaluation} ähnelt.
+Die Teiler in~\eqref{eq:total_evaluation} und~\eqref{eq:evaluation} werden entfernt. Diese sind für die Maximierung nicht relevant.
+Da OrTools keine Betragsfunktion in Formeln erlaubt, muss die Funktion \emph{AddAbsEquality} verwendet werden.
+Für diese Funktion wird eine Integer-Hilfsvariable benötigt. Diese speichert den Betrag der Differenz aus~\eqref{eq:difference}.
+Eine Fallunterscheidung für~\eqref{eq:evaluation} ist ebenfalls nicht möglich.
+Die Variablen \(e_i\) werden daher mit folgender Formel berechnet.
 \[
 e_i = \degrees(i) - \min(\text{diff}_i, \degrees(i))
 \]
-Allerdings erlaubt OrTools auch keine \emph{min} Funktion in Formeln weshalb die \emph{AddMinEquality} Funktion verwendet wird.
-Diese benötigt ebenfalls eine Integer Hilfsvariable, welche die Minimumsberechnung speichert.
-Diese Überarbeite Formel wird dann in die Zielfunktion als Maximierung eingefügt.
+OrTools erlaubt keine \emph{min}-Funktion in Formeln. Deshalb wird die Funktion \emph{AddMinEquality} verwendet.
+Auch hierfür wird eine Integer-Hilfsvariable benötigt, welche das Minimum speichert.
+Diese überarbeitete Formel wird in die Zielfunktion zur Maximierung eingefügt.
 
 
 
