@@ -124,12 +124,14 @@ class Run_Algbench:
     ):
         instance = self.instances[instance_name]
 
-        for file_name, file_path in instance.items():
+        for file_name in sorted(instance):
+            file_path = instance[file_name]
             nodes = load_nodes_from_json(file_path)
             with open(file_path, "r") as f:
                 possible = json.load(f)["possible"]
             graph = Graph_Wrapper(nodes)
             timeout = [False]
+            logging.info(f"starte instance: {instance_name}/{file_name}")
             self.benchmark.add(
                 self.create_benchmark_entry,
                 solver_type=solver_type,
