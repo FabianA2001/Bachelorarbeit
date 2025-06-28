@@ -23,7 +23,6 @@ class Parameter:
     number_edges: bool = False
     intersection: bool = False
     all_edges: bool = False
-    intersection_and_all_edges: bool = False
     degree_exact: bool = False
     degree_atleast: bool = False
     degree_subset: bool = False
@@ -75,10 +74,10 @@ class SAT(Solver):
             raise TimeoutError()
 
     def intersection_constraint(self):
-        intersection_all = self.graph.get_all_intersections(self.timeout_error)
+        intersection_all = self.graph.get_all_intersections_cpp(self.timeout_error)
         for edge, intersections in intersection_all.items():
+            edge_index = self.get_index(edge)
             for intersection in intersections:
-                edge_index = self.get_index(edge)
                 other_edge_index = self.get_index(intersection)
                 if edge_index == -1 or other_edge_index == -1:
                     continue
@@ -86,26 +85,12 @@ class SAT(Solver):
         self.timeout_error()
 
     def alle_edges_constraint(self):
-        edges = self.graph.get_all_edges()
-        for edge in edges:
-            intersection = self.graph.get_intersections_with_all_edges(edge)
-            self.solver.add_clause(
-                [self.get_index(edge)]
-                + [self.get_index(other_edge) for other_edge in intersection]
-            )
-
-    def alle_edges_and_intersection_constraint(self):
-        edges = self.graph.get_all_edges()
-        for edge in edges:
-            intersections = self.graph.get_intersections_with_all_edges(edge)
+        intersection_all = self.graph.get_all_intersections_cpp(self.timeout_error)
+        for edge, intersections in intersection_all.items():
             self.solver.add_clause(
                 [self.get_index(edge)]
                 + [self.get_index(other_edge) for other_edge in intersections]
             )
-            for intersect in intersections:
-                self.solver.add_clause(
-                    [-self.get_index(edge), -self.get_index(intersect)]
-                )
 
     def degree_constraint(self, exact_atleast=True):
         for node in self.graph.get_all_nodes():

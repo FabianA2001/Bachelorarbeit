@@ -81,11 +81,11 @@ class Graph_Wrapper:
     ) -> dict[tuple[int, int], set[tuple[int, int]]]:
         return self._check.get_all_intersections_n2(check_if_active, timeout_func)
 
-    def get_all_intersections_cpp(self) -> dict[tuple[int, int], set[tuple[int, int]]]:
-        poss = [self.get_pos_from_node(edge) for edge in self.get_all_nodes()]
-        # print(str(poss).replace(")", "}").replace("(", "{"))
-        x = intersection_cpp_extern(self.get_all_nodes(), poss)
-        return x
+    def get_all_intersections_cpp(
+        self, timeout_func=lambda: ...
+    ) -> dict[tuple[int, int], set[tuple[int, int]]]:
+        timeout_func()
+        return self.get_all_intersections_cpp_cached
 
     def get_all_triangles_intersections_cpp(
         self,
@@ -356,3 +356,10 @@ class Graph_Wrapper:
     @cached_property
     def exclude_edge_partition(self) -> list[tuple[int, int]]:
         return Exclude_Edge_Partition(self._data, self.impossible_edges)()
+
+    @cached_property
+    def get_all_intersections_cpp_cached(
+        self,
+    ) -> dict[tuple[int, int], set[tuple[int, int]]]:
+        poss = [self.get_pos_from_node(edge) for edge in self.get_all_nodes()]
+        return intersection_cpp_extern(self.get_all_nodes(), poss)
