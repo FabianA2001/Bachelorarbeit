@@ -114,24 +114,42 @@ TODO infos über OrTools rausuchen
 	\item Solver von Google
 	\item Solver mit intersection Konstriend und Zielfunktion maximiere~\eqref{eq:evaluation}
 	\item erste Konstriend Kanten auf richtige Anzahl
-\end{itemize}
-Zunächst sei \(E\) die Menge aller Kanten und \(E_P\) die Menge aller möglicher Kanten. Also Kanten die keine Punkte schneiden.
-Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
-Diese Variable ist wahr wenn die Kante \(e\) in der Triangulation enthalten ist.
-Für den Überschneidungs Konstriend werden folgende Klauseln dem OrTools Modeln hinzugefügt.
-\[
-\neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E_P: e_2 \in \intersection(e_1)
-\]
-\begin{itemize}
 	\item Zielfunktion ist maximiere \(Q_T\) aus~\eqref{eq:evaluation}
 	\item Teiler rausgenommen da für max nicht relevant
 	\item für die Difference, Betrag und min muss eine Integer Hilfsvarible eingeführt werden.
-\end{itemize}
-\begin{itemize}
 	\item Zweiter ansatz weniger Integer Variablen nutzen
 	\item Degree - sollDegree und sollDegree - Degree größer als Hilfsvarible
 	\item Summe maximieren
 \end{itemize}
+
+Bei dieser Heuristik wird der OrTools-Solver von Google verwendet, um eine gradbeschränkte Triangulation zu finden.
+Der Vorteil an diesem Solver ist das nur einige Beschränkungen vorgegeben werden müssen und dieser dann eine Lösung sucht.
+In diesem Fall wird ein Überschneidungs Beschränkung vorgegeben und eine Zielfunktion welche die Evaluation~\eqref{eq:total_evaluation} maximiert.
+
+Der erste Schritt ist die Definition der Kantenvariablen.
+Dabei wird für jede Kante \(e\) eine Bool Variable \(x_e\) erstellt.
+Anschließend wird für die Überschneidungs Beschränkung die \emph{add\_at\_most\_one} Funktion von OrTools verwendet.
+Diese wird dann mit folgenden Variablen Paaren aufgerufen:
+\[
+	( x_{e_1}, x_{e_2}) \hspace{3cm} \forall e_1, e_2 \in E_P: e_2 \in \intersection(e_1)
+\]
+
+Für die Zielfunktion wird eine zu Gleichung~\eqref{eq:total_evaluation} ähnliche Funktion erstellt.
+Zunächst werden die Teiler in~\eqref{eq:total_evaluation} und~\eqref{eq:evaluation} entfernt, da diese für die Maximierung nicht relevant sind.
+Da OrTools keine Betragsfunktion in Formeln erlaubt muss die Funktion \emph{AddAbsEquality} genutzt werden.
+Für diese wird allerdings eine Integer Hilfsvariable benötigt, welche den Betrag der Difference aus~\eqref{eq:difference} speichert.
+Auch eine Fallunterscheidung für~\eqref{eq:evaluation} ist nicht möglich.
+Die Variablen \(e_i\) werden daher durch folgende Formel berechnet:
+\[
+e_i = \degrees(i) - \min(\text{diff}_i, \degrees(i))
+\]
+Allerdings erlaubt OrTools auch keine \emph{min} Funktion in Formeln weshalb die \emph{AddMinEquality} Funktion verwendet wird.
+Diese benötigt ebenfalls eine Integer Hilfsvariable, welche die Minimumsberechnung speichert.
+Diese Überarbeite Formel wird dann in die Zielfunktion als Maximierung eingefügt.
+
+
+
+
 
 \section{Solver}
 \begin{itemize}
@@ -152,6 +170,13 @@ Für den Überschneidungs Konstriend werden folgende Klauseln dem OrTools Modeln
 \end{itemize}
 \subsection{SAT mit Kanten}
 TODO Rausfinden wie SAT degree gemacht wird
+Zunächst sei \(E\) die Menge aller Kanten und \(E_P\) die Menge aller möglicher Kanten. Also Kanten die keine Punkte schneiden.
+Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
+Diese Variable ist wahr wenn die Kante \(e\) in der Triangulation enthalten ist.
+Für den Überschneidungs Konstriend werden folgende Klauseln dem OrTools Modeln hinzugefügt.
+\[
+\neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E_P: e_2 \in \intersection(e_1)
+\]
 \begin{itemize}
 	\item Alle möglichen Kanten als Bool Variable wie OrTools
 	\item Intersection Konstriend wie OrTools
