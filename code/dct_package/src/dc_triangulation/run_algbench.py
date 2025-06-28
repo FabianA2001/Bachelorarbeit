@@ -84,14 +84,14 @@ class Run_Algbench:
         possible: bool,
         host: str,
         _graph: Graph_Wrapper,
+        _timeout: list[bool],
     ):
         try:
             solver = solver_type(_graph)
             solution: dict = solver.solve(parameter)
         except Exception as e:
-            logging.error(
-                f"Error while solving {instance_name} - {solver_name} - {file_name} with {format_dictionary(parameter)}\n error:{e}"
-            )
+            logging.error(f"Error while solving: {e}")
+            _timeout[0] = True
             return {
                 "correct": False,
                 "time_solver": -1,
@@ -129,6 +129,7 @@ class Run_Algbench:
             with open(file_path, "r") as f:
                 possible = json.load(f)["possible"]
             graph = Graph_Wrapper(nodes)
+            timeout = [False]
             self.benchmark.add(
                 self.create_benchmark_entry,
                 solver_type=solver_type,
@@ -139,7 +140,14 @@ class Run_Algbench:
                 possible=possible,
                 host=socket.gethostname(),
                 _graph=graph,
+                _timeout=timeout,
             )
+            if timeout[0]:
+                logging.warning(
+                    f"Timeout while solving {instance_name} - {solver_type.NAME} - {file_name} with {format_dictionary(parameter)}"
+                )
+                break
+
         self.benchmark.compress()
 
     def show(
