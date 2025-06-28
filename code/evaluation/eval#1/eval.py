@@ -46,6 +46,10 @@ if __name__ == "__main__":
         ],
     }
 
-    ri = Run_Algbench(inst_path=path, outer_parameter=outer_parameter)
+    ri = Run_Algbench(
+        inst_path=path,
+        outer_parameter=outer_parameter,
+        figure_path=os.path.dirname(__file__),
+    )
     ri.run()
     ri.show()
