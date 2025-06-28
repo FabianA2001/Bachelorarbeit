@@ -11,6 +11,7 @@ Anschließend wird mit einem klassischen Triangulationsverfahren eine initiale T
 Von dieser werden dann die Grade und die Knotenkoordinaten gespeichert, um sie als Eingabe für die zu testenden Algorithmen zu verwenden.
 
 \subsubsection{Delaunay mit zufälligen Flips}
+\label{sec:Delaunay_mit_zufällig_Flips}
 Das erste klassische Verfahren zur Gradbestimmung verwendet die Delaunay-Triangulation in Verbindung mit zufälligen Kantenflips.
 Die Delaunay-Triangulation wurde bereits im Kapitel~\cref{sec:delaunay_triangulation} vorgestellt.
 Für die Erstellung der Delaunay-Triangulation wird die Bibliothek \texttt{scipy} genutzt.
@@ -69,30 +70,37 @@ In~\eqref{eq:evaluation} wird diese Abweichung Prozentual bewertet.
 Am Ende wird in~\eqref{eq:total_evaluation} ein Durchschnitt über alle Prozentualen Werte gebildet.
 
 \subsection{Flips}
-\begin{itemize}
-	\item Diagonale Flips
-	\item k mal Wiederholen
-	\begin{itemize}
-		\item Alle Knoten durchgehen
-		\item wenn falscher Degree auswählen
-		\item alle ausgehenden Kanten berechnen
-		\item Kante Auswählen \cref{algo:choose_edge}
-		\item Flipe Kante wie oben
-		\item wenn Gradbeschränkte Triangulation erfolgreich abbrechen
-	\end{itemize}
-\end{itemize}
+In dieser Heuristik werden die in~\cref{def:flip} definierten Kantenflips verwendet. 
+Ziel ist es, die Gradbeschränkung zu erreichen. 
+Dabei wird ausgenutzt, dass Flips den Grad eines Knotens verändern können die Triangulationseigenschaft dabei aber erhalten bleibt. 
+
+Die Heuristik beginnt mit einer initialen Triangulation.
+Diese wird durch ein klassisches Triangulationsverfahren erzeugt. 
+Anschließend werden maximal \(k\) Flips durchgeführt. 
+Ziel ist es, die Gradbeschränkung zu erfüllen. 
+
+Zunächst wird mit dem Algorithmus~\cref{algo:choose_edge} eine Kante ausgewählt. 
+Diese soll geflippt werden. 
+Der Algorithmus versucht, eine Kante zu finden, deren Knoten nicht den Sollgrad erfüllen. 
+Zusätzlich wird über den Parameter \(p\) eine Wahrscheinlichkeit eingeführt. 
+Dadurch kann auch eine Kante ausgewählt werden, deren Knoten den Sollgrad erfüllen. 
+Dies verhindert, dass die Heuristik in einem lokalen Optimum stecken bleibt. 
+Die ausgewählte Kante wird anschließend wie in~\cref{sec:Delaunay_mit_zufällig_Flips} beschrieben geflippt. 
+Nach jedem Flip wird überprüft, ob die Gradbeschränkung für alle Knoten erfüllt ist. Sollte dies der Fall sein, wird die Heuristik beendet.
+
+
 \begin{algorithm}[H]
-	\caption{CHOOSE EDGE(\(v\))}
+	\caption{CHOOSE EDGE(\(v\),\(p\))}
 	\label{algo:choose_edge}
 	\begin{algorithmic}[1]
 		\STATE \(E \gets \{ e \mid e \text{ ist ausgehende Kante von } v \}\)
 		\WHILE{\(E \neq \emptyset\)}
-			\STATE \(e \gets \) zufälliges Element aus \(E\)
+			\STATE \(e \gets \) zufällige Kante aus \(E\)
 			\STATE \(E \gets E \setminus \{e\}\)
 			\STATE \(u \gets \text{Knoten von } e~\AND~v \neq u\)
 			\IF{\(\degree(u) \neq \degrees(u)\)}
 				\RETURN e
-			\ELSIF{zu 20 \%}
+			\ELSIF{zu \(p\) \%}
 				\RETURN e
 			\ENDIF
 		\ENDWHILE
