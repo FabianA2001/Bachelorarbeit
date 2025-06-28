@@ -37,6 +37,7 @@ class Run_Algbench:
         ignore_correct: bool = False,
         host: str = socket.gethostname(),
         path_benchmark: str = "",
+        figure_path: str = "",
     ) -> None:
         self.inst_path = inst_path
         self.instances = self.get_instances(self.inst_path)
@@ -48,6 +49,7 @@ class Run_Algbench:
             self.path_benchmark = self.DEFAULT_BENCHMARK_PATH
         else:
             self.path_benchmark = path_benchmark
+        self.figure_path = figure_path
 
         self.benchmark = Benchmark(self.path_benchmark)
         self.benchmark.capture_logger(Solver.LOGGER_NAME)
@@ -284,6 +286,8 @@ class Run_Algbench:
         plt.grid(True, axis="y", linestyle="--", alpha=0.7)
         plt.tight_layout()
         plt.show(block=block)
+        if self.figure_path:
+            plt.savefig(os.path.join(self.figure_path, y + ".pdf"))
 
     def run(
         self,

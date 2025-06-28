@@ -1,13 +1,7 @@
 import os
 from dataclasses import asdict
 
-from dc_triangulation import (
-    SAT,
-    Ortools,
-    Ortools_Parameter,
-    Run_Algbench,
-    SAT_Parameter,
-)
+from dc_triangulation import SAT, Run_Algbench, SAT_Parameter
 
 if __name__ == "__main__":
     path = os.path.join(os.path.dirname(__file__), "instances")
@@ -22,14 +16,12 @@ if __name__ == "__main__":
                 ),
             },
         ],
-        Ortools: [
-            {
-                "timeout": -1,
-                "args": asdict(Ortools_Parameter(intersection=True, degree=True)),
-            },
-        ],
     }
 
-    ri = Run_Algbench(inst_path=path, outer_parameter=outer_parameter)
+    ri = Run_Algbench(
+        inst_path=path,
+        outer_parameter=outer_parameter,
+        # figure_path=os.path.dirname(__file__),
+    )
     ri.run()
     ri.show()
