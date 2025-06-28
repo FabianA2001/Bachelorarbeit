@@ -1,5 +1,6 @@
 import json
 import math
+import os
 from abc import ABC, abstractmethod
 from random import choice, randint
 from typing import Optional
@@ -8,7 +9,7 @@ from ..solver.delaunay import Delaunay
 from ..solver.random_adder import Random_Adder
 from . import graph_const
 from .graph_wrapper.graph_wrapper import Graph_Wrapper
-from .node import Node
+from .node import Node, save_nodes_as_json
 
 
 def gen_nodes(
@@ -31,7 +32,7 @@ def gen_nodes(
 
 class Generate_Instance_ABC_Edges(ABC):
     @abstractmethod
-    def generate_instance(self, graph: Graph_Wrapper) -> tuple[Graph_Wrapper, bool]:
+    def generate_instance(self, graph: Graph_Wrapper) -> tuple[list[Node], bool]:
         """Generiert eine Instanz des Graphen mit den gegebenen Knoten."""
         pass
 
@@ -79,13 +80,16 @@ class Generate_Instance:
                 self.number_nodes, self.width, self.height
             )
             graph = Graph_Wrapper(nodes)
-            graph, possible = self.edges_gen.generate_instance(graph)
+            nodes, possible = self.edges_gen.generate_instance(graph)
             number = str(i).zfill(3)
-            graph.save_graph_as_json(
-                path=self.path, filename=f"{self.name}/{number}_{self.file_name}.json"
+            filename = f"{self.name}/{number}_{self.file_name}_{len(graph.get_all_nodes())}.json"
+            save_nodes_as_json(
+                nodes,
+                path=self.path,
+                filename=filename,
             )
             if possible is not None:
-                path = f"{self.path}/{self.name}/{number}_{self.file_name}.json"
+                path = os.path.join(self.path, filename)
                 with open(path, "r") as f:
                     data = json.load(f)
                 data["possible"] = possible
@@ -100,7 +104,7 @@ class Generate_Edges_Delaunay_Flips(Generate_Instance_ABC_Edges):
 
     def generate_instance(
         self, graph: Graph_Wrapper
-    ) -> tuple[Graph_Wrapper, Optional[bool]]:
+    ) -> tuple[list[Node], Optional[bool]]:
         solver = Delaunay(graph)
         solver.solve(
             {
@@ -114,13 +118,13 @@ class Generate_Edges_Delaunay_Flips(Generate_Instance_ABC_Edges):
                 edge = choice(edges)
                 if graph.flip_edge(edge):
                     break
-        return (graph, True)
+        return (graph.get_aktive_graph_nodes(), True)
 
 
 class Generate_Edges_Delaunay(Generate_Instance_ABC_Edges):
     def generate_instance(
         self, graph: Graph_Wrapper
-    ) -> tuple[Graph_Wrapper, Optional[bool]]:
+    ) -> tuple[list[Node], Optional[bool]]:
         solver = Delaunay(graph)
         solver.solve(
             {
@@ -128,13 +132,13 @@ class Generate_Edges_Delaunay(Generate_Instance_ABC_Edges):
                 "ignore_degree": True,
             }
         )
-        return (graph, True)
+        return (graph.get_aktive_graph_nodes(), True)
 
 
 class Generate_Edges_Random(Generate_Instance_ABC_Edges):
     def generate_instance(
         self, graph: Graph_Wrapper
-    ) -> tuple[Graph_Wrapper, Optional[bool]]:
+    ) -> tuple[list[Node], Optional[bool]]:
         solver = Random_Adder(graph)
         solver.solve(
             {
@@ -142,7 +146,34 @@ class Generate_Edges_Random(Generate_Instance_ABC_Edges):
                 "ignore_degree": True,
             }
         )
-        return (graph, True)
+        return (graph.get_aktive_graph_nodes(), True)
+
+
+class Generate_Edges_Random_Impossible(Generate_Instance_ABC_Edges):
+    # Sehr warscheinlich kann die Lösung nicht trianguliert werden dies ist aber nicht sicher gestellt
+    def generate_instance(
+        self, graph: Graph_Wrapper
+    ) -> tuple[list[Node], Optional[bool]]:
+        solver = Random_Adder(graph)
+        solver.solve(
+            {
+                "timeout": -1,
+                "ignore_degree": True,
+            }
+        )
+        nodes = graph.get_aktive_graph_nodes()
+        while True:
+            node1: Node = choice(nodes)
+            node2: Node = choice(nodes)
+            if node1 == node2:
+                continue
+            if node1.degree <= 2 or node2.degree <= 2:
+                continue
+            node1.degree -= 1
+            node2.degree += 1
+            break
+
+        return (nodes, False)
 
 
 class Generate_Nodes_Iterativ(Generate_Instance_ABC_Nodes):

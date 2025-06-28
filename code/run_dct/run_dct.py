@@ -129,8 +129,8 @@ def run_algo():
 
 
 def create_instance():
-    NAME = "iterative_80_5"
-    FILE_NAME = "delaunay"
+    NAME = "random_impossible"
+    FILE_NAME = "random_impossible"
     NUMBER_INSTANCE = 6
     NUMBER_NODES = 80
     STEP = 10
@@ -140,7 +140,7 @@ def create_instance():
         NUMBER_NODES,
         NUMBER_INSTANCE,
         generate.Generate_Nodes_Iterativ(STEP, NUMBER_INSTANCE),
-        generate.Generate_Edges_Delaunay(),
+        generate.Generate_Edges_Random_Impossible(),
         path="instance",
         width=10000,
         height=10000,
