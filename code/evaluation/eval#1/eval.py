@@ -1,7 +1,17 @@
 import os
 from dataclasses import asdict
 
-from dc_triangulation import SAT, Run_Algbench, SAT_Parameter
+from dc_triangulation import (
+    SAT,
+    SAT_TRI,
+    Gurobi,
+    Gurobi_Parameter,
+    Ortools,
+    Ortools_Parameter,
+    Run_Algbench,
+    SAT_Parameter,
+    SAT_TRI_Parameter,
+)
 
 if __name__ == "__main__":
     path = os.path.join(os.path.dirname(__file__), "instances")
@@ -14,6 +24,24 @@ if __name__ == "__main__":
                 "args": asdict(
                     SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
                 ),
+            },
+        ],
+        Ortools: [
+            {
+                "timeout": -1,
+                "args": asdict(Ortools_Parameter(intersection=True, degree=True)),
+            },
+        ],
+        Gurobi: [
+            {
+                "timeout": -1,
+                "args": asdict(Gurobi_Parameter(intersection=True, degree=True)),
+            },
+        ],
+        SAT_TRI: [
+            {
+                "timeout": -1,
+                "args": asdict(SAT_TRI_Parameter(intersection=True, degree=True)),
             },
         ],
     }
