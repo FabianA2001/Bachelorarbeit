@@ -84,7 +84,7 @@ class Graph_Wrapper:
         self, timeout_func=lambda: ...
     ) -> dict[tuple[int, int], set[tuple[int, int]]]:
         timeout_func()
-        return self.get_all_intersections_cpp_cached
+        return self.__get_all_intersections_cpp_cached
 
     def get_all_triangles_intersections_cpp(
         self,
@@ -355,7 +355,7 @@ class Graph_Wrapper:
         return Exclude_Edge_Partition(self._data, self.impossible_edges)()
 
     @cached_property
-    def get_all_intersections_cpp_cached(
+    def __get_all_intersections_cpp_cached(
         self,
     ) -> dict[tuple[int, int], set[tuple[int, int]]]:
         poss = [self.get_pos_from_node(edge) for edge in self.get_all_nodes()]

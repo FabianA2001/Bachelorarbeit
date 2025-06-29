@@ -62,11 +62,19 @@ intersection(const std::vector<int> &indices, const std::vector<Poss> &point_pai
                 point_pairs[current_node]);
             for (int remaining_node = current_node + 1; remaining_node < point_pairs.size(); ++remaining_node)
             {
+                // alle edges benötigt die größere Menge, intersection würde die kleinere Reichen.
+                // TODO testen ob intersection durch größere Menge schneller wird
+                // if (
+                //     remaining_node == node1 || remaining_node == node2 || std::tie(node1, node2) < std::tie(current_node, remaining_node))
+                // {
+                //     continue; // Skip the nodes that form the edge or already processed
+                // }
                 if (
-                    remaining_node == node1 || remaining_node == node2 || std::tie(node1, node2) < std::tie(current_node, remaining_node))
+                    remaining_node == node1 || remaining_node == node2)
                 {
                     continue; // Skip the nodes that form the edge or already processed
                 }
+
                 auto orientation_node1_node2_remaining = orientation(
                     point_pairs[node1],
                     point_pairs[node2],

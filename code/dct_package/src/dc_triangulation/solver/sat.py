@@ -86,6 +86,7 @@ class SAT(Solver):
 
     def alle_edges_constraint(self):
         intersection_all = self.graph.get_all_intersections_cpp(self.timeout_error)
+        # intersection_all = self.graph.get_all_intersections_n2()
         for edge, intersections in intersection_all.items():
             self.solver.add_clause(
                 [self.get_index(edge)]

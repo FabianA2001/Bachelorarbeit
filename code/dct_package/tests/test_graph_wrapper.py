@@ -266,6 +266,8 @@ def test_get_all_intersections():
                 continue
             assert intersection in intersections_n2[edge]
 
+    intersections_all = graph.get_all_intersections_cpp()
+
 
 def test_exclude_edges():
     PATH = os.path.join(os.path.dirname(__file__), "instance", "10_delaunay_flips.json")

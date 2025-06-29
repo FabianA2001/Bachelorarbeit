@@ -69,7 +69,7 @@ class Ortools(Solver):
             self.model.add(
                 sum(self.vars[intersection] for intersection in intersections)
                 + self.vars[edge]
-                == 1
+                >= 1
             )
 
     def constraint_degree(self):
