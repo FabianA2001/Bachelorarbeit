@@ -170,6 +170,7 @@ class Run_Algbench:
                 "timeout": result["parameters"]["args"]["parameter"]["timeout"],
                 # "runtime": result["runtime"],
                 "runtime": result["result"]["time_solver"],
+                "pre_time": result["result"]["time_pre_solver"],
             },
         )
         # Filter nach Host, falls host angegeben ist
@@ -255,9 +256,14 @@ class Run_Algbench:
         legend += "\n" + "=" * 50
         logging.info(legend)
 
+        # self.create_plt(
+        #     table=table,
+        #     y="evaluation",
+        #     block=False,
+        # )
         self.create_plt(
             table=table,
-            y="evaluation",
+            y="pre_time",
             block=False,
         )
         self.create_plt(
