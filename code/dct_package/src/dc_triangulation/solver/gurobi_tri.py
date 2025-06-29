@@ -17,10 +17,11 @@ sonnst aktiviert True den constrient
 class Parameter:
     intersection: bool = False
     degree: bool = False
+    exclude_edges: bool = False
 
 
-class Gurobi(Solver):
-    NAME = "gurobi"
+class Gurobi_Tri(Solver):
+    NAME = "gurobi_tri"
 
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
@@ -45,6 +46,23 @@ class Gurobi(Solver):
             )
             for node1, node2, node3 in self.triangle
         }
+
+        self.edge_to_triangles = {}
+
+        for triangle in self.triangle:
+            node1, node2, node3 = triangle
+            # Get all three edges of the triangle
+            edges = [
+                (min(node1, node2), max(node1, node2)),
+                (min(node2, node3), max(node2, node3)),
+                (min(node1, node3), max(node1, node3)),
+            ]
+
+            # Add this triangle to each edge's list
+            for edge in edges:
+                if edge not in self.edge_to_triangles:
+                    self.edge_to_triangles[edge] = []
+                self.edge_to_triangles[edge].append(triangle)
 
     def pre_solve(self, parameter: Parameter):
         self.setup(parameter)
@@ -100,6 +118,15 @@ class Gurobi(Solver):
             # Sum of all triangle variables containing this node must be <= degree
             summ = sum(self.vars[tri] for tri in tris)
             self.model.addConstr(summ == degree)  # type: ignore[reportCallIssue]
+
+    def exclude_edges_constraint(self):
+        for edge in self.graph.exclude_edge_partition:
+            for tri in self.get_triangles_from_edge(edge):
+                self.model.addConstr(self.vars[tri] == 0)
+
+    def get_triangles_from_edge(self, edge: tuple[int, int]) -> list[int]:
+        sorted_edge = tuple(sorted(edge))
+        return self.edge_to_triangles.get(sorted_edge, [])
 
     def _actual_solver(self, parameter: dict) -> dict:
         if not isinstance(parameter, dict):

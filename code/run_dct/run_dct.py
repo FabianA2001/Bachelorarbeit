@@ -7,8 +7,8 @@ from dc_triangulation import (
     SAT_TRI,
     Delaunay,
     Graph_Wrapper,
-    Gurobi,
     Gurobi_Parameter,
+    Gurobi_Tri,
     Iterative,
     Node,
     Ortools,
@@ -23,7 +23,16 @@ from dc_triangulation import (
 
 
 def get_solvers():
-    return [Raw_Flips, Delaunay, Iterative, Ortools, SAT, Random_Adder, SAT_TRI, Gurobi]
+    return [
+        Raw_Flips,
+        Delaunay,
+        Iterative,
+        Ortools,
+        SAT,
+        Random_Adder,
+        SAT_TRI,
+        Gurobi_Tri,
+    ]
 
 
 def get_parameters():
@@ -93,12 +102,9 @@ def sat_Tri_algorithm(graph):
     )
 
 
-def gurobi_algorithm(graph):
-    solver = Gurobi(graph)
-    para = Gurobi_Parameter(
-        intersection=True,
-        degree=True,
-    )
+def gurobi_tri_algorithm(graph):
+    solver = Gurobi_Tri(graph)
+    para = Gurobi_Parameter(intersection=True, degree=True, exclude_edges=True)
     logging.info(
         f"solution found: {solver.solve({'timeout': -1, 'args': asdict(para)})}"
     )
@@ -106,7 +112,7 @@ def gurobi_algorithm(graph):
 
 def run_algo():
     PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_10", "000_delaunay_flips.json"
+        os.path.dirname(__file__), "instance", "simple_20", "000_delaunay_flips.json"
     )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
@@ -117,9 +123,9 @@ def run_algo():
     # assert x1 == x2
     # print(*x1.items(), sep="\n")
     # sat_algorithm(graph)
-    sat_Tri_algorithm(graph)
+    # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
-    # gurobi_algorithm(graph)
+    gurobi_tri_algorithm(graph)
 
     # graph.add_edge(0, 5)
     # graph.add_all_possible_edges(True)

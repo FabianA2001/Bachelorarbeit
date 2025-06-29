@@ -4,8 +4,8 @@ from dataclasses import asdict
 from dc_triangulation import (
     SAT,
     SAT_TRI,
-    Gurobi,
     Gurobi_Parameter,
+    Gurobi_Tri,
     Ortools,
     Ortools_Parameter,
     Run_Algbench,
@@ -32,7 +32,7 @@ if __name__ == "__main__":
                 "args": asdict(Ortools_Parameter(intersection=True, degree=True)),
             },
         ],
-        Gurobi: [
+        Gurobi_Tri: [
             {
                 "timeout": -1,
                 "args": asdict(Gurobi_Parameter(intersection=True, degree=True)),
