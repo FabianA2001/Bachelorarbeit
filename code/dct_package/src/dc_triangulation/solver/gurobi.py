@@ -18,6 +18,7 @@ class Parameter:
     degree: bool = False
     exclude_edges: bool = False
     fix_hull: bool = False
+    all_edges: bool = False
 
 
 class Gurobi(Solver):
@@ -46,6 +47,8 @@ class Gurobi(Solver):
             self.exclude_edges_constraint()
         if parameter.fix_hull:
             self.fix_hull_constraint()
+        if parameter.all_edges:
+            self.all_edges_constraint()
 
     def intersection_constraint(self):
         intersection_all = self.graph.get_all_intersections_cpp(self.timeout_error)
@@ -70,6 +73,9 @@ class Gurobi(Solver):
     def exclude_edges_constraint(self):
         for edge in self.graph.exclude_edge_partition:
             self.model.addConstr(self.vars[edge] == 0)
+
+    def all_edges_constraint(self):
+        pass
 
     def fix_hull_constraint(self):
         for edge in self.graph.get_hull_edges():

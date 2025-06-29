@@ -4,6 +4,8 @@ from dataclasses import asdict
 from dc_triangulation import (
     SAT,
     SAT_TRI,
+    Gurobi,
+    Gurobi_Parameter,
     Gurobi_Tri,
     Gurobi_Tri_Parameter,
     Ortools,
@@ -21,8 +23,42 @@ if __name__ == "__main__":
         SAT: [
             {
                 "timeout": -1,
+                "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
+            },
+            {
+                "timeout": -1,
                 "args": asdict(
                     SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
+                ),
+            },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    SAT_Parameter(
+                        intersection=True,
+                        degree_exact=True,
+                        exclude_edges=True,
+                    )
+                ),
+            },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    SAT_Parameter(
+                        intersection=True,
+                        degree_exact=True,
+                        add_allEdges_or_exclude_edges=False,
+                    )
+                ),
+            },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    SAT_Parameter(
+                        intersection=True,
+                        degree_exact=True,
+                        all_edges=True,
+                    )
                 ),
             },
         ],
@@ -31,17 +67,79 @@ if __name__ == "__main__":
                 "timeout": -1,
                 "args": asdict(Ortools_Parameter(intersection=True, degree=True)),
             },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    Ortools_Parameter(intersection=True, degree=True, fix_hull=True)
+                ),
+            },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    Ortools_Parameter(intersection=True, degree=True, all_edges=True)
+                ),
+            },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    Ortools_Parameter(
+                        intersection=True,
+                        degree=True,
+                        exclude_edges=True,
+                    )
+                ),
+            },
         ],
         Gurobi_Tri: [
             {
                 "timeout": -1,
                 "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
             },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    Gurobi_Tri_Parameter(
+                        intersection=True, degree=True, exclude_edges=True
+                    )
+                ),
+            },
+        ],
+        Gurobi: [
+            {
+                "timeout": -1,
+                "args": asdict(Gurobi_Parameter(intersection=True, degree=True)),
+            },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    Gurobi_Parameter(intersection=True, degree=True, fix_hull=True)
+                ),
+            },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    Gurobi_Parameter(intersection=True, degree=True, exclude_edges=True)
+                ),
+            },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    Gurobi_Parameter(intersection=True, degree=True, all_edges=True)
+                ),
+            },
         ],
         SAT_TRI: [
             {
                 "timeout": -1,
                 "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
+            },
+            {
+                "timeout": -1,
+                "args": asdict(
+                    SAT_Tri_Parameter(
+                        intersection=True, degree=True, exclude_edges=True
+                    )
+                ),
             },
         ],
     }
