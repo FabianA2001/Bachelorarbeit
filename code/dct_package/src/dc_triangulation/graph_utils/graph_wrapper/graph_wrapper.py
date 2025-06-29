@@ -23,7 +23,6 @@ class Graph_Wrapper:
         self._data = Data(nodes)
         self._name = graph_const.DEFAULT_NAME
         self._check = Check(self._data)
-        self.hull_edges = []
 
     @property
     def name(self):
@@ -170,9 +169,7 @@ class Graph_Wrapper:
         return self._data.get_hull_nodes
 
     def get_hull_edges(self) -> list[tuple[int, int]]:
-        if self.hull_edges == []:
-            self.hull_edges = self._data.get_hull_edges
-        return self.hull_edges
+        return self._data.get_hull_edges
 
     def add_convex_hull(self) -> None:
         """Fügt den konvexen Rumpf der Punkte als Kante hinzu."""

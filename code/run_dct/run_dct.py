@@ -121,7 +121,7 @@ def run_algo():
     # print(*graph.get_all_intersections_cpp(), sep="\n")
     # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
-    # ortools_algorithm(graph)
+    ortools_algorithm(graph)
     # gurobi_algorithm(graph)
 
     # graph.add_edge(0, 5)
@@ -148,5 +148,5 @@ def create_instance():
 
 
 if __name__ == "__main__":
-    # run_algo()
-    create_instance()
+    run_algo()
+    # create_instance()

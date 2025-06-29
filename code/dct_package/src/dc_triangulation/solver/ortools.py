@@ -11,6 +11,7 @@ from .solver import Solver
 class Parameter:
     intersection: bool = False
     degree: bool = False
+    fix_hull: bool = False
     number_edges: bool = False
     evaluation_direction: bool = False
     degree_direction: bool = False
@@ -74,6 +75,11 @@ class Ortools(Solver):
                 else:
                     summ += self.vars[(edge[1], edge[0])]
             self.model.Add(summ == degree)
+
+    def constraint_set_hull_fix(self):
+        hull = self.graph.get_hull_edges()
+        for edge in hull:
+            self.model.Add(self.vars[edge] == 1)
 
     def constraint_set_number_edges(self, number_edges: int):
         self.aktive_constrinsts += "set_edges(int), "
@@ -144,6 +150,9 @@ class Ortools(Solver):
 
         if parameter_data.degree:
             self.constraint_degree()
+
+        if parameter_data.fix_hull:
+            self.constraint_set_hull_fix()
 
         if parameter_data.number_edges:
             self.constraint_set_number_edges(
