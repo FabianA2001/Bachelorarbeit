@@ -10,6 +10,7 @@ from .solver import Solver
 @dataclass
 class Parameter:
     intersection: bool = False
+    all_edges: bool = False
     degree: bool = False
     fix_hull: bool = False
     number_edges: bool = False
@@ -61,6 +62,15 @@ class Ortools(Solver):
                     continue
                 self.model.add_at_most_one(self.vars[edge], self.vars[intersection])
         self.timeout_error()
+
+    def constraint_all_edges(self):
+        intersection_all = self.graph.get_all_intersections_cpp(self.timeout_error)
+        for edge, intersections in intersection_all.items():
+            self.model.add(
+                sum(self.vars[intersection] for intersection in intersections)
+                + self.vars[edge]
+                == 1
+            )
 
     def constraint_degree(self):
         self.aktive_constrinsts += "degree, "
@@ -147,6 +157,9 @@ class Ortools(Solver):
 
         if parameter_data.intersection:
             self.constraint_intersection()
+
+        if parameter_data.all_edges:
+            self.constraint_all_edges()
 
         if parameter_data.degree:
             self.constraint_degree()
