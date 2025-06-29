@@ -171,8 +171,6 @@ class SAT(Solver):
             time_function(self.intersection_constraint, self.logger)()
         if parameter_data.all_edges:
             time_function(self.alle_edges_constraint, self.logger)()
-        if parameter_data.intersection_and_all_edges:
-            time_function(self.alle_edges_and_intersection_constraint, self.logger)()
         if parameter_data.degree_exact:
             time_function(self.degree_constraint, self.logger)(exact_atleast=True)
         if parameter_data.degree_atleast:
