@@ -4,7 +4,7 @@ from .graph_utils.node import Node, load_nodes_from_json, save_nodes_as_json
 from .run_algbench import Run_Algbench
 from .solver.delaunay import Delaunay
 from .solver.gurobi_tri import Gurobi_Tri
-from .solver.gurobi_tri import Parameter as Gurobi_Parameter
+from .solver.gurobi_tri import Parameter as Gurobi_Tri_Parameter
 from .solver.iterative import Iterative
 from .solver.ortools import Ortools
 from .solver.ortools import Parameter as Ortools_Parameter
@@ -13,7 +13,7 @@ from .solver.raw_flips import Raw_Flips
 from .solver.sat import SAT
 from .solver.sat import Parameter as SAT_Parameter
 from .solver.sat_tri import SAT_TRI
-from .solver.sat_tri import Parameter as SAT_TRI_Parameter
+from .solver.sat_tri import Parameter as SAT_Tri_Parameter
 from .solver.solver import Solver
 from .utils import format_dictionary, setup_logging, time_function
 
@@ -27,7 +27,7 @@ __all__ = [
     "Random_Adder",
     "Raw_Flips",
     "SAT_TRI",
-    "SAT_TRI_Parameter",
+    "SAT_Tri_Parameter",
     "SAT",
     "SAT_Parameter",
     "Solver",
@@ -40,5 +40,5 @@ __all__ = [
     "Run_Algbench",
     "time_function",
     "Gurobi_Tri",
-    "Gurobi_Parameter",
+    "Gurobi_Tri_Parameter",
 ]

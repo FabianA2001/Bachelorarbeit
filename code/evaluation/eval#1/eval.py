@@ -4,13 +4,13 @@ from dataclasses import asdict
 from dc_triangulation import (
     SAT,
     SAT_TRI,
-    Gurobi_Parameter,
     Gurobi_Tri,
+    Gurobi_Tri_Parameter,
     Ortools,
     Ortools_Parameter,
     Run_Algbench,
     SAT_Parameter,
-    SAT_TRI_Parameter,
+    SAT_Tri_Parameter,
 )
 
 if __name__ == "__main__":
@@ -35,13 +35,13 @@ if __name__ == "__main__":
         Gurobi_Tri: [
             {
                 "timeout": -1,
-                "args": asdict(Gurobi_Parameter(intersection=True, degree=True)),
+                "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
             },
         ],
         SAT_TRI: [
             {
                 "timeout": -1,
-                "args": asdict(SAT_TRI_Parameter(intersection=True, degree=True)),
+                "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
             },
         ],
     }

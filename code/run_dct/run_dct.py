@@ -7,8 +7,8 @@ from dc_triangulation import (
     SAT_TRI,
     Delaunay,
     Graph_Wrapper,
-    Gurobi_Parameter,
     Gurobi_Tri,
+    Gurobi_Tri_Parameter,
     Iterative,
     Node,
     Ortools,
@@ -16,7 +16,7 @@ from dc_triangulation import (
     Random_Adder,
     Raw_Flips,
     SAT_Parameter,
-    SAT_TRI_Parameter,
+    SAT_Tri_Parameter,
     generate,
     load_nodes_from_json,
 )
@@ -36,7 +36,7 @@ def get_solvers():
 
 
 def get_parameters():
-    return [SAT_Parameter, Ortools_Parameter, SAT_TRI_Parameter, Gurobi_Parameter]
+    return [SAT_Parameter, Ortools_Parameter, SAT_Tri_Parameter, Gurobi_Tri_Parameter]
 
 
 def custom_points() -> list[Node]:
@@ -96,7 +96,7 @@ def sat_algorithm(graph):
 
 def sat_Tri_algorithm(graph):
     solver = SAT_TRI(graph)
-    para = SAT_TRI_Parameter(intersection=True, degree=True, exclude_edges=True)
+    para = SAT_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
     logging.info(
         f"solution found: {solver.solve({'timeout': -1, 'args': asdict(para)})}"
     )
@@ -104,7 +104,7 @@ def sat_Tri_algorithm(graph):
 
 def gurobi_tri_algorithm(graph):
     solver = Gurobi_Tri(graph)
-    para = Gurobi_Parameter(intersection=True, degree=True, exclude_edges=True)
+    para = Gurobi_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
     logging.info(
         f"solution found: {solver.solve({'timeout': -1, 'args': asdict(para)})}"
     )
