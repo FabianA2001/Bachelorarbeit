@@ -122,7 +122,11 @@ def gurobi_tri_algorithm(graph):
 def gurobi_algorithm(graph):
     solver = Gurobi(graph)
     para = Gurobi_Parameter(
-        fix_hull=True, degree=True, intersection=True, exclude_edges=True
+        fix_hull=True,
+        degree=True,
+        intersection=True,
+        exclude_edges=True,
+        all_edges=True,
     )
     logging.info(
         f"solution found: {solver.solve({'timeout': -1, 'args': asdict(para)})}"

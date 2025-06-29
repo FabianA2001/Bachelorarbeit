@@ -75,7 +75,13 @@ class Gurobi(Solver):
             self.model.addConstr(self.vars[edge] == 0)
 
     def all_edges_constraint(self):
-        pass
+        intersection_all = self.graph.get_all_intersections_cpp(self.timeout_error)
+        for edge, intersections in intersection_all.items():
+            self.model.addConstr(
+                sum(self.vars[intersection] for intersection in intersections)
+                + self.vars[edge]
+                >= 1
+            )
 
     def fix_hull_constraint(self):
         for edge in self.graph.get_hull_edges():
