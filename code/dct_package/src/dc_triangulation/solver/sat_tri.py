@@ -19,6 +19,7 @@ class Parameter:
     number_tri: bool = False
     intersection: bool = False
     degree: bool = False
+    exclude_edges: bool = False
 
 
 class SAT_TRI(Solver):
@@ -47,9 +48,45 @@ class SAT_TRI(Solver):
             )
             for node1, node2, node3 in self.graph.get_all_triangles()
         ]
+        # hier speichern
         self.all_vars = list(range(1, len(self.tris) + 1))
         self.tri_to_index = {tri: i for i, tri in enumerate(self.tris)}
         self.point_to_index = {tri: i for i, tri in enumerate(self.tris_as_point)}
+
+        # Mapping von Kanten zu Dreiecken für schnelle Suche
+        self.edge_to_triangles = {}
+        for i, tri in enumerate(self.tris):
+            # Alle drei Kanten des Dreiecks
+            edges = [
+                tuple(sorted([tri[0], tri[1]])),
+                tuple(sorted([tri[1], tri[2]])),
+                tuple(sorted([tri[0], tri[2]])),
+            ]
+            for edge in edges:
+                if edge not in self.edge_to_triangles:
+                    self.edge_to_triangles[edge] = []
+                self.edge_to_triangles[edge].append(
+                    i + 1
+                )  # +1 für 1-basierte Indizierung
+
+        self.solver = SatSolver(name=parameter.solver_name)
+        if not hasattr(self.solver, "interrupt"):
+            raise RuntimeError(
+                "The solver does not support interruption. "
+                "Please use a different solver that supports this feature."
+            )
+
+        if parameter.number_tri:
+            self.number_tri_constraint()
+
+        if parameter.intersection:
+            time_function(self.intersection_constraint, self.logger)()
+
+        if parameter.degree:
+            time_function(self.degree_constraint, self.logger)()
+
+        if parameter.exclude_edges:
+            time_function(self.exclude_triangles_constraint)()
 
     def get_index(self, tri_pos) -> int:
         if not (isinstance(tri_pos, tuple) and len(tri_pos) == 3):
@@ -92,6 +129,12 @@ class SAT_TRI(Solver):
                 index2 = self.get_index(tri2)
                 self.solver.add_clause([-index1, -index2])
         self.timeout_error()
+
+    def exclude_triangles_constraint(self):
+        for edge in self.graph.exclude_edge_partition:
+            tris = self.get_triangles_from_edge(edge)
+            for tri in tris:
+                self.solver.add_clause([-tri])
 
     def degree_constraint(self):
         hull = self.graph.get_hull_nodes()
@@ -136,23 +179,7 @@ class SAT_TRI(Solver):
                 "Args must be provided in the parameter dictionary."
             )
             parameter_data: Parameter = Parameter(**(args))
-            self.setup(parameter_data)
-
-            self.solver = SatSolver(name=parameter_data.solver_name)
-            if not hasattr(self.solver, "interrupt"):
-                raise RuntimeError(
-                    "The solver does not support interruption. "
-                    "Please use a different solver that supports this feature."
-                )
-
-            if parameter_data.number_tri:
-                self.number_tri_constraint()
-
-            if parameter_data.intersection:
-                time_function(self.intersection_constraint, self.logger)()
-
-            if parameter_data.degree:
-                time_function(self.degree_constraint, self.logger)()
+            self.time_pre_solve(self.setup)(parameter_data)
 
             if "timeout" not in parameter:
                 raise ValueError("Timeout parameter is missing.")
@@ -199,3 +226,16 @@ class SAT_TRI(Solver):
             return {
                 "success": False,
             }
+
+    def get_triangles_from_edge(self, edge: tuple[int, int]) -> list[int]:
+        """
+        Gibt alle Dreiecks-Indizes zurück, die die gegebene Kante enthalten.
+
+        Args:
+            edge: Tuple von zwei Knoten (wird automatisch sortiert)
+
+        Returns:
+            Liste der Dreiecks-Indizes (1-basiert)
+        """
+        sorted_edge = tuple(sorted(edge))
+        return self.edge_to_triangles.get(sorted_edge, [])

@@ -87,11 +87,7 @@ def sat_algorithm(graph):
 
 def sat_Tri_algorithm(graph):
     solver = SAT_TRI(graph)
-    para = SAT_TRI_Parameter(
-        add_allEdges_or_exlucde_edges=True,
-        intersection=True,
-        degree=True,
-    )
+    para = SAT_TRI_Parameter(intersection=True, degree=True, exclude_edges=True)
     logging.info(
         f"solution found: {solver.solve({'timeout': -1, 'args': asdict(para)})}"
     )
@@ -121,8 +117,8 @@ def run_algo():
     # assert x1 == x2
     # print(*x1.items(), sep="\n")
     # sat_algorithm(graph)
-    # sat_Tri_algorithm(graph)
-    ortools_algorithm(graph)
+    sat_Tri_algorithm(graph)
+    # ortools_algorithm(graph)
     # gurobi_algorithm(graph)
 
     # graph.add_edge(0, 5)
