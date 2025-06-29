@@ -31,12 +31,12 @@ int orientation(std::pair<int, int> p1, std::pair<int, int> p2, std::pair<int, i
 
 // Updated function to return a map of pairs to sets of pairs
 // (equivalent to Python dict[tuple[int, int], set[tuple[int, int]]])
-std::map<std::pair<int, int>, std::vector<std::pair<int, int>>>
-intersection(const std::vector<int> &indices, const std::vector<std::pair<int, int>> &point_pairs)
+std::map<Edge, std::vector<Edge>>
+intersection(const std::vector<int> &indices, const std::vector<Poss> &point_pairs, const std::vector<Edge> &impossible_edges)
 {
     // Placeholder for intersection logic
     // Create a result map to return
-    std::map<std::pair<int, int>, std::vector<std::pair<int, int>>> result;
+    std::map<Edge, std::vector<Edge>> result;
 
     auto combinations = two_combinations(point_pairs.size() - 1);
     for (auto [node1, node2] : combinations)
@@ -44,6 +44,12 @@ intersection(const std::vector<int> &indices, const std::vector<std::pair<int, i
         // Check if the two points are distinct
         auto edge1 = std::make_pair(min(indices.at(node1), indices.at(node2)),
                                     max(indices.at(node1), indices.at(node2)));
+
+        if (std::find(impossible_edges.begin(), impossible_edges.end(), edge1) != impossible_edges.end())
+        {
+            continue;
+        }
+
         for (int current_node = 0; current_node < point_pairs.size(); ++current_node)
         {
             if (current_node == node1 || current_node == node2)
@@ -84,6 +90,10 @@ intersection(const std::vector<int> &indices, const std::vector<std::pair<int, i
                 }
                 auto edge2 = std::make_pair(min(indices.at(current_node), indices.at(remaining_node)),
                                             max(indices.at(current_node), indices.at(remaining_node)));
+                if (std::find(impossible_edges.begin(), impossible_edges.end(), edge2) != impossible_edges.end())
+                {
+                    continue;
+                }
                 result[edge1].push_back(edge2);
             }
         }

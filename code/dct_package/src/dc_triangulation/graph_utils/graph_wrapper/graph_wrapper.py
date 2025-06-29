@@ -359,4 +359,6 @@ class Graph_Wrapper:
         self,
     ) -> dict[tuple[int, int], set[tuple[int, int]]]:
         poss = [self.get_pos_from_node(edge) for edge in self.get_all_nodes()]
-        return intersection_cpp_extern(self.get_all_nodes(), poss)
+        return intersection_cpp_extern(
+            self.get_all_nodes(), poss, self.impossible_edges
+        )

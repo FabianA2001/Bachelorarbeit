@@ -63,7 +63,7 @@ def custom_points() -> list[Node]:
 def ortools_algorithm(graph):
     solver = Ortools(graph)
     para = Ortools_Parameter(
-        intersection=True, degree=True, fix_hull=True, all_edges=True
+        intersection=True, degree=True, fix_hull=True, all_edges=False
     )
     logging.info(
         f"solution found: {solver.solve({'timeout': 30, 'args': asdict(para)})}"

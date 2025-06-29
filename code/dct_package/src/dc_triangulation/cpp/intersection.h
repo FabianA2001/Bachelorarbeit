@@ -2,5 +2,8 @@
 #include <vector>
 #include <map>
 
-std::map<std::pair<int, int>, std::vector<std::pair<int, int>>>
-intersection(const std::vector<int> &indices, const std::vector<std::pair<int, int>> &point_pairs);
+typedef std::pair<int, int> Poss;
+typedef std::pair<int, int> Edge;
+
+std::map<Edge, std::vector<Edge>>
+intersection(const std::vector<int> &indices, const std::vector<Poss> &point_pairs, const std::vector<Edge> &impossible_edges);
