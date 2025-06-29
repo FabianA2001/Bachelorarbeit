@@ -7,6 +7,8 @@ from dc_triangulation import (
     SAT_TRI,
     Delaunay,
     Graph_Wrapper,
+    Gurobi,
+    Gurobi_Parameter,
     Gurobi_Tri,
     Gurobi_Tri_Parameter,
     Iterative,
@@ -32,11 +34,18 @@ def get_solvers():
         Random_Adder,
         SAT_TRI,
         Gurobi_Tri,
+        Gurobi,
     ]
 
 
 def get_parameters():
-    return [SAT_Parameter, Ortools_Parameter, SAT_Tri_Parameter, Gurobi_Tri_Parameter]
+    return [
+        SAT_Parameter,
+        Ortools_Parameter,
+        SAT_Tri_Parameter,
+        Gurobi_Tri_Parameter,
+        Gurobi_Parameter,
+    ]
 
 
 def custom_points() -> list[Node]:
@@ -110,6 +119,16 @@ def gurobi_tri_algorithm(graph):
     )
 
 
+def gurobi_algorithm(graph):
+    solver = Gurobi(graph)
+    para = Gurobi_Parameter(
+        fix_hull=True, degree=True, intersection=True, exclude_edges=True
+    )
+    logging.info(
+        f"solution found: {solver.solve({'timeout': -1, 'args': asdict(para)})}"
+    )
+
+
 def run_algo():
     PATH = os.path.join(
         os.path.dirname(__file__), "instance", "simple_20", "000_delaunay_flips.json"
@@ -125,7 +144,8 @@ def run_algo():
     # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
-    gurobi_tri_algorithm(graph)
+    # gurobi_tri_algorithm(graph)
+    gurobi_algorithm(graph)
 
     # graph.add_edge(0, 5)
     # graph.add_all_possible_edges(True)

@@ -1,0 +1,110 @@
+from dataclasses import dataclass
+
+from gurobipy import GRB, Model
+
+from ..graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
+from ..utils import time_function
+from .solver import Solver
+
+"""
+wenn ein or im Name ist True das erste und False das zweite
+sonnst aktiviert True den constrient
+"""
+
+
+@dataclass
+class Parameter:
+    intersection: bool = False
+    degree: bool = False
+    exclude_edges: bool = False
+    fix_hull: bool = False
+
+
+class Gurobi(Solver):
+    NAME = "gurobi"
+
+    def __init__(self, graph: Graph_Wrapper) -> None:
+        super().__init__(graph)
+        self.name = self.NAME
+
+    def setup(self, parameter: Parameter):
+        self.graph.add_all_possible_edges(default_for_active=False)
+        self.vars = {}
+        for edge in self.graph.get_all_edges():
+            self.vars[edge] = self.model.addVar(
+                vtype=GRB.BINARY,
+                name=f"edge:({edge[0]},{edge[1]})",
+            )
+
+    def pre_solve(self, parameter: Parameter):
+        self.setup(parameter)
+        if parameter.intersection:
+            time_function(self.intersection_constraint, self.logger)()
+        if parameter.degree:
+            time_function(self.degree_constraint, self.logger)()
+        if parameter.exclude_edges:
+            self.exclude_edges_constraint()
+        if parameter.fix_hull:
+            self.fix_hull_constraint()
+
+    def intersection_constraint(self):
+        intersection_all = self.graph.get_all_intersections_cpp(self.timeout_error)
+        for edge, intersections in intersection_all.items():
+            for intersection in intersections:
+                self.model.addConstr(self.vars[edge] + self.vars[intersection] <= 1)
+        self.timeout_error()
+
+    def degree_constraint(self):
+        if self.graph is None:
+            raise ValueError("Graph is not set. Please set the graph before solving.")
+        for node in self.graph.get_all_nodes():
+            degree = self.graph._data.nodes[node]["degree"]
+            summ = 0
+            for edge in self.graph._data.edges(node):
+                if edge in self.vars:
+                    summ += self.vars[edge]
+                else:
+                    summ += self.vars[(edge[1], edge[0])]
+            self.model.addConstr(summ == degree)
+
+    def exclude_edges_constraint(self):
+        for edge in self.graph.exclude_edge_partition:
+            self.model.addConstr(self.vars[edge] == 0)
+
+    def fix_hull_constraint(self):
+        for edge in self.graph.get_hull_edges():
+            self.model.addConstr(self.vars[edge] == 1)
+
+    def _actual_solver(self, parameter: dict) -> dict:
+        if not isinstance(parameter, dict):
+            raise TypeError("Parameter must be a dictionary.")
+        args = parameter.get("args", None)
+        assert args is not None, "Parameter 'args' must be provided in the dictionary."
+        parameter_data: Parameter = Parameter(**(args))
+
+        try:
+            self.model = Model()
+            self.model.setParam("OutputFlag", 0)  # Suppress Gurobi output
+            self.time_pre_solve(self.pre_solve)(parameter_data)
+
+            # Solve the optimization model
+            self.time_solver(self.model.optimize)()
+
+            success = False
+            # Check if solution was found
+            if self.model.status == GRB.OPTIMAL:
+                success = True
+                for edge, var in self.vars.items():
+                    if var.X > 0.5:  # Variable is active (binary variable close to 1)
+                        self.graph.activate_edge(edge)
+
+            if not success:
+                self.logger.warning(f"{self.name} did not find an optimal solution.")
+            return {
+                "success": success,
+            }
+        except TimeoutError:
+            self.logger.warning(f"{self.name} timed out.")
+            return {
+                "success": False,
+            }
