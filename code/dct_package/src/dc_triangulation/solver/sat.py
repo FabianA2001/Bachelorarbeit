@@ -132,8 +132,6 @@ class SAT(Solver):
 
     def exclude_edges_constraint(self):
         for edge in self.graph.exclude_edge_partition:
-            if edge in self.graph.impossible_edges:
-                continue
             index = self.get_index(edge)
             # Setze die Kante als inaktiv
             self.solver.add_clause([-index])

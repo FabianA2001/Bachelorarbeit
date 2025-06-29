@@ -17,6 +17,7 @@ class Parameter:
     evaluation_direction: bool = False
     degree_direction: bool = False
     maximize_edges: bool = False
+    exclude_edges: bool = False
 
 
 class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
@@ -90,6 +91,10 @@ class Ortools(Solver):
         for edge in hull:
             self.model.Add(self.vars[edge] == 1)
 
+    def constraint_exclude_edges(self):
+        for edge in self.graph.exclude_edge_partition:
+            self.model.Add(self.vars[edge] == 0)
+
     def constraint_set_number_edges(self, number_edges: int):
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
@@ -162,6 +167,9 @@ class Ortools(Solver):
 
         if parameter_data.fix_hull:
             self.constraint_set_hull_fix()
+
+        if parameter_data.exclude_edges:
+            self.constraint_exclude_edges()
 
         if parameter_data.number_edges:
             self.constraint_set_number_edges(

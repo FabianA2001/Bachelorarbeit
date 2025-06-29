@@ -352,7 +352,8 @@ class Graph_Wrapper:
 
     @cached_property
     def exclude_edge_partition(self) -> list[tuple[int, int]]:
-        return Exclude_Edge_Partition(self._data, self.impossible_edges)()
+        edges = Exclude_Edge_Partition(self._data, self.impossible_edges)()
+        return [edge for edge in edges if edge not in self.impossible_edges]
 
     @cached_property
     def __get_all_intersections_cpp_cached(

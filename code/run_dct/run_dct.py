@@ -60,7 +60,11 @@ def custom_points() -> list[Node]:
 def ortools_algorithm(graph):
     solver = Ortools(graph)
     para = Ortools_Parameter(
-        intersection=True, degree=True, fix_hull=True, all_edges=True
+        intersection=True,
+        degree=True,
+        fix_hull=True,
+        all_edges=True,
+        exclude_edges=True,
     )
     logging.info(
         f"solution found: {solver.solve({'timeout': 30, 'args': asdict(para)})}"
@@ -110,12 +114,12 @@ def run_algo():
     )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
-    nodes = custom_points()
+    # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    x1 = graph.get_all_intersections_cpp()
-    x2 = graph.get_all_intersections()
+    # x1 = graph.get_all_intersections_cpp()
+    # x2 = graph.get_all_intersections()
     # assert x1 == x2
-    print(*x1.items(), sep="\n")
+    # print(*x1.items(), sep="\n")
     # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
     ortools_algorithm(graph)
