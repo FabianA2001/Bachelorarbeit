@@ -72,6 +72,8 @@ class Gurobi_Tri(Solver):
             time_function(self.intersection_constraint, self.logger)()
         if parameter.degree:
             time_function(self.degree_constraint, self.logger)()
+        if parameter.exclude_edges:
+            self.exclude_edges_constraint()
 
     @staticmethod
     def triangles_intersect(
