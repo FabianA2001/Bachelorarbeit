@@ -73,7 +73,6 @@ class Ortools(Solver):
             )
 
     def constraint_degree(self):
-        self.aktive_constrinsts += "degree, "
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
         for node in self.graph.get_all_nodes():
@@ -92,7 +91,6 @@ class Ortools(Solver):
             self.model.Add(self.vars[edge] == 1)
 
     def constraint_set_number_edges(self, number_edges: int):
-        self.aktive_constrinsts += "set_edges(int), "
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
         if number_edges < 0:
@@ -101,7 +99,6 @@ class Ortools(Solver):
         self.model.Add(summ == number_edges)
 
     def evaluation_direction(self):
-        self.aktive_constrinsts += "eval_direction, "
         evaluation = 0.0
         nodes = self.graph.get_all_nodes()
         for node in nodes:
@@ -124,7 +121,6 @@ class Ortools(Solver):
         self.model.Maximize(evaluation)
 
     def degree_direction(self):
-        self.aktive_constrinsts += "degree_direction, "
         nodes = self.graph.get_all_nodes()
         max_degree = self.graph.get_max_degree
         self.vars_int = {
@@ -218,12 +214,10 @@ class Ortools(Solver):
             self.logger.warning("No solution found.")
             return {
                 "success": False,
-                "info": self.aktive_constrinsts,
             }
         for edge, var in zip(self.graph.get_all_edges(), self.vars.values()):
             if solver.BooleanValue(var):
                 self.graph.activate_edge(edge)
         return {
             "success": True,
-            "info": self.aktive_constrinsts,
         }
