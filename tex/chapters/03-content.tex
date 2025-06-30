@@ -109,18 +109,6 @@ Nach jedem Flip wird überprüft, ob die Gradbeschränkung für alle Knoten erf�
 \end{algorithm}
 \subsection{OrTools mit Zielfunktion}
 \label{sec:ortools_heu}
-TODO infos über OrTools rausuchen
-% \begin{itemize}
-% 	\item Solver von Google
-% 	\item Solver mit intersection Konstriend und Zielfunktion maximiere~\eqref{eq:evaluation}
-% 	\item erste Konstriend Kanten auf richtige Anzahl
-% 	\item Zielfunktion ist maximiere \(Q_T\) aus~\eqref{eq:evaluation}
-% 	\item Teiler rausgenommen da für max nicht relevant
-% 	\item für die Difference, Betrag und min muss eine Integer Hilfsvarible eingeführt werden.
-% 	\item Zweiter ansatz weniger Integer Variablen nutzen
-% 	\item Degree - sollDegree und sollDegree - Degree größer als Hilfsvarible
-% 	\item Summe maximieren
-% \end{itemize}
 
 Bei dieser Heuristik wird der OrTools-Solver von Google verwendet.
 Der Vorteil dieses Solvers ist, dass nur wenige Beschränkungen vorgegeben werden müssen. Der Solver sucht dann eigenständig eine Lösung.
@@ -167,9 +155,25 @@ Die Summe aus \(j_i\) wird dann als Zielfunktion maximiert.
 	\item Gurobi
 \end{itemize}
 \subsection{Kanten Formulierung}
+\begin{itemize}
+	\item Variable pro Kante
+	\item Intersection Konstriend
+	\begin{itemize}
+		\item algo von Michael mit Orientierung
+	\end{itemize}
+	\item Gradbeschränkung
+	\item all Edges
+	\item fix hull
+	\item Exclude Edges
+\end{itemize}
 \subsubsection{PySat}
-\subsubsection{OrTools}
-\subsubsection{Gurobi}
+\subsubsection{OrTools und Gurobi}
+Für ein exaktes Ergebnis kann sowohl OrTools als auch Gurobi verwendet werden.
+Da beide Solver eine ähnliche Art der Formulierung verwenden werden sie hier zusammengefasst.
+Die Überschneidungsbeschränkung wird wie in~\cref{sec:ortools_heu} implementiert.
+Gurobie nutzt hier eqivalent die 
+Es wird jedoch keine Zielfunktion verwendet. Stattdessen wird eine Gradbeschränkung an den Solver übergeben.
+Diese beschränkt die Summe der booleschen Variablen \(x_e\) für alle ausgehenden Kanten eines Knotens \(i\) auf den Sollgrad \(\degrees(i)\).
 \subsection{Dreieck Formulierung}
 \subsubsection{PySat}
 \subsubsection{OrTools}
@@ -227,10 +231,7 @@ Die Summe aus \(j_i\) wird dann als Zielfunktion maximiert.
 % % 	\item Ansatz für die Gradbeschränkung
 % % 	\item für jeden Knoten die summe der x für ausgehende Kanten varibalen gleich dem Sollgrad
 % % \end{itemize}
-% Für ein exaktes Ergebnis wird ebenfalls der OrTools-Solver von Google genutzt.
-% Die Überschneidungsbeschränkung wird wie in~\cref{sec:ortools_heu} implementiert.
-% Es wird jedoch keine Zielfunktion verwendet. Stattdessen wird eine Gradbeschränkung an den Solver übergeben.
-% Diese beschränkt die Summe der booleschen Variablen \(x_e\) für alle ausgehenden Kanten eines Knotens \(i\) auf den Sollgrad \(\degrees(i)\).
+
 
 % Eine weitere Möglichkeit besteht darin, als Zielfunktion die Summe der booleschen Variablen \(x_e\) zu maximieren.
 % In diesem Fall wird die Anzahl der Kanten maximiert, die in der Triangulation enthalten sind.
