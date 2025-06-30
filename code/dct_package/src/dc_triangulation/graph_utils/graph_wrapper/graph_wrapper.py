@@ -83,8 +83,9 @@ class Graph_Wrapper:
     def get_all_intersections_cpp(
         self, timeout_func=lambda: ...
     ) -> dict[tuple[int, int], set[tuple[int, int]]]:
+        x = self.__get_all_intersections_cpp_cached
         timeout_func()
-        return self.__get_all_intersections_cpp_cached
+        return x
 
     def get_all_triangles_intersections_cpp(
         self,

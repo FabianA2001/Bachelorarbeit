@@ -139,8 +139,10 @@ class Gurobi_Tri(Solver):
 
         try:
             self.model = Model()
-            self.model.setParam("OutputFlag", 0)  # Suppress Gurobi output
             self.time_pre_solve(self.pre_solve)(parameter_data)
+            self.model.setParam("OutputFlag", 0)  # Suppress Gurobi output
+            print(self.get_remaining_time())
+            self.model.setParam("TimeLimit", self.get_remaining_time())  # Set timeout
 
             # Solve the optimization model
             self.time_solver(self.model.optimize)()
@@ -157,6 +159,7 @@ class Gurobi_Tri(Solver):
                             self.graph.activate_edge(edge)
 
             if not success:
+                self.timeout_error()
                 self.logger.warning(f"{self.name} did not find an optimal solution.")
             return {
                 "success": success,

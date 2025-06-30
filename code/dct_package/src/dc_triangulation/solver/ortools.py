@@ -45,22 +45,11 @@ class Ortools(Solver):
     def constraint_intersection(self):
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
-        self.aktive_constrinsts += "intersection, "
-        all_intersections = self.graph.get_all_intersections(self.timeout_error)
+        all_intersections = time_function(self.graph.get_all_intersections_cpp)(
+            self.timeout_error
+        )
         for edge, intersections in all_intersections.items():
-            if (
-                min(edge[0], edge[1]),
-                max(edge[0], edge[1]),
-            ) in self.graph.impossible_edges:
-                continue
             for intersection in intersections:
-                if (
-                    (
-                        min(intersection[0], intersection[1]),
-                        max(intersection[0], intersection[1]),
-                    )
-                ) in self.graph.impossible_edges:
-                    continue
                 self.model.add_at_most_one(self.vars[edge], self.vars[intersection])
         self.timeout_error()
 
@@ -157,7 +146,7 @@ class Ortools(Solver):
             self.model.Maximize(sum(list(self.vars.values())))
 
         if parameter_data.intersection:
-            self.constraint_intersection()
+            time_function(self.constraint_intersection)()
 
         if parameter_data.all_edges:
             self.constraint_all_edges()

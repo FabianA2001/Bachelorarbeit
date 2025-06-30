@@ -74,7 +74,7 @@ class Data(Data_Raw):
 
     def get_edges_for_node(self, node: int) -> list[tuple[int, int]]:
         """Gibt die Kanten des Graphen zurück."""
-        return [(node, neighbor) for neighbor in self[node]]
+        return [(min(node, neighbor), max(node, neighbor)) for neighbor in self[node]]
 
     def clear_cache(self):
         """Leert den Cache der all_edges-Property."""

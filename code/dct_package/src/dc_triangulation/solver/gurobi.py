@@ -38,7 +38,7 @@ class Gurobi(Solver):
             )
 
     def pre_solve(self, parameter: Parameter):
-        self.setup(parameter)
+        time_function(self.setup)(parameter)
         if parameter.intersection:
             time_function(self.intersection_constraint, self.logger)()
         if parameter.degree:
@@ -49,6 +49,7 @@ class Gurobi(Solver):
             self.fix_hull_constraint()
         if parameter.all_edges:
             self.all_edges_constraint()
+        self.timeout_error()
 
     def intersection_constraint(self):
         intersection_all = self.graph.get_all_intersections_cpp(self.timeout_error)
@@ -61,13 +62,10 @@ class Gurobi(Solver):
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
         for node in self.graph.get_all_nodes():
-            degree = self.graph._data.nodes[node]["degree"]
+            degree = self.graph.get_desired_degree_node(node)
             summ = 0
-            for edge in self.graph._data.edges(node):
-                if edge in self.vars:
-                    summ += self.vars[edge]
-                else:
-                    summ += self.vars[(edge[1], edge[0])]
+            for edge in self.graph.get_edges_of_node(node):
+                summ += self.vars[edge]
             self.model.addConstr(summ == degree)
 
     def exclude_edges_constraint(self):
@@ -96,8 +94,9 @@ class Gurobi(Solver):
 
         try:
             self.model = Model()
-            self.model.setParam("OutputFlag", 0)  # Suppress Gurobi output
             self.time_pre_solve(self.pre_solve)(parameter_data)
+            self.model.setParam("OutputFlag", 0)  # Suppress Gurobi output
+            self.model.setParam("TimeLimit", self.get_remaining_time())  # Set timeout
 
             # Solve the optimization model
             self.time_solver(self.model.optimize)()
@@ -111,6 +110,7 @@ class Gurobi(Solver):
                         self.graph.activate_edge(edge)
 
             if not success:
+                self.timeout_error()
                 self.logger.warning(f"{self.name} did not find an optimal solution.")
             return {
                 "success": success,
