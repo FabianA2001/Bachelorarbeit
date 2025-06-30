@@ -161,12 +161,12 @@ Die Summe aus \(j_i\) wird dann als Zielfunktion maximiert.
 	\begin{itemize}
 		\item algo von Michael mit Orientierung
 	\end{itemize}
+	\item überschneidung
 	\item Gradbeschränkung
 	\item all Edges
 	\item fix hull
 	\item Exclude Edges
 \end{itemize}
-\subsubsection{PySat}
 \subsubsection{OrTools und Gurobi}
 Für ein exaktes Ergebnis kann sowohl OrTools als auch Gurobi verwendet werden.
 Da beide Solver eine ähnliche Art der Formulierung verwenden werden sie hier zusammengefasst.
@@ -178,6 +178,37 @@ Gurobi nutzt hier äquivalent:
 \]
 Da ein exaktes Ergebnis erwartet wird, wird jedoch keine Zielfunktion verwendet. Stattdessen wird eine Gradbeschränkung an den Solver übergeben.
 Diese beschränkt die Summe der booleschen Variablen \(x_e\) für alle ausgehenden Kanten eines Knotens \(i\) auf den Sollgrad \(\degrees(i)\).
+
+Für die Gradbeschränkung werden folgende Bedingungen hinzugefügt:
+TODO anpassen wie zwischen OrTools und Gurobi add/addConstr dargestellt wird
+\[
+	\texttt{model.(add | addConstr)(\(\sum x_{e_i} = \degrees(i)\))}
+\]
+Wobei \(i\) der Knoten ist und \(e_i\) alle Kanten für diesen Knoten.
+
+Für die \emph{all\_edges} Beschränkung werden folgende Bedingungen hinzugefügt:
+\[
+	\texttt{model.(add | addConstr)(\((\sum_{j=\intersection(e)}{x_{j}}) + x_e \leq 1\))}
+\]
+
+Für die \emph{fix\_hull} Beschränkung werden die Kanten der konvexen Hülle fest gesetzt in dem die dazugehörige Variable auf \emph{eins} gesetzt wird.
+Eqivaltend werden für \emph{exclude\_edges} die Variablen auf \emph{null} gesetzt.
+
+\subsubsection{PySat}
+Da PySat eine SAT Formulierung verwendet müssen die Bedingungen etwas angepasst werden.
+Die Überschneidungsbeschränkung kann sehr ähnlich mit folgender Formel umgesetzt werden:
+\[
+\neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E_P: e_2 \in \intersection(e_1)
+\]
+Für die Gradbeschränkung ist das Problem das bei PySat für eine Menge von Variablen nicht festgelegt werden kann wie viele von ihnen wahr sein müssen.
+Dies kann allerdings mit folgendem Verfahren gelöst werden.
+TODO rausfinden wie das geht
+
+
+Die Beschränkungen \emph{fix\_hull} und \emph{exclude\_edges} können analog wie in OrTools und Gurobi umgesetzt werden.
+Hierbei werden anstatt die Variablen auf \emph{null} und \emph{eins} zu setzen, die Klausen \((\neg x_e)\) und \((x_e)\) hinzugefügt.
+
+
 \subsection{Dreieck Formulierung}
 \subsubsection{PySat}
 \subsubsection{OrTools}
