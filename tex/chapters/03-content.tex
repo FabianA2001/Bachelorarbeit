@@ -171,8 +171,12 @@ Die Summe aus \(j_i\) wird dann als Zielfunktion maximiert.
 Für ein exaktes Ergebnis kann sowohl OrTools als auch Gurobi verwendet werden.
 Da beide Solver eine ähnliche Art der Formulierung verwenden werden sie hier zusammengefasst.
 Die Überschneidungsbeschränkung wird wie in~\cref{sec:ortools_heu} implementiert.
-Gurobie nutzt hier eqivalent die 
-Es wird jedoch keine Zielfunktion verwendet. Stattdessen wird eine Gradbeschränkung an den Solver übergeben.
+Gurobi nutzt hier äquivalent:
+
+\[
+	\texttt{model.addConstr(\(x_{e_1} + x_{e_2} \leq 1\))}
+\]
+Da ein exaktes Ergebnis erwartet wird, wird jedoch keine Zielfunktion verwendet. Stattdessen wird eine Gradbeschränkung an den Solver übergeben.
 Diese beschränkt die Summe der booleschen Variablen \(x_e\) für alle ausgehenden Kanten eines Knotens \(i\) auf den Sollgrad \(\degrees(i)\).
 \subsection{Dreieck Formulierung}
 \subsubsection{PySat}
