@@ -119,7 +119,7 @@ Für jede Kante \(e\) wird eine boolesche Variable \(x_e\) erstellt.
 Für die Überschneidungsbeschränkung wird die Funktion \emph{add\_at\_most\_one} von OrTools verwendet.
 Diese Funktion wird mit den folgenden Variablenpaaren aufgerufen.
 \[
-	( x_{e_1}, x_{e_2}) \hspace{3cm} \forall e_1, e_2 \in E_P. e_2 \in \intersection(e_1)
+	( x_{e_1}, x_{e_2}) \hspace{3cm} \forall e_1, e_2 \in E. e_2 \in \intersection(e_1)
 \]
 
 Für die Zielfunktion wird eine Funktion erstellt, die der Gleichung~\eqref{eq:total_evaluation} ähnelt.
@@ -156,17 +156,49 @@ Die Summe aus \(j_i\) wird dann als Zielfunktion maximiert.
 \end{itemize}
 \subsection{Kanten Formulierung}
 \begin{itemize}
-	\item Variable pro Kante
 	\item Intersection Konstriend
 	\begin{itemize}
+		\item Triangulation darf keine Überschneidungen haben
+		\item Alle Kantenpaare max eine aktiv
 		\item algo von Michael mit Orientierung
 	\end{itemize}
-	\item überschneidung
 	\item Gradbeschränkung
-	\item all Edges
+	\begin{itemize}
+		\item Knoten müssen Sollgrad erfüllen
+		\item für jeden Knoten Anzahl ausgehender Kanten gleich Sollgrad
+	\end{itemize}
 	\item fix hull
+	\begin{itemize}
+		\item Kanten der konvexen Hülle müssen aktiv sein da keine alternative und maximal
+	\end{itemize}
+	\item all Edges
+	\begin{itemize}
+		\item nicht notwendig aber mehr Einschrängugnen könnten die Laufzeit verbessern
+		\item Alle Kanten und ihre Schnittkanten betrachten
+		\item mindestens eine davon muss aktiv sein
+		\item in~\cref{fig:all_edges} ist \(e_1\) die ausgewählt Kante und die restlichen Kanten sind mögliche Schnittkanten.
+		\item wenn e1 nicht hinzugefügt wird muss mindestens eine andere da sonst nicht Maximal
+		\item darf nicht gleich 1 sein da zwei Schnittkanten können gleichzeitig aktiv sein
+		\item z.B. e4 und e5 können gleichzeitig aktive sein.
+		\item Exact Algorithms for Minimum Dilation Triangulation
+	\end{itemize}
 	\item Exclude Edges
+	\begin{itemize}
+		\item 
+	\end{itemize}
+	\item 
 \end{itemize}
+
+\begin{figure}[tb]
+	\caption{\emph{All Edges}}
+	\centering
+	\label{fig:all_edges}
+	\includegraphics[scale=0.85]{all_edges.pdf}
+\end{figure}
+
+Für alle Solver wird angenommen das \(E\) die Menge aller möglicher Kanten sei. Also Kanten die keine Punkte schneiden.
+Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
+Diese Variable ist wahr wenn die Kante \(e\) in der Triangulation enthalten ist.
 \subsubsection{OrTools und Gurobi}
 Für ein exaktes Ergebnis kann sowohl OrTools als auch Gurobi verwendet werden.
 Da beide Solver eine ähnliche Art der Formulierung verwenden werden sie hier zusammengefasst.
@@ -188,7 +220,7 @@ Wobei \(i\) der Knoten ist und \(e_i\) alle Kanten für diesen Knoten.
 
 Für die \emph{all\_edges} Beschränkung werden folgende Bedingungen hinzugefügt:
 \[
-	\texttt{model.(add | addConstr)(\((\sum_{j=\intersection(e)}{x_{j}}) + x_e \leq 1\))}
+	\texttt{model.(add | addConstr)(\((\sum_{j \in \intersection(e)}{x_{j}}) + x_e \leq 1\))}
 \]
 
 Für die \emph{fix\_hull} Beschränkung werden die Kanten der konvexen Hülle fest gesetzt in dem die dazugehörige Variable auf \emph{eins} gesetzt wird.
@@ -198,7 +230,7 @@ Eqivaltend werden für \emph{exclude\_edges} die Variablen auf \emph{null} geset
 Da PySat eine SAT Formulierung verwendet müssen die Bedingungen etwas angepasst werden.
 Die Überschneidungsbeschränkung kann sehr ähnlich mit folgender Formel umgesetzt werden:
 \[
-\neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E_P: e_2 \in \intersection(e_1)
+\neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E: e_2 \in \intersection(e_1)
 \]
 Für die Gradbeschränkung ist das Problem das bei PySat für eine Menge von Variablen nicht festgelegt werden kann wie viele von ihnen wahr sein müssen.
 Dies kann allerdings mit folgendem Verfahren gelöst werden.
@@ -207,6 +239,12 @@ TODO rausfinden wie das geht
 
 Die Beschränkungen \emph{fix\_hull} und \emph{exclude\_edges} können analog wie in OrTools und Gurobi umgesetzt werden.
 Hierbei werden anstatt die Variablen auf \emph{null} und \emph{eins} zu setzen, die Klausen \((\neg x_e)\) und \((x_e)\) hinzugefügt.
+
+Für die \emph{all\_edges} Beschränkung kann folgende Klauseln genutzt werden:
+\[
+x_e \lor \bigvee_{e_j \in I(e)} x_{e_j} \qquad \forall e \in E
+\]
+
 
 
 \subsection{Dreieck Formulierung}
@@ -220,12 +258,12 @@ Hierbei werden anstatt die Variablen auf \emph{null} und \emph{eins} zu setzen, 
 % \end{itemize}
 % \subsection{SAT mit Kanten}
 % TODO Rausfinden wie SAT degree gemacht wird
-% Zunächst sei \(E\) die Menge aller Kanten und \(E_P\) die Menge aller möglicher Kanten. Also Kanten die keine Punkte schneiden.
+% Zunächst sei \(E\) die Menge aller Kanten und \(E\) die Menge aller möglicher Kanten. Also Kanten die keine Punkte schneiden.
 % Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
 % Diese Variable ist wahr wenn die Kante \(e\) in der Triangulation enthalten ist.
 % Für den Überschneidungs Konstriend werden folgende Klauseln dem OrTools Modeln hinzugefügt.
 % \[
-% \neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E_P: e_2 \in \intersection(e_1)
+% \neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E: e_2 \in \intersection(e_1)
 % \]
 % \begin{itemize}
 % 	\item Alle möglichen Kanten als Bool Variable wie OrTools
