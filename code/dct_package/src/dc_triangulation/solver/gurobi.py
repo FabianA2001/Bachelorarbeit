@@ -66,7 +66,7 @@ class Gurobi(Solver):
             summ = 0
             for edge in self.graph.get_edges_of_node(node):
                 summ += self.vars[edge]
-            self.model.addConstr(summ == degree)
+            self.model.addConstr(summ == degree)  # type: ignore[reportCallIssue]
 
     def exclude_edges_constraint(self):
         for edge in self.graph.exclude_edge_partition:
