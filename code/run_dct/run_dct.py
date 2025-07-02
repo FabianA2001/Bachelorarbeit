@@ -21,6 +21,7 @@ from dc_triangulation import (
     SAT_Tri_Parameter,
     generate,
     load_nodes_from_json,
+    time_function,
 )
 
 
@@ -46,6 +47,9 @@ def get_parameters():
         Gurobi_Tri_Parameter,
         Gurobi_Parameter,
     ]
+
+
+time_function
 
 
 def custom_points() -> list[Node]:
@@ -153,19 +157,16 @@ def run_algo():
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    # x1 = graph.get_all_intersections_cpp()
-    # x2 = graph.get_all_intersections()
-    # assert x1 == x2
-    # print(*x1.items(), sep="\n")
+    print(len(time_function(graph.get_intersection_clique)()))
     # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
-    gurobi_tri_algorithm(graph)
+    # gurobi_tri_algorithm(graph)
     # gurobi_algorithm(graph)
 
     # graph.add_edge(0, 5)
     # graph.add_all_possible_edges(True)
-    graph.show_and_save()
+    # graph.show_and_save()
 
 
 def create_instance():

@@ -3,6 +3,7 @@ import logging
 from functools import cached_property
 from typing import Optional, Tuple, Union
 
+import networkx as nx
 import shapely
 
 from ...cpp._cpp_bindings import intersection as intersection_cpp_extern
@@ -86,6 +87,15 @@ class Graph_Wrapper:
         x = self.__get_all_intersections_cpp_cached
         timeout_func()
         return x
+
+    def get_intersection_clique(self) -> list[list[tuple[int, int]]]:
+        edge_dict = self.get_all_intersections_cpp()
+        edge_graph = nx.Graph()
+        for edge, neighbors in edge_dict.items():
+            for neighbor in neighbors:
+                edge_graph.add_edge(edge, neighbor)
+
+        return list(nx.find_cliques(edge_graph))
 
     def get_all_triangles_intersections_cpp(
         self,
