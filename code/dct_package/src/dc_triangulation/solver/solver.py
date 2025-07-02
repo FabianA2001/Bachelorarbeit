@@ -41,6 +41,7 @@ class Solver(ABC):
         return self.name
 
     def get_remaining_time(self) -> float:
+        self.timeout_error()
         if self.start_time is None:
             raise ValueError("Solver has not started yet.")
         return (

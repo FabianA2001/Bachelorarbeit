@@ -226,10 +226,10 @@ class SAT(Solver):
                     raise TimeoutError()
 
             model = self.solver.get_model()
-            assert model is not None, "Model should not be None"
-            for var in self.all_vars:
-                if var in model:
-                    self.graph.activate_edge(self.get_edge(var))
+            if model is not None:
+                for var in self.all_vars:
+                    if var in model:
+                        self.graph.activate_edge(self.get_edge(var))
 
             return {
                 "success": result[0],

@@ -115,7 +115,7 @@ def gurobi_tri_algorithm(graph):
     solver = Gurobi_Tri(graph)
     para = Gurobi_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
     logging.info(
-        f"solution found: {solver.solve({'timeout': 20, 'args': asdict(para)})}"
+        f"solution found: {solver.solve({'timeout': 60, 'args': asdict(para)})}"
     )
 
 
@@ -134,15 +134,21 @@ def gurobi_algorithm(graph):
 
 
 def run_algo():
-    PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_30", "000_delaunay.json"
-    )
+    # PATH = os.path.join(
+    #     os.path.dirname(__file__), "instance", "simple_30", "000_delaunay.json"
+    # )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
     # )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_60", "000_delaunay_flips.json"
     # )
+    PATH = os.path.join(
+        os.path.dirname(__file__),
+        "instance",
+        "random_impossible",
+        "000_random_impossible_30.json",
+    )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
@@ -163,18 +169,20 @@ def run_algo():
 
 
 def create_instance():
-    NAME = "random_impossible"
-    FILE_NAME = "random_impossible"
+    NAME = "delaunay_impossible"
+    FILE_NAME = "delaunay_impossible"
     NUMBER_INSTANCE = 6
     NUMBER_NODES = 80
     STEP = 10
+    FLIPS = 300
     generate.Generate_Instance(
         NAME,
         FILE_NAME,
         NUMBER_NODES,
         NUMBER_INSTANCE,
         generate.Generate_Nodes_Iterativ(STEP, NUMBER_INSTANCE),
-        generate.Generate_Edges_Random_Impossible(),
+        generate.Generate_Edges_Delaunay(),
+        generate.Generate_Impossible_Move_Degree(),
         path="instance",
         width=10000,
         height=10000,

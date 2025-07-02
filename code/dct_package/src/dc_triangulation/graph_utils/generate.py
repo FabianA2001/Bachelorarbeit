@@ -1,4 +1,5 @@
 import json
+import logging
 import math
 import os
 from abc import ABC, abstractmethod
@@ -49,6 +50,13 @@ class Generate_Instance_ABC_Nodes(ABC):
         pass
 
 
+class Generate_Make_Impossible(ABC):
+    @abstractmethod
+    def generate_instance(self, nodes: list[Node]) -> tuple[list[Node], bool]:
+        """Generiert eine Instanz des Graphen mit den gegebenen Knoten."""
+        pass
+
+
 class Generate_Instance:
     def __init__(
         self,
@@ -58,6 +66,7 @@ class Generate_Instance:
         number_instances: int,
         nodes_gen: Generate_Instance_ABC_Nodes,
         edges_gen: Generate_Instance_ABC_Edges,
+        impossible_gen: Optional[Generate_Make_Impossible] = None,
         path: str = "",
         width: int = graph_const.GEN_WIDTH,
         height: int = graph_const.GEN_HEIGHT,
@@ -68,6 +77,7 @@ class Generate_Instance:
         self.number_instances = number_instances
         self.nodes_gen = nodes_gen
         self.edges_gen = edges_gen
+        self.impossible_gen = impossible_gen
         self.path = path
         self.width = width
         self.height = height
@@ -81,6 +91,8 @@ class Generate_Instance:
             )
             graph = Graph_Wrapper(nodes)
             nodes, possible = self.edges_gen.generate_instance(graph)
+            if self.impossible_gen is not None:
+                nodes, possible = self.impossible_gen.generate_instance(nodes)
             number = str(i).zfill(3)
             filename = f"{self.name}/{number}_{self.file_name}_{len(graph.get_all_nodes())}.json"
             save_nodes_as_json(
@@ -147,33 +159,6 @@ class Generate_Edges_Random(Generate_Instance_ABC_Edges):
             }
         )
         return (graph.get_aktive_graph_nodes(), True)
-
-
-class Generate_Edges_Random_Impossible(Generate_Instance_ABC_Edges):
-    # Sehr warscheinlich kann die Lösung nicht trianguliert werden dies ist aber nicht sicher gestellt
-    def generate_instance(
-        self, graph: Graph_Wrapper
-    ) -> tuple[list[Node], Optional[bool]]:
-        solver = Random_Adder(graph)
-        solver.solve(
-            {
-                "timeout": -1,
-                "ignore_degree": True,
-            }
-        )
-        nodes = graph.get_aktive_graph_nodes()
-        while True:
-            node1: Node = choice(nodes)
-            node2: Node = choice(nodes)
-            if node1 == node2:
-                continue
-            if node1.degree <= 2 or node2.degree <= 2:
-                continue
-            node1.degree -= 1
-            node2.degree += 1
-            break
-
-        return (nodes, False)
 
 
 class Generate_Nodes_Iterativ(Generate_Instance_ABC_Nodes):
@@ -255,3 +240,23 @@ class Generate_Nodes_Iterativ_N_Gon(Generate_Instance_ABC_Nodes):
             y: int = int(center_y + math.sin(i * angle) * self.radius)
             nodes.append(Node((x, y)))
         return nodes
+
+
+class Generate_Impossible_Move_Degree(Generate_Make_Impossible):
+    def generate_instance(self, nodes: list[Node]) -> tuple[list[Node], bool]:
+        """Generiert eine Instanz des Graphen mit den gegebenen Knoten."""
+
+        for _ in range(1000):
+            node1: Node = choice(nodes)
+            node2: Node = choice(nodes)
+            if node1 == node2:
+                continue
+            if node1.degree <= 2 or node2.degree <= 2:
+                continue
+            node1.degree -= 1
+            node2.degree += 1
+            break
+        else:
+            logging.warning("No nodes could be modified to make the graph impossible.")
+
+        return (nodes, False)
