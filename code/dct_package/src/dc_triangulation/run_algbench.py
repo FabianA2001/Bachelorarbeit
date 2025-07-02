@@ -278,18 +278,89 @@ class Run_Algbench:
         y: str,
         block: bool = False,
     ):
-        plt.figure()
-        sns.barplot(
-            data=table,
-            x="instance_file",
-            y=y,
-            hue="solver_args",
-        )
-        plt.title(f"{y.capitalize()} pro Instanz/File und Solver-Version")
-        plt.xlabel("Instanz/Datei")
-        plt.ylabel(y.capitalize())
-        plt.xticks(rotation=90)
-        plt.grid(True, axis="y", linestyle="--", alpha=0.7)
+        # Bestimme ob eine gebrochene Y-Achse nötig ist
+        y_values = table[y].dropna()
+        y_values = y_values[
+            y_values >= 0
+        ]  # Entferne negative Werte (z.B. -1 für Timeouts)
+
+        if len(y_values) == 0:
+            # Fallback für den Fall, dass keine gültigen Werte vorhanden sind
+            plt.figure()
+            sns.barplot(
+                data=table,
+                x="instance_file",
+                y=y,
+                hue="solver_args",
+            )
+            plt.title(f"{y.capitalize()} pro Instanz/File und Solver-Version")
+            plt.xlabel("Instanz/Datei")
+            plt.ylabel(y.capitalize())
+            plt.xticks(rotation=90)
+            plt.grid(True, axis="y", linestyle="--", alpha=0.7)
+            plt.tight_layout()
+            plt.show(block=block)
+            if self.figure_path:
+                plt.savefig(os.path.join(self.figure_path, y + ".pdf"))
+            return
+
+        y_min, y_max = y_values.min(), y_values.max()
+        y_range = y_max - y_min
+
+        # Prüfe ob gebrochene Achse sinnvoll ist (große Spanne mit vielen kleinen Werten)
+        if y_range > 0 and y_max > 10 * y_min and y_min > 0:
+            # Erstelle gebrochene Y-Achse
+            fig, (ax2, ax1) = plt.subplots(2, 1, sharex=True, figsize=(12, 8))
+            fig.subplots_adjust(hspace=0.05)
+
+            # Bestimme Break-Points
+            break_point = y_min + y_range * 0.1  # Unten 10% der Spanne
+
+            # Oberer Plot (hohe Werte) - ax2 ist jetzt oben
+            sns.barplot(data=table, x="instance_file", y=y, hue="solver_args", ax=ax2)
+            ax2.set_ylim(break_point, y_max * 1.1)
+            ax2.set_ylabel(f"{y.capitalize()} (hohe Werte)")
+            ax2.tick_params(axis="x", labelbottom=False)
+            ax2.grid(True, axis="y", linestyle="--", alpha=0.7)
+
+            # Unterer Plot (niedrige Werte) - ax1 ist jetzt unten
+            sns.barplot(data=table, x="instance_file", y=y, hue="solver_args", ax=ax1)
+            ax1.set_ylim(0, break_point)
+            ax1.set_xlabel("Instanz/Datei")
+            ax1.set_ylabel(f"{y.capitalize()} (niedrige Werte)")
+            ax1.tick_params(axis="x", rotation=90)
+            ax1.grid(True, axis="y", linestyle="--", alpha=0.7)
+
+            # Entferne Legende vom unteren Plot
+            ax1.legend().remove()
+
+            # Break-Markierungen hinzufügen
+            d = 0.015
+            kwargs = dict(transform=ax1.transAxes, color="k", clip_on=False)
+            ax1.plot((-d, +d), (1 - d, 1 + d), **kwargs)
+            ax1.plot((1 - d, 1 + d), (1 - d, 1 + d), **kwargs)
+
+            kwargs.update(transform=ax2.transAxes)
+            ax2.plot((-d, +d), (-d, +d), **kwargs)
+            ax2.plot((1 - d, 1 + d), (-d, +d), **kwargs)
+
+            plt.suptitle(f"{y.capitalize()} pro Instanz/File und Solver-Version")
+
+        else:
+            # Normale Darstellung
+            plt.figure(figsize=(12, 6))
+            sns.barplot(
+                data=table,
+                x="instance_file",
+                y=y,
+                hue="solver_args",
+            )
+            plt.title(f"{y.capitalize()} pro Instanz/File und Solver-Version")
+            plt.xlabel("Instanz/Datei")
+            plt.ylabel(y.capitalize())
+            plt.xticks(rotation=90)
+            plt.grid(True, axis="y", linestyle="--", alpha=0.7)
+
         plt.tight_layout()
         plt.show(block=block)
         if self.figure_path:
