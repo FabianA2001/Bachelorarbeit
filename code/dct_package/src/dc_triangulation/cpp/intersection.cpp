@@ -1,7 +1,11 @@
 
 #include <iostream>
-#include "intersection.h"
+#include <map>
+#include <vector>
+#include <set>
+#include <algorithm>
 
+#include "intersection.h"
 using namespace std;
 std::vector<std::pair<int, int>> two_combinations(int max_index)
 {
@@ -107,4 +111,61 @@ intersection(const std::vector<int> &indices, const std::vector<Poss> &point_pai
         }
     }
     return result;
+}
+
+// Bron-Kerbosch Algorithmus (ohne Pivot) für maximale Cliquen
+void bronKerbosch(std::set<Edge> R, std::set<Edge> P, std::set<Edge> X,
+                  const std::map<Edge, std::set<Edge>> &graph,
+                  std::vector<std::set<Edge>> &maximalCliques)
+{
+    if (P.empty() && X.empty())
+    {
+        maximalCliques.push_back(R);
+        return;
+    }
+
+    std::set<Edge> P_copy = P; // Wir müssen P kopieren, weil wir es verändern
+    for (const Edge &v : P_copy)
+    {
+        std::set<Edge> newR = R;
+        newR.insert(v);
+
+        std::set<Edge> newP, newX;
+        for (const Edge &u : graph.at(v))
+        {
+            if (P.count(u))
+                newP.insert(u);
+            if (X.count(u))
+                newX.insert(u);
+        }
+
+        bronKerbosch(newR, newP, newX, graph, maximalCliques);
+        P.erase(v);
+        X.insert(v);
+    }
+}
+
+std::vector<std::set<Edge>> max_clique(std::map<Edge, std::vector<Edge>> intersection_Map)
+{
+    // Schritt 1: Schnittgraph als Adjazenzliste bauen
+    std::map<Edge, std::set<Edge>> graph;
+    for (const auto &[kante, schnittkanten] : intersection_Map)
+    {
+        for (const auto &s : schnittkanten)
+        {
+            graph[kante].insert(s);
+            graph[s].insert(kante); // Graph ungerichtet machen
+        }
+    }
+
+    // Schritt 2: Bron-Kerbosch starten
+    std::set<Edge> R, P, X;
+    for (const auto &[kante, _] : graph)
+    {
+        P.insert(kante);
+    }
+
+    std::vector<std::set<Edge>> maximalCliques;
+    bronKerbosch(R, P, X, graph, maximalCliques);
+    return maximalCliques;
 }

@@ -14,4 +14,8 @@ PYBIND11_MODULE(_cpp_bindings, m)
       m.def("triangles_intersection", &triangles_intersection,
             "Function that processes triangles and their positions to find intersections",
             pybind11::arg("triangles"), pybind11::arg("triangles_pos"));
+
+      m.def("max_clique", &max_clique,
+            "Function that finds the maximum cliques in a graph represented by an intersection map",
+            pybind11::arg("intersection_map"));
 }

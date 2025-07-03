@@ -7,7 +7,7 @@ import networkx as nx
 import shapely
 
 from ...cpp._cpp_bindings import intersection as intersection_cpp_extern
-from ...cpp._cpp_bindings import triangles_intersection
+from ...cpp._cpp_bindings import max_clique, triangles_intersection
 from .. import graph_const
 from ..node import Node
 from . import visualisation
@@ -87,15 +87,6 @@ class Graph_Wrapper:
         x = self.__get_all_intersections_cpp_cached
         timeout_func()
         return x
-
-    def get_intersection_clique(self) -> list[list[tuple[int, int]]]:
-        edge_dict = self.get_all_intersections_cpp()
-        edge_graph = nx.Graph()
-        for edge, neighbors in edge_dict.items():
-            for neighbor in neighbors:
-                edge_graph.add_edge(edge, neighbor)
-
-        return list(nx.find_cliques(edge_graph))
 
     def get_all_triangles_intersections_cpp(
         self,
@@ -374,3 +365,18 @@ class Graph_Wrapper:
         return intersection_cpp_extern(
             self.get_all_nodes(), poss, self.impossible_edges
         )
+
+    @cached_property
+    def get_intersection_clique(self) -> list[list[tuple[int, int]]]:
+        edge_dict = self.get_all_intersections_cpp()
+        edge_graph = nx.Graph()
+        for edge, neighbors in edge_dict.items():
+            for neighbor in neighbors:
+                edge_graph.add_edge(edge, neighbor)
+
+        return list(nx.find_cliques(edge_graph))
+
+    @cached_property
+    def get_intersection_clique_cpp(self) -> list[set[tuple[int, int]]]:
+        edge_dict = self.get_all_intersections_cpp()
+        return max_clique(edge_dict)
