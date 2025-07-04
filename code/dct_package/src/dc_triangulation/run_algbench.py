@@ -50,6 +50,7 @@ class Run_Algbench:
         else:
             self.path_benchmark = path_benchmark
         self.figure_path = figure_path
+        self.get_solver_inst_from_runlist: dict[str, tuple] = {}
 
         self.benchmark = Benchmark(self.path_benchmark)
         self.benchmark.capture_logger(Solver.LOGGER_NAME)
@@ -78,37 +79,34 @@ class Run_Algbench:
 
     @staticmethod
     def create_benchmark_entry(
-        solver_type: type[Solver],
         solver_name: str,
         parameter: dict,
         instance_name: str,
         file_name: str,
-        possible: bool,
-        host: str,
+        _possible: bool,
+        _solver_type: type[Solver],
         _graph: Graph_Wrapper,
-        _timeout: list[bool],
     ):
+        info = ""
         try:
-            solver = solver_type(_graph)
+            solver = _solver_type(_graph)
             solution: dict = solver.solve(parameter)
         except Exception as e:
-            logging.error(f"Error while solving: {e}")
-            _timeout[0] = True
+            info += f"Error while solving: {e}\n"
             return {
                 "correct": False,
                 "time_solver": -1,
                 "time_pre_solver": -1,
                 "evaluation": 0.0,
                 "triangulation": [],
+                "info": info,
             }
 
         is_triangulation = _graph.check_if_triangulation_with_degree_constrained()
         result = solution["success"] and is_triangulation
-        correct = possible == result
-        if is_triangulation and not possible:
-            logging.error(
-                f"{instance_name} - {solver.name} - {file_name} should not be possible, but triangulation was found."
-            )
+        correct = _possible == result
+        if is_triangulation and not _possible:
+            info += f"{solver.name} on {instance_name}_{file_name} should not be possible, but triangulation was found.\n"
 
         return {
             "correct": correct,
@@ -116,43 +114,21 @@ class Run_Algbench:
             "time_solver": solver.solve_time,
             "evaluation": _graph.evaluate_graph(),
             "triangulation": _graph.get_all_edges(True),
+            "info": info,
         }
 
-    def run_solver_on_instance(
-        self,
-        solver_type: type[Solver],
-        instance_name: str,
-        parameter: dict,
-    ):
-        instance = self.instances[instance_name]
+    # @staticmethod
+    # def run_solver_on_instance():
 
-        for file_name in sorted(instance):
-            file_path = instance[file_name]
-            nodes = load_nodes_from_json(file_path)
-            with open(file_path, "r") as f:
-                possible = json.load(f)["possible"]
-            graph = Graph_Wrapper(nodes)
-            timeout = [False]
-            logging.info(f"starte instance: {instance_name}/{file_name}")
-            self.benchmark.add(
-                self.create_benchmark_entry,
-                solver_type=solver_type,
-                solver_name=solver_type.NAME,
-                parameter=parameter,
-                instance_name=instance_name,
-                file_name=file_name,
-                possible=possible,
-                host=socket.gethostname(),
-                _graph=graph,
-                _timeout=timeout,
-            )
-            if timeout[0]:
-                logging.warning(
-                    f"Timeout while solving {instance_name} - {solver_type.NAME} - {file_name} with {format_dictionary(parameter)}"
-                )
-                break
-
-        self.benchmark.compress()
+    #     graph = Graph_Wrapper(nodes)
+    #     self.benchmark.add(
+    #         self.create_benchmark_entry,
+    #         solver_name=solver_type.NAME,
+    #         parameter=parameter,
+    #         _possible=possible,
+    #         _solver_type=solver_type,
+    #         _graph=graph,
+    #     )
 
     def show(
         self,
@@ -366,19 +342,24 @@ class Run_Algbench:
         if self.figure_path:
             plt.savefig(os.path.join(self.figure_path, y + ".pdf"))
 
-    def run(
+    def get_run_list(
         self,
-    ):
+    ) -> list[str]:
         for inst in self.instances.keys():
             for solver in self.solvers:
-                if solver in self.outer_parameter:
-                    list_parameter = self.outer_parameter[solver]
-                else:
-                    logging.warning("No parameter found for solver, using default.")
-                    list_parameter = [{"timeout": self.DEFAULT_TIME, "args": None}]
-                for parameter in list_parameter:
-                    self.run_solver_on_instance(
-                        solver_type=solver,
-                        instance_name=inst,
-                        parameter=parameter,
-                    )
+                instance = self.instances[inst]
+
+                for file_name in sorted(instance):
+                    file_path = instance[file_name]
+                    nodes = load_nodes_from_json(file_path)
+                    with open(file_path, "r") as f:
+                        possible = json.load(f)["possible"]
+                    logging.info(f"starte instance: {inst}/{file_name}")
+                    self.get_solver_inst_from_runlist[
+                        f"{solver.NAME}_{inst}_{file_name}"
+                    ] = (solver, nodes, possible, inst, file_name)
+
+        return list(self.get_solver_inst_from_runlist.keys())
+
+    def compress(self):
+        self.benchmark.compress()
