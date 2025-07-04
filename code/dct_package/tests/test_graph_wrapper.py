@@ -3,6 +3,7 @@ from dataclasses import asdict
 
 from dc_triangulation import (
     SAT,
+    Delaunay,
     Graph_Wrapper,
     Node,
     SAT_Parameter,
@@ -299,3 +300,31 @@ def test_exclude_edges():
 
 #         graph.show_and_save()
 #         assert False, f"Solver should not find a solution with excluded edge {edge}."
+
+
+def test_clyce():
+    nodes = [
+        Node((5, 10)),
+        Node((2, 6)),
+        Node((6, 5)),
+        Node((9, 3)),
+        Node((0, 10)),
+        Node((9, 5)),
+        Node((1, 2)),
+        # Node((8, 6)),
+        # Node((2, 3)),
+        # Node((2, 10)),
+    ]
+    graph = Graph_Wrapper(nodes)
+    solver = Delaunay(graph)
+    solver.solve({"timeout": -1, "ignore_degree": True})
+    nodes = graph.get_aktive_graph_nodes()
+    graph = Graph_Wrapper(nodes)
+
+    cpp = graph.get_intersection_clique_cpp
+    nativ = graph.get_intersection_clique
+    nativ = [sorted(x) for x in nativ]
+    print(*nativ, sep="\n")
+    cpp = [sorted(list(x)) for x in cpp]
+    for x in cpp:
+        assert x in nativ, f"Menge {x} not found in native implementation."
