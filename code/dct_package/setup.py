@@ -20,6 +20,7 @@ setup(  # https://scikit-build.readthedocs.io/en/latest/usage.html#setup-options
         "scalene",
         "streamlit",
         "gurobipy",
+        "slurminade",
     ],  # Python Dependencies
     conan_requirements=["cgal/[>=6.0.1]"],  # C++ Dependencies
     cmake_minimum_required_version="3.23",
