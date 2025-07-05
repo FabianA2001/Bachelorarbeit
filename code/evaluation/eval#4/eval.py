@@ -38,91 +38,20 @@ if __name__ == "__main__":
                     )
                 ),
             },
+        ],
+        Ortools: [
             {
                 "timeout": TIMEOUT,
                 "args": asdict(
-                    SAT_Parameter(
-                        solver_name="Cadical195",
+                    Ortools_Parameter(
                         intersection=True,
-                        degree_exact=True,
+                        degree=True,
                         fix_hull=True,
                         all_edges=True,
                     )
                 ),
             },
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(
-                    SAT_Parameter(
-                        solver_name="Gluecard4",
-                        intersection=True,
-                        degree_exact=True,
-                        fix_hull=True,
-                        all_edges=True,
-                    )
-                ),
-            },
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(
-                    SAT_Parameter(
-                        solver_name="Glucose42",
-                        intersection=True,
-                        degree_exact=True,
-                        fix_hull=True,
-                        all_edges=True,
-                    )
-                ),
-            },
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(
-                    SAT_Parameter(
-                        solver_name="Lingeling",
-                        intersection=True,
-                        degree_exact=True,
-                        fix_hull=True,
-                        all_edges=True,
-                    )
-                ),
-            },
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(
-                    SAT_Parameter(
-                        solver_name="Mergesat3",
-                        intersection=True,
-                        degree_exact=True,
-                        fix_hull=True,
-                        all_edges=True,
-                    )
-                ),
-            },
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(
-                    SAT_Parameter(
-                        solver_name="Maplesat",
-                        intersection=True,
-                        degree_exact=True,
-                        fix_hull=True,
-                        all_edges=True,
-                    )
-                ),
-            },
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(
-                    SAT_Parameter(
-                        solver_name="MapleCM",
-                        intersection=True,
-                        degree_exact=True,
-                        fix_hull=True,
-                        all_edges=True,
-                    )
-                ),
-            },
-        ]
+        ],
     }
 
 ri = Run_Algbench(
