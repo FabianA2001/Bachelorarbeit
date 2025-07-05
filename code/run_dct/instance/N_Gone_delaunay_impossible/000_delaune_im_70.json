@@ -12,14 +12,14 @@
                 5995,
                 5089
             ],
-            "degree": 8
+            "degree": 4
         },
         {
             "pos": [
                 5983,
                 5178
             ],
-            "degree": 4
+            "degree": 3
         },
         {
             "pos": [
@@ -33,49 +33,49 @@
                 5936,
                 5351
             ],
-            "degree": 3
+            "degree": 2
         },
         {
             "pos": [
                 5900,
                 5433
             ],
-            "degree": 5
+            "degree": 13
         },
         {
             "pos": [
                 5858,
                 5512
             ],
-            "degree": 2
+            "degree": 3
         },
         {
             "pos": [
                 5809,
                 5587
             ],
-            "degree": 6
+            "degree": 2
         },
         {
             "pos": [
                 5753,
                 5657
             ],
-            "degree": 7
+            "degree": 5
         },
         {
             "pos": [
                 5691,
                 5722
             ],
-            "degree": 6
+            "degree": 2
         },
         {
             "pos": [
                 5623,
                 5781
             ],
-            "degree": 3
+            "degree": 4
         },
         {
             "pos": [
@@ -89,84 +89,84 @@
                 5473,
                 5880
             ],
-            "degree": 5
+            "degree": 3
         },
         {
             "pos": [
                 5393,
                 5919
             ],
-            "degree": 2
+            "degree": 3
         },
         {
             "pos": [
                 5309,
                 5951
             ],
-            "degree": 3
+            "degree": 2
         },
         {
             "pos": [
                 5222,
                 5974
             ],
-            "degree": 4
+            "degree": 7
         },
         {
             "pos": [
                 5134,
                 5990
             ],
-            "degree": 3
+            "degree": 2
         },
         {
             "pos": [
                 5044,
                 5998
             ],
-            "degree": 2
+            "degree": 5
         },
         {
             "pos": [
                 4955,
                 5998
             ],
-            "degree": 6
+            "degree": 4
         },
         {
             "pos": [
                 4865,
                 5990
             ],
-            "degree": 5
+            "degree": 2
         },
         {
             "pos": [
                 4777,
                 5974
             ],
-            "degree": 4
+            "degree": 7
         },
         {
             "pos": [
                 4690,
                 5951
             ],
-            "degree": 3
+            "degree": 2
         },
         {
             "pos": [
                 4606,
                 5919
             ],
-            "degree": 2
+            "degree": 3
         },
         {
             "pos": [
                 4526,
                 5880
             ],
-            "degree": 5
+            "degree": 3
         },
         {
             "pos": [
@@ -194,28 +194,28 @@
                 4246,
                 5657
             ],
-            "degree": 4
+            "degree": 5
         },
         {
             "pos": [
                 4190,
                 5587
             ],
-            "degree": 4
+            "degree": 2
         },
         {
             "pos": [
                 4141,
                 5512
             ],
-            "degree": 4
+            "degree": 3
         },
         {
             "pos": [
                 4099,
                 5433
             ],
-            "degree": 7
+            "degree": 15
         },
         {
             "pos": [
@@ -229,42 +229,42 @@
                 4036,
                 5266
             ],
-            "degree": 6
+            "degree": 3
         },
         {
             "pos": [
                 4016,
                 5178
             ],
-            "degree": 2
+            "degree": 3
         },
         {
             "pos": [
                 4004,
                 5089
             ],
-            "degree": 4
+            "degree": 3
         },
         {
             "pos": [
                 4000,
                 5000
             ],
-            "degree": 2
+            "degree": 4
         },
         {
             "pos": [
                 4004,
                 4910
             ],
-            "degree": 4
+            "degree": 3
         },
         {
             "pos": [
                 4016,
                 4821
             ],
-            "degree": 5
+            "degree": 2
         },
         {
             "pos": [
@@ -285,7 +285,7 @@
                 4099,
                 4566
             ],
-            "degree": 5
+            "degree": 14
         },
         {
             "pos": [
@@ -299,21 +299,21 @@
                 4190,
                 4412
             ],
-            "degree": 4
+            "degree": 2
         },
         {
             "pos": [
                 4246,
                 4342
             ],
-            "degree": 6
+            "degree": 5
         },
         {
             "pos": [
                 4308,
                 4277
             ],
-            "degree": 3
+            "degree": 2
         },
         {
             "pos": [
@@ -327,21 +327,21 @@
                 4449,
                 4165
             ],
-            "degree": 7
+            "degree": 5
         },
         {
             "pos": [
                 4526,
                 4119
             ],
-            "degree": 2
+            "degree": 3
         },
         {
             "pos": [
                 4606,
                 4080
             ],
-            "degree": 8
+            "degree": 3
         },
         {
             "pos": [
@@ -355,21 +355,21 @@
                 4777,
                 4025
             ],
-            "degree": 4
+            "degree": 7
         },
         {
             "pos": [
                 4865,
                 4009
             ],
-            "degree": 3
+            "degree": 2
         },
         {
             "pos": [
                 4955,
                 4001
             ],
-            "degree": 2
+            "degree": 4
         },
         {
             "pos": [
@@ -383,21 +383,21 @@
                 5134,
                 4009
             ],
-            "degree": 4
+            "degree": 2
         },
         {
             "pos": [
                 5222,
                 4025
             ],
-            "degree": 6
+            "degree": 7
         },
         {
             "pos": [
                 5309,
                 4048
             ],
-            "degree": 4
+            "degree": 2
         },
         {
             "pos": [
@@ -411,7 +411,7 @@
                 5473,
                 4119
             ],
-            "degree": 2
+            "degree": 3
         },
         {
             "pos": [
@@ -432,7 +432,7 @@
                 5691,
                 4277
             ],
-            "degree": 3
+            "degree": 2
         },
         {
             "pos": [
@@ -446,28 +446,28 @@
                 5809,
                 4412
             ],
-            "degree": 4
+            "degree": 2
         },
         {
             "pos": [
                 5858,
                 4487
             ],
-            "degree": 2
+            "degree": 3
         },
         {
             "pos": [
                 5900,
                 4566
             ],
-            "degree": 3
+            "degree": 13
         },
         {
             "pos": [
                 5936,
                 4648
             ],
-            "degree": 6
+            "degree": 2
         },
         {
             "pos": [
@@ -481,7 +481,7 @@
                 5983,
                 4821
             ],
-            "degree": 2
+            "degree": 3
         },
         {
             "pos": [
@@ -491,5 +491,5 @@
             "degree": 5
         }
     ],
-    "possible": true
+    "possible": false
 }

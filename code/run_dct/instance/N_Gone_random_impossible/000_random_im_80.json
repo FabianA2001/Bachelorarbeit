@@ -5,7 +5,7 @@
                 6000,
                 5000
             ],
-            "degree": 3
+            "degree": 7
         },
         {
             "pos": [
@@ -19,21 +19,21 @@
                 5987,
                 5156
             ],
-            "degree": 2
+            "degree": 7
         },
         {
             "pos": [
                 5972,
                 5233
             ],
-            "degree": 8
+            "degree": 2
         },
         {
             "pos": [
                 5951,
                 5309
             ],
-            "degree": 4
+            "degree": 3
         },
         {
             "pos": [
@@ -47,14 +47,14 @@
                 5891,
                 5453
             ],
-            "degree": 2
+            "degree": 5
         },
         {
             "pos": [
                 5852,
                 5522
             ],
-            "degree": 7
+            "degree": 4
         },
         {
             "pos": [
@@ -68,56 +68,56 @@
                 5760,
                 5649
             ],
-            "degree": 3
+            "degree": 4
         },
         {
             "pos": [
                 5707,
                 5707
             ],
-            "degree": 3
+            "degree": 7
         },
         {
             "pos": [
                 5649,
                 5760
             ],
-            "degree": 6
+            "degree": 3
         },
         {
             "pos": [
                 5587,
                 5809
             ],
-            "degree": 3
+            "degree": 2
         },
         {
             "pos": [
                 5522,
                 5852
             ],
-            "degree": 2
+            "degree": 4
         },
         {
             "pos": [
                 5453,
                 5891
             ],
-            "degree": 5
+            "degree": 3
         },
         {
             "pos": [
                 5382,
                 5923
             ],
-            "degree": 5
+            "degree": 8
         },
         {
             "pos": [
                 5309,
                 5951
             ],
-            "degree": 3
+            "degree": 2
         },
         {
             "pos": [
@@ -131,21 +131,21 @@
                 5156,
                 5987
             ],
-            "degree": 3
+            "degree": 7
         },
         {
             "pos": [
                 5078,
                 5996
             ],
-            "degree": 4
+            "degree": 2
         },
         {
             "pos": [
                 5000,
                 6000
             ],
-            "degree": 2
+            "degree": 5
         },
         {
             "pos": [
@@ -159,98 +159,98 @@
                 4843,
                 5987
             ],
-            "degree": 10
+            "degree": 2
         },
         {
             "pos": [
                 4766,
                 5972
             ],
-            "degree": 2
+            "degree": 7
         },
         {
             "pos": [
                 4690,
                 5951
             ],
-            "degree": 5
+            "degree": 2
         },
         {
             "pos": [
                 4617,
                 5923
             ],
-            "degree": 4
+            "degree": 3
         },
         {
             "pos": [
                 4546,
                 5891
             ],
-            "degree": 5
+            "degree": 3
         },
         {
             "pos": [
                 4477,
                 5852
             ],
-            "degree": 3
+            "degree": 6
         },
         {
             "pos": [
                 4412,
                 5809
             ],
-            "degree": 3
+            "degree": 2
         },
         {
             "pos": [
                 4350,
                 5760
             ],
-            "degree": 2
+            "degree": 5
         },
         {
             "pos": [
                 4292,
                 5707
             ],
-            "degree": 5
+            "degree": 2
         },
         {
             "pos": [
                 4239,
                 5649
             ],
-            "degree": 3
+            "degree": 6
         },
         {
             "pos": [
                 4190,
                 5587
             ],
-            "degree": 10
+            "degree": 4
         },
         {
             "pos": [
                 4147,
                 5522
             ],
-            "degree": 2
+            "degree": 4
         },
         {
             "pos": [
                 4108,
                 5453
             ],
-            "degree": 6
+            "degree": 4
         },
         {
             "pos": [
                 4076,
                 5382
             ],
-            "degree": 6
+            "degree": 3
         },
         {
             "pos": [
@@ -264,42 +264,42 @@
                 4027,
                 5233
             ],
-            "degree": 4
+            "degree": 5
         },
         {
             "pos": [
                 4012,
                 5156
             ],
-            "degree": 3
+            "degree": 2
         },
         {
             "pos": [
                 4003,
                 5078
             ],
-            "degree": 2
+            "degree": 5
         },
         {
             "pos": [
                 4000,
                 5000
             ],
-            "degree": 8
+            "degree": 4
         },
         {
             "pos": [
                 4003,
                 4921
             ],
-            "degree": 2
+            "degree": 4
         },
         {
             "pos": [
                 4012,
                 4843
             ],
-            "degree": 4
+            "degree": 7
         },
         {
             "pos": [
@@ -313,21 +313,21 @@
                 4048,
                 4690
             ],
-            "degree": 4
+            "degree": 3
         },
         {
             "pos": [
                 4076,
                 4617
             ],
-            "degree": 4
+            "degree": 5
         },
         {
             "pos": [
                 4108,
                 4546
             ],
-            "degree": 4
+            "degree": 3
         },
         {
             "pos": [
@@ -348,7 +348,7 @@
                 4239,
                 4350
             ],
-            "degree": 2
+            "degree": 6
         },
         {
             "pos": [
@@ -362,14 +362,14 @@
                 4350,
                 4239
             ],
-            "degree": 4
+            "degree": 3
         },
         {
             "pos": [
                 4412,
                 4190
             ],
-            "degree": 3
+            "degree": 7
         },
         {
             "pos": [
@@ -383,28 +383,28 @@
                 4546,
                 4108
             ],
-            "degree": 5
+            "degree": 3
         },
         {
             "pos": [
                 4617,
                 4076
             ],
-            "degree": 6
+            "degree": 3
         },
         {
             "pos": [
                 4690,
                 4048
             ],
-            "degree": 2
+            "degree": 4
         },
         {
             "pos": [
                 4766,
                 4027
             ],
-            "degree": 7
+            "degree": 3
         },
         {
             "pos": [
@@ -425,7 +425,7 @@
                 5000,
                 4000
             ],
-            "degree": 2
+            "degree": 8
         },
         {
             "pos": [
@@ -453,77 +453,77 @@
                 5309,
                 4048
             ],
-            "degree": 4
+            "degree": 8
         },
         {
             "pos": [
                 5382,
                 4076
             ],
-            "degree": 5
+            "degree": 2
         },
         {
             "pos": [
                 5453,
                 4108
             ],
-            "degree": 3
+            "degree": 4
         },
         {
             "pos": [
                 5522,
                 4147
             ],
-            "degree": 7
+            "degree": 2
         },
         {
             "pos": [
                 5587,
                 4190
             ],
-            "degree": 2
+            "degree": 5
         },
         {
             "pos": [
                 5649,
                 4239
             ],
-            "degree": 5
+            "degree": 3
         },
         {
             "pos": [
                 5707,
                 4292
             ],
-            "degree": 2
+            "degree": 3
         },
         {
             "pos": [
                 5760,
                 4350
             ],
-            "degree": 3
+            "degree": 2
         },
         {
             "pos": [
                 5809,
                 4412
             ],
-            "degree": 8
+            "degree": 2
         },
         {
             "pos": [
                 5852,
                 4477
             ],
-            "degree": 5
+            "degree": 7
         },
         {
             "pos": [
                 5891,
                 4546
             ],
-            "degree": 4
+            "degree": 5
         },
         {
             "pos": [
@@ -558,8 +558,8 @@
                 5996,
                 4921
             ],
-            "degree": 3
+            "degree": 2
         }
     ],
-    "possible": true
+    "possible": false
 }

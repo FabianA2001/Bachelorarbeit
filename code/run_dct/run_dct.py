@@ -186,7 +186,7 @@ def run_algo():
 
 
 def create_instance():
-    NAME = "N_Gone_Random"
+    NAME = "N_Gone_random"
     FILE_NAME = "random"
     NUMBER_INSTANCE = 1
     NUMBER_NODES = 100
@@ -200,7 +200,7 @@ def create_instance():
             i,
             NUMBER_INSTANCE,
             generate.Generate_Nodes_n_gon(1000),
-            generate.Generate_Edges_Delaunay_Flips(FLIPS),
+            generate.Generate_Edges_Random(),
             # generate.Generate_Impossible_Move_Degree(),
             path="instance",
             width=10000,
