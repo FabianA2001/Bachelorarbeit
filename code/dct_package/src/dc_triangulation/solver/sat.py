@@ -207,6 +207,8 @@ class SAT(Solver):
             try:
                 for edge in parameter.get("debug_set_edges", []):
                     self.solver.add_clause([self.get_index(edge)])
+                for edge in parameter.get("debug_exclude_edges", []):
+                    self.solver.add_clause([-self.get_index(edge)])
             except Exception as e:
                 self.logger.warning(
                     f"Debug set edges failed([{e}]), continuing without them."
