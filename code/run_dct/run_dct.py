@@ -139,9 +139,9 @@ def gurobi_algorithm(graph):
 
 
 def run_algo():
-    PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_40", "000_delaunay.json"
-    )
+    # PATH = os.path.join(
+    #     os.path.dirname(__file__), "instance", "simple_40", "002_delaunay_flips.json"
+    # )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
     # )
@@ -160,12 +160,20 @@ def run_algo():
     #     "iterative_80_10",
     #     "003_random_60.json",
     # )
+    PATH = os.path.join(
+        os.path.dirname(__file__),
+        "instance",
+        "N_Gon_60",
+        "006_random.json",
+    )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    time_function(lambda: graph.get_intersection_clique)()
-    print("--------------------")
+    print(len(graph.exclude_edge_partition))
+    # solver = Random_Adder(graph)
+    # solver.solve({"timeout": -1})
+
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
@@ -178,26 +186,28 @@ def run_algo():
 
 
 def create_instance():
-    NAME = "delaunay_impossible"
-    FILE_NAME = "delaunay_impossible"
-    NUMBER_INSTANCE = 6
-    NUMBER_NODES = 80
+    NAME = "N_Gone_Random"
+    FILE_NAME = "random"
+    NUMBER_INSTANCE = 1
+    NUMBER_NODES = 100
     STEP = 10
     FLIPS = 300
-    generate.Generate_Instance(
-        NAME,
-        FILE_NAME,
-        NUMBER_NODES,
-        NUMBER_INSTANCE,
-        generate.Generate_Nodes_Iterativ(STEP, NUMBER_INSTANCE),
-        generate.Generate_Edges_Delaunay(),
-        generate.Generate_Impossible_Move_Degree(),
-        path="instance",
-        width=10000,
-        height=10000,
-    ).generate()
+    RADIUS = 1000
+    for i in [70, 80, 90, 100]:
+        generate.Generate_Instance(
+            NAME,
+            FILE_NAME,
+            i,
+            NUMBER_INSTANCE,
+            generate.Generate_Nodes_n_gon(1000),
+            generate.Generate_Edges_Delaunay_Flips(FLIPS),
+            # generate.Generate_Impossible_Move_Degree(),
+            path="instance",
+            width=10000,
+            height=10000,
+        ).generate()
 
 
 if __name__ == "__main__":
-    run_algo()
-    # create_instance()
+    # run_algo()
+    create_instance()
