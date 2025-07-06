@@ -290,12 +290,10 @@ def test_exclude_edges():
             intersection=True,
             degree_atleast=True,
         )
-        try:
-            solver.solve(
-                {"timeout": -1, "args": asdict(para), "debug_set_edges": [edge]}
-            )
-        except AssertionError:
-            continue
+        solution = solver.solve(
+            {"timeout": -1, "args": asdict(para), "debug_set_edges": [edge]}
+        )
+        assert not solution["success"]
 
 
 #         graph.show_and_save()
