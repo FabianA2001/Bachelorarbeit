@@ -38,6 +38,29 @@ if __name__ == "__main__":
                     )
                 ),
             },
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    SAT_Parameter(
+                        intersection=True,
+                        degree_exact=True,
+                        fix_hull=True,
+                        all_edges=True,
+                        exclude_edges=True,
+                    )
+                ),
+            },
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    SAT_Parameter(
+                        intersection=True,
+                        degree_exact=True,
+                        fix_hull=True,
+                        all_edges=True,
+                    )
+                ),
+            },
         ],
         Ortools: [
             {
@@ -48,6 +71,29 @@ if __name__ == "__main__":
                         degree=True,
                         fix_hull=True,
                         all_edges=True,
+                    )
+                ),
+            },
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    Ortools_Parameter(
+                        intersection=True,
+                        degree=True,
+                        fix_hull=True,
+                        all_edges=True,
+                        exclude_edges=True,
+                    )
+                ),
+            },
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    Ortools_Parameter(
+                        intersection=True,
+                        degree=True,
+                        fix_hull=True,
+                        exclude_edges=True,
                     )
                 ),
             },
