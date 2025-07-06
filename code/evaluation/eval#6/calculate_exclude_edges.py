@@ -170,11 +170,12 @@ def get_edges(PATH, PERCENT, KEY):
 
 
 if __name__ == "__main__":
-    INST = "simple_40"
-    FILE = "000_delaunay_flips.json"
+    INST = "simple_80"
+    # FILE = "000_delaunay_flips.json"
+    FILE = "000_random.json"
     PATH = os.path.join(os.path.dirname(__file__), "instance", INST, FILE)
     KEY = f"{INST}_{FILE}"
-    PERCENT = 0.1
+    PERCENT = 0.2
 
     edges = time_function(get_edges)(PATH, PERCENT, KEY)
     logging.info(f"anzahl Kanten: {len(edges)}")
