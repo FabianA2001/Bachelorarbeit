@@ -133,6 +133,35 @@ class Run_Algbench:
                 possible = json.load(f)["possible"]
             graph = Graph_Wrapper(nodes)
             timeout = [False]
+            ####################################################
+            # hack für eval 6
+            if parameter.get("hack_eval_6", False):
+                try:
+                    if "hack_eval_6_data" not in parameter:
+                        raise ValueError(
+                            "hack_eval_6_data must be provided in the parameter."
+                        )
+                    if "hack_eval_6_PERCENT" not in parameter:
+                        raise ValueError(
+                            "hack_eval_6_PERCENT must be provided in the parameter."
+                        )
+                    data = parameter["hack_eval_6_data"]
+                    percent = parameter["hack_eval_6_PERCENT"]
+                    key = f"{instance_name}_{file_name}.json"
+                    logging.info("-------------------------------------------->")
+                    logging.info(key)
+                    if key not in data:
+                        raise ValueError(f"No data found for instance {key}.")
+                    if percent not in data[key]:
+                        raise ValueError(
+                            f"No data found for instance {key} with percent {percent}."
+                        )
+                    parameter["debug_exclude_edges"] = data[key][percent]
+                except ValueError as e:
+                    logging.error(f"Error in hack_eval_6: {e}")
+                    continue
+            ############################################
+
             logging.info(f"starte instance: {instance_name}/{file_name}")
             self.benchmark.add(
                 self.create_benchmark_entry,

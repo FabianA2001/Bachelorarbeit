@@ -51,10 +51,12 @@ def get_parameters():
 
 time_function
 
-DATA_PATH = "./"
+DATA_PATH = os.path.join(os.path.dirname(__file__), "calculated_data.json")
 
 
-def load_data(file_path: str) -> dict[str, dict[str, list[tuple[int, int]]]]:
+def load_data(
+    file_path: str = DATA_PATH,
+) -> dict[str, dict[str, list[tuple[int, int]]]]:
     """
     Lädt Daten aus einer JSON-Datei.
     Falls die Datei nicht existiert, wird ein leeres Dictionary zurückgegeben.
@@ -83,7 +85,7 @@ def load_data(file_path: str) -> dict[str, dict[str, list[tuple[int, int]]]]:
 
 
 def save_data(
-    data: dict[str, dict[str, list[tuple[int, int]]]], file_path: str
+    data: dict[str, dict[str, list[tuple[int, int]]]], file_path: str = DATA_PATH
 ) -> bool:
     """
     Speichert Daten in einer JSON-Datei.
@@ -110,10 +112,9 @@ def save_data(
 
 def get_edges(PATH, PERCENT, KEY):
     # Definiere den Pfad zur JSON-Datei
-    json_file_path = os.path.join(DATA_PATH, "calculated_data.json")
 
     # Lade bestehende Daten
-    data = load_data(json_file_path)
+    data = load_data()
 
     # Prüfe ob die Berechnung bereits existiert
     if KEY in data:
@@ -133,6 +134,7 @@ def get_edges(PATH, PERCENT, KEY):
     )
     solver.solve({"timeout": -1, "args": asdict(para)})
     all_edges = graph.get_all_edges()
+    logging.info(f"Anzahl aller Kanten: {len(all_edges)}")
     num_desiert_edges = int(len(all_edges) * PERCENT)
     logging.info(f"ziel sind {num_desiert_edges} kanten")
     aktive_edges = graph.get_aktive_graph().edges
@@ -162,7 +164,7 @@ def get_edges(PATH, PERCENT, KEY):
     data[KEY][str(PERCENT)] = result
 
     # Speichere die Daten
-    save_data(data, json_file_path)
+    save_data(data)
 
     return result
 
@@ -172,6 +174,8 @@ if __name__ == "__main__":
     FILE = "000_delaunay_flips.json"
     PATH = os.path.join(os.path.dirname(__file__), "instance", INST, FILE)
     KEY = f"{INST}_{FILE}"
-    PERCENT = 0.01
+    PERCENT = 0.1
 
-    print(time_function(get_edges)(PATH, PERCENT, KEY))
+    edges = time_function(get_edges)(PATH, PERCENT, KEY)
+    logging.info(f"anzahl Kanten: {len(edges)}")
+    print(*edges, sep="\n")
