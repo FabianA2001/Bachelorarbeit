@@ -54,6 +54,7 @@ Dieses Verfahren ist maximal da alle möglichen Kanten betrachten wurden.
 	\item Gurobi
 \end{itemize}
 \subsection{Kanten Formulierung}
+Es gibt zwei notwendige Beschränkungen damit eine gradbeschränkte Triangulation erzeugt werden kann.
 Die erste Beschränkung ist die Überschneidungsbeschränkung.
 Da eine Triangulation keine Überschneidungen haben darf müssen diese verboten werden.
 Dafür werden alle Kantenpaare berechnet welche sich schneiden.
@@ -61,23 +62,55 @@ Von diesen Paaren darf dann jeweils nur eine Kante aktiv sein.
 TODO algo erklären oder verweisen
 Die Schnittpaare werden mit dem algo berechnet.
 
+Die zweite ist die Gradbeschränkung.
+Bei dieser Beschränkung wird für jeden Knoten \(i\) die Summe der ausgehenden Kanten auf den Sollgrad \(\degrees(i)\) beschränkt.
+Um dies zu erreichen wird für jeden Knoten festgelegt das die Summe der ausgehenden Kanten gleich dem Sollgrad ist.
+
+Eine weitere notwendige Bedingung ist das die Kantenanzahl Maximal ist.
+Dies muss aber nicht explizit als Beschränkung angegeben werden, da es durch die Gradbeschränkung implizit gegeben ist.
+Man muss nur testen ob die Gradbeschränkung in einer Triangulation erfüllbar ist.
+Da für kann die Formel 
+\[
+\text{Anzahl Kanten: } 3 n - 3 - k
+\]
+aus~\cref{sec:delaunay_triangulation} genutzt werden.
+Diese Formel liefert die benötigte Kantenanzahl und kann dann in folgender Formel genutzt werden um die Gradbeschränkung zu verifzieren.
+\[
+\text{Anzahl Kanten} \cdot 2 \overset{!}{=} \sum \degrees(i)
+\]
+
+Alle anderen Beschränkungen sind optional und sollen die Laufzeit des Solvers verbessern.
+Die erste und naheliegend Beschränkung ist die \emph{fixierte Hülle} Beschränkung. 
+Bei dieser Beschränkung werden die Kanten der konvexen Hülle immer hinzugefügt.
+Diese dürfen hinzugefügt werden da sie keine Schnittkanten haben.
+Auch dürfen sie nicht die Gradbeschränkung verletzen da der Graph sonst nicht maximal wäre und somit auch keine Triangulation.
+
+
+
+
+
+
+
+
+
+
 
 \begin{itemize}
-	\item Intersection Konstriend
-	\begin{itemize}
-		\item Triangulation darf keine Überschneidungen haben
-		\item Alle Kantenpaare max eine aktiv
-		\item algo von Michael mit Orientierung
-	\end{itemize}
-	\item Gradbeschränkung
-	\begin{itemize}
-		\item Knoten müssen Sollgrad erfüllen
-		\item für jeden Knoten Anzahl ausgehender Kanten gleich Sollgrad
-	\end{itemize}
-	\item fix hull
-	\begin{itemize}
-		\item Kanten der konvexen Hülle müssen aktiv sein da keine alternative und maximal
-	\end{itemize}
+	% \item Intersection Konstriend
+	% \begin{itemize}
+	% 	\item Triangulation darf keine Überschneidungen haben
+	% 	\item Alle Kantenpaare max eine aktiv
+	% 	\item algo von Michael mit Orientierung
+	% \end{itemize}
+	% \item Gradbeschränkung
+	% \begin{itemize}
+	% 	\item Knoten müssen Sollgrad erfüllen
+	% 	\item für jeden Knoten Anzahl ausgehender Kanten gleich Sollgrad
+	% \end{itemize}
+	% \item fix hull
+	% \begin{itemize}
+	% 	\item Kanten der konvexen Hülle müssen aktiv sein da keine alternative und maximal
+	% \end{itemize}
 	\item all Edges
 	\begin{itemize}
 		\item nicht notwendig aber mehr Einschrängugnen könnten die Laufzeit verbessern
