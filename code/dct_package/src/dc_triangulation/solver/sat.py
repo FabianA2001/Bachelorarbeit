@@ -30,6 +30,7 @@ class Parameter:
     fix_hull: bool = False
     exclude_edges: bool = False
     hack_eval6: bool = False
+    fix_edges: bool = False
 
 
 class SAT(Solver):
@@ -138,16 +139,15 @@ class SAT(Solver):
             # Setze die Kante als inaktiv
             self.solver.add_clause([-index])
 
-    def intersection_clique_constraint(self):
-        all_clique = time_function(self.graph.get_intersection_clique, self.logger)()
-        for clique in all_clique:
-            vars = [self.get_index(edge) for edge in clique]
-            cnf = self.formula_number_vars(
-                vars=vars,
-                n=1,
-                exact_atleast=True,
-            )
-            self.solver.append_formula(cnf)
+    def fix_edges_constraint(self):
+        for edge in self.graph.fix_edges:
+            index = self.get_index(edge)
+            if index == -1:
+                continue
+            # Setze die Kante als aktiv
+            self.solver.add_clause([index])
+        if self.reach_timeout():
+            raise TimeoutError()
 
     def formula_number_vars(self, vars, n, exact_atleast=True):
         # CNF-Formel erstellen
@@ -193,8 +193,8 @@ class SAT(Solver):
             time_function(self.set_hull_fix_constraint, self.logger)()
         if parameter_data.exclude_edges:
             time_function(self.exclude_edges_constraint, self.logger)()
-        if parameter_data.intersection_clique:
-            time_function(self.intersection_clique_constraint, self.logger)()
+        if parameter_data.fix_edges:
+            time_function(self.fix_edges_constraint, self.logger)()
 
     def _actual_solver(self, parameter: dict) -> dict:
         if not isinstance(parameter, dict):

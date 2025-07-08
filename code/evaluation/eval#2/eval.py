@@ -36,6 +36,12 @@ outer_parameter = {
         {
             "timeout": TIMEOUT,
             "args": asdict(
+                SAT_Parameter(intersection=True, degree_exact=True, fix_edges=True)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
                 SAT_Parameter(
                     intersection=True,
                     degree_exact=True,
@@ -73,6 +79,12 @@ outer_parameter = {
             "timeout": TIMEOUT,
             "args": asdict(
                 Ortools_Parameter(intersection=True, degree=True, fix_hull=True)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(intersection=True, degree=True, fix_edges=True)
             ),
         },
         {
