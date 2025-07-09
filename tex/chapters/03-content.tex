@@ -54,6 +54,14 @@ Dieses Verfahren ist maximal da alle möglichen Kanten betrachten wurden.
 	\item Gurobi
 \end{itemize}
 \subsection{Kanten Formulierung}
+Die erste Beschränkung ist die Überschneidungsbeschränkung.
+Da eine Triangulation keine Überschneidungen haben darf müssen diese verboten werden.
+Dafür werden alle Kantenpaare berechnet welche sich schneiden.
+Von diesen Paaren darf dann jeweils nur eine Kante aktiv sein.
+TODO algo erklären oder verweisen
+Die Schnittpaare werden mit dem algo berechnet.
+
+
 \begin{itemize}
 	\item Intersection Konstriend
 	\begin{itemize}

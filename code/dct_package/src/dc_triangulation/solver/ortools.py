@@ -18,6 +18,7 @@ class Parameter:
     degree_direction: bool = False
     maximize_edges: bool = False
     exclude_edges: bool = False
+    fix_edges: bool = False
 
 
 class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
@@ -132,6 +133,16 @@ class Ortools(Solver):
 
         self.model.Maximize(sum(self.vars_int.values()))
 
+    def fix_edges_constraint(self):
+        for edge in self.graph.fix_edges:
+            if edge not in self.vars:
+                continue
+            index = self.vars[edge]
+            # Setze die Kante als aktiv
+            self.model.Add(index == 1)
+
+        self.timeout_error()
+
     def pre_solve(self, parameter_data: Parameter, timeout: int) -> bool:
         self.graph.add_all_possible_edges(default_for_active=False)
         self.vars = {
@@ -164,6 +175,8 @@ class Ortools(Solver):
             self.add_time(self.constraint_set_number_edges)(
                 self.graph.get_number_edges_in_Triangulation()
             )
+        if parameter_data.fix_edges:
+            self.fix_edges_constraint()
 
         stop_after_first_solution = True
         if parameter_data.evaluation_direction:

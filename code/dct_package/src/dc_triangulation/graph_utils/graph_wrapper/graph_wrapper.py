@@ -380,3 +380,17 @@ class Graph_Wrapper:
     def get_intersection_clique_cpp(self) -> list[set[tuple[int, int]]]:
         edge_dict = self.get_all_intersections_cpp()
         return max_clique(edge_dict)
+
+    @cached_property
+    def fix_edges(self) -> set[tuple[int, int]]:
+        """Gibt die Kanten zurück, die fixiert werden sollen."""
+        edges = set()
+        hull_nodes = self.get_hull_nodes()
+        for node1, node2, node3 in zip(
+            hull_nodes,
+            hull_nodes[1:] + hull_nodes[:-1],
+            hull_nodes[2:] + hull_nodes[:-2],
+        ):
+            if self.get_desired_degree_node(node2) != 2:
+                edges.add((min(node1, node3), max(node1, node3)))
+        return edges
