@@ -205,7 +205,7 @@ def configure_grb_license_path():
     # It is expected that the license file is in the following location:
     # ~/.gurobi/{$HOSTNAME}/gurobi.lic
     # You can of course change this path to whatever you like.
-    grb_license_path = Path.home() / ".gurobi"  / "gurobi.lic"
+    grb_license_path = Path.home() / ".gurobi" / "gurobi.lic"
     import os
 
     os.environ["GRB_LICENSE_FILE"] = str(grb_license_path)
@@ -240,7 +240,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if False:
+    if True:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.

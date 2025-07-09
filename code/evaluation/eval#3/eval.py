@@ -1,23 +1,8 @@
 import os
 from dataclasses import asdict
 
-from dc_triangulation import (
-    SAT,
-    SAT_TRI,
-    Delaunay,
-    Gurobi,
-    Gurobi_Parameter,
-    Gurobi_Tri,
-    Gurobi_Tri_Parameter,
-    Iterative,
-    Ortools,
-    Ortools_Parameter,
-    Random_Adder,
-    Raw_Flips,
-    Run_Algbench,
-    SAT_Parameter,
-    SAT_Tri_Parameter,
-)
+import slurminade
+from dc_triangulation import SAT, Graph_Wrapper, Run_Algbench, SAT_Parameter
 
 asdict
 if __name__ == "__main__":
@@ -125,34 +110,75 @@ if __name__ == "__main__":
         ]
     }
 
-ri = Run_Algbench(
+RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
 )
-ri.run()
-ri.show()
 
 
-def get_solvers():
-    return [
-        Raw_Flips,
-        Delaunay,
-        Iterative,
-        Ortools,
-        SAT,
-        Random_Adder,
-        SAT_TRI,
-        Gurobi_Tri,
-        Gurobi,
-    ]
+@slurminade.node_setup
+def configure_grb_license_path():
+    # copy and paste solution for handling Gurobi licenses.
+    import socket
+    from pathlib import Path
+
+    if "alg" not in socket.gethostname():
+        return
+
+    # TODO: Make sure that the license file is in the correct location
+    # It is expected that the license file is in the following location:
+    # ~/.gurobi/{$HOSTNAME}/gurobi.lic
+    # You can of course change this path to whatever you like.
+    grb_license_path = Path.home() / ".gurobi" / "gurobi.lic"
+    import os
+
+    os.environ["GRB_LICENSE_FILE"] = str(grb_license_path)
+
+    if not grb_license_path.exists():
+        msg = "Gurobi License File does not exist."
+        raise RuntimeError(msg)
 
 
-def get_parameters():
-    return [
-        SAT_Parameter,
-        Ortools_Parameter,
-        SAT_Tri_Parameter,
-        Gurobi_Tri_Parameter,
-        Gurobi_Parameter,
-    ]
+@slurminade.slurmify()
+def run_solver_on_inst(key: str):
+    solver, nodes, possible, inst, file_name = RI.get_solver_inst_from_runlist[key]
+    parameters = RI.outer_parameter[solver]
+    for parameter in parameters:
+        graph = Graph_Wrapper(nodes)
+        RI.benchmark.add(
+            RI.create_benchmark_entry,
+            solver_name=solver.NAME,
+            parameter=parameter,
+            instance_name=inst,
+            file_name=file_name,
+            _possible=possible,
+            _solver_type=solver,
+            _graph=graph,
+        )
+
+
+@slurminade.slurmify(mail_type="ALL")
+def compress_results():
+    # Compress the results to save significant disk space
+    RI.compress()
+
+
+if __name__ == "__main__":
+    if True:
+        slurminade.update_default_configuration(
+            # Your supervisor will tell you these details
+            partition="alg",  # Which partition to use. Usually group name.
+            constraint="alggen02",  # Which workstations within the partition to use
+            exclusive=True,  # To use all cores on a node exclusively
+            mail_type="FAIL",  # Send mail on failure
+            mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
+        )
+        run_list = RI.get_run_list()
+        for key in run_list:
+            run_solver_on_inst.distribute(key)
+
+        slurminade.join()
+        compress_results.distribute()
+    else:
+        RI.show()

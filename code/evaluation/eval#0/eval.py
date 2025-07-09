@@ -57,7 +57,7 @@ def configure_grb_license_path():
     # It is expected that the license file is in the following location:
     # ~/.gurobi/{$HOSTNAME}/gurobi.lic
     # You can of course change this path to whatever you like.
-    grb_license_path = Path.home() / ".gurobi" / socket.gethostname() / "gurobi.lic"
+    grb_license_path = Path.home() / ".gurobi" / "gurobi.lic"
     import os
 
     os.environ["GRB_LICENSE_FILE"] = str(grb_license_path)
@@ -96,14 +96,14 @@ if __name__ == "__main__":
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
-            constraint="alggen05",  # Which workstations within the partition to use
+            constraint="alggen02",  # Which workstations within the partition to use
             exclusive=True,  # To use all cores on a node exclusively
             mail_type="FAIL",  # Send mail on failure
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
         )
         run_list = RI.get_run_list()
         for key in run_list:
-            run_solver_on_inst(key)
+            run_solver_on_inst.distribute(key)
 
         slurminade.join()
         compress_results.distribute()
