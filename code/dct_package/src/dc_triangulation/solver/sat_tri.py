@@ -9,7 +9,6 @@ from pysat.solvers import Solver as SatSolver
 
 from ..graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from ..solver.solver import Solver
-from ..utils import time_function
 
 
 @dataclass
@@ -80,13 +79,13 @@ class SAT_TRI(Solver):
             self.number_tri_constraint()
 
         if parameter.intersection:
-            time_function(self.intersection_constraint, self.logger)()
+            self.add_time(self.intersection_constraint)()
 
         if parameter.degree:
-            time_function(self.degree_constraint, self.logger)()
+            self.add_time(self.degree_constraint)()
 
         if parameter.exclude_edges:
-            time_function(self.exclude_triangles_constraint)()
+            self.add_time(self.exclude_triangles_constraint)()
 
     def get_index(self, tri_pos) -> int:
         if not (isinstance(tri_pos, tuple) and len(tri_pos) == 3):

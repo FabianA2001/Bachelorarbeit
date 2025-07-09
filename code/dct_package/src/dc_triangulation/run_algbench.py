@@ -4,6 +4,7 @@ import os
 import socket
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 from algbench import Benchmark, read_as_pandas
@@ -112,6 +113,7 @@ class Run_Algbench:
             "correct": correct,
             "time_pre_solver": solver.pre_solve_time,
             "time_solver": solver.solve_time,
+            "timing": solver.timing,
             "evaluation": _graph.evaluate_graph(),
             "triangulation": _graph.get_all_edges(True),
             "info": info,
@@ -177,6 +179,7 @@ class Run_Algbench:
 
     def show(
         self,
+        old: bool = False,
     ):
         table = read_as_pandas(
             self.path_benchmark,
@@ -277,21 +280,137 @@ class Run_Algbench:
         legend += "\n" + "=" * 50
         logging.info(legend)
 
-        # self.create_plt(
-        #     table=table,
-        #     y="evaluation",
-        #     block=False,
-        # )
-        self.create_plt(
+        # als Balkendiagramm darstellen
+        if old:
+            self.create_plt(
+                table=table,
+                y="pre_time",
+                block=False,
+            )
+            self.create_plt(
+                table=table,
+                y="runtime",
+                block=True,
+            )
+            return
+
+        # Erstelle Cactus Plot
+        self.create_cactus(
             table=table,
             y="pre_time",
             block=False,
         )
-        self.create_plt(
+        self.create_cactus(
             table=table,
             y="runtime",
             block=True,
         )
+
+    def create_cactus(
+        self,
+        table,
+        y: str,
+        block: bool = False,
+    ):
+        """
+        Erstellt einen Cactus Plot für die Benchmark-Daten.
+        In einem Cactus Plot wird die Zeit (y-Achse) gegen die Anzahl der gelösten
+        Instanzen (x-Achse) dargestellt, sortiert nach Laufzeit.
+        """
+
+        # Seaborn Style setzen
+        sns.set_style("whitegrid")
+
+        # Debug: Zeige alle verfügbaren Solver
+        all_solvers = table["solver_args"].unique()
+
+        # Debug: Zeige Datenverteilung vor Filterung
+        for solver in all_solvers:
+            solver_count = len(table[table["solver_args"] == solver])
+            positive_count = len(
+                table[(table["solver_args"] == solver) & (table[y] >= 0)]
+            )
+
+        # Filter gültige Werte (entferne negative Werte wie -1 für Timeouts)
+        valid_data = table[table[y] >= 0].copy()
+
+        if len(valid_data) == 0:
+            logging.warning(f"Keine gültigen Daten für {y} Cactus Plot gefunden")
+            return
+
+        # Eindeutige Solver ermitteln
+        unique_solvers = valid_data["solver_args"].unique()
+
+        # Seaborn Farbpalette
+        colors = sns.color_palette("husl", len(unique_solvers))
+
+        plt.figure(figsize=(12, 8))
+
+        # Für jeden Solver die Daten sortieren und plotten
+        for i, solver in enumerate(unique_solvers):
+            solver_data = valid_data[valid_data["solver_args"] == solver][y].values
+
+            if len(solver_data) == 0:
+                logging.warning(f"Keine Daten für Solver '{solver}' nach Filterung")
+                continue
+
+            # Sortieren für Cactus Plot (wichtig!)
+            times_sorted = np.sort(solver_data)
+            x_values = np.arange(1, len(times_sorted) + 1)
+
+            # Plot erstellen
+            plt.plot(
+                x_values,
+                times_sorted,
+                "o-",
+                color=colors[i],
+                label=solver,
+                linewidth=2,
+                markersize=3,
+                alpha=0.8,
+            )
+
+        # Styling
+        plt.xlabel("Anzahl gelöste Instanzen", fontsize=12, fontweight="bold")
+        plt.ylabel(
+            f"{y.replace('_', ' ').title()} (Sekunden)", fontsize=12, fontweight="bold"
+        )
+        plt.title(
+            f"Cactus Plot - {y.replace('_', ' ').title()} Performance Vergleich",
+            fontsize=14,
+            fontweight="bold",
+            pad=20,
+        )
+
+        # Legende styling
+        legend = plt.legend(
+            loc="upper left", fontsize=11, frameon=True, fancybox=True, shadow=True
+        )
+        legend.get_frame().set_facecolor("white")
+        legend.get_frame().set_alpha(0.9)
+
+        # Grid
+        plt.grid(True, alpha=0.3, linestyle="-", linewidth=0.5)
+
+        # Y-Achse logarithmisch skalieren (oft nützlich bei Performance-Daten)
+        if valid_data[y].max() / valid_data[y].min() > 10:  # Nur wenn große Spanne
+            plt.yscale("log")
+
+        # Seaborn despine für cleaner look
+        sns.despine()
+
+        # Layout optimieren
+        plt.tight_layout()
+
+        # Speichern falls Pfad angegeben
+        if self.figure_path:
+            plt.savefig(
+                os.path.join(self.figure_path, f"cactus_{y}.pdf"),
+                dpi=300,
+                bbox_inches="tight",
+            )
+
+        plt.show(block=block)
 
     def create_plt(
         self,

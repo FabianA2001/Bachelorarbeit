@@ -4,7 +4,6 @@ import shapely
 from gurobipy import GRB, Model
 
 from ..graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from ..utils import time_function
 from .solver import Solver
 
 """
@@ -29,7 +28,7 @@ class Gurobi_Tri(Solver):
 
     def setup(self, parameter: Parameter):
         self.graph.add_all_possible_edges(default_for_active=False)
-        self.triangle = time_function(self.graph.get_all_triangles, self.logger)()
+        self.triangle = self.add_time(self.graph.get_all_triangles)()
         self.vars = {}
         for tri in self.triangle:
             if not isinstance(tri, tuple) or len(tri) != 3:
@@ -65,15 +64,15 @@ class Gurobi_Tri(Solver):
                 self.edge_to_triangles[edge].append(triangle)
 
     def pre_solve(self, parameter: Parameter):
-        self.setup(parameter)
+        self.add_time(self.setup)(parameter)
         if not self.triangle:
             raise ValueError("No triangles found in the graph.")
         if parameter.intersection:
-            time_function(self.intersection_constraint, self.logger)()
+            self.add_time(self.intersection_constraint)()
         if parameter.degree:
-            time_function(self.degree_constraint, self.logger)()
+            self.add_time(self.degree_constraint)()
         if parameter.exclude_edges:
-            self.exclude_edges_constraint()
+            self.add_time(self.exclude_edges_constraint)()
 
     @staticmethod
     def triangles_intersect(
@@ -101,9 +100,7 @@ class Gurobi_Tri(Solver):
         for (
             tri1,
             intersection,
-        ) in time_function(
-            self.graph.get_all_triangles_intersections_cpp, self.logger
-        )().items():
+        ) in self.add_time(self.graph.get_all_triangles_intersections_cpp)().items():
             for tri2 in intersection:
                 self.model.addConstr(
                     self.vars[tri1] + self.vars[tri2] <= 1,
