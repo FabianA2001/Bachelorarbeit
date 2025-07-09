@@ -7,7 +7,6 @@ from pysat.formula import CNF
 from pysat.solvers import Solver as SatSolver
 
 from ..graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from ..utils import time_function
 from .solver import Solver
 
 """
@@ -139,7 +138,7 @@ class SAT(Solver):
             self.solver.add_clause([-index])
 
     def intersection_clique_constraint(self):
-        all_clique = time_function(self.graph.get_intersection_clique, self.logger)()
+        all_clique = self.add_time(self.graph.get_intersection_clique)()
         for clique in all_clique:
             vars = [self.get_index(edge) for edge in clique]
             cnf = self.formula_number_vars(
@@ -178,23 +177,23 @@ class SAT(Solver):
             )
         self.setup(parameter_data)
         if parameter_data.number_edges:
-            time_function(self.number_edge_constraint, self.logger)()
+            self.add_time(self.number_edge_constraint)()
         if parameter_data.intersection:
-            time_function(self.intersection_constraint, self.logger)()
+            self.add_time(self.intersection_constraint)()
         if parameter_data.all_edges:
-            time_function(self.alle_edges_constraint, self.logger)()
+            self.add_time(self.alle_edges_constraint)()
         if parameter_data.degree_exact:
-            time_function(self.degree_constraint, self.logger)(exact_atleast=True)
+            self.add_time(self.degree_constraint)(exact_atleast=True)
         if parameter_data.degree_atleast:
-            time_function(self.degree_constraint, self.logger)(exact_atleast=False)
+            self.add_time(self.degree_constraint)(exact_atleast=False)
         if parameter_data.degree_subset:
-            time_function(self.degree_subset_constraint, self.logger)()
+            self.add_time(self.degree_subset_constraint)()
         if parameter_data.fix_hull:
-            time_function(self.set_hull_fix_constraint, self.logger)()
+            self.add_time(self.set_hull_fix_constraint)()
         if parameter_data.exclude_edges:
-            time_function(self.exclude_edges_constraint, self.logger)()
+            self.add_time(self.exclude_edges_constraint)()
         if parameter_data.intersection_clique:
-            time_function(self.intersection_clique_constraint, self.logger)()
+            self.add_time(self.intersection_clique_constraint)()
 
     def _actual_solver(self, parameter: dict) -> dict:
         if not isinstance(parameter, dict):

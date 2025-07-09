@@ -28,6 +28,7 @@ class Solver(ABC):
         self.timeout = -1  # Default timeout value, can be overridden
         self.solve_time = -1.0
         self.pre_solve_time = -1.0
+        self.timing = {}
         self.logger = self._initialize_logger()
 
     def _initialize_logger(self) -> logging.Logger:
@@ -92,6 +93,23 @@ class Solver(ABC):
             result = func(*args, **kwargs)
             elapsed_time = time.time() - start_time
             self.pre_solve_time = elapsed_time
+            self.logger.info(
+                f"Function {func.__name__:<40} took {elapsed_time:>8.4f} seconds"
+            )
+            return result
+
+        return wrapper
+
+    def add_time(self, func):
+        """
+        Decorator to time a solver function.
+        """
+
+        def wrapper(*args, **kwargs):
+            start_time = time.time()
+            result = func(*args, **kwargs)
+            elapsed_time = time.time() - start_time
+            self.timing[func.__name__] = elapsed_time
             self.logger.info(
                 f"Function {func.__name__:<40} took {elapsed_time:>8.4f} seconds"
             )

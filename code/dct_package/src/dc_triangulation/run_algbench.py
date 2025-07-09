@@ -114,6 +114,7 @@ class Run_Algbench:
             "correct": correct,
             "time_pre_solver": solver.pre_solve_time,
             "time_solver": solver.solve_time,
+            "timing": solver.timing,
             "evaluation": _graph.evaluate_graph(),
             "triangulation": _graph.get_all_edges(True),
         }
