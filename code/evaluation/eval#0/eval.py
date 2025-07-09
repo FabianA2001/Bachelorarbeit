@@ -69,6 +69,9 @@ def configure_grb_license_path():
 
 @slurminade.slurmify()
 def run_solver_on_inst(key: str):
+    assert key in RI.get_solver_inst_from_runlist, (
+        f"Key {key} not found in {RI.get_solver_inst_from_runlist.keys()}"
+    )
     solver, nodes, possible, inst, file_name = RI.get_solver_inst_from_runlist[key]
     parameters = RI.outer_parameter[solver]
     for parameter in parameters:
