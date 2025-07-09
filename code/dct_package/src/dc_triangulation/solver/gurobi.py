@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from gurobipy import GRB, Model
 
 from ..graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from ..utils import time_function
 from .solver import Solver
 
 """
@@ -38,17 +37,17 @@ class Gurobi(Solver):
             )
 
     def pre_solve(self, parameter: Parameter):
-        time_function(self.setup)(parameter)
+        self.add_time(self.setup)(parameter)
         if parameter.intersection:
-            time_function(self.intersection_constraint, self.logger)()
+            self.add_time(self.intersection_constraint)()
         if parameter.degree:
-            time_function(self.degree_constraint, self.logger)()
+            self.add_time(self.degree_constraint)()
         if parameter.exclude_edges:
-            self.exclude_edges_constraint()
+            self.add_time(self.exclude_edges_constraint)()
         if parameter.fix_hull:
-            self.fix_hull_constraint()
+            self.add_time(self.fix_hull_constraint)()
         if parameter.all_edges:
-            self.all_edges_constraint()
+            self.add_time(self.all_edges_constraint)()
         self.timeout_error()
 
     def intersection_constraint(self):

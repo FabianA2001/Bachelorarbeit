@@ -157,22 +157,22 @@ class Ortools(Solver):
             self.model.Maximize(sum(list(self.vars.values())))
 
         if parameter_data.intersection:
-            time_function(self.constraint_intersection)()
+            self.add_time(self.constraint_intersection)()
 
         if parameter_data.all_edges:
-            self.constraint_all_edges()
+            self.add_time(self.constraint_all_edges)()
 
         if parameter_data.degree:
-            self.constraint_degree()
+            self.add_time(self.constraint_degree)()
 
         if parameter_data.fix_hull:
-            self.constraint_set_hull_fix()
+            self.add_time(self.constraint_set_hull_fix)()
 
         if parameter_data.exclude_edges:
-            self.constraint_exclude_edges()
+            self.add_time(self.constraint_exclude_edges)()
 
         if parameter_data.number_edges:
-            self.constraint_set_number_edges(
+            self.add_time(self.constraint_set_number_edges)(
                 self.graph.get_number_edges_in_Triangulation()
             )
         if parameter_data.fix_edges:
@@ -182,13 +182,13 @@ class Ortools(Solver):
         if parameter_data.evaluation_direction:
             if timeout == -1:
                 self.logger.warning("Es sollte ein Timeout gesetzt werden.")
-            time_function(self.evaluation_direction, self.logger)()
+            self.add_time(self.evaluation_direction)()
             stop_after_first_solution = False
 
         if parameter_data.degree_direction:
             if timeout == -1:
                 self.logger.warning("Es sollte ein Timeout gesetzt werden.")
-            time_function(self.degree_direction, self.logger)()
+            self.add_time(self.degree_direction)()
             stop_after_first_solution = False
 
         return stop_after_first_solution
