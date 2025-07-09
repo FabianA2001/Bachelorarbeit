@@ -203,7 +203,7 @@ def configure_grb_license_path():
     # It is expected that the license file is in the following location:
     # ~/.gurobi/{$HOSTNAME}/gurobi.lic
     # You can of course change this path to whatever you like.
-    grb_license_path = Path.home() / ".gurobi" / socket.gethostname() / "gurobi.lic"
+    grb_license_path = Path.home() / ".gurobi"  / "gurobi.lic"
     import os
 
     os.environ["GRB_LICENSE_FILE"] = str(grb_license_path)
@@ -249,7 +249,7 @@ if __name__ == "__main__":
         )
         run_list = RI.get_run_list()
         for key in run_list:
-            run_solver_on_inst(key)
+            run_solver_on_inst.distribute(key)
 
         slurminade.join()
         compress_results.distribute()
