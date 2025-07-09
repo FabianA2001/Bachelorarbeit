@@ -89,14 +89,18 @@ Diese dürfen hinzugefügt werden, da sie keine Schnittkanten besitzen.
 Sie dürfen auch die Gradbeschränkung nicht verletzen. 
 Andernfalls wäre der Graph nicht maximal und somit keine Triangulation.
 
-
-
-
-
-
-
-
-
+Eine andere mögliche Beschränkung ist die \emph{alternative Kanten} Beschränkung.
+Diese wurde von Sándor P. Fekete et.al.~\cite{Exact_Algorithms_for_Minimum_Dilation_Triangulation} übernommen.
+\begin{figure}[tb]
+	\caption{Ein Vollständiger Graph mit allen möglichen Triangulation. Die Kanten \(e_2\) und \(e_3\) sind Schnittkanten von \(e_1\).}
+	\centering
+	\label{fig:all_edges}
+	\includegraphics[scale=0.7]{all_edges.pdf}
+\end{figure}
+Diese Beschränkung nutzt aus das der Graph maximal sein muss.
+Damit dies der Fall sein kann muss für jede Kante gelten das entweder die Kante aktiv ist oder eine der Schnittkanten aktiv ist.
+Wie man in~\cref{fig:all_edges} sieht, ist \(e_1\) die ausgewählte Kante und und \(e_2\) und \(e_3\) die die Schnittkanten.
+Und wie man im Bild sieht werden für alle Möglichen Triangulation mindestens eine der drei Kanten verwendet.
 
 
 \begin{itemize}
@@ -145,12 +149,6 @@ Andernfalls wäre der Graph nicht maximal und somit keine Triangulation.
 	\item 
 \end{itemize}
 
-\begin{figure}[tb]
-	\caption{\emph{All Edges}}
-	\centering
-	\label{fig:all_edges}
-	\includegraphics[scale=0.85]{all_edges.pdf}
-\end{figure}
 
 Für alle Solver wird angenommen das \(E\) die Menge aller möglicher Kanten sei. Also Kanten die keine Punkte schneiden.
 Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
