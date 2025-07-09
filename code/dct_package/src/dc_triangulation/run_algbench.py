@@ -52,12 +52,28 @@ class Run_Algbench:
             self.path_benchmark = path_benchmark
         self.figure_path = figure_path
         self.get_solver_inst_from_runlist: dict[str, tuple] = {}
+        self.setup_keys()
 
         self.benchmark = Benchmark(self.path_benchmark)
         self.benchmark.capture_logger(Solver.LOGGER_NAME)
         pd.set_option("display.max_rows", None)
         pd.set_option("display.max_columns", None)
         pd.set_option("display.width", 200)
+
+    def setup_keys(self):
+        for inst in self.instances.keys():
+            for solver in self.solvers:
+                instance = self.instances[inst]
+
+                for file_name in sorted(instance):
+                    file_path = instance[file_name]
+                    nodes = load_nodes_from_json(file_path)
+                    with open(file_path, "r") as f:
+                        possible = json.load(f)["possible"]
+                    logging.info(f"starte instance: {inst}/{file_name}")
+                    self.get_solver_inst_from_runlist[
+                        f"{solver.NAME}_{inst}_{file_name}"
+                    ] = (solver, nodes, possible, inst, file_name)
 
     @staticmethod
     def get_instances(path) -> dict[str, dict[str, str]]:
@@ -509,20 +525,6 @@ class Run_Algbench:
     def get_run_list(
         self,
     ) -> list[str]:
-        for inst in self.instances.keys():
-            for solver in self.solvers:
-                instance = self.instances[inst]
-
-                for file_name in sorted(instance):
-                    file_path = instance[file_name]
-                    nodes = load_nodes_from_json(file_path)
-                    with open(file_path, "r") as f:
-                        possible = json.load(f)["possible"]
-                    logging.info(f"starte instance: {inst}/{file_name}")
-                    self.get_solver_inst_from_runlist[
-                        f"{solver.NAME}_{inst}_{file_name}"
-                    ] = (solver, nodes, possible, inst, file_name)
-
         return list(self.get_solver_inst_from_runlist.keys())
 
     def compress(self):
