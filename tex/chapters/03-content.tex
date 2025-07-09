@@ -54,30 +54,67 @@ Dieses Verfahren ist maximal da alle möglichen Kanten betrachten wurden.
 	\item Gurobi
 \end{itemize}
 \subsection{Kanten Formulierung}
+Es gibt zwei notwendige Beschränkungen. Nur so kann eine gradbeschränkte Triangulation erzeugt werden.
 Die erste Beschränkung ist die Überschneidungsbeschränkung.
-Da eine Triangulation keine Überschneidungen haben darf müssen diese verboten werden.
-Dafür werden alle Kantenpaare berechnet welche sich schneiden.
-Von diesen Paaren darf dann jeweils nur eine Kante aktiv sein.
-TODO algo erklären oder verweisen
-Die Schnittpaare werden mit dem algo berechnet.
+Eine Triangulation darf keine Überschneidungen enthalten. 
+Diese müssen ausgeschlossen werden.
+Dafür werden alle Kantenpaare berechnet, die sich schneiden.
+Von jedem dieser Paare darf dann nur eine Kante aktiv sein.
+TODO Algorithmus erklären oder darauf verweisen.
+Die Schnittpaare werden mit dem Algorithmus berechnet.
+
+Die zweite Beschränkung ist die Gradbeschränkung.
+Für jeden Knoten \(i\) wird die Summe der ausgehenden Kanten auf den Sollgrad \(\degrees(i)\) beschränkt.
+Um dies zu erreichen, wird für jeden Knoten festgelegt, dass die Summe der ausgehenden Kanten dem Sollgrad entspricht.
+
+Eine weitere notwendige Bedingung ist, dass die Kantenanzahl maximal ist.
+Dies muss nicht explizit als Beschränkung angegeben werden. Die Gradbeschränkung impliziert diese Eigenschaft.
+Es muss nur geprüft werden, ob die Gradbeschränkung in einer Triangulation erfüllbar ist.
+Dafür kann die Formel
+\[
+\text{Anzahl Kanten} = 3 n - 3 - k
+\]
+aus~\cref{sec:delaunay_triangulation} verwendet werden.
+Diese Formel liefert die benötigte Kantenanzahl. 
+Sie kann in folgender Formel genutzt werden, um die Gradbeschränkung zu überprüfen.
+\[
+\text{Anzahl Kanten} \cdot 2 \overset{!}{=} \sum \degrees(i)
+\]
+
+Alle weiteren Beschränkungen sind optional. 
+Sie dienen dazu, die Laufzeit des Solvers zu verbessern.
+Die erste und naheliegende Beschränkung ist die \emph{fixierte Hülle} Beschränkung.
+Hierbei werden die Kanten der konvexen Hülle immer hinzugefügt.
+Diese dürfen hinzugefügt werden, da sie keine Schnittkanten besitzen.
+Sie dürfen auch die Gradbeschränkung nicht verletzen. 
+Andernfalls wäre der Graph nicht maximal und somit keine Triangulation.
+
+
+
+
+
+
+
+
+
 
 
 \begin{itemize}
-	\item Intersection Konstriend
-	\begin{itemize}
-		\item Triangulation darf keine Überschneidungen haben
-		\item Alle Kantenpaare max eine aktiv
-		\item algo von Michael mit Orientierung
-	\end{itemize}
-	\item Gradbeschränkung
-	\begin{itemize}
-		\item Knoten müssen Sollgrad erfüllen
-		\item für jeden Knoten Anzahl ausgehender Kanten gleich Sollgrad
-	\end{itemize}
-	\item fix hull
-	\begin{itemize}
-		\item Kanten der konvexen Hülle müssen aktiv sein da keine alternative und maximal
-	\end{itemize}
+	% \item Intersection Konstriend
+	% \begin{itemize}
+	% 	\item Triangulation darf keine Überschneidungen haben
+	% 	\item Alle Kantenpaare max eine aktiv
+	% 	\item algo von Michael mit Orientierung
+	% \end{itemize}
+	% \item Gradbeschränkung
+	% \begin{itemize}
+	% 	\item Knoten müssen Sollgrad erfüllen
+	% 	\item für jeden Knoten Anzahl ausgehender Kanten gleich Sollgrad
+	% \end{itemize}
+	% \item fix hull
+	% \begin{itemize}
+	% 	\item Kanten der konvexen Hülle müssen aktiv sein da keine alternative und maximal
+	% \end{itemize}
 	\item all Edges
 	\begin{itemize}
 		\item nicht notwendig aber mehr Einschrängugnen könnten die Laufzeit verbessern
