@@ -34,17 +34,17 @@ if __name__ == "__main__":
                     )
                 ),
             },
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(
-                    SAT_Parameter(
-                        intersection=True,
-                        degree_subset=True,
-                        fix_hull=True,
-                        all_edges=True,
-                    )
-                ),
-            },
+            # {
+            #     "timeout": TIMEOUT,
+            #     "args": asdict(
+            #         SAT_Parameter(
+            #             intersection=True,
+            #             degree_subset=True,
+            #             fix_hull=True,
+            #             all_edges=True,
+            #         )
+            #     ),
+            # },
         ]
     }
 

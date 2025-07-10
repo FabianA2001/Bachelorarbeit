@@ -186,24 +186,25 @@ def run_algo():
 
 
 def create_instance():
-    NAME = "Random"
-    POST = "impossible_change_5_10"
-    INST_NAME = f"{NAME}_{POST}"
-    FILE_NAME = NAME
+    NAME = "flips"
+    POST = ""
+    INST_NAME = f"{NAME}{POST}"
+    FILE_NAME = f"{NAME}_2"
     NUMBER_INSTANCE = 1
     NUMBER_NODES = 100
     STEP = 10
     FLIPS = 300
     RADIUS = 1000
-    for i in [60, 70, 80, 90]:
+    for i in [60, 70, 80]:
         generate.Generate_Instance(
             INST_NAME,
             FILE_NAME,
             i,
             NUMBER_INSTANCE,
-            generate.Generate_Nodes_n_gon(1000),
-            generate.Generate_Edges_Random(),
-            generate.Generate_Impossible_Change_Degree(10),
+            generate.Generate_Nodes_Random(),
+            generate.Generate_Edges_Delaunay_Flips(FLIPS),
+            # generate.Generate_Impossible_Move_Degree(amount=5, times=10),
+            # generate.Generate_Impossible_Change_Degree(times=10),
             path="instance",
             width=10000,
             height=10000,
