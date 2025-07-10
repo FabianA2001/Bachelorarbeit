@@ -48,29 +48,6 @@ RI = Run_Algbench(
 )
 
 
-@slurminade.node_setup
-def configure_grb_license_path():
-    # copy and paste solution for handling Gurobi licenses.
-    import socket
-    from pathlib import Path
-
-    if "alg" not in socket.gethostname():
-        return
-
-    # TODO: Make sure that the license file is in the correct location
-    # It is expected that the license file is in the following location:
-    # ~/.gurobi/{$HOSTNAME}/gurobi.lic
-    # You can of course change this path to whatever you like.
-    grb_license_path = Path.home() / ".gurobi" / "gurobi.lic"
-    import os
-
-    os.environ["GRB_LICENSE_FILE"] = str(grb_license_path)
-
-    if not grb_license_path.exists():
-        msg = "Gurobi License File does not exist."
-        raise RuntimeError(msg)
-
-
 @slurminade.slurmify()
 def run_solver_on_inst(key: str):
     solver, nodes, possible, inst, file_name = RI.get_solver_inst_from_runlist[key]
