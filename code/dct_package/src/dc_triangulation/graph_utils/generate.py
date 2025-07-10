@@ -255,16 +255,17 @@ class Generate_Impossible_Move_Degree(Generate_Make_Impossible):
             for _ in range(1000):
                 node1: Node = choice(nodes)
                 node2: Node = choice(nodes)
+                lokal_amount = randint(1, self.amount)
                 if node1 == node2:
                     continue
-                if node1.degree <= self.amount + 1:
+                if node1.degree <= lokal_amount + 1:
                     continue
                 if node1 in blacklist or node2 in blacklist:
                     continue
                 blacklist.append(node1)
                 blacklist.append(node2)
-                node1.degree -= self.amount
-                node2.degree += self.amount
+                node1.degree -= lokal_amount
+                node2.degree += lokal_amount
                 break
             else:
                 logging.warning(
