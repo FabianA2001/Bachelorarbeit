@@ -243,20 +243,58 @@ class Generate_Nodes_Iterativ_N_Gon(Generate_Instance_ABC_Nodes):
 
 
 class Generate_Impossible_Move_Degree(Generate_Make_Impossible):
+    def __init__(self, amount: int = 1, times: int = 1) -> None:
+        super().__init__()
+        self.amount = amount
+        self.times = times
+
     def generate_instance(self, nodes: list[Node]) -> tuple[list[Node], bool]:
         """Generiert eine Instanz des Graphen mit den gegebenen Knoten."""
+        blacklist = []
+        for _ in range(self.times):
+            for _ in range(1000):
+                node1: Node = choice(nodes)
+                node2: Node = choice(nodes)
+                if node1 == node2:
+                    continue
+                if node1.degree <= self.amount + 1:
+                    continue
+                if node1 in blacklist or node2 in blacklist:
+                    continue
+                blacklist.append(node1)
+                blacklist.append(node2)
+                node1.degree -= self.amount
+                node2.degree += self.amount
+                break
+            else:
+                logging.warning(
+                    "No nodes could be modified to make the graph impossible."
+                )
 
-        for _ in range(1000):
-            node1: Node = choice(nodes)
-            node2: Node = choice(nodes)
-            if node1 == node2:
-                continue
-            if node1.degree <= 2 or node2.degree <= 2:
-                continue
-            node1.degree -= 1
-            node2.degree += 1
-            break
-        else:
-            logging.warning("No nodes could be modified to make the graph impossible.")
+        return (nodes, False)
+
+
+class Generate_Impossible_Change_Degree(Generate_Make_Impossible):
+    def __init__(self, times: int = 1) -> None:
+        super().__init__()
+        self.times = times
+
+    def generate_instance(self, nodes: list[Node]) -> tuple[list[Node], bool]:
+        """Generiert eine Instanz des Graphen mit den gegebenen Knoten."""
+        blacklist = []
+        for _ in range(self.times):
+            for _ in range(1000):
+                node1: Node = choice(nodes)
+                node2: Node = choice(nodes)
+                if node1 in blacklist or node2 in blacklist:
+                    continue
+                blacklist.append(node1)
+                blacklist.append(node2)
+                node1.degree, node2.degree = node2.degree, node1.degree
+                break
+            else:
+                logging.warning(
+                    "No nodes could be modified to make the graph impossible."
+                )
 
         return (nodes, False)

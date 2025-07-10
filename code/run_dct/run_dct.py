@@ -186,14 +186,14 @@ def run_algo():
 
 
 def create_instance():
-    NAME = "N_Gone_random"
+    NAME = "random_impossible_move_5_10"
     FILE_NAME = "random"
     NUMBER_INSTANCE = 1
     NUMBER_NODES = 100
     STEP = 10
     FLIPS = 300
     RADIUS = 1000
-    for i in [70, 80, 90, 100]:
+    for i in [60, 70, 80, 90]:
         generate.Generate_Instance(
             NAME,
             FILE_NAME,
@@ -201,7 +201,7 @@ def create_instance():
             NUMBER_INSTANCE,
             generate.Generate_Nodes_n_gon(1000),
             generate.Generate_Edges_Random(),
-            # generate.Generate_Impossible_Move_Degree(),
+            generate.Generate_Impossible_Move_Degree(5, 10),
             path="instance",
             width=10000,
             height=10000,
@@ -209,5 +209,5 @@ def create_instance():
 
 
 if __name__ == "__main__":
-    # run_algo()
-    create_instance()
+    run_algo()
+    # create_instance()
