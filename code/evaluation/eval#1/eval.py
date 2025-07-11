@@ -135,18 +135,18 @@ outer_parameter = {
             ),
         },
     ],
-    Gurobi_Tri: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Gurobi_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
-            ),
-        },
-    ],
+    # Gurobi_Tri: [
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Gurobi_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
+    #         ),
+    #     },
+    # ],
     Gurobi: [
         {
             "timeout": TIMEOUT,
@@ -171,18 +171,18 @@ outer_parameter = {
             ),
         },
     ],
-    SAT_TRI: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
-            ),
-        },
-    ],
+    # SAT_TRI: [
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             SAT_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
+    #         ),
+    #     },
+    # ],
 }
 
 RI = Run_Algbench(
