@@ -22,88 +22,88 @@ path = os.path.join(os.path.dirname(__file__), "instances")
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
 outer_parameter = {
-    SAT: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_exact=True, fix_edges=True)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    intersection=True,
-                    degree_exact=True,
-                    exclude_edges=True,
-                )
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    intersection=True,
-                    degree_exact=True,
-                    add_allEdges_or_exclude_edges=False,
-                )
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    intersection=True,
-                    degree_exact=True,
-                    all_edges=True,
-                )
-            ),
-        },
-    ],
-    Ortools: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(Ortools_Parameter(intersection=True, degree=True)),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, fix_hull=True)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, fix_edges=True)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, all_edges=True)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Parameter(
-                    intersection=True,
-                    degree=True,
-                    exclude_edges=True,
-                )
-            ),
-        },
-    ],
+    # SAT: [
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
+    #         ),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             SAT_Parameter(intersection=True, degree_exact=True, fix_edges=True)
+    #         ),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             SAT_Parameter(
+    #                 intersection=True,
+    #                 degree_exact=True,
+    #                 exclude_edges=True,
+    #             )
+    #         ),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             SAT_Parameter(
+    #                 intersection=True,
+    #                 degree_exact=True,
+    #                 add_allEdges_or_exclude_edges=False,
+    #             )
+    #         ),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             SAT_Parameter(
+    #                 intersection=True,
+    #                 degree_exact=True,
+    #                 all_edges=True,
+    #             )
+    #         ),
+    #     },
+    # ],
+    # Ortools: [
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(Ortools_Parameter(intersection=True, degree=True)),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Ortools_Parameter(intersection=True, degree=True, fix_hull=True)
+    #         ),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Ortools_Parameter(intersection=True, degree=True, fix_edges=True)
+    #         ),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Ortools_Parameter(intersection=True, degree=True, all_edges=True)
+    #         ),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Ortools_Parameter(
+    #                 intersection=True,
+    #                 degree=True,
+    #                 exclude_edges=True,
+    #             )
+    #         ),
+    #     },
+    # ],
     # Gurobi_Tri: [
     #     {
     #         "timeout": TIMEOUT,
@@ -189,7 +189,7 @@ if __name__ == "__main__":
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
-            constraint="alggen02",  # Which workstations within the partition to use
+            constraint="alggen01",  # Which workstations within the partition to use
             exclusive=True,  # To use all cores on a node exclusively
             mail_type="FAIL",  # Send mail on failure
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
@@ -201,4 +201,7 @@ if __name__ == "__main__":
         slurminade.join()
         compress_results.distribute()
     else:
+        # for key in RI.get_run_list():
+        #     RI.delete_key_from_runlist(key)
+            # RI.show_key_from_runlist(key)
         RI.show()
