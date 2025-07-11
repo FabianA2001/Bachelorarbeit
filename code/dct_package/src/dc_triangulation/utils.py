@@ -62,13 +62,18 @@ def time_function(func, logger: Optional[logging.Logger] = None):
     return wrapper
 
 
-def format_dictionary(dictionary: dict, indention=1) -> str:
+def format_dictionary(dictionary: dict, indention=1, new_line: bool = True) -> str:
     """
     Formats the parameters for logging.
     """
     result = ""
+    new_line_str = ""
+    if new_line:
+        new_line_str = "\n"
+    else:
+        new_line_str = " "
     for key, value in dictionary.items():
         if type(value) is dict:
-            value = format_dictionary(value, indention + 1)
-        result += f"\n{'|' * indention}{(key + ':')[:35]:<35} {value}"
+            value = format_dictionary(value, indention + 1, new_line=new_line)
+        result += f"{new_line_str}{'|' * indention}{(key + ':')[:35]:<35} {value}"
     return result

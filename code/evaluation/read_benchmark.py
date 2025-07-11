@@ -7,7 +7,7 @@ streamlit run read_benchmark.py
 """
 
 BENCHMARK_PATH = "./benchmark"
-if True:
+if False:
     describe(BENCHMARK_PATH)
 else:
     df = read_as_pandas(
@@ -28,7 +28,7 @@ else:
         },
     )
 
-    df["args"] = df["args"].apply(lambda x: format_dictionary(x))
+    df["args"] = df["args"].apply(lambda x: format_dictionary(x, new_line=False))
     df["logging"] = df["logging"].apply(lambda x: str(x))
 
     st.dataframe(df)
