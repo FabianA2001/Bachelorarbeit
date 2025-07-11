@@ -15,18 +15,18 @@ path = os.path.join(os.path.dirname(__file__), "instances")
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
 outer_parameter = {
-    SAT: [
-        {
-            "timeout": -1,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
-            ),
-        },
-        {
-            "timeout": -1,
-            "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
-        },
-    ],
+    # SAT: [
+    #     {
+    #         "timeout": -1,
+    #         "args": asdict(
+    #             SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
+    #         ),
+    #     },
+    #     {
+    #         "timeout": -1,
+    #         "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
+    #     },
+    # ],
     Gurobi: [
         {
             "timeout": -1,
@@ -72,7 +72,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
