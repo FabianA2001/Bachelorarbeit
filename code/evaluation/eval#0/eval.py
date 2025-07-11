@@ -2,14 +2,7 @@ import os
 from dataclasses import asdict
 
 import slurminade
-from dc_triangulation import (
-    SAT,
-    Graph_Wrapper,
-    Gurobi,
-    Gurobi_Parameter,
-    Run_Algbench,
-    SAT_Parameter,
-)
+from dc_triangulation import Graph_Wrapper, Gurobi, Gurobi_Parameter, Run_Algbench
 
 path = os.path.join(os.path.dirname(__file__), "instances")
 # This is the entry point for the evaluation script
@@ -41,6 +34,7 @@ RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
+    host="algpc01",
 )
 
 

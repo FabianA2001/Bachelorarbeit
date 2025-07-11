@@ -217,8 +217,8 @@ class Run_Algbench:
         table = table.drop(columns=["host"])
 
         if not self.ignore_correct:
-            # Setze runtime auf -1, wenn correct False ist
-            table.loc[~table["correct"], "runtime"] = -1
+            # lösche zeilen wenn nicht correct
+            table = table[table["correct"]]
             table = table.drop(columns=["correct"])
 
         if self.instances:
@@ -256,6 +256,10 @@ class Run_Algbench:
         table = table[idx]
         table = table.drop(columns=["timeout_rank"])
 
+        if table.empty:
+            logging.warning("Keine Daten für die angegebene Konfiguration gefunden.")
+            return
+
         # Create mapping from unique args to numbers, grouped by solver
         solver_args_mapping = {}
         solver_args_multiple = {}
@@ -280,6 +284,11 @@ class Run_Algbench:
         table = table.drop(columns=["solver"])
 
         table = table.sort_values(by=["instance_file", "solver_args"])
+
+        if table.empty:
+            logging.warning("Keine Daten für die angegebene Konfiguration gefunden.")
+            return
+        print(table)
 
         legend = ""
         legend += "\nArgs Legend Mapping (by Solver):"
