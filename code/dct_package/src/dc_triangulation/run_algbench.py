@@ -60,6 +60,28 @@ class Run_Algbench:
         pd.set_option("display.max_columns", None)
         pd.set_option("display.width", 200)
 
+    def delete_key_from_runlist(self, key: str):
+        solver, nodes, possible, inst, file_name = self.get_solver_inst_from_runlist[
+            key
+        ]
+        parameters = self.outer_parameter[solver]
+
+        for para in parameters:
+
+            def func(dictionary: dict) -> bool:
+                if (
+                    dictionary["parameters"]["args"]["solver_name"] == solver.NAME
+                    and dictionary["parameters"]["args"]["instance_name"] == inst
+                    and dictionary["parameters"]["args"]["file_name"] == file_name
+                    and dictionary["env"]["hostname"] == self.host
+                    and dictionary["parameters"]["args"]["parameter"]["args"]
+                    == para["args"]
+                ):
+                    return True
+                return False
+
+            self.benchmark.delete_if(func)
+
     def setup_keys(self):
         for inst in self.instances.keys():
             for solver in self.solvers:
@@ -223,6 +245,12 @@ class Run_Algbench:
 
         if self.instances:
             table = table[table["instance"].isin(self.instances)]
+
+            all_instance = [
+                key for inst in self.instances for key in self.instances[inst].keys()
+            ]
+            table = table[table["file"].isin(all_instance)]
+
         solvers_name = [solver.NAME for solver in self.solvers]
         table = table[table["solver"].isin(solvers_name)]
 
@@ -288,7 +316,6 @@ class Run_Algbench:
         if table.empty:
             logging.warning("Keine Daten für die angegebene Konfiguration gefunden.")
             return
-        print(table)
 
         legend = ""
         legend += "\nArgs Legend Mapping (by Solver):"
@@ -303,6 +330,7 @@ class Run_Algbench:
         legend = legend[:-1]
         legend += "\n" + "=" * 50
         logging.info(legend)
+        print(table)
 
         # als Balkendiagramm darstellen
         if old:
