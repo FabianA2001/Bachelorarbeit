@@ -82,6 +82,27 @@ class Run_Algbench:
 
             self.benchmark.delete_if(func)
 
+    def show_key_from_runlist(self, key: str):
+        solver, nodes, possible, inst, file_name = self.get_solver_inst_from_runlist[
+            key
+        ]
+        parameters = [para["args"] for para in self.outer_parameter[solver]]
+        for entry in self.benchmark:
+            if (
+                entry["parameters"]["args"]["solver_name"] == solver.NAME
+                and entry["parameters"]["args"]["instance_name"] == inst
+                and entry["parameters"]["args"]["file_name"] == file_name
+                and entry["env"]["hostname"] == self.host
+                and entry["parameters"]["args"]["parameter"]["args"] in parameters
+            ):
+                logger = entry.get("logging", None)
+                entry["logging"] = ""
+                print(format_dictionary(entry))
+                print("Logging:")
+                if logger:
+                    for dict in logger:
+                        print(f"{dict['name']} : {dict['msg']}")
+
     def setup_keys(self):
         for inst in self.instances.keys():
             for solver in self.solvers:

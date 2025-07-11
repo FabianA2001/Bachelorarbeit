@@ -34,7 +34,7 @@ RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
-    host="algpc01",
+    host="algpc05",
     ignore_correct=True,
 )
 
@@ -83,6 +83,7 @@ if __name__ == "__main__":
         slurminade.join()
         compress_results.distribute()
     else:
-        # for key in RI.get_run_list():
-        #     RI.delete_key_from_runlist(key)
-        RI.show(old=True)
+        for key in RI.get_run_list():
+            RI.delete_key_from_runlist(key)
+            # RI.show_key_from_runlist(key)
+        # RI.show(old=True)

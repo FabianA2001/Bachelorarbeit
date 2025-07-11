@@ -7,7 +7,7 @@ streamlit run read_benchmark.py
 """
 
 BENCHMARK_PATH = "./benchmark"
-if True:
+if False:
     describe(BENCHMARK_PATH)
 else:
     df = read_as_pandas(
