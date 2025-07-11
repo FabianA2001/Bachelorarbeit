@@ -2,31 +2,24 @@ import os
 from dataclasses import asdict
 
 import slurminade
-from dc_triangulation import (
-    SAT,
-    Graph_Wrapper,
-    Gurobi,
-    Gurobi_Parameter,
-    Run_Algbench,
-    SAT_Parameter,
-)
+from dc_triangulation import Graph_Wrapper, Gurobi, Gurobi_Parameter, Run_Algbench
 
 path = os.path.join(os.path.dirname(__file__), "instances")
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
 outer_parameter = {
-    SAT: [
-        {
-            "timeout": -1,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
-            ),
-        },
-        {
-            "timeout": -1,
-            "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
-        },
-    ],
+    # SAT: [
+    #     {
+    #         "timeout": -1,
+    #         "args": asdict(
+    #             SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
+    #         ),
+    #     },
+    #     {
+    #         "timeout": -1,
+    #         "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
+    #     },
+    # ],
     Gurobi: [
         {
             "timeout": -1,
@@ -41,6 +34,8 @@ RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
+    host="algpc05",
+    ignore_correct=True,
 )
 
 
@@ -72,11 +67,11 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
-            constraint="alggen02",  # Which workstations within the partition to use
+            constraint="alggen01",  # Which workstations within the partition to use
             exclusive=True,  # To use all cores on a node exclusively
             mail_type="FAIL",  # Send mail on failure
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
@@ -88,4 +83,7 @@ if __name__ == "__main__":
         slurminade.join()
         compress_results.distribute()
     else:
-        RI.show()
+        for key in RI.get_run_list():
+            RI.delete_key_from_runlist(key)
+            # RI.show_key_from_runlist(key)
+        # RI.show(old=True)

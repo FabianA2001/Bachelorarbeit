@@ -19,7 +19,7 @@ if __name__ == "__main__":
                         intersection=True,
                         degree_exact=True,
                         fix_hull=True,
-                        all_edges=True,
+                        # all_edges=True,
                     )
                 ),
             },
@@ -30,21 +30,21 @@ if __name__ == "__main__":
                         intersection=True,
                         degree_atleast=True,
                         fix_hull=True,
-                        all_edges=True,
+                        # all_edges=True,
                     )
                 ),
             },
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(
-                    SAT_Parameter(
-                        intersection=True,
-                        degree_subset=True,
-                        fix_hull=True,
-                        all_edges=True,
-                    )
-                ),
-            },
+            # {
+            #     "timeout": TIMEOUT,
+            #     "args": asdict(
+            #         SAT_Parameter(
+            #             intersection=True,
+            #             degree_subset=True,
+            #             fix_hull=True,
+            #             all_edges=True,
+            #         )
+            #     ),
+            # },
         ]
     }
 
@@ -81,7 +81,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.

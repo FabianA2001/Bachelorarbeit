@@ -60,6 +60,49 @@ class Run_Algbench:
         pd.set_option("display.max_columns", None)
         pd.set_option("display.width", 200)
 
+    def delete_key_from_runlist(self, key: str):
+        solver, nodes, possible, inst, file_name = self.get_solver_inst_from_runlist[
+            key
+        ]
+        parameters = self.outer_parameter[solver]
+
+        for para in parameters:
+
+            def func(dictionary: dict) -> bool:
+                if (
+                    dictionary["parameters"]["args"]["solver_name"] == solver.NAME
+                    and dictionary["parameters"]["args"]["instance_name"] == inst
+                    and dictionary["parameters"]["args"]["file_name"] == file_name
+                    and dictionary["env"]["hostname"] == self.host
+                    and dictionary["parameters"]["args"]["parameter"]["args"]
+                    == para["args"]
+                ):
+                    return True
+                return False
+
+            self.benchmark.delete_if(func)
+
+    def show_key_from_runlist(self, key: str):
+        solver, nodes, possible, inst, file_name = self.get_solver_inst_from_runlist[
+            key
+        ]
+        parameters = [para["args"] for para in self.outer_parameter[solver]]
+        for entry in self.benchmark:
+            if (
+                entry["parameters"]["args"]["solver_name"] == solver.NAME
+                and entry["parameters"]["args"]["instance_name"] == inst
+                and entry["parameters"]["args"]["file_name"] == file_name
+                and entry["env"]["hostname"] == self.host
+                and entry["parameters"]["args"]["parameter"]["args"] in parameters
+            ):
+                logger = entry.get("logging", None)
+                entry["logging"] = ""
+                print(format_dictionary(entry))
+                print("Logging:")
+                if logger:
+                    for dict in logger:
+                        print(f"{dict['name']} : {dict['msg']}")
+
     def setup_keys(self):
         for inst in self.instances.keys():
             for solver in self.solvers:
@@ -70,7 +113,6 @@ class Run_Algbench:
                     nodes = load_nodes_from_json(file_path)
                     with open(file_path, "r") as f:
                         possible = json.load(f)["possible"]
-                    logging.info(f"starte instance: {inst}/{file_name}")
                     self.get_solver_inst_from_runlist[
                         f"{solver.NAME}_{inst}_{file_name}"
                     ] = (solver, nodes, possible, inst, file_name)
@@ -218,12 +260,18 @@ class Run_Algbench:
         table = table.drop(columns=["host"])
 
         if not self.ignore_correct:
-            # Setze runtime auf -1, wenn correct False ist
-            table.loc[~table["correct"], "runtime"] = -1
+            # lösche zeilen wenn nicht correct
+            table = table[table["correct"]]
             table = table.drop(columns=["correct"])
 
         if self.instances:
             table = table[table["instance"].isin(self.instances)]
+
+            all_instance = [
+                key for inst in self.instances for key in self.instances[inst].keys()
+            ]
+            table = table[table["file"].isin(all_instance)]
+
         solvers_name = [solver.NAME for solver in self.solvers]
         table = table[table["solver"].isin(solvers_name)]
 
@@ -257,6 +305,10 @@ class Run_Algbench:
         table = table[idx]
         table = table.drop(columns=["timeout_rank"])
 
+        if table.empty:
+            logging.warning("Keine Daten für die angegebene Konfiguration gefunden.")
+            return
+
         # Create mapping from unique args to numbers, grouped by solver
         solver_args_mapping = {}
         solver_args_multiple = {}
@@ -282,6 +334,10 @@ class Run_Algbench:
 
         table = table.sort_values(by=["instance_file", "solver_args"])
 
+        if table.empty:
+            logging.warning("Keine Daten für die angegebene Konfiguration gefunden.")
+            return
+
         legend = ""
         legend += "\nArgs Legend Mapping (by Solver):"
         legend += "\n" + "=" * 50
@@ -295,6 +351,7 @@ class Run_Algbench:
         legend = legend[:-1]
         legend += "\n" + "=" * 50
         logging.info(legend)
+        print(table)
 
         # als Balkendiagramm darstellen
         if old:
