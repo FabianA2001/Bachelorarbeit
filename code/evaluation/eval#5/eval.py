@@ -5,48 +5,47 @@ import slurminade
 from dc_triangulation import SAT, Graph_Wrapper, Run_Algbench, SAT_Parameter
 
 asdict
-if __name__ == "__main__":
-    TIMEOUT = 300
-    path = os.path.join(os.path.dirname(__file__), "instances")
-    # This is the entry point for the evaluation script
-    # It will run the Run_Instance class from run_algbench module
-    outer_parameter = {
-        SAT: [
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(
-                    SAT_Parameter(
-                        intersection=True,
-                        degree_exact=True,
-                        fix_hull=True,
-                        # all_edges=True,
-                    )
-                ),
-            },
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(
-                    SAT_Parameter(
-                        intersection=True,
-                        degree_atleast=True,
-                        fix_hull=True,
-                        # all_edges=True,
-                    )
-                ),
-            },
-            # {
-            #     "timeout": TIMEOUT,
-            #     "args": asdict(
-            #         SAT_Parameter(
-            #             intersection=True,
-            #             degree_subset=True,
-            #             fix_hull=True,
-            #             all_edges=True,
-            #         )
-            #     ),
-            # },
-        ]
-    }
+TIMEOUT = 300
+path = os.path.join(os.path.dirname(__file__), "instances")
+# This is the entry point for the evaluation script
+# It will run the Run_Instance class from run_algbench module
+outer_parameter = {
+    SAT: [
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    intersection=True,
+                    degree_exact=True,
+                    fix_hull=True,
+                    # all_edges=True,
+                )
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    intersection=True,
+                    degree_atleast=True,
+                    fix_hull=True,
+                    # all_edges=True,
+                )
+            ),
+        },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             intersection=True,
+        #             degree_subset=True,
+        #             fix_hull=True,
+        #             all_edges=True,
+        #         )
+        #     ),
+        # },
+    ]
+}
 
 
 RI = Run_Algbench(
