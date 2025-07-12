@@ -114,6 +114,12 @@ class Run_Algbench:
                 if logger:
                     for dict in logger:
                         print(f"{dict['name']} : {dict['msg']}")
+        print(
+            "-----------------------------------------------------------------------------------"
+        )
+        print(
+            "-----------------------------------------------------------------------------------"
+        )
 
     def setup_keys(self):
         for inst in self.instances.keys():
