@@ -405,16 +405,6 @@ class Run_Algbench:
         # Seaborn Style setzen
         sns.set_style("whitegrid")
 
-        # Debug: Zeige alle verfügbaren Solver
-        all_solvers = table["solver_args"].unique()
-
-        # Debug: Zeige Datenverteilung vor Filterung
-        for solver in all_solvers:
-            solver_count = len(table[table["solver_args"] == solver])
-            positive_count = len(
-                table[(table["solver_args"] == solver) & (table[y] >= 0)]
-            )
-
         # Filter gültige Werte (entferne negative Werte wie -1 für Timeouts)
         valid_data = table[table[y] >= 0].copy()
 
