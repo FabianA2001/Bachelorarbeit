@@ -295,7 +295,7 @@ class Run_Algbench:
 
         # Kombiniere Instanz und Dateiname für die x-Achse
         table["instance_file"] = table["instance"] + "/" + table["file"]
-        table = table.drop(columns=["instance", "file"])
+        table = table.drop(columns=["file"])
 
         all_args = []
         for arg_list in self.outer_parameter.values():
@@ -418,90 +418,110 @@ class Run_Algbench:
             logging.warning(f"Keine gültigen Daten für {y} Cactus Plot gefunden")
             return
 
-        # Eindeutige Solver ermitteln
+        # Eindeutige Solver und Instanzen ermitteln
         unique_solvers = valid_data["solver_args"].unique()
+        unique_instances = valid_data["instance"].unique()
 
-        # Seaborn Farbpalette
+        # Seaborn Farbpalette für Solver
         colors = sns.color_palette("husl", len(unique_solvers))
 
-        plt.figure(figsize=(12, 8))
+        # Bestimme Layout für Subplots
+        n_instances = len(unique_instances)
+        cols = min(3, n_instances)  # Maximal 3 Spalten
+        rows = (n_instances + cols - 1) // cols  # Aufrunden
 
-        # Für jeden Solver die Daten sortieren und plotten
-        for i, solver in enumerate(unique_solvers):
-            solver_data = valid_data[valid_data["solver_args"] == solver][y].values
+        fig, axes = plt.subplots(rows, cols, figsize=(5 * cols, 4 * rows))
 
-            if len(solver_data) == 0:
-                logging.warning(f"Keine Daten für Solver '{solver}' nach Filterung")
-                continue
+        # Für den Fall dass nur eine Instanz vorhanden ist
+        if n_instances == 1:
+            axes = [axes]
+        elif rows == 1:
+            axes = axes if isinstance(axes, (list, np.ndarray)) else [axes]
+        else:
+            axes = axes.flatten()
 
-            # Sortieren für Cactus Plot (wichtig!)
-            times_sorted = np.sort(solver_data)
-            y_values = np.arange(1, len(times_sorted) + 1)
+        # Für jede Instanz einen eigenen Plot
+        for idx, instance in enumerate(unique_instances):
+            ax = axes[idx]
 
-            # Punkt (0,0) hinzufügen - bei Zeit 0 sind 0 Instanzen gelöst
-            times_with_zero = np.concatenate([[0], times_sorted])
-            y_values_with_zero = np.concatenate([[0], y_values])
+            # Für jeden Solver in dieser Instanz plotten
+            for i, solver in enumerate(unique_solvers):
+                instance_solver_data = valid_data[
+                    (valid_data["solver_args"] == solver)
+                    & (valid_data["instance"] == instance)
+                ][y].values
 
-            plt.plot(
-                times_with_zero,
-                y_values_with_zero,
-                "o-",
-                color=colors[i],
-                label=solver,
-                linewidth=2,
-                markersize=3,
-                alpha=0.8,
-                drawstyle="steps-post",
-            )
+                if len(instance_solver_data) == 0:
+                    continue
 
-        # Styling (x und y Achsen getauscht)
-        plt.xlabel(
-            f"{y.replace('_', ' ').title()} (Sekunden)", fontsize=12, fontweight="bold"
-        )
-        plt.ylabel("Anzahl gelöste Instanzen", fontsize=12, fontweight="bold")
-        plt.title(
+                # Sortieren für Cactus Plot (wichtig!)
+                times_sorted = np.sort(instance_solver_data)
+                y_values = np.arange(1, len(times_sorted) + 1)
+
+                # Punkt (0,0) hinzufügen - bei Zeit 0 sind 0 Instanzen gelöst
+                times_with_zero = np.concatenate([[0], times_sorted])
+                y_values_with_zero = np.concatenate([[0], y_values])
+
+                ax.plot(
+                    times_with_zero,
+                    y_values_with_zero,
+                    "o-",
+                    color=colors[i],
+                    label=solver,
+                    linewidth=2,
+                    markersize=3,
+                    alpha=0.8,
+                    drawstyle="steps-post",
+                )
+
+            # Subplot Styling
+            ax.set_xlabel(f"{y.replace('_', ' ').title()} (Sekunden)", fontsize=10)
+            ax.set_ylabel("Anzahl gelöste Instanzen", fontsize=10)
+            ax.set_title(f"{instance}", fontsize=12, fontweight="bold")
+            ax.grid(True, alpha=0.3, linestyle="-", linewidth=0.5)
+
+            # Y-Achse auf ganze Zahlen beschränken
+            from matplotlib.ticker import MaxNLocator
+
+            ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+
+            # X-Achse logarithmisch skalieren wenn nötig
+            instance_data = valid_data[valid_data["instance"] == instance][y]
+            if (
+                len(instance_data) > 0
+                and instance_data.max() / instance_data.min() > 10
+            ):
+                ax.set_xscale("log")
+
+            # X-Achse Formatierung
+            from matplotlib.ticker import FuncFormatter
+
+            def format_seconds(x, p):
+                return f"{x:.3g}"
+
+            ax.xaxis.set_major_formatter(FuncFormatter(format_seconds))
+
+            # Legende nur beim ersten Plot
+            if idx == 0:
+                ax.legend(fontsize=9)
+
+        # Verstecke überschüssige Subplots
+        for idx in range(n_instances, len(axes)):
+            axes[idx].set_visible(False)
+
+        # Gesamttitel
+        fig.suptitle(
             f"Cactus Plot - {y.replace('_', ' ').title()} Performance Vergleich",
-            fontsize=14,
+            fontsize=16,
             fontweight="bold",
-            pad=20,
         )
-
-        # Legende styling
-        legend = plt.legend(
-            loc="upper left", fontsize=11, frameon=True, fancybox=True, shadow=True
-        )
-        legend.get_frame().set_facecolor("white")
-        legend.get_frame().set_alpha(0.9)
-
-        # Grid
-        plt.grid(True, alpha=0.3, linestyle="-", linewidth=0.5)
-
-        # Y-Achse auf ganze Zahlen beschränken
-        from matplotlib.ticker import MaxNLocator
-
-        plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
-
-        # X-Achse logarithmisch skalieren (oft nützlich bei Performance-Daten)
-        if valid_data[y].max() / valid_data[y].min() > 10:  # Nur wenn große Spanne
-            plt.xscale("log")
-
-        # X-Achse Formatierung: normale Zahlen statt wissenschaftliche Notation
-        from matplotlib.ticker import FuncFormatter
-
-        def format_seconds(x, p):
-            return f"{x:.3g}"
-
-        plt.gca().xaxis.set_major_formatter(FuncFormatter(format_seconds))
-
-        # Seaborn despine für cleaner look
-        sns.despine()
 
         # Layout optimieren
-        plt.tight_layout()
+        fig.tight_layout()
 
         # Speichern falls Pfad angegeben
         if self.figure_path:
-            plt.savefig(
+            fig.savefig(
                 os.path.join(self.figure_path, f"cactus_{y}.pdf"),
                 dpi=300,
                 bbox_inches="tight",
