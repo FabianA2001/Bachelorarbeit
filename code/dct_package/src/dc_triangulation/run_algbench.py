@@ -195,64 +195,6 @@ class Run_Algbench:
             "info": info,
         }
 
-        # @staticmethod
-        # def run_solver_on_instance():
-
-        # for file_name in sorted(instance):
-        #     file_path = instance[file_name]
-        #     nodes = load_nodes_from_json(file_path)
-        #     with open(file_path, "r") as f:
-        #         possible = json.load(f)["possible"]
-        #     graph = Graph_Wrapper(nodes)
-        #     timeout = [False]
-        #     ####################################################
-        #     # hack für eval 6
-        #     if parameter.get("hack_eval_6", False):
-        #         try:
-        #             if "hack_eval_6_data" not in parameter:
-        #                 raise ValueError(
-        #                     "hack_eval_6_data must be provided in the parameter."
-        #                 )
-        #             if "hack_eval_6_PERCENT" not in parameter:
-        #                 raise ValueError(
-        #                     "hack_eval_6_PERCENT must be provided in the parameter."
-        #                 )
-        #             data = parameter["hack_eval_6_data"]
-        #             percent = parameter["hack_eval_6_PERCENT"]
-        #             key = f"{instance_name}_{file_name}.json"
-        #             logging.info("-------------------------------------------->")
-        #             logging.info(key)
-        #             if key not in data:
-        #                 raise ValueError(f"No data found for instance {key}.")
-        #             if percent not in data[key]:
-        #                 raise ValueError(
-        #                     f"No data found for instance {key} with percent {percent}."
-        #                 )
-        #             parameter["debug_exclude_edges"] = data[key][percent]
-        #         except ValueError as e:
-        #             logging.error(f"Error in hack_eval_6: {e}")
-        #             continue
-        #     ############################################
-
-        #     logging.info(f"starte instance: {instance_name}/{file_name}")
-        #     self.benchmark.add(
-        #         self.create_benchmark_entry,
-        #         solver_type=solver_type,
-        #         solver_name=solver_type.NAME,
-        #         parameter=parameter,
-        #         instance_name=instance_name,
-        #         file_name=file_name,
-        #         possible=possible,
-        #         host=socket.gethostname(),
-        #         _graph=graph,
-        #         _timeout=timeout,
-        #     )
-        #     if timeout[0]:
-        #         logging.warning(
-        #             f"Timeout while solving {instance_name} - {solver_type.NAME} - {file_name} with {format_dictionary(parameter)}"
-        #         )
-        #         break
-
     def show(
         self,
         old: bool = False,
@@ -443,6 +385,7 @@ class Run_Algbench:
         # Für jede Instanz einen eigenen Plot
         for idx, instance in enumerate(unique_instances):
             ax = axes[idx]
+            len_instance = len(self.instances[instance])
 
             # Für jeden Solver in dieser Instanz plotten
             for i, solver in enumerate(unique_solvers):
@@ -462,9 +405,12 @@ class Run_Algbench:
                 times_with_zero = np.concatenate([[0], times_sorted])
                 y_values_with_zero = np.concatenate([[0], y_values])
 
+                # Y-Werte in Prozent umwandeln
+                y_values_percent = (y_values_with_zero / len_instance) * 100
+
                 ax.plot(
                     times_with_zero,
-                    y_values_with_zero,
+                    y_values_percent,
                     "o-",
                     color=colors[i],
                     label=solver,
@@ -476,14 +422,12 @@ class Run_Algbench:
 
             # Subplot Styling
             ax.set_xlabel(f"{y.replace('_', ' ').title()} (Sekunden)", fontsize=10)
-            ax.set_ylabel("Anzahl gelöste Instanzen", fontsize=10)
+            ax.set_ylabel("Gelöste Instanzen (%)", fontsize=10)
             ax.set_title(f"{instance}", fontsize=12, fontweight="bold")
             ax.grid(True, alpha=0.3, linestyle="-", linewidth=0.5)
 
-            # Y-Achse auf ganze Zahlen beschränken
-            from matplotlib.ticker import MaxNLocator
-
-            ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+            # Y-Achse auf 0-100% beschränken
+            ax.set_ylim(0, 100)
 
             # # X-Achse Formatierung
             # from matplotlib.ticker import FuncFormatter
