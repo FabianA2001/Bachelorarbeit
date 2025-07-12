@@ -442,7 +442,6 @@ class Run_Algbench:
             times_sorted = np.sort(solver_data)
             y_values = np.arange(1, len(times_sorted) + 1)
 
-            # Plot erstellen (x und y getauscht)
             plt.plot(
                 times_sorted,
                 y_values,
@@ -452,6 +451,7 @@ class Run_Algbench:
                 linewidth=2,
                 markersize=3,
                 alpha=0.8,
+                drawstyle="steps-post",
             )
 
         # Styling (x und y Achsen getauscht)
