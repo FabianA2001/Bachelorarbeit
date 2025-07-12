@@ -476,9 +476,22 @@ class Run_Algbench:
         # Grid
         plt.grid(True, alpha=0.3, linestyle="-", linewidth=0.5)
 
+        # Y-Achse auf ganze Zahlen beschränken
+        from matplotlib.ticker import MaxNLocator
+
+        plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
+
         # X-Achse logarithmisch skalieren (oft nützlich bei Performance-Daten)
         if valid_data[y].max() / valid_data[y].min() > 10:  # Nur wenn große Spanne
             plt.xscale("log")
+
+        # X-Achse Formatierung: normale Zahlen statt wissenschaftliche Notation
+        from matplotlib.ticker import FuncFormatter
+
+        def format_seconds(x, p):
+            return f"{x:.3g}"
+
+        plt.gca().xaxis.set_major_formatter(FuncFormatter(format_seconds))
 
         # Seaborn despine für cleaner look
         sns.despine()
