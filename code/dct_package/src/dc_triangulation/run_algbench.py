@@ -485,21 +485,13 @@ class Run_Algbench:
 
             ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
-            # X-Achse logarithmisch skalieren wenn nötig
-            instance_data = valid_data[valid_data["instance"] == instance][y]
-            if (
-                len(instance_data) > 0
-                and instance_data.max() / instance_data.min() > 10
-            ):
-                ax.set_xscale("log")
+            # # X-Achse Formatierung
+            # from matplotlib.ticker import FuncFormatter
 
-            # X-Achse Formatierung
-            from matplotlib.ticker import FuncFormatter
+            # def format_seconds(x, p):
+            #     return f"{x:.3g}"
 
-            def format_seconds(x, p):
-                return f"{x:.3g}"
-
-            ax.xaxis.set_major_formatter(FuncFormatter(format_seconds))
+            # ax.xaxis.set_major_formatter(FuncFormatter(format_seconds))
 
             # Legende nur beim ersten Plot
             if idx == 0:
