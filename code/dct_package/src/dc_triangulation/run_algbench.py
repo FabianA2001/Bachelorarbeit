@@ -10,7 +10,7 @@ import seaborn as sns
 from algbench import Benchmark, read_as_pandas
 
 from .graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from .graph_utils.node import load_nodes_from_json
+from .graph_utils.node import Node, load_nodes_from_json
 from .solver.solver import Solver
 from .utils import format_dictionary
 
@@ -51,7 +51,9 @@ class Run_Algbench:
         else:
             self.path_benchmark = path_benchmark
         self.figure_path = figure_path
-        self.get_solver_inst_from_runlist: dict[str, tuple] = {}
+        self.get_solver_inst_from_runlist: dict[
+            str, tuple[type[Solver], list[Node], bool, str, str]
+        ] = {}
         self.setup_keys()
 
         self.benchmark = Benchmark(self.path_benchmark)
@@ -60,27 +62,37 @@ class Run_Algbench:
         pd.set_option("display.max_columns", None)
         pd.set_option("display.width", 200)
 
-    def delete_key_from_runlist(self, key: str):
-        solver, nodes, possible, inst, file_name = self.get_solver_inst_from_runlist[
-            key
-        ]
-        parameters = self.outer_parameter[solver]
+    def delete_runlist(self):
+        delete_list = []
+        for (
+            solver,
+            nodes,
+            possible,
+            inst,
+            file_name,
+        ) in self.get_solver_inst_from_runlist.values():
+            parameters = self.outer_parameter[solver]
+            for para in parameters:
+                delete_list.append(
+                    (
+                        solver.NAME,
+                        inst,
+                        file_name,
+                        para["args"],
+                    )
+                )
 
-        for para in parameters:
+        def func(dictionary: dict) -> bool:
+            if (
+                dictionary["parameters"]["args"]["solver_name"],
+                dictionary["parameters"]["args"]["instance_name"],
+                dictionary["parameters"]["args"]["file_name"],
+                dictionary["parameters"]["args"]["parameter"]["args"],
+            ) in delete_list and dictionary["env"]["hostname"] == self.host:
+                return True
+            return False
 
-            def func(dictionary: dict) -> bool:
-                if (
-                    dictionary["parameters"]["args"]["solver_name"] == solver.NAME
-                    and dictionary["parameters"]["args"]["instance_name"] == inst
-                    and dictionary["parameters"]["args"]["file_name"] == file_name
-                    and dictionary["env"]["hostname"] == self.host
-                    and dictionary["parameters"]["args"]["parameter"]["args"]
-                    == para["args"]
-                ):
-                    return True
-                return False
-
-            self.benchmark.delete_if(func)
+        self.benchmark.delete_if(func)
 
     def show_key_from_runlist(self, key: str):
         solver, nodes, possible, inst, file_name = self.get_solver_inst_from_runlist[
