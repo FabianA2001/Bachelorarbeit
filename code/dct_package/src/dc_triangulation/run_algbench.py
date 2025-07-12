@@ -438,9 +438,13 @@ class Run_Algbench:
             times_sorted = np.sort(solver_data)
             y_values = np.arange(1, len(times_sorted) + 1)
 
+            # Punkt (0,0) hinzufügen - bei Zeit 0 sind 0 Instanzen gelöst
+            times_with_zero = np.concatenate([[0], times_sorted])
+            y_values_with_zero = np.concatenate([[0], y_values])
+
             plt.plot(
-                times_sorted,
-                y_values,
+                times_with_zero,
+                y_values_with_zero,
                 "o-",
                 color=colors[i],
                 label=solver,
