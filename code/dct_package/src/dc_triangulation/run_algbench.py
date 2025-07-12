@@ -363,7 +363,6 @@ class Run_Algbench:
         legend = legend[:-1]
         legend += "\n" + "=" * 50
         logging.info(legend)
-        print(table)
 
         # als Balkendiagramm darstellen
         if old:
@@ -441,12 +440,12 @@ class Run_Algbench:
 
             # Sortieren für Cactus Plot (wichtig!)
             times_sorted = np.sort(solver_data)
-            x_values = np.arange(1, len(times_sorted) + 1)
+            y_values = np.arange(1, len(times_sorted) + 1)
 
-            # Plot erstellen
+            # Plot erstellen (x und y getauscht)
             plt.plot(
-                x_values,
                 times_sorted,
+                y_values,
                 "o-",
                 color=colors[i],
                 label=solver,
@@ -455,11 +454,11 @@ class Run_Algbench:
                 alpha=0.8,
             )
 
-        # Styling
-        plt.xlabel("Anzahl gelöste Instanzen", fontsize=12, fontweight="bold")
-        plt.ylabel(
+        # Styling (x und y Achsen getauscht)
+        plt.xlabel(
             f"{y.replace('_', ' ').title()} (Sekunden)", fontsize=12, fontweight="bold"
         )
+        plt.ylabel("Anzahl gelöste Instanzen", fontsize=12, fontweight="bold")
         plt.title(
             f"Cactus Plot - {y.replace('_', ' ').title()} Performance Vergleich",
             fontsize=14,
@@ -477,9 +476,9 @@ class Run_Algbench:
         # Grid
         plt.grid(True, alpha=0.3, linestyle="-", linewidth=0.5)
 
-        # Y-Achse logarithmisch skalieren (oft nützlich bei Performance-Daten)
+        # X-Achse logarithmisch skalieren (oft nützlich bei Performance-Daten)
         if valid_data[y].max() / valid_data[y].min() > 10:  # Nur wenn große Spanne
-            plt.yscale("log")
+            plt.xscale("log")
 
         # Seaborn despine für cleaner look
         sns.despine()

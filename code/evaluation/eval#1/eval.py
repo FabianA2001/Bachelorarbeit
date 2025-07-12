@@ -147,30 +147,30 @@ outer_parameter = {
     #         ),
     #     },
     # ],
-    Gurobi: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(Gurobi_Parameter(intersection=True, degree=True)),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Gurobi_Parameter(intersection=True, degree=True, fix_hull=True)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Gurobi_Parameter(intersection=True, degree=True, exclude_edges=True)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Gurobi_Parameter(intersection=True, degree=True, all_edges=True)
-            ),
-        },
-    ],
+    # Gurobi: [
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(Gurobi_Parameter(intersection=True, degree=True)),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Gurobi_Parameter(intersection=True, degree=True, fix_hull=True)
+    #         ),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Gurobi_Parameter(intersection=True, degree=True, exclude_edges=True)
+    #         ),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Gurobi_Parameter(intersection=True, degree=True, all_edges=True)
+    #         ),
+    #     },
+    # ],
     # SAT_TRI: [
     #     {
     #         "timeout": TIMEOUT,
@@ -189,6 +189,7 @@ RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
+    host="algpc01",
 )
 
 
@@ -217,7 +218,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
