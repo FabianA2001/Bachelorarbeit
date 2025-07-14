@@ -58,38 +58,38 @@ outer_parameter = {
             "timeout": TIMEOUT,
             "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
         },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(intersection=True, degree_exact=True, fix_edges=True)
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             intersection=True,
-        #             degree_exact=True,
-        #             exclude_edges=True,
-        #         )
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             intersection=True,
-        #             degree_exact=True,
-        #             add_allEdges_or_exclude_edges=False,
-        #         )
-        #     ),
-        # },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_exact=True, fix_edges=True)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    intersection=True,
+                    degree_exact=True,
+                    exclude_edges=True,
+                )
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    intersection=True,
+                    degree_exact=True,
+                    add_allEdges_or_exclude_edges=False,
+                )
+            ),
+        },
         {
             "timeout": TIMEOUT,
             "args": asdict(
@@ -106,34 +106,34 @@ outer_parameter = {
             "timeout": TIMEOUT,
             "args": asdict(Ortools_Parameter(intersection=True, degree=True)),
         },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         Ortools_Parameter(intersection=True, degree=True, fix_hull=True)
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         Ortools_Parameter(intersection=True, degree=True, fix_edges=True)
-        #     ),
-        # },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(intersection=True, degree=True, fix_hull=True)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(intersection=True, degree=True, fix_edges=True)
+            ),
+        },
         {
             "timeout": TIMEOUT,
             "args": asdict(
                 Ortools_Parameter(intersection=True, degree=True, all_edges=True)
             ),
         },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         Ortools_Parameter(
-        #             intersection=True,
-        #             degree=True,
-        #             exclude_edges=True,
-        #         )
-        #     ),
-        # },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(
+                    intersection=True,
+                    degree=True,
+                    exclude_edges=True,
+                )
+            ),
+        },
     ],
     # Gurobi_Tri: [
     #     {
@@ -147,30 +147,30 @@ outer_parameter = {
     #         ),
     #     },
     # ],
-    # Gurobi: [
-    #     {
-    #         "timeout": TIMEOUT,
-    #         "args": asdict(Gurobi_Parameter(intersection=True, degree=True)),
-    #     },
-    #     {
-    #         "timeout": TIMEOUT,
-    #         "args": asdict(
-    #             Gurobi_Parameter(intersection=True, degree=True, fix_hull=True)
-    #         ),
-    #     },
-    #     {
-    #         "timeout": TIMEOUT,
-    #         "args": asdict(
-    #             Gurobi_Parameter(intersection=True, degree=True, exclude_edges=True)
-    #         ),
-    #     },
-    #     {
-    #         "timeout": TIMEOUT,
-    #         "args": asdict(
-    #             Gurobi_Parameter(intersection=True, degree=True, all_edges=True)
-    #         ),
-    #     },
-    # ],
+    Gurobi: [
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(Gurobi_Parameter(intersection=True, degree=True)),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Gurobi_Parameter(intersection=True, degree=True, fix_hull=True)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Gurobi_Parameter(intersection=True, degree=True, exclude_edges=True)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Gurobi_Parameter(intersection=True, degree=True, all_edges=True)
+            ),
+        },
+    ],
     # SAT_TRI: [
     #     {
     #         "timeout": TIMEOUT,

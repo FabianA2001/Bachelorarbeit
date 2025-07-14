@@ -17,7 +17,7 @@ sonnst aktiviert True den constrient
 
 @dataclass
 class Parameter:
-    solver_name: str = "glucose3"
+    solver_name: str = "Glucose42"
     add_allEdges_or_exclude_edges: bool = True
     number_edges: bool = False
     intersection: bool = False

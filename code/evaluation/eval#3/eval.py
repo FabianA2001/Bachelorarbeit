@@ -50,18 +50,6 @@ outer_parameter = {
             "timeout": TIMEOUT,
             "args": asdict(
                 SAT_Parameter(
-                    solver_name="Glucose42",
-                    intersection=True,
-                    degree_exact=True,
-                    fix_hull=True,
-                    all_edges=True,
-                )
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
                     solver_name="Lingeling",
                     intersection=True,
                     degree_exact=True,
