@@ -412,9 +412,22 @@ class Run_Algbench:
                 # Y-Werte in Prozent umwandeln
                 y_values_percent = (y_values_with_zero / len_instance) * 100
 
+                # Füge einen Punkt beim Timelimit hinzu, falls die Linie nicht bis dahin reicht
+                if len(times_with_zero) > 1 and times_with_zero[-1] < timelimit:
+                    # Aktueller y-Wert (Prozentsatz der gelösten Instanzen) bleibt beim Timelimit
+                    times_with_timelimit = np.concatenate(
+                        [times_with_zero, [timelimit]]
+                    )
+                    y_values_with_timelimit = np.concatenate(
+                        [y_values_percent, [y_values_percent[-1]]]
+                    )
+                else:
+                    times_with_timelimit = times_with_zero
+                    y_values_with_timelimit = y_values_percent
+
                 ax.plot(
-                    times_with_zero,
-                    y_values_percent,
+                    times_with_timelimit,
+                    y_values_with_timelimit,
                     "o-",
                     color=colors[i],
                     label=solver,
@@ -444,11 +457,11 @@ class Run_Algbench:
 
             # Beschriftung für die 100% Linie
             ax.text(
-                ax.get_xlim()[1] * 0.95,
-                100,
+                ax.get_xlim()[1] * 0.5,
+                101,
                 "100% gelöst",
                 verticalalignment="bottom",
-                horizontalalignment="right",
+                horizontalalignment="center",
                 fontsize=8,
                 color="green",
                 alpha=0.8,
@@ -465,11 +478,11 @@ class Run_Algbench:
 
             # Beschriftung direkt an die Linie
             ax.text(
-                timelimit,
-                95,
+                timelimit + 12,
+                50,
                 f"Timelimit ({timelimit}s)",
                 rotation=90,
-                verticalalignment="top",
+                verticalalignment="center",
                 horizontalalignment="right",
                 fontsize=8,
                 color="red",

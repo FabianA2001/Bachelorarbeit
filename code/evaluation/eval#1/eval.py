@@ -118,12 +118,12 @@ outer_parameter = {
         #         Ortools_Parameter(intersection=True, degree=True, fix_edges=True)
         #     ),
         # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         Ortools_Parameter(intersection=True, degree=True, all_edges=True)
-        #     ),
-        # },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(intersection=True, degree=True, all_edges=True)
+            ),
+        },
         # {
         #     "timeout": TIMEOUT,
         #     "args": asdict(
