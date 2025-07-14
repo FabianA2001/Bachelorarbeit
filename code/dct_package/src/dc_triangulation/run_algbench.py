@@ -430,8 +430,29 @@ class Run_Algbench:
             ax.set_title(f"{instance}", fontsize=12, fontweight="bold")
             ax.grid(True, alpha=0.3, linestyle="-", linewidth=0.5)
 
-            # Y-Achse auf 0-100% beschränken
-            ax.set_ylim(0, 100)
+            # Y-Achse auf 0-105% setzen, damit 100%-Linie und Beschriftung sichtbar sind
+            ax.set_ylim(0, 105)
+
+            # Horizontale Linie bei 100% hinzufügen
+            ax.axhline(
+                y=100,
+                color="green",
+                linestyle="-",
+                alpha=0.6,
+                linewidth=1.5,
+            )
+
+            # Beschriftung für die 100% Linie
+            ax.text(
+                ax.get_xlim()[1] * 0.95,
+                100,
+                "100% gelöst",
+                verticalalignment="bottom",
+                horizontalalignment="right",
+                fontsize=8,
+                color="green",
+                alpha=0.8,
+            )
 
             # Vertikale Linie bei timelimit hinzufügen
             ax.axvline(
