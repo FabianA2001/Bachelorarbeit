@@ -294,6 +294,10 @@ class Graph_Wrapper:
             if ((com in hull) or ((com[1], com[0]) in hull)) and ignore_hull:
                 self._data.remove_edge(com)
 
+    def get_line_of_edge(self, edge: tuple[int, int]) -> shapely.LineString:
+        """Gibt die Linie einer Kante zurück."""
+        return self._data.get_line_of_edge(edge)
+
     def get_desired_degree_node(self, node: int) -> int:
         """Gibt den Grad eines Knotens zurück."""
         if node not in self._data.nodes:

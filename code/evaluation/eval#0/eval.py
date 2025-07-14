@@ -2,24 +2,31 @@ import os
 from dataclasses import asdict
 
 import slurminade
-from dc_triangulation import Graph_Wrapper, Gurobi, Gurobi_Parameter, Run_Algbench
+from dc_triangulation import (
+    SAT,
+    Graph_Wrapper,
+    Gurobi,
+    Gurobi_Parameter,
+    Run_Algbench,
+    SAT_Parameter,
+)
 
 path = os.path.join(os.path.dirname(__file__), "instances")
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
 outer_parameter = {
-    # SAT: [
-    #     {
-    #         "timeout": -1,
-    #         "args": asdict(
-    #             SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
-    #         ),
-    #     },
-    #     {
-    #         "timeout": -1,
-    #         "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
-    #     },
-    # ],
+    SAT: [
+        {
+            "timeout": -1,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
+            ),
+        },
+        #     {
+        #         "timeout": -1,
+        #         "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
+        #     },
+    ],
     Gurobi: [
         {
             "timeout": -1,
@@ -34,7 +41,6 @@ RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
-    host="algpc05",
     ignore_correct=True,
 )
 
@@ -83,7 +89,8 @@ if __name__ == "__main__":
         slurminade.join()
         compress_results.distribute()
     else:
-        for key in RI.get_run_list():
-            RI.delete_key_from_runlist(key)
-            # RI.show_key_from_runlist(key)
-        # RI.show(old=True)
+        # RI.delete_runlist()
+        # for key in RI.get_run_list():
+        # RI.show_key_from_runlist(key)
+        RI.show()
+        # print(len(list(RI.benchmark)))

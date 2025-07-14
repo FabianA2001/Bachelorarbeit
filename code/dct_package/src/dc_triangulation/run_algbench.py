@@ -10,7 +10,7 @@ import seaborn as sns
 from algbench import Benchmark, read_as_pandas
 
 from .graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
-from .graph_utils.node import load_nodes_from_json
+from .graph_utils.node import Node, load_nodes_from_json
 from .solver.solver import Solver
 from .utils import format_dictionary
 
@@ -51,7 +51,9 @@ class Run_Algbench:
         else:
             self.path_benchmark = path_benchmark
         self.figure_path = figure_path
-        self.get_solver_inst_from_runlist: dict[str, tuple] = {}
+        self.get_solver_inst_from_runlist: dict[
+            str, tuple[type[Solver], list[Node], bool, str, str]
+        ] = {}
         self.setup_keys()
 
         self.benchmark = Benchmark(self.path_benchmark)
@@ -60,27 +62,37 @@ class Run_Algbench:
         pd.set_option("display.max_columns", None)
         pd.set_option("display.width", 200)
 
-    def delete_key_from_runlist(self, key: str):
-        solver, nodes, possible, inst, file_name = self.get_solver_inst_from_runlist[
-            key
-        ]
-        parameters = self.outer_parameter[solver]
+    def delete_runlist(self):
+        delete_list = []
+        for (
+            solver,
+            nodes,
+            possible,
+            inst,
+            file_name,
+        ) in self.get_solver_inst_from_runlist.values():
+            parameters = self.outer_parameter[solver]
+            for para in parameters:
+                delete_list.append(
+                    (
+                        solver.NAME,
+                        inst,
+                        file_name,
+                        para["args"],
+                    )
+                )
 
-        for para in parameters:
+        def func(dictionary: dict) -> bool:
+            if (
+                dictionary["parameters"]["args"]["solver_name"],
+                dictionary["parameters"]["args"]["instance_name"],
+                dictionary["parameters"]["args"]["file_name"],
+                dictionary["parameters"]["args"]["parameter"]["args"],
+            ) in delete_list and dictionary["env"]["hostname"] == self.host:
+                return True
+            return False
 
-            def func(dictionary: dict) -> bool:
-                if (
-                    dictionary["parameters"]["args"]["solver_name"] == solver.NAME
-                    and dictionary["parameters"]["args"]["instance_name"] == inst
-                    and dictionary["parameters"]["args"]["file_name"] == file_name
-                    and dictionary["env"]["hostname"] == self.host
-                    and dictionary["parameters"]["args"]["parameter"]["args"]
-                    == para["args"]
-                ):
-                    return True
-                return False
-
-            self.benchmark.delete_if(func)
+        self.benchmark.delete_if(func)
 
     def show_key_from_runlist(self, key: str):
         solver, nodes, possible, inst, file_name = self.get_solver_inst_from_runlist[
@@ -102,6 +114,12 @@ class Run_Algbench:
                 if logger:
                     for dict in logger:
                         print(f"{dict['name']} : {dict['msg']}")
+        print(
+            "-----------------------------------------------------------------------------------"
+        )
+        print(
+            "-----------------------------------------------------------------------------------"
+        )
 
     def setup_keys(self):
         for inst in self.instances.keys():
@@ -177,66 +195,9 @@ class Run_Algbench:
             "info": info,
         }
 
-        # @staticmethod
-        # def run_solver_on_instance():
-
-        # for file_name in sorted(instance):
-        #     file_path = instance[file_name]
-        #     nodes = load_nodes_from_json(file_path)
-        #     with open(file_path, "r") as f:
-        #         possible = json.load(f)["possible"]
-        #     graph = Graph_Wrapper(nodes)
-        #     timeout = [False]
-        #     ####################################################
-        #     # hack für eval 6
-        #     if parameter.get("hack_eval_6", False):
-        #         try:
-        #             if "hack_eval_6_data" not in parameter:
-        #                 raise ValueError(
-        #                     "hack_eval_6_data must be provided in the parameter."
-        #                 )
-        #             if "hack_eval_6_PERCENT" not in parameter:
-        #                 raise ValueError(
-        #                     "hack_eval_6_PERCENT must be provided in the parameter."
-        #                 )
-        #             data = parameter["hack_eval_6_data"]
-        #             percent = parameter["hack_eval_6_PERCENT"]
-        #             key = f"{instance_name}_{file_name}.json"
-        #             logging.info("-------------------------------------------->")
-        #             logging.info(key)
-        #             if key not in data:
-        #                 raise ValueError(f"No data found for instance {key}.")
-        #             if percent not in data[key]:
-        #                 raise ValueError(
-        #                     f"No data found for instance {key} with percent {percent}."
-        #                 )
-        #             parameter["debug_exclude_edges"] = data[key][percent]
-        #         except ValueError as e:
-        #             logging.error(f"Error in hack_eval_6: {e}")
-        #             continue
-        #     ############################################
-
-        #     logging.info(f"starte instance: {instance_name}/{file_name}")
-        #     self.benchmark.add(
-        #         self.create_benchmark_entry,
-        #         solver_type=solver_type,
-        #         solver_name=solver_type.NAME,
-        #         parameter=parameter,
-        #         instance_name=instance_name,
-        #         file_name=file_name,
-        #         possible=possible,
-        #         host=socket.gethostname(),
-        #         _graph=graph,
-        #         _timeout=timeout,
-        #     )
-        #     if timeout[0]:
-        #         logging.warning(
-        #             f"Timeout while solving {instance_name} - {solver_type.NAME} - {file_name} with {format_dictionary(parameter)}"
-        #         )
-        #         break
-
     def show(
         self,
+        timelimit: int = 300,
         old: bool = False,
     ):
         table = read_as_pandas(
@@ -277,7 +238,7 @@ class Run_Algbench:
 
         # Kombiniere Instanz und Dateiname für die x-Achse
         table["instance_file"] = table["instance"] + "/" + table["file"]
-        table = table.drop(columns=["instance", "file"])
+        table = table.drop(columns=["file"])
 
         all_args = []
         for arg_list in self.outer_parameter.values():
@@ -351,7 +312,6 @@ class Run_Algbench:
         legend = legend[:-1]
         legend += "\n" + "=" * 50
         logging.info(legend)
-        print(table)
 
         # als Balkendiagramm darstellen
         if old:
@@ -372,11 +332,13 @@ class Run_Algbench:
             table=table,
             y="pre_time",
             block=False,
+            timelimit=timelimit,
         )
         self.create_cactus(
             table=table,
             y="runtime",
             block=True,
+            timelimit=timelimit,
         )
 
     def create_cactus(
@@ -384,6 +346,7 @@ class Run_Algbench:
         table,
         y: str,
         block: bool = False,
+        timelimit: int = 300,
     ):
         """
         Erstellt einen Cactus Plot für die Benchmark-Daten.
@@ -394,16 +357,6 @@ class Run_Algbench:
         # Seaborn Style setzen
         sns.set_style("whitegrid")
 
-        # Debug: Zeige alle verfügbaren Solver
-        all_solvers = table["solver_args"].unique()
-
-        # Debug: Zeige Datenverteilung vor Filterung
-        for solver in all_solvers:
-            solver_count = len(table[table["solver_args"] == solver])
-            positive_count = len(
-                table[(table["solver_args"] == solver) & (table[y] >= 0)]
-            )
-
         # Filter gültige Werte (entferne negative Werte wie -1 für Timeouts)
         valid_data = table[table[y] >= 0].copy()
 
@@ -411,73 +364,152 @@ class Run_Algbench:
             logging.warning(f"Keine gültigen Daten für {y} Cactus Plot gefunden")
             return
 
-        # Eindeutige Solver ermitteln
+        # Eindeutige Solver und Instanzen ermitteln
         unique_solvers = valid_data["solver_args"].unique()
+        unique_instances = valid_data["instance"].unique()
 
-        # Seaborn Farbpalette
+        # Seaborn Farbpalette für Solver
         colors = sns.color_palette("husl", len(unique_solvers))
 
-        plt.figure(figsize=(12, 8))
+        # Bestimme Layout für Subplots
+        n_instances = len(unique_instances)
+        cols = min(3, n_instances)  # Maximal 3 Spalten
+        rows = (n_instances + cols - 1) // cols  # Aufrunden
 
-        # Für jeden Solver die Daten sortieren und plotten
-        for i, solver in enumerate(unique_solvers):
-            solver_data = valid_data[valid_data["solver_args"] == solver][y].values
+        fig, axes = plt.subplots(rows, cols, figsize=(5 * cols, 4 * rows))
 
-            if len(solver_data) == 0:
-                logging.warning(f"Keine Daten für Solver '{solver}' nach Filterung")
-                continue
+        # Für den Fall dass nur eine Instanz vorhanden ist
+        if n_instances == 1:
+            axes = [axes]
+        elif rows == 1:
+            axes = axes if isinstance(axes, (list, np.ndarray)) else [axes]
+        else:
+            axes = axes.flatten()
 
-            # Sortieren für Cactus Plot (wichtig!)
-            times_sorted = np.sort(solver_data)
-            x_values = np.arange(1, len(times_sorted) + 1)
+        # Für jede Instanz einen eigenen Plot
+        for idx, instance in enumerate(unique_instances):
+            ax = axes[idx]
+            len_instance = len(self.instances[instance])
 
-            # Plot erstellen
-            plt.plot(
-                x_values,
-                times_sorted,
-                "o-",
-                color=colors[i],
-                label=solver,
-                linewidth=2,
-                markersize=3,
+            # Für jeden Solver in dieser Instanz plotten
+            for i, solver in enumerate(unique_solvers):
+                instance_solver_data = valid_data[
+                    (valid_data["solver_args"] == solver)
+                    & (valid_data["instance"] == instance)
+                ][y].values
+
+                if len(instance_solver_data) == 0:
+                    continue
+
+                # Sortieren für Cactus Plot (wichtig!)
+                times_sorted = np.sort(instance_solver_data)
+                y_values = np.arange(1, len(times_sorted) + 1)
+
+                # Punkt (0,0) hinzufügen - bei Zeit 0 sind 0 Instanzen gelöst
+                times_with_zero = np.concatenate([[0], times_sorted])
+                y_values_with_zero = np.concatenate([[0], y_values])
+
+                # Y-Werte in Prozent umwandeln
+                y_values_percent = (y_values_with_zero / len_instance) * 100
+
+                # Füge einen Punkt beim Timelimit hinzu, falls die Linie nicht bis dahin reicht
+                if len(times_with_zero) > 1 and times_with_zero[-1] < timelimit:
+                    # Aktueller y-Wert (Prozentsatz der gelösten Instanzen) bleibt beim Timelimit
+                    times_with_timelimit = np.concatenate(
+                        [times_with_zero, [timelimit]]
+                    )
+                    y_values_with_timelimit = np.concatenate(
+                        [y_values_percent, [y_values_percent[-1]]]
+                    )
+                else:
+                    times_with_timelimit = times_with_zero
+                    y_values_with_timelimit = y_values_percent
+
+                ax.plot(
+                    times_with_timelimit,
+                    y_values_with_timelimit,
+                    "o-",
+                    color=colors[i],
+                    label=solver,
+                    linewidth=2,
+                    markersize=3,
+                    alpha=0.8,
+                    drawstyle="steps-post",
+                )
+
+            # Subplot Styling
+            ax.set_xlabel(f"{y.replace('_', ' ').title()} (Sekunden)", fontsize=10)
+            ax.set_ylabel("Gelöste Instanzen (%)", fontsize=10)
+            ax.set_title(f"{instance}", fontsize=12, fontweight="bold")
+            ax.grid(True, alpha=0.3, linestyle="-", linewidth=0.5)
+
+            # Y-Achse auf 0-105% setzen, damit 100%-Linie und Beschriftung sichtbar sind
+            ax.set_ylim(0, 105)
+
+            # Horizontale Linie bei 100% hinzufügen
+            ax.axhline(
+                y=100,
+                color="green",
+                linestyle="-",
+                alpha=0.6,
+                linewidth=1.5,
+            )
+
+            # Beschriftung für die 100% Linie
+            ax.text(
+                ax.get_xlim()[1] * 0.5,
+                101,
+                "100% gelöst",
+                verticalalignment="bottom",
+                horizontalalignment="center",
+                fontsize=8,
+                color="green",
                 alpha=0.8,
             )
 
-        # Styling
-        plt.xlabel("Anzahl gelöste Instanzen", fontsize=12, fontweight="bold")
-        plt.ylabel(
-            f"{y.replace('_', ' ').title()} (Sekunden)", fontsize=12, fontweight="bold"
-        )
-        plt.title(
+            # Vertikale Linie bei timelimit hinzufügen
+            ax.axvline(
+                x=timelimit,
+                color="red",
+                linestyle="--",
+                alpha=0.7,
+                linewidth=1.5,
+            )
+
+            # Beschriftung direkt an die Linie
+            ax.text(
+                timelimit + 12,
+                50,
+                f"Timelimit ({timelimit}s)",
+                rotation=90,
+                verticalalignment="center",
+                horizontalalignment="right",
+                fontsize=8,
+                color="red",
+                alpha=0.8,
+            )
+
+            # Legende nur beim ersten Plot
+            if idx == 0:
+                ax.legend(fontsize=9)
+
+        # Verstecke überschüssige Subplots
+        for idx in range(n_instances, len(axes)):
+            axes[idx].set_visible(False)
+
+        # Gesamttitel
+        fig.suptitle(
             f"Cactus Plot - {y.replace('_', ' ').title()} Performance Vergleich",
-            fontsize=14,
+            fontsize=16,
             fontweight="bold",
-            pad=20,
         )
-
-        # Legende styling
-        legend = plt.legend(
-            loc="upper left", fontsize=11, frameon=True, fancybox=True, shadow=True
-        )
-        legend.get_frame().set_facecolor("white")
-        legend.get_frame().set_alpha(0.9)
-
-        # Grid
-        plt.grid(True, alpha=0.3, linestyle="-", linewidth=0.5)
-
-        # Y-Achse logarithmisch skalieren (oft nützlich bei Performance-Daten)
-        if valid_data[y].max() / valid_data[y].min() > 10:  # Nur wenn große Spanne
-            plt.yscale("log")
-
-        # Seaborn despine für cleaner look
-        sns.despine()
 
         # Layout optimieren
-        plt.tight_layout()
+        fig.tight_layout()
 
         # Speichern falls Pfad angegeben
         if self.figure_path:
-            plt.savefig(
+            fig.savefig(
                 os.path.join(self.figure_path, f"cactus_{y}.pdf"),
                 dpi=300,
                 bbox_inches="tight",

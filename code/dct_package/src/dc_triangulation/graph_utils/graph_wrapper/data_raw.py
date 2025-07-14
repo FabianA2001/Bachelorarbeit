@@ -169,6 +169,12 @@ class Data_Raw(nx.Graph):
     def degree(self, node):
         return super().degree(node)  # type:ignore
 
+    def get_line_of_edge(self, edge: tuple[int, int]) -> shapely.LineString:
+        """Gibt die Linie einer Kante zurück."""
+        if edge not in self.edges:
+            raise ValueError(f"Edge {edge} not found in graph.")
+        return self.edges[edge]["line"]
+
     def degree_aktive(self, node: int) -> int:
         """Gibt den Grad eines Knotens im aktiven Graphen zurück."""
         if node not in self.nodes:

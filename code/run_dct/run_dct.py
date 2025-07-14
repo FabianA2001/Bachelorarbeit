@@ -7,6 +7,7 @@ from dc_triangulation import (
     SAT_TRI,
     Delaunay,
     Graph_Wrapper,
+    Greedy,
     Gurobi,
     Gurobi_Parameter,
     Gurobi_Tri,
@@ -27,6 +28,7 @@ from dc_triangulation import (
 
 def get_solvers():
     return [
+        Greedy,
         Raw_Flips,
         Delaunay,
         Iterative,
@@ -97,8 +99,7 @@ def sat_algorithm(graph):
     solver = SAT(graph)
     para = SAT_Parameter(
         intersection=True,
-        degree_atleast=True,
-        intersection_clique=True,
+        degree_exact=True,
         # fix_hull=True,
         # all_edges=True,
         # exclude_edges=True,
@@ -148,31 +149,30 @@ def run_algo():
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_60", "000_delaunay_flips.json"
     # )
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__),
-    #     "instance",
-    #     "random_impossible",
-    #     "000_random_impossible_30.json",
-    # )
+    PATH = os.path.join(
+        os.path.dirname(__file__),
+        "instance",
+        "random_impossible",
+        "000_random_impossible_30.json",
+    )
     # PATH = os.path.join(
     #     os.path.dirname(__file__),
     #     "instance",
     #     "iterative_80_10",
     #     "003_random_60.json",
     # )
-    PATH = os.path.join(
-        os.path.dirname(__file__),
-        "instance",
-        "N_Gon_60",
-        "006_random.json",
-    )
+    # PATH = os.path.join(
+    #     os.path.dirname(__file__),
+    #     "instance",
+    #     "N_Gon_60",
+    #     "006_random.json",
+    # )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    print(len(graph.exclude_edge_partition))
-    # solver = Random_Adder(graph)
-    # solver.solve({"timeout": -1})
+    solver = Greedy(graph)
+    solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     # sat_algorithm(graph)
@@ -182,29 +182,52 @@ def run_algo():
     # gurobi_algorithm(graph)
 
     # graph.add_all_possible_edges(True)
-    # graph.show_and_save()
+    graph.show_and_save()
 
 
 def create_instance():
-    NAME = "flips"
-    POST = ""
-    INST_NAME = f"{NAME}{POST}"
-    FILE_NAME = f"{NAME}_2"
-    NUMBER_INSTANCE = 1
+    NAME = "d_flips"
+    INST_NAME = f"{NAME}"
     NUMBER_NODES = 100
     STEP = 10
-    FLIPS = 300
+    FLIPS = 500
     RADIUS = 1000
     for i in [60, 70, 80]:
+        gen = generate.Generate_Edges_Delaunay_Flips(FLIPS)
+        FILE_NAME = f"{NAME}"
         generate.Generate_Instance(
             INST_NAME,
             FILE_NAME,
             i,
-            NUMBER_INSTANCE,
+            2,
             generate.Generate_Nodes_Random(),
-            generate.Generate_Edges_Delaunay_Flips(FLIPS),
-            # generate.Generate_Impossible_Move_Degree(amount=5, times=10),
-            # generate.Generate_Impossible_Change_Degree(times=10),
+            gen,
+            path="instance",
+            width=10000,
+            height=10000,
+        ).generate()
+        FILE_NAME = f"{NAME}_impossible_move"
+        generate.Generate_Instance(
+            INST_NAME,
+            FILE_NAME,
+            i,
+            1,
+            generate.Generate_Nodes_Random(),
+            gen,
+            generate.Generate_Impossible_Move_Degree(amount=5, times=10),
+            path="instance",
+            width=10000,
+            height=10000,
+        ).generate()
+        FILE_NAME = f"{NAME}_impossible_change"
+        generate.Generate_Instance(
+            INST_NAME,
+            FILE_NAME,
+            i,
+            1,
+            generate.Generate_Nodes_Random(),
+            gen,
+            generate.Generate_Impossible_Change_Degree(times=10),
             path="instance",
             width=10000,
             height=10000,

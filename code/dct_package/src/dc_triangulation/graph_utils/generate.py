@@ -7,6 +7,8 @@ from random import choice, randint
 from typing import Optional
 
 from ..solver.delaunay import Delaunay
+from ..solver.greedy import Greedy
+from ..solver.iterative import Iterative
 from ..solver.random_adder import Random_Adder
 from . import graph_const
 from .graph_wrapper.graph_wrapper import Graph_Wrapper
@@ -85,7 +87,7 @@ class Generate_Instance:
     def generate(self) -> None:
         if self.file_name == "":
             raise ValueError("lokal_name is not set.")
-        for i in range(self.number_instances):
+        for _ in range(self.number_instances):
             nodes = self.nodes_gen.generate_nodes(
                 self.number_nodes, self.width, self.height
             )
@@ -93,7 +95,17 @@ class Generate_Instance:
             nodes, possible = self.edges_gen.generate_instance(graph)
             if self.impossible_gen is not None:
                 nodes, possible = self.impossible_gen.generate_instance(nodes)
-            number = str(i).zfill(3)
+            if os.path.exists(os.path.join(self.path, self.name)):
+                number_files = len(
+                    [
+                        name
+                        for name in os.listdir(os.path.join(self.path, self.name))
+                        if ".json" in name
+                    ]
+                )
+            else:
+                number_files = 0
+            number = str(number_files).zfill(3)
             filename = f"{self.name}/{number}_{self.file_name}_{len(graph.get_all_nodes())}.json"
             save_nodes_as_json(
                 nodes,
@@ -152,6 +164,34 @@ class Generate_Edges_Random(Generate_Instance_ABC_Edges):
         self, graph: Graph_Wrapper
     ) -> tuple[list[Node], Optional[bool]]:
         solver = Random_Adder(graph)
+        solver.solve(
+            {
+                "timeout": -1,
+                "ignore_degree": True,
+            }
+        )
+        return (graph.get_aktive_graph_nodes(), True)
+
+
+class Generate_Edges_Greedy(Generate_Instance_ABC_Edges):
+    def generate_instance(
+        self, graph: Graph_Wrapper
+    ) -> tuple[list[Node], Optional[bool]]:
+        solver = Greedy(graph)
+        solver.solve(
+            {
+                "timeout": -1,
+                "ignore_degree": True,
+            }
+        )
+        return (graph.get_aktive_graph_nodes(), True)
+
+
+class Generate_Edges_Iterative(Generate_Instance_ABC_Edges):
+    def generate_instance(
+        self, graph: Graph_Wrapper
+    ) -> tuple[list[Node], Optional[bool]]:
+        solver = Iterative(graph)
         solver.solve(
             {
                 "timeout": -1,

@@ -22,7 +22,6 @@ class Parameter:
     number_edges: bool = False
     intersection: bool = False
     all_edges: bool = False
-    intersection_clique: bool = False
     degree_exact: bool = False
     degree_atleast: bool = False
     degree_subset: bool = False
@@ -160,6 +159,7 @@ class SAT(Solver):
             )
             + 1
         )
+        # TODO Encoding für 1(default), 3,7,8 testen
         if exact_atleast:
             enc = CardEnc.equals(lits=vars, bound=n, top_id=used)
         else:

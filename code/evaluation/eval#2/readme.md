@@ -1,3 +1,4 @@
-* 30 bis 80 Knoten in 10 Schritten
-* alle Solver ein mal mit standart parametern
-* Instanzen sollten nicht möglich sein
+* 60 bis 80 Knoten 
+* besten Solver 
+* Instanzen zwei normal, zwei unmöglich 
+* greedy, iterative, random, Delaunay, Flips
