@@ -186,14 +186,14 @@ def run_algo():
 
 
 def create_instance():
-    NAME = "greedy"
+    NAME = "d_flips"
     INST_NAME = f"{NAME}"
     NUMBER_NODES = 100
     STEP = 10
-    FLIPS = 300
+    FLIPS = 500
     RADIUS = 1000
     for i in [60, 70, 80]:
-        gen = generate.Generate_Edges_Greedy()
+        gen = generate.Generate_Edges_Delaunay_Flips(FLIPS)
         FILE_NAME = f"{NAME}"
         generate.Generate_Instance(
             INST_NAME,
