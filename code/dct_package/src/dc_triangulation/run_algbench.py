@@ -197,6 +197,7 @@ class Run_Algbench:
 
     def show(
         self,
+        timelimit: int = 300,
         old: bool = False,
     ):
         table = read_as_pandas(
@@ -331,11 +332,13 @@ class Run_Algbench:
             table=table,
             y="pre_time",
             block=False,
+            timelimit=timelimit,
         )
         self.create_cactus(
             table=table,
             y="runtime",
             block=True,
+            timelimit=timelimit,
         )
 
     def create_cactus(
@@ -343,6 +346,7 @@ class Run_Algbench:
         table,
         y: str,
         block: bool = False,
+        timelimit: int = 300,
     ):
         """
         Erstellt einen Cactus Plot für die Benchmark-Daten.
@@ -428,6 +432,16 @@ class Run_Algbench:
 
             # Y-Achse auf 0-100% beschränken
             ax.set_ylim(0, 100)
+
+            # Vertikale Linie bei timelimit hinzufügen
+            ax.axvline(
+                x=timelimit,
+                color="red",
+                linestyle="--",
+                alpha=0.7,
+                linewidth=1.5,
+                label=f"Timelimit ({timelimit}s)",
+            )
 
             # # X-Achse Formatierung
             # from matplotlib.ticker import FuncFormatter
