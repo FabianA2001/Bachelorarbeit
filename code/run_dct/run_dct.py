@@ -7,6 +7,7 @@ from dc_triangulation import (
     SAT_TRI,
     Delaunay,
     Graph_Wrapper,
+    Greedy,
     Gurobi,
     Gurobi_Parameter,
     Gurobi_Tri,
@@ -27,6 +28,7 @@ from dc_triangulation import (
 
 def get_solvers():
     return [
+        Greedy,
         Raw_Flips,
         Delaunay,
         Iterative,
@@ -169,11 +171,11 @@ def run_algo():
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    # solver = Random_Adder(graph)
-    # solver.solve({"timeout": -1})
+    solver = Greedy(graph)
+    solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
-    sat_algorithm(graph)
+    # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # gurobi_tri_algorithm(graph)
@@ -184,25 +186,48 @@ def run_algo():
 
 
 def create_instance():
-    NAME = "flips"
-    POST = ""
-    INST_NAME = f"{NAME}{POST}"
-    FILE_NAME = f"{NAME}_2"
-    NUMBER_INSTANCE = 1
+    NAME = "greedy"
+    INST_NAME = f"{NAME}"
     NUMBER_NODES = 100
     STEP = 10
     FLIPS = 300
     RADIUS = 1000
     for i in [60, 70, 80]:
+        gen = generate.Generate_Edges_Greedy()
+        FILE_NAME = f"{NAME}"
         generate.Generate_Instance(
             INST_NAME,
             FILE_NAME,
             i,
-            NUMBER_INSTANCE,
+            2,
             generate.Generate_Nodes_Random(),
-            generate.Generate_Edges_Delaunay_Flips(FLIPS),
-            # generate.Generate_Impossible_Move_Degree(amount=5, times=10),
-            # generate.Generate_Impossible_Change_Degree(times=10),
+            gen,
+            path="instance",
+            width=10000,
+            height=10000,
+        ).generate()
+        FILE_NAME = f"{NAME}_impossible_move"
+        generate.Generate_Instance(
+            INST_NAME,
+            FILE_NAME,
+            i,
+            1,
+            generate.Generate_Nodes_Random(),
+            gen,
+            generate.Generate_Impossible_Move_Degree(amount=5, times=10),
+            path="instance",
+            width=10000,
+            height=10000,
+        ).generate()
+        FILE_NAME = f"{NAME}_impossible_change"
+        generate.Generate_Instance(
+            INST_NAME,
+            FILE_NAME,
+            i,
+            1,
+            generate.Generate_Nodes_Random(),
+            gen,
+            generate.Generate_Impossible_Change_Degree(times=10),
             path="instance",
             width=10000,
             height=10000,
@@ -210,5 +235,5 @@ def create_instance():
 
 
 if __name__ == "__main__":
-    run_algo()
-    # create_instance()
+    # run_algo()
+    create_instance()
