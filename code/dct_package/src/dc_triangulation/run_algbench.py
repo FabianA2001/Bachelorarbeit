@@ -197,6 +197,7 @@ class Run_Algbench:
 
     def show(
         self,
+        timelimit: int = 300,
         old: bool = False,
     ):
         table = read_as_pandas(
@@ -331,11 +332,13 @@ class Run_Algbench:
             table=table,
             y="pre_time",
             block=False,
+            timelimit=timelimit,
         )
         self.create_cactus(
             table=table,
             y="runtime",
             block=True,
+            timelimit=timelimit,
         )
 
     def create_cactus(
@@ -343,6 +346,7 @@ class Run_Algbench:
         table,
         y: str,
         block: bool = False,
+        timelimit: int = 300,
     ):
         """
         Erstellt einen Cactus Plot für die Benchmark-Daten.
@@ -408,9 +412,22 @@ class Run_Algbench:
                 # Y-Werte in Prozent umwandeln
                 y_values_percent = (y_values_with_zero / len_instance) * 100
 
+                # Füge einen Punkt beim Timelimit hinzu, falls die Linie nicht bis dahin reicht
+                if len(times_with_zero) > 1 and times_with_zero[-1] < timelimit:
+                    # Aktueller y-Wert (Prozentsatz der gelösten Instanzen) bleibt beim Timelimit
+                    times_with_timelimit = np.concatenate(
+                        [times_with_zero, [timelimit]]
+                    )
+                    y_values_with_timelimit = np.concatenate(
+                        [y_values_percent, [y_values_percent[-1]]]
+                    )
+                else:
+                    times_with_timelimit = times_with_zero
+                    y_values_with_timelimit = y_values_percent
+
                 ax.plot(
-                    times_with_zero,
-                    y_values_percent,
+                    times_with_timelimit,
+                    y_values_with_timelimit,
                     "o-",
                     color=colors[i],
                     label=solver,
@@ -426,16 +443,51 @@ class Run_Algbench:
             ax.set_title(f"{instance}", fontsize=12, fontweight="bold")
             ax.grid(True, alpha=0.3, linestyle="-", linewidth=0.5)
 
-            # Y-Achse auf 0-100% beschränken
-            ax.set_ylim(0, 100)
+            # Y-Achse auf 0-105% setzen, damit 100%-Linie und Beschriftung sichtbar sind
+            ax.set_ylim(0, 105)
 
-            # # X-Achse Formatierung
-            # from matplotlib.ticker import FuncFormatter
+            # Horizontale Linie bei 100% hinzufügen
+            ax.axhline(
+                y=100,
+                color="green",
+                linestyle="-",
+                alpha=0.6,
+                linewidth=1.5,
+            )
 
-            # def format_seconds(x, p):
-            #     return f"{x:.3g}"
+            # Beschriftung für die 100% Linie
+            ax.text(
+                ax.get_xlim()[1] * 0.5,
+                101,
+                "100% gelöst",
+                verticalalignment="bottom",
+                horizontalalignment="center",
+                fontsize=8,
+                color="green",
+                alpha=0.8,
+            )
 
-            # ax.xaxis.set_major_formatter(FuncFormatter(format_seconds))
+            # Vertikale Linie bei timelimit hinzufügen
+            ax.axvline(
+                x=timelimit,
+                color="red",
+                linestyle="--",
+                alpha=0.7,
+                linewidth=1.5,
+            )
+
+            # Beschriftung direkt an die Linie
+            ax.text(
+                timelimit + 12,
+                50,
+                f"Timelimit ({timelimit}s)",
+                rotation=90,
+                verticalalignment="center",
+                horizontalalignment="right",
+                fontsize=8,
+                color="red",
+                alpha=0.8,
+            )
 
             # Legende nur beim ersten Plot
             if idx == 0:

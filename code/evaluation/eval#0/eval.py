@@ -89,8 +89,8 @@ if __name__ == "__main__":
         slurminade.join()
         compress_results.distribute()
     else:
-        RI.delete_runlist()
+        # RI.delete_runlist()
         # for key in RI.get_run_list():
         # RI.show_key_from_runlist(key)
-        # RI.show(old=True)
-        print(len(list(RI.benchmark)))
+        RI.show()
+        # print(len(list(RI.benchmark)))
