@@ -97,8 +97,7 @@ def sat_algorithm(graph):
     solver = SAT(graph)
     para = SAT_Parameter(
         intersection=True,
-        degree_atleast=True,
-        intersection_clique=True,
+        degree_exact=True,
         # fix_hull=True,
         # all_edges=True,
         # exclude_edges=True,
@@ -148,41 +147,40 @@ def run_algo():
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_60", "000_delaunay_flips.json"
     # )
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__),
-    #     "instance",
-    #     "random_impossible",
-    #     "000_random_impossible_30.json",
-    # )
+    PATH = os.path.join(
+        os.path.dirname(__file__),
+        "instance",
+        "random_impossible",
+        "000_random_impossible_30.json",
+    )
     # PATH = os.path.join(
     #     os.path.dirname(__file__),
     #     "instance",
     #     "iterative_80_10",
     #     "003_random_60.json",
     # )
-    PATH = os.path.join(
-        os.path.dirname(__file__),
-        "instance",
-        "N_Gon_60",
-        "006_random.json",
-    )
+    # PATH = os.path.join(
+    #     os.path.dirname(__file__),
+    #     "instance",
+    #     "N_Gon_60",
+    #     "006_random.json",
+    # )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    print(len(graph.exclude_edge_partition))
     # solver = Random_Adder(graph)
     # solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
-    # sat_algorithm(graph)
+    sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # gurobi_tri_algorithm(graph)
     # gurobi_algorithm(graph)
 
     # graph.add_all_possible_edges(True)
-    # graph.show_and_save()
+    graph.show_and_save()
 
 
 def create_instance():
@@ -212,5 +210,5 @@ def create_instance():
 
 
 if __name__ == "__main__":
-    # run_algo()
-    create_instance()
+    run_algo()
+    # create_instance()
