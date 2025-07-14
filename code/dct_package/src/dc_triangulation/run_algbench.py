@@ -440,16 +440,20 @@ class Run_Algbench:
                 linestyle="--",
                 alpha=0.7,
                 linewidth=1.5,
-                label=f"Timelimit ({timelimit}s)",
             )
 
-            # # X-Achse Formatierung
-            # from matplotlib.ticker import FuncFormatter
-
-            # def format_seconds(x, p):
-            #     return f"{x:.3g}"
-
-            # ax.xaxis.set_major_formatter(FuncFormatter(format_seconds))
+            # Beschriftung direkt an die Linie
+            ax.text(
+                timelimit,
+                95,
+                f"Timelimit ({timelimit}s)",
+                rotation=90,
+                verticalalignment="top",
+                horizontalalignment="right",
+                fontsize=8,
+                color="red",
+                alpha=0.8,
+            )
 
             # Legende nur beim ersten Plot
             if idx == 0:
