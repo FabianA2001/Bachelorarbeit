@@ -2,7 +2,7 @@ import itertools
 import threading
 from dataclasses import dataclass
 
-from pysat.card import CardEnc
+from pysat.card import CardEnc, EncType
 from pysat.formula import CNF
 from pysat.solvers import Solver as SatSolver
 
@@ -24,6 +24,7 @@ class Parameter:
     all_edges: bool = False
     degree_exact: bool = False
     degree_atleast: bool = False
+    degree_encoding: int = EncType.seqcounter
     degree_subset: bool = False
     fix_hull: bool = False
     exclude_edges: bool = False
@@ -94,7 +95,7 @@ class SAT(Solver):
                 + [self.get_index(other_edge) for other_edge in intersections]
             )
 
-    def degree_constraint(self, exact_atleast=True):
+    def degree_constraint(self, exact_atleast=True, encoding: int = EncType.seqcounter):
         for node in self.graph.get_all_nodes():
             degree = self.graph.get_desired_degree_node(node)
             if degree == -1:
@@ -104,6 +105,7 @@ class SAT(Solver):
                 [self.get_index(edge) for edge in edges],
                 degree,
                 exact_atleast=exact_atleast,
+                encoding=encoding,
             )
             self.solver.append_formula(cnf)
             if self.reach_timeout():
@@ -147,7 +149,9 @@ class SAT(Solver):
         if self.reach_timeout():
             raise TimeoutError()
 
-    def formula_number_vars(self, vars, n, exact_atleast=True):
+    def formula_number_vars(
+        self, vars, n, exact_atleast=True, encoding: int = EncType.seqcounter
+    ):
         # CNF-Formel erstellen
         cnf = CNF()
         # Cardinality Constraint: genau n Variablen aus "vars" sind True
@@ -159,11 +163,10 @@ class SAT(Solver):
             )
             + 1
         )
-        # TODO Encoding für 1(default), 3,7,8 testen
         if exact_atleast:
-            enc = CardEnc.equals(lits=vars, bound=n, top_id=used)
+            enc = CardEnc.equals(lits=vars, bound=n, top_id=used, encoding=encoding)
         else:
-            enc = CardEnc.atleast(lits=vars, bound=n, top_id=used)
+            enc = CardEnc.atleast(lits=vars, bound=n, top_id=used, encoding=encoding)
         cnf.extend(enc.clauses)
         return cnf
         # TODO andere self solver testen, anstatt glucose42
@@ -183,9 +186,13 @@ class SAT(Solver):
         if parameter_data.all_edges:
             self.add_time(self.alle_edges_constraint)()
         if parameter_data.degree_exact:
-            self.add_time(self.degree_constraint)(exact_atleast=True)
+            self.add_time(self.degree_constraint)(
+                exact_atleast=True, encoding=parameter_data.degree_encoding
+            )
         if parameter_data.degree_atleast:
-            self.add_time(self.degree_constraint)(exact_atleast=False)
+            self.add_time(self.degree_constraint)(
+                exact_atleast=False, encoding=parameter_data.degree_encoding
+            )
         if parameter_data.degree_subset:
             self.add_time(self.degree_subset_constraint)()
         if parameter_data.fix_hull:

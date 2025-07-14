@@ -95,11 +95,13 @@ def ortools_algorithm(graph):
     )
 
 
+# 1,2,3,6,7,8
 def sat_algorithm(graph):
     solver = SAT(graph)
     para = SAT_Parameter(
         intersection=True,
         degree_exact=True,
+        degree_encoding=9,
         # fix_hull=True,
         # all_edges=True,
         # exclude_edges=True,
@@ -140,21 +142,21 @@ def gurobi_algorithm(graph):
 
 
 def run_algo():
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__), "instance", "simple_40", "002_delaunay_flips.json"
-    # )
+    PATH = os.path.join(
+        os.path.dirname(__file__), "instance", "simple_40", "002_delaunay_flips.json"
+    )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
     # )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_60", "000_delaunay_flips.json"
     # )
-    PATH = os.path.join(
-        os.path.dirname(__file__),
-        "instance",
-        "random_impossible",
-        "000_random_impossible_30.json",
-    )
+    # PATH = os.path.join(
+    #     os.path.dirname(__file__),
+    #     "instance",
+    #     "random_impossible",
+    #     "000_random_impossible_30.json",
+    # )
     # PATH = os.path.join(
     #     os.path.dirname(__file__),
     #     "instance",
@@ -171,11 +173,11 @@ def run_algo():
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
-    solver = Greedy(graph)
-    solver.solve({"timeout": -1})
+    # solver = Greedy(graph)
+    # solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
-    # sat_algorithm(graph)
+    sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # gurobi_tri_algorithm(graph)
@@ -235,5 +237,5 @@ def create_instance():
 
 
 if __name__ == "__main__":
-    # run_algo()
-    create_instance()
+    run_algo()
+    # create_instance()
