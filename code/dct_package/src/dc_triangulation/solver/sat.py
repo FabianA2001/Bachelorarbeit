@@ -38,6 +38,7 @@ class SAT(Solver):
     def __init__(self, graph: Graph_Wrapper) -> None:
         super().__init__(graph)
         self.name = self.NAME
+        self.all_clauses = []  # Liste zum Sammeln aller Klauseln
 
     def setup(self, parameter: Parameter):
         self.graph.add_all_possible_edges(default_for_active=False)
@@ -54,6 +55,8 @@ class SAT(Solver):
         self.logger.info(
             f"Anzahl Kanten: {len(self.edges)}, Anzahl Variablen: {len(self.all_vars)}"
         )
+        for edge in self.edges:
+            self.logger.info(f"Edge: {edge}, Index: {self.get_index(edge)}")
 
     def get_index(self, edge) -> int:
         if edge in self.edges_to_index:
@@ -65,13 +68,23 @@ class SAT(Solver):
     def get_edge(self, index) -> tuple[int, int]:
         return self.edges[index - 1]
 
+    def add_clause_with_tracking(self, clause):
+        """Fügt eine Klausel sowohl zum Solver als auch zur Tracking-Liste hinzu"""
+        self.solver.add_clause(clause)
+        self.all_clauses.append(clause)
+
+    def append_formula_with_tracking(self, cnf):
+        """Fügt eine CNF-Formel sowohl zum Solver als auch zur Tracking-Liste hinzu"""
+        self.solver.append_formula(cnf)
+        self.all_clauses.extend(cnf.clauses)
+
     def number_edge_constraint(self):
         cnf = self.formula_number_vars(
             self.all_vars,
             self.graph.get_number_edges_in_Triangulation(),
             exact_atleast=True,
         )
-        self.solver.append_formula(cnf)
+        self.append_formula_with_tracking(cnf)
         if self.reach_timeout():
             raise TimeoutError()
 
@@ -83,14 +96,14 @@ class SAT(Solver):
                 other_edge_index = self.get_index(intersection)
                 if edge_index == -1 or other_edge_index == -1:
                     continue
-                self.solver.add_clause([-edge_index, -other_edge_index])
+                self.add_clause_with_tracking([-edge_index, -other_edge_index])
         self.timeout_error()
 
     def alle_edges_constraint(self):
         intersection_all = self.graph.get_all_intersections_cpp(self.timeout_error)
         # intersection_all = self.graph.get_all_intersections_n2()
         for edge, intersections in intersection_all.items():
-            self.solver.add_clause(
+            self.add_clause_with_tracking(
                 [self.get_index(edge)]
                 + [self.get_index(other_edge) for other_edge in intersections]
             )
@@ -107,7 +120,7 @@ class SAT(Solver):
                 exact_atleast=exact_atleast,
                 encoding=encoding,
             )
-            self.solver.append_formula(cnf)
+            self.append_formula_with_tracking(cnf)
             if self.reach_timeout():
                 raise TimeoutError()
 
@@ -118,7 +131,7 @@ class SAT(Solver):
                 self.get_index(edge) for edge in self.graph.get_edges_of_node(node)
             ]
             for subset in itertools.combinations(edges, len(edges) - (degree - 1)):
-                self.solver.add_clause(subset)
+                self.add_clause_with_tracking(subset)
                 self.timeout_error()
 
     def set_hull_fix_constraint(self):
@@ -129,7 +142,7 @@ class SAT(Solver):
         for edge in hull_edges:
             index = self.get_index(edge)
             # Setze die Kante als aktiv
-            self.solver.add_clause([index])
+            self.add_clause_with_tracking([index])
         if self.reach_timeout():
             raise TimeoutError()
 
@@ -137,7 +150,7 @@ class SAT(Solver):
         for edge in self.graph.exclude_edge_partition:
             index = self.get_index(edge)
             # Setze die Kante als inaktiv
-            self.solver.add_clause([-index])
+            self.add_clause_with_tracking([-index])
 
     def fix_edges_constraint(self):
         for edge in self.graph.fix_edges:
@@ -145,7 +158,7 @@ class SAT(Solver):
             if index == -1:
                 continue
             # Setze die Kante als aktiv
-            self.solver.add_clause([index])
+            self.add_clause_with_tracking([index])
         if self.reach_timeout():
             raise TimeoutError()
 
@@ -173,6 +186,7 @@ class SAT(Solver):
 
     def pre_solve(self, parameter_data: Parameter) -> None:
         self.solver = SatSolver(name=parameter_data.solver_name)
+        self.all_clauses = []  # Initialisiere die Klauselliste
         if not hasattr(self.solver, "interrupt"):
             raise RuntimeError(
                 "The solver does not support interruption. "
@@ -213,9 +227,9 @@ class SAT(Solver):
             self.time_pre_solve(self.pre_solve)(parameter_data)
             try:
                 for edge in parameter.get("debug_set_edges", []):
-                    self.solver.add_clause([self.get_index(edge)])
+                    self.add_clause_with_tracking([self.get_index(edge)])
                 for edge in parameter.get("debug_exclude_edges", []):
-                    self.solver.add_clause([-self.get_index(edge)])
+                    self.add_clause_with_tracking([-self.get_index(edge)])
             except Exception as e:
                 self.logger.warning(
                     f"Debug set edges failed([{e}]), continuing without them."
@@ -229,6 +243,26 @@ class SAT(Solver):
                 raise TypeError("Timeout must be an integer or float.")
 
             result = [None]
+
+            ######################################
+            # Carical extern
+            # print varibalen länge
+            print(f"Anzahl Variablen: {self.solver.nof_vars()}")
+            # print all vlauses
+            print(f"Anzahl Klauseln: {len(self.all_clauses)}")
+            print("Alle Klauseln:")
+            clause_result = ""
+            for i, clause in enumerate(self.all_clauses):
+                clause_result += "{"
+                for var in clause:
+                    if var > 0:
+                        clause_result += f"v[{var}], "
+                    else:
+                        clause_result += f"-v[{abs(var)}], "
+                clause_result += "},\n"
+            print(clause_result)
+
+            #######################################
 
             if timeout == -1:
                 result[0] = self.time_solver(self.solver.solve)()
@@ -250,9 +284,12 @@ class SAT(Solver):
 
             model = self.solver.get_model()
             if model is not None:
-                for var in self.all_vars:
+                for i, var in enumerate(self.all_vars):
                     if var in model:
+                        print(f"v[{var}] = 1")
                         self.graph.activate_edge(self.get_edge(var))
+                    else:
+                        print(f"v[{var}] = 0")
 
             return {
                 "success": result[0],

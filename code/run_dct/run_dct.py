@@ -55,12 +55,12 @@ time_function
 
 
 def custom_points() -> list[Node]:
-    if False:
+    if True:
         return [
-            Node((0, 0), 3),
-            Node((1, 1), 3),
-            Node((1, 0), 2),
-            Node((0, 1), 2),
+            Node((0, 0), 2),
+            Node((1, 1), 2),
+            Node((1, 0), 3),
+            Node((0, 1), 3),
         ]
     else:
         nodes = [
@@ -100,9 +100,10 @@ def sat_algorithm(graph):
     solver = SAT(graph)
     para = SAT_Parameter(
         intersection=True,
-        degree_exact=True,
-        degree_encoding=9,
-        # fix_hull=True,
+        # degree_atleast=True,
+        degree_subset=True,
+        # degree_encoding=9,
+        fix_hull=True,
         # all_edges=True,
         # exclude_edges=True,
     )
@@ -171,7 +172,7 @@ def run_algo():
     # )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
-    # nodes = custom_points()
+    nodes = custom_points()
     graph = Graph_Wrapper(nodes)
     # solver = Greedy(graph)
     # solver.solve({"timeout": -1})
@@ -184,7 +185,7 @@ def run_algo():
     # gurobi_algorithm(graph)
 
     # graph.add_all_possible_edges(True)
-    graph.show_and_save()
+    # graph.show_and_save()
 
 
 def create_instance():
