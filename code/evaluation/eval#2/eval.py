@@ -2,16 +2,7 @@ import os
 from dataclasses import asdict
 
 import slurminade
-from dc_triangulation import (
-    SAT,
-    Graph_Wrapper,
-    Gurobi,
-    Gurobi_Parameter,
-    Ortools,
-    Ortools_Parameter,
-    Run_Algbench,
-    SAT_Parameter,
-)
+from dc_triangulation import SAT, Graph_Wrapper, Run_Algbench, SAT_Parameter
 
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
@@ -22,7 +13,11 @@ outer_parameter = {
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
+                SAT_Parameter(
+                    intersection=True,
+                    degree_exact=True,
+                    fix_hull=True,
+                )
             ),
         },
         {
@@ -54,67 +49,68 @@ outer_parameter = {
             ),
         },
     ],
-    Ortools: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, fix_hull=True)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Parameter(
-                    intersection=True, degree=True, fix_hull=True, all_edges=True
-                )
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Parameter(
-                    intersection=True, degree=True, fix_hull=True, fix_edges=True
-                )
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Parameter(
-                    intersection=True,
-                    degree=True,
-                    fix_hull=True,
-                    fix_edges=True,
-                    all_edges=True,
-                )
-            ),
-        },
-    ],
-    Gurobi: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Gurobi_Parameter(
-                    intersection=True,
-                    degree=True,
-                    fix_hull=True,
-                )
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Gurobi_Parameter(
-                    intersection=True, degree=True, fix_hull=True, all_edges=True
-                )
-            ),
-        },
-    ],
+    # Ortools: [
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Ortools_Parameter(intersection=True, degree=True, fix_hull=True)
+    #         ),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Ortools_Parameter(
+    #                 intersection=True, degree=True, fix_hull=True, all_edges=True
+    #             )
+    #         ),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Ortools_Parameter(
+    #                 intersection=True, degree=True, fix_hull=True, fix_edges=True
+    #             )
+    #         ),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Ortools_Parameter(
+    #                 intersection=True,
+    #                 degree=True,
+    #                 fix_hull=True,
+    #                 fix_edges=True,
+    #                 all_edges=True,
+    #             )
+    #         ),
+    #     },
+    # ],
+    # Gurobi: [
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Gurobi_Parameter(
+    #                 intersection=True,
+    #                 degree=True,
+    #                 fix_hull=True,
+    #             )
+    #         ),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Gurobi_Parameter(
+    #                 intersection=True, degree=True, fix_hull=True, all_edges=True
+    #             )
+    #         ),
+    #     },
+    # ],
 }
 RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
+    host="algpc01",
 )
 
 
@@ -161,6 +157,6 @@ if __name__ == "__main__":
         compress_results.distribute()
     else:
         # for key in RI.get_run_list():
-        #     RI.delete_key_from_runlist(key)
-        # RI.show_key_from_runlist(key)
+        #     RI.show_key_from_runlist(key)
+        # RI.delete_runlist()
         RI.show()

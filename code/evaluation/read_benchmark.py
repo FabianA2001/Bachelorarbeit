@@ -30,6 +30,10 @@ else:
 
     df["args"] = df["args"].apply(lambda x: format_dictionary(x, new_line=False))
     df["logging"] = df["logging"].apply(lambda x: str(x))
+    df.sort_values(
+        by=["host", "solver", "instance", "file"],
+        inplace=True,
+    )
 
     st.dataframe(df)
     # # Als HTML-Tabelle rendern
