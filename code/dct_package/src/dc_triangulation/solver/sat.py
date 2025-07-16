@@ -216,6 +216,7 @@ class SAT(Solver):
                     self.solver.add_clause([self.get_index(edge)])
                 for edge in parameter.get("debug_exclude_edges", []):
                     self.solver.add_clause([-self.get_index(edge)])
+
             except Exception as e:
                 self.logger.warning(
                     f"Debug set edges failed([{e}]), continuing without them."
@@ -257,6 +258,17 @@ class SAT(Solver):
             return {
                 "success": result[0],
             }
+        except TimeoutError:
+            self.logger.warning(f"{self.name} timed out.")
+            return {
+                "success": False,
+            }
+
+    def second_run(self, parameter: dict) -> dict:
+        """This method is called when the solver is run a second time."""
+        try:
+            result = self.add_time(self.solver.solve)()
+            return {"success": result}
         except TimeoutError:
             self.logger.warning(f"{self.name} timed out.")
             return {

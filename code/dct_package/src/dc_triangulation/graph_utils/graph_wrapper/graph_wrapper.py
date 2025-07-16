@@ -342,6 +342,10 @@ class Graph_Wrapper:
                 if isinstance(attr, cached_property):
                     self.__dict__.pop(name, None)
 
+    def get_all_active_edges(self) -> list[tuple[int, int]]:
+        """Gibt alle aktiven Kanten des Graphen zurück."""
+        return self._data.get_all_active_edges
+
     @cached_property
     def impossible_edges(self) -> list[tuple[int, int]]:
         """Gibt alle Kanten zurück, die nicht im Graphen vorhanden sind."""
