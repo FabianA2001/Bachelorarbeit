@@ -24,6 +24,7 @@ from dc_triangulation import (
     load_nodes_from_json,
     time_function,
 )
+from pysat.card import CardEnc
 
 
 def get_solvers():
@@ -237,6 +238,16 @@ def create_instance():
         ).generate()
 
 
+def generate_sat():
+    vars = [1, 2, 3, 4]
+    k = 2
+    # cnf = CNF()
+    # Cardinality Constraint: genau n Variablen aus "vars" sind True
+    enc = CardEnc.atmost(lits=vars, bound=k)
+    print(*enc.clauses, sep="\n")
+
+
 if __name__ == "__main__":
-    run_algo()
+    # run_algo()
+    generate_sat()
     # create_instance()
