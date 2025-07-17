@@ -266,7 +266,7 @@ private:
     std::vector<std::vector<Lit>> hidden_clauses;
 };
 
-std::vector<int> cadical_wrapper(int nummber_vars, std::vector<std::vector<int>> clauses)
+std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int nummber_vars, std::vector<Vars_List> clauses)
 {
     cdc::CadicalSolver solver;
     std::vector<cdc::CadicalSolver::Lit> v;
@@ -307,7 +307,7 @@ std::vector<int> cadical_wrapper(int nummber_vars, std::vector<std::vector<int>>
     if (!result || !*result)
     {
         std::cerr << "No solution found\n";
-        return {};
+        return std::make_pair(Vars_List{}, std::vector<Vars_List>{});
     }
     else
     {
@@ -318,6 +318,7 @@ std::vector<int> cadical_wrapper(int nummber_vars, std::vector<std::vector<int>>
         {
             result.push_back(model[l]);
         }
-        return result;
+        return std::make_pair(result, std::vector<Vars_List>{});
+        ;
     }
 }

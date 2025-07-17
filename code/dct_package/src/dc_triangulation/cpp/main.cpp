@@ -46,7 +46,7 @@ void cadical_solver_test()
 {
     auto x = cadical_wrapper(3, {{1, 2}, {-1, 2}});
     int index = 0;
-    for (const auto &val : x)
+    for (const auto &val : x.first)
     {
         std::cout << "Variable " << index++ << ": " << val << "\n";
     }
