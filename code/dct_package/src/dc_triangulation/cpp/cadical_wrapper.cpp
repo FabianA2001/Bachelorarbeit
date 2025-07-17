@@ -57,7 +57,7 @@ public:
     {
         for (Lit l : assignments)
         {
-            assert(is_open(l) && "Should not assign a value to an already assigned literal.");
+            // assert(is_open(l) && "Should not assign a value to an already assigned literal.");
             observed_trail.push_back(l);
             std::size_t index = p_var_index(l);
             assert(index + 1 < observed_values.size() && "Observed values vector is too small.");

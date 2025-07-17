@@ -107,7 +107,10 @@ class Cadical(Solver):
 
         for i in range(len(self.edges)):
             if vars[i] == 1:
+                self.logger.info(f"var{i}: {vars[i]}")
                 self.graph.activate_edge(self.edges[i])
+            else:
+                self.logger.info(f"var{i}: {vars[i]}")
 
         return {
             "success": True,
