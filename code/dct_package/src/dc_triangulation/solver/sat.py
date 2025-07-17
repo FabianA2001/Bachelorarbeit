@@ -255,10 +255,7 @@ class SAT(Solver):
             for i, clause in enumerate(self.all_clauses):
                 clause_result += "{"
                 for var in clause:
-                    if var > 0:
-                        clause_result += f"v[{var}], "
-                    else:
-                        clause_result += f"-v[{abs(var)}], "
+                    clause_result += f"{var}, "
                 clause_result += "},\n"
             print(clause_result)
 

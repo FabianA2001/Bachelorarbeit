@@ -248,6 +248,6 @@ def generate_sat():
 
 
 if __name__ == "__main__":
-    # run_algo()
-    generate_sat()
+    run_algo()
+    # generate_sat()
     # create_instance()
