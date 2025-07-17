@@ -111,4 +111,5 @@ class Cadical(Solver):
 
         return {
             "success": True,
+            "debug_vars": debug_vars,
         }

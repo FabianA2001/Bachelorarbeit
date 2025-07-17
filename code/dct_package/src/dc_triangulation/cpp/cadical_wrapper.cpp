@@ -293,16 +293,16 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int nummber_vars, s
         // std::cout << "Finishing clause with 0\n";
         solver.finish_clause();
     }
-    // // add the propagator
-    // auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver);
-    // // observe the variables (must be AFTER the constructor)
-    // propagator.observe_variables(v);
-    // for (const auto &clause : clauses)
-    // {
-    //     // add the clauses to the propagator
-    //     propagator.add_hidden_clause(clause);
-    // }
-    //
+    // add the propagator
+    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver);
+    // observe the variables (must be AFTER the constructor)
+    propagator.observe_variables(v);
+    for (const auto &clause : clauses)
+    {
+        // add the clauses to the propagator
+        propagator.add_hidden_clause(clause);
+    }
+
     auto result = solver.solve();
     if (!result || !*result)
     {

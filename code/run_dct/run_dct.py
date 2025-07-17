@@ -59,7 +59,7 @@ time_function
 
 
 def custom_points() -> list[Node]:
-    if False:
+    if True:
         return [
             Node((0, 0), 3),
             Node((1, 1), 3),
@@ -156,15 +156,15 @@ def cadical_algorithm(graph):
 
 
 def run_algo():
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__), "instance", "simple_40", "002_delaunay_flips.json"
-    # )
+    PATH = os.path.join(
+        os.path.dirname(__file__), "instance", "simple_40", "002_delaunay_flips.json"
+    )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
     # )
-    PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_60", "000_delaunay_flips.json"
-    )
+    # PATH = os.path.join(
+    #     os.path.dirname(__file__), "instance", "simple_60", "000_delaunay_flips.json"
+    # )
     # PATH = os.path.join(
     #     os.path.dirname(__file__),
     #     "instance",
@@ -185,14 +185,14 @@ def run_algo():
     # )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
-    # nodes = custom_points()
+    nodes = custom_points()
     graph = Graph_Wrapper(nodes)
     # solver = Greedy(graph)
     # solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
-    sat_algorithm(graph)
-    # cadical_algorithm(graph)
+    # sat_algorithm(graph)
+    cadical_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # gurobi_tri_algorithm(graph)
