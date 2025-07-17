@@ -117,6 +117,35 @@ public:
         reasons.erase(it);
     }
 
+    void set_observed_vars(const std::vector<Lit> &observed_vars)
+    {
+        this->observed_vars = observed_vars;
+    }
+    std::vector<std::vector<int>> get_vars_saved()
+    {
+        return this->vars_saved;
+    }
+    void update_vars_saved()
+    {
+        std::vector<int> result = {};
+        for (auto l : observed_vars)
+        {
+            if (is_true(l))
+            {
+                result.push_back(1);
+            }
+            else if (is_false(l))
+            {
+                result.push_back(0);
+            }
+            else
+            {
+                result.push_back(-1); // -1 for open variables
+            }
+        }
+        vars_saved.push_back(result);
+    }
+
 private:
     static std::size_t p_var_index(Lit observed_lit)
     {
@@ -129,6 +158,8 @@ private:
     std::vector<Lit> observed_trail;
     std::vector<bool> observed_values;
     std::size_t current_decision_level{0};
+    std::vector<Lit> observed_vars;
+    std::vector<std::vector<int>> vars_saved;
 };
 
 /**
@@ -261,6 +292,11 @@ public:
         state_tracker.get_reason(propagated_lit, reason_buffer);
     }
 
+    std::vector<std::vector<int>> get_vars_saved()
+    {
+        return state_tracker.get_vars_saved();
+    }
+
 private:
     ObservedLiteralStateTracker state_tracker;
     std::vector<std::vector<Lit>> hidden_clauses;
@@ -325,7 +361,7 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int nummber_vars, s
                 result.push_back(0);
             }
         }
-        return std::make_pair(result, std::vector<Vars_List>{});
+        return std::make_pair(result, propagator.get_vars_saved());
         ;
     }
 }
