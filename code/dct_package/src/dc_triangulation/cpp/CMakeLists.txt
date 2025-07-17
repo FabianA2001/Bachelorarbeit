@@ -10,6 +10,7 @@ if(BUILD_PYTHON_BINDINGS)
     
     pybind11_add_module(_cpp_bindings bindings.cpp intersection.cpp triangles.cpp cadical_wrapper.cpp)
     target_link_libraries(_cpp_bindings PUBLIC CGAL::CGAL) 
+    target_link_libraries(_cpp_bindings PUBLIC cadical_binding)
     # enable compilation warnings
     target_compile_options(
       _cpp_bindings PRIVATE "$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall>")

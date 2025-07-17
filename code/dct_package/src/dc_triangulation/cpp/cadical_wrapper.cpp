@@ -316,7 +316,14 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int nummber_vars, s
         std::vector<int> result = {};
         for (auto l : v)
         {
-            result.push_back(model[l]);
+            if (model[l])
+            {
+                result.push_back(1);
+            }
+            else
+            {
+                result.push_back(0);
+            }
         }
         return std::make_pair(result, std::vector<Vars_List>{});
         ;

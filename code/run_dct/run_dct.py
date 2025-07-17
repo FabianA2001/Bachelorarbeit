@@ -5,6 +5,8 @@ from dataclasses import asdict
 from dc_triangulation import (
     SAT,
     SAT_TRI,
+    Cadical,
+    Cadical_Parameter,
     Delaunay,
     Graph_Wrapper,
     Greedy,
@@ -38,6 +40,7 @@ def get_solvers():
         SAT_TRI,
         Gurobi_Tri,
         Gurobi,
+        Cadical,
     ]
 
 
@@ -48,6 +51,7 @@ def get_parameters():
         SAT_Tri_Parameter,
         Gurobi_Tri_Parameter,
         Gurobi_Parameter,
+        Cadical_Parameter,
     ]
 
 
@@ -101,7 +105,6 @@ def sat_algorithm(graph):
     para = SAT_Parameter(
         intersection=True,
         degree_exact=True,
-        degree_encoding=9,
         # fix_hull=True,
         # all_edges=True,
         # exclude_edges=True,
@@ -141,16 +144,27 @@ def gurobi_algorithm(graph):
     )
 
 
-def run_algo():
-    PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_40", "002_delaunay_flips.json"
+def cadical_algorithm(graph):
+    solver = Cadical(graph)
+    para = Cadical_Parameter(
+        degree=True,
+        intersection=True,
     )
+    logging.info(
+        f"solution found: {solver.solve({'timeout': -1, 'args': asdict(para)})}"
+    )
+
+
+def run_algo():
+    # PATH = os.path.join(
+    #     os.path.dirname(__file__), "instance", "simple_40", "002_delaunay_flips.json"
+    # )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
     # )
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__), "instance", "simple_60", "000_delaunay_flips.json"
-    # )
+    PATH = os.path.join(
+        os.path.dirname(__file__), "instance", "simple_60", "000_delaunay_flips.json"
+    )
     # PATH = os.path.join(
     #     os.path.dirname(__file__),
     #     "instance",
@@ -178,6 +192,7 @@ def run_algo():
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     sat_algorithm(graph)
+    # cadical_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # gurobi_tri_algorithm(graph)
