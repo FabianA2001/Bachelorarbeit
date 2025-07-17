@@ -3,6 +3,8 @@
 
 #include "intersection.h"
 #include "triangles.h"
+#include <cadical_binding/cadical_solver.h>
+#include <cstdlib>
 
 void intersection_test()
 {
@@ -41,7 +43,37 @@ void triangles_test()
 
 int main()
 {
-    std::cout << "Running intersection test..." << std::endl;
-    // triangles_test();
-    intersection_test();
+    cdc::CadicalSolver solver;
+    using Lit = cdc::CadicalSolver::Lit;
+    Lit x1 = solver.new_var();
+    Lit x2 = solver.new_var();
+    Lit x3 = solver.new_var();
+
+    solver.add_short_clause(x1);
+    // x1 -> x2
+    solver.add_short_clause(-x1, x2);
+
+    // x1 -> x2 v -x3
+    solver.add_short_clause(-x1, x2, -x3);
+
+    std::optional<bool> result = solver.solve();
+    if (!result)
+    {
+        // timeout or interrupt. should not happen here
+        std::cerr << "INCORRECT INTERRUPT/TIMEOUT\n";
+        return EXIT_FAILURE;
+    }
+    if (!*result)
+    {
+        // UNSAT - should not happen here
+        std::cerr << "INCORRECT UNSAT!\n";
+        return EXIT_FAILURE;
+    }
+
+    auto sat_assignment = solver.get_model();
+
+    for (auto const &var : {x1, x2, x3})
+    {
+        std::cout << "sat[" << var << "] = " << sat_assignment[var] << "\n";
+    }
 }

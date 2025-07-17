@@ -2,7 +2,7 @@
 # compiling a CGAL application.
 
 find_package(CGAL REQUIRED)
-
+add_subdirectory(".." "cadical_cmake")
 
 if(BUILD_PYTHON_BINDINGS)
     # Python bindings using pybind11
@@ -24,6 +24,7 @@ else()
     # Native C++ executable
     add_executable(main_executable main.cpp  intersection.cpp triangles.cpp)
     target_link_libraries(main_executable PUBLIC CGAL::CGAL)
+    target_link_libraries(main_executable PUBLIC cadical_binding)
     
     # enable compilation warnings
     target_compile_options(
