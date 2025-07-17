@@ -58,10 +58,10 @@ time_function
 def custom_points() -> list[Node]:
     if True:
         return [
-            Node((0, 0), 2),
-            Node((1, 1), 2),
-            Node((1, 0), 3),
-            Node((0, 1), 3),
+            Node((0, 0), 3),
+            Node((1, 1), 3),
+            Node((1, 0), 2),
+            Node((0, 1), 2),
         ]
     else:
         nodes = [
