@@ -1,0 +1,3 @@
+[submodule "code/dct_package/src/dc_triangulation/cpp/cadical_cmake/external/cadical"]
+	path = code/dct_package/src/dc_triangulation/cpp/cadical_cmake/external/cadical
+	url = https://github.com/arminbiere/cadical
