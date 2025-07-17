@@ -2,7 +2,7 @@
 # compiling a CGAL application.
 
 find_package(CGAL REQUIRED)
-add_subdirectory(".." "cadical_cmake")
+add_subdirectory("cadical_cmake")
 
 if(BUILD_PYTHON_BINDINGS)
     # Python bindings using pybind11
