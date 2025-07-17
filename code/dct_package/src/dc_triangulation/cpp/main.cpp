@@ -44,7 +44,12 @@ void triangles_test()
 
 void cadical_solver_test()
 {
-    auto x = cadical_wrapper(3, {{-1, 2}, {-1, 2, -3}});
+    auto x = cadical_wrapper(3, {{1, 2}, {-1, 2}});
+    int index = 0;
+    for (const auto &val : x)
+    {
+        std::cout << "Variable " << index++ << ": " << val << "\n";
+    }
 }
 
 int main()

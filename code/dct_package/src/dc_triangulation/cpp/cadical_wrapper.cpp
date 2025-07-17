@@ -281,13 +281,16 @@ std::vector<int> cadical_wrapper(int nummber_vars, std::vector<std::vector<int>>
         {
             if (l > 0)
             {
+                // std::cout << "Adding literal: " << v.at(l - 1) << "\n";
                 solver.add_literal(v.at(l - 1));
             }
             else
             {
+                // std::cout << "Adding negated literal: " << -v.at((-1 * l) - 1) << "\n";
                 solver.add_literal(-v.at((-1 * l) - 1));
             }
         }
+        // std::cout << "Finishing clause with 0\n";
         solver.finish_clause();
     }
     // // add the propagator
@@ -313,7 +316,7 @@ std::vector<int> cadical_wrapper(int nummber_vars, std::vector<std::vector<int>>
         std::vector<int> result = {};
         for (auto l : v)
         {
-            std::cout << "Variable " << l << ": " << model[l] << "\n";
+            result.push_back(model[l]);
         }
         return result;
     }
