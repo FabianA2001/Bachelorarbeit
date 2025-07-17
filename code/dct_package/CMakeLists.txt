@@ -5,11 +5,10 @@ cmake_minimum_required(VERSION 3.23)
 option(CXX "enable C++ compilation" ON)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings (OFF = native executable)" ON)
 
+project(degree-constrained-triangulation CXX) # Feel free to add more project information
 if(CXX)
   enable_language(CXX)
 endif()
-project(degree-constrained-triangulation CXX) # Feel free to add more project
-                                        # information
 set(CMAKE_CXX_STANDARD 17) # Using C++-17 (most features with good support at
                            # 2022)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON) # The code needs to be compiled as PIC

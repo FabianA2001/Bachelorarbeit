@@ -3,6 +3,9 @@
 
 #include "intersection.h"
 #include "triangles.h"
+#include "cadical_wrapper.h"
+#include <cadical_binding/cadical_solver.h>
+#include <cstdlib>
 
 void intersection_test()
 {
@@ -39,9 +42,12 @@ void triangles_test()
     }
 }
 
+void cadical_solver_test()
+{
+    auto x = cadical_wrapper(3, {{-1, 2}, {-1, 2, -3}});
+}
+
 int main()
 {
-    std::cout << "Running intersection test..." << std::endl;
-    // triangles_test();
-    intersection_test();
+    cadical_solver_test();
 }
