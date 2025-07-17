@@ -1,8 +1,9 @@
 ## Installation für Entwicklung
 ### Python
-1. `python setup.py develop`
-2. bei Fehler : `pip install skbuild_conan` oder `conan install . --build=missing -of . -s build_type=Debug -s compiler.cppstd=17`
-3. `pip install -e .`
+1. `git submodule update --init --recursive`
+2. `python setup.py develop`
+3. bei Fehler : `pip install skbuild_conan` oder `conan install . --build=missing -of . -s build_type=Debug -s compiler.cppstd=17`
+4. `pip install -e .`
 
 
 Wenn der cpp code verändert wird wieder `python setup.py develop`
