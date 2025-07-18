@@ -127,7 +127,7 @@ class Cadical(Solver):
         self.time_pre_solve(self.pre_solve)(parameter)
 
         vars, debug_vars = self.time_solver(cadical_wrapper)(
-            self.max_used, self.clauses
+            self.max_used, len(self.edges), self.clauses
         )
 
         for i in range(len(self.edges)):

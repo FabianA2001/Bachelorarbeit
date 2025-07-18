@@ -22,5 +22,5 @@ PYBIND11_MODULE(_cpp_bindings, m)
 
       m.def("cadical_wrapper", &cadical_wrapper,
             "Function that wraps the CaDiCaL SAT solver",
-            pybind11::arg("number_vars"), pybind11::arg("clauses"));
+            pybind11::arg("number_vars"), pybind11::arg("number_edges_vars"), pybind11::arg("clauses"));
 }

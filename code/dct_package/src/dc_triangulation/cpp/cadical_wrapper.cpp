@@ -238,53 +238,52 @@ public:
         }
         std::cerr << "\n";
 
-        for (const auto &clause : hidden_clauses)
-        {
-            bool has_true = false;
-            std::size_t num_open = 0;
-            Lit unit_lit = 0;
-            for (Lit l : clause)
-            {
-                if (state_tracker.is_true(l))
-                {
-                    has_true = true;
-                    break;
-                }
-                else if (state_tracker.is_open(l))
-                {
-                    unit_lit = l;
-                    ++num_open;
-                }
-            }
-            if (has_true)
-            {
-                continue; // clause is satisfied
-            }
-            if (num_open == 0)
-            {
-                std::cerr << "External clause violated: ";
-                for (Lit l : clause)
-                {
-                    std::cerr << l << " ";
-                }
-                std::cerr << "\n";
-                add_external_clause(clause.begin(), clause.end());
-                return 0; // clause is violated, return 0 and external clause
-            }
-            if (num_open == 1)
-            {
-                std::cerr << "Unit clause: ";
-                for (Lit l : clause)
-                {
-                    std::cerr << l << " ";
-                }
-                std::cerr << "\n";
-                std::cerr << "Unit literal: " << unit_lit << "\n";
-                state_tracker.store_reason(unit_lit, clause);
-                return unit_lit;
-            }
-        }
-        std::cerr << "No unit clauses found, returning 0.\n";
+        // for (const auto &clause : hidden_clauses)
+        // {
+        //     bool has_true = false;
+        //     std::size_t num_open = 0;
+        //     Lit unit_lit = 0;
+        //     for (Lit l : clause)
+        //     {
+        //         if (state_tracker.is_true(l))
+        //         {
+        //             has_true = true;
+        //             break;
+        //         }
+        //         else if (state_tracker.is_open(l))
+        //         {
+        //             unit_lit = l;
+        //             ++num_open;
+        //         }
+        //     }
+        //     if (has_true)
+        //     {
+        //         continue; // clause is satisfied
+        //     }
+        //     if (num_open == 0)
+        //     {
+        //         std::cerr << "External clause violated: ";
+        //         for (Lit l : clause)
+        //         {
+        //             std::cerr << l << " ";
+        //         }
+        //         std::cerr << "\n";
+        //         add_external_clause(clause.begin(), clause.end());
+        //         return 0; // clause is violated, return 0 and external clause
+        //     }
+        //     if (num_open == 1)
+        //     {
+        //         std::cerr << "Unit clause: ";
+        //         for (Lit l : clause)
+        //         {
+        //             std::cerr << l << " ";
+        //         }
+        //         std::cerr << "\n";
+        //         std::cerr << "Unit literal: " << unit_lit << "\n";
+        //         state_tracker.store_reason(unit_lit, clause);
+        //         return unit_lit;
+        //     }
+        // }
         return 0;
     }
 
@@ -304,11 +303,11 @@ private:
     std::vector<std::vector<Lit>> hidden_clauses;
 };
 
-std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int nummber_vars, std::vector<Vars_List> clauses)
+std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars, int number_edges_vars, std::vector<Vars_List> clauses)
 {
     cdc::CadicalSolver solver;
     std::vector<cdc::CadicalSolver::Lit> v;
-    for (int i = 0; i < nummber_vars; ++i)
+    for (int i = 0; i < number_vars; ++i)
     {
         v.push_back(solver.new_var());
     }
@@ -334,12 +333,12 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int nummber_vars, s
     // add the propagator
     auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver);
     // observe the variables (must be AFTER the constructor)
-    propagator.observe_variables(v);
-    for (const auto &clause : clauses)
-    {
-        // add the clauses to the propagator
-        propagator.add_hidden_clause(clause);
-    }
+    propagator.observe_variables(std::vector<cdc::CadicalSolver::Lit>(v.begin(), v.begin() + number_edges_vars));
+    // for (const auto &clause : clauses)
+    // {
+    //     // add the clauses to the propagator
+    //     propagator.add_hidden_clause(clause);
+    // }
 
     auto result = solver.solve();
     if (!result || !*result)

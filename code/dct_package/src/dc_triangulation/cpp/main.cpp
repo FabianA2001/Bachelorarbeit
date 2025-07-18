@@ -109,7 +109,7 @@ void cadical_solver_test()
             3,
         },
     };
-    auto x = cadical_wrapper(max_var, clauses);
+    auto x = cadical_wrapper(max_var, 6, clauses);
     int index = 0;
     for (const auto &val : x.first)
     {
