@@ -65,6 +65,7 @@ public:
             observed_values[index] = true;        // mark the variable as assigned
             observed_values[index + 1] = (l > 0); // store the value
         }
+        has_changes = true;
     }
 
     /**
@@ -146,6 +147,9 @@ public:
         }
         vars_saved.push_back(result);
     }
+
+public:
+    bool has_changes = false;
 
 private:
     static std::size_t p_var_index(Lit observed_lit)
@@ -230,6 +234,13 @@ public:
      */
     int propagate() override
     {
+        if (!state_tracker.has_changes)
+        {
+            return 0; // Keine Änderungen - früher Ausstieg
+        }
+
+        state_tracker.has_changes = false; // Flag zurücksetzen
+
         state_tracker.update_vars_saved();
         std::cerr << "PROPAGATE called with observed trail ";
         for (Lit l : state_tracker.get_observed_trail())

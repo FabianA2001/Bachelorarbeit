@@ -44,7 +44,7 @@ void triangles_test()
 
 void cadical_solver_test()
 {
-    int max_var = 6;
+    int max_var = 8;
     std::vector<Vars_List> clauses = {
         {
             -1,
@@ -108,7 +108,7 @@ void cadical_solver_test()
         {
             3,
         },
-    };
+        {7, 8}};
     auto x = cadical_wrapper(max_var, 6, clauses);
     int index = 0;
     for (const auto &val : x.first)
