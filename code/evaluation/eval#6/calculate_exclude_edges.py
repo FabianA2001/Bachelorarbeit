@@ -170,13 +170,11 @@ def get_edges(PATH, PERCENT, KEY):
 
 
 if __name__ == "__main__":
-    INST = "simple_80"
-    # FILE = "000_delaunay_flips.json"
-    FILE = "000_random.json"
-    PATH = os.path.join(os.path.dirname(__file__), "instance", INST, FILE)
-    KEY = f"{INST}_{FILE}"
-    PERCENT = 0.2
+    for INST in ["d_flips", "delaunay", "greedy", "iterative", "random"]:
+        for i in range(3):
+            FILE = f"00{i}_{INST}_50.json"
+            PATH = os.path.join(os.path.dirname(__file__), "instance", INST, FILE)
+            KEY = f"{INST}_{FILE}"
+            PERCENT = 0.2
 
-    edges = time_function(get_edges)(PATH, PERCENT, KEY)
-    logging.info(f"anzahl Kanten: {len(edges)}")
-    print(*edges, sep="\n")
+            edges = time_function(get_edges)(PATH, PERCENT, KEY)
