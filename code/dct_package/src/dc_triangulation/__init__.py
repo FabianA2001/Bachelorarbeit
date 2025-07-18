@@ -11,6 +11,8 @@ from .solver.gurobi_tri import Parameter as Gurobi_Tri_Parameter
 from .solver.iterative import Iterative
 from .solver.ortools import Ortools
 from .solver.ortools import Parameter as Ortools_Parameter
+from .solver.ortools_tri import OrTools_Tri
+from .solver.ortools_tri import Parameter as Ortools_Tri_Parameter
 from .solver.random_adder import Random_Adder
 from .solver.raw_flips import Raw_Flips
 from .solver.sat import SAT
@@ -47,4 +49,6 @@ __all__ = [
     "Gurobi",
     "Gurobi_Parameter",
     "Greedy",
+    "OrTools_Tri",
+    "Ortools_Tri_Parameter",
 ]

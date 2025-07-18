@@ -16,6 +16,8 @@ from dc_triangulation import (
     Node,
     Ortools,
     Ortools_Parameter,
+    OrTools_Tri,
+    Ortools_Tri_Parameter,
     Random_Adder,
     Raw_Flips,
     SAT_Parameter,
@@ -38,6 +40,7 @@ def get_solvers():
         SAT_TRI,
         Gurobi_Tri,
         Gurobi,
+        OrTools_Tri,
     ]
 
 
@@ -48,6 +51,7 @@ def get_parameters():
         SAT_Tri_Parameter,
         Gurobi_Tri_Parameter,
         Gurobi_Parameter,
+        Ortools_Tri_Parameter,
     ]
 
 
@@ -127,6 +131,14 @@ def gurobi_tri_algorithm(graph):
     )
 
 
+def ortools_tri_algorithm(graph):
+    solver = OrTools_Tri(graph)
+    para = Ortools_Tri_Parameter(intersection=True, degree=True)
+    logging.info(
+        f"solution found: {solver.solve({'timeout': 60, 'args': asdict(para)})}"
+    )
+
+
 def gurobi_algorithm(graph):
     solver = Gurobi(graph)
     para = Gurobi_Parameter(
@@ -177,9 +189,10 @@ def run_algo():
     # solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
-    sat_algorithm(graph)
+    # sat_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
+    ortools_tri_algorithm(graph)
     # gurobi_tri_algorithm(graph)
     # gurobi_algorithm(graph)
 
