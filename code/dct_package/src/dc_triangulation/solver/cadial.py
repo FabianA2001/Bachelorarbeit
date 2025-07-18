@@ -11,6 +11,8 @@ from .solver import Solver
 class Parameter:
     intersection: bool = False
     degree: bool = False
+    fix_hull: bool = False
+    all_edges: bool = False
 
 
 class Cadical(Solver):
@@ -78,12 +80,35 @@ class Cadical(Solver):
             for clause in cnf:
                 self.clauses.append(clause)
 
+    def set_hull_fix_constraint(self):
+        hull_edges = self.graph.get_hull_edges()
+        if len(hull_edges) == 0:
+            return
+
+        for edge in hull_edges:
+            index = self.get_index(edge)
+            # Setze die Kante als aktiv
+            self.clauses.append([index])
+
+    def alle_edges_constraint(self):
+        intersection_all = self.graph.get_all_intersections_cpp(self.timeout_error)
+        # intersection_all = self.graph.get_all_intersections_n2()
+        for edge, intersections in intersection_all.items():
+            self.clauses.append(
+                [self.get_index(edge)]
+                + [self.get_index(other_edge) for other_edge in intersections]
+            )
+
     def pre_solve(self, parameter: Parameter) -> None:
         self.setup(parameter)
         if parameter.intersection:
             self.intersection_constraint()
         if parameter.degree:
             self.degree_constraint(exact_atleast=True, encoding=EncType.seqcounter)
+        if parameter.fix_hull:
+            self.set_hull_fix_constraint()
+        if parameter.all_edges:
+            self.alle_edges_constraint()
 
     def _actual_solver(self, parameter_raw: dict) -> dict:
         if self.graph is None:

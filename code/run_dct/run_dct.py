@@ -149,9 +149,10 @@ def cadical_algorithm(graph, nodes=None):
     para = Cadical_Parameter(
         degree=True,
         intersection=True,
+        fix_hull=True,
     )
     solution = solver.solve({"timeout": -1, "args": asdict(para)})
-    logging.info(f"solution found: {solution}")
+    logging.info(f"solution found: {solution.get('success', False)}")
     if nodes is None:
         return
     SAVE = "cadical_figures"
@@ -177,7 +178,7 @@ def cadical_algorithm(graph, nodes=None):
 
 def run_algo():
     PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_40", "002_delaunay_flips.json"
+        os.path.dirname(__file__), "instance", "simple_20", "001_delaunay_flips.json"
     )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
@@ -205,7 +206,7 @@ def run_algo():
     # )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
-    nodes = custom_points()
+    # nodes = custom_points()
     graph = Graph_Wrapper(nodes)
     # solver = Greedy(graph)
     # solver.solve({"timeout": -1})
