@@ -76,7 +76,7 @@ class SAT_TRI(Solver):
             )
 
         if parameter.number_tri:
-            self.number_tri_constraint()
+            self.add_time(self.number_tri_constraint)()
 
         if parameter.intersection:
             self.add_time(self.intersection_constraint)()

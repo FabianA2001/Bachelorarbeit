@@ -176,7 +176,7 @@ class Ortools(Solver):
                 self.graph.get_number_edges_in_Triangulation()
             )
         if parameter_data.fix_edges:
-            self.fix_edges_constraint()
+            self.add_time(self.fix_edges_constraint)()
 
         stop_after_first_solution = True
         if parameter_data.evaluation_direction:

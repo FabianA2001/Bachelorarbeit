@@ -18,6 +18,7 @@ class Parameter:
     exclude_edges: bool = False
     fix_hull: bool = False
     all_edges: bool = False
+    fix_edges: bool = False
 
 
 class Gurobi(Solver):
@@ -48,6 +49,8 @@ class Gurobi(Solver):
             self.add_time(self.fix_hull_constraint)()
         if parameter.all_edges:
             self.add_time(self.all_edges_constraint)()
+        if parameter.fix_edges:
+            self.add_time(self.fix_edges_constraint)()
         self.timeout_error()
 
     def intersection_constraint(self):
@@ -83,6 +86,16 @@ class Gurobi(Solver):
     def fix_hull_constraint(self):
         for edge in self.graph.get_hull_edges():
             self.model.addConstr(self.vars[edge] == 1)
+
+    def fix_edges_constraint(self):
+        for edge in self.graph.fix_edges:
+            if edge not in self.vars:
+                continue
+            index = self.vars[edge]
+            # Setze die Kante als aktiv
+            self.model.addConstr(index == 1)
+
+        self.timeout_error()
 
     def _actual_solver(self, parameter: dict) -> dict:
         if not isinstance(parameter, dict):
