@@ -85,6 +85,19 @@ def custom_points() -> list[Node]:
         return graph.get_aktive_graph_nodes()
 
 
+def multiple_solutions() -> list[Node]:
+    return [
+        Node((0, 0), 4),
+        Node((5, 0), 4),
+        Node((5, 5), 4),
+        Node((0, 5), 4),
+        Node((1, 1), 5),
+        Node((4, 1), 4),
+        Node((4, 4), 5),
+        Node((1, 4), 4),
+    ]
+
+
 def ortools_algorithm(graph):
     solver = Ortools(graph)
     para = Ortools_Parameter(
@@ -206,14 +219,15 @@ def run_algo():
     # )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
-    nodes = custom_points()
+    # nodes = custom_points()
+    nodes = multiple_solutions()
     graph = Graph_Wrapper(nodes)
     # solver = Greedy(graph)
     # solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
-    # sat_algorithm(graph)
-    cadical_algorithm(graph, nodes)
+    sat_algorithm(graph)
+    # cadical_algorithm(graph, nodes)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # gurobi_tri_algorithm(graph)
