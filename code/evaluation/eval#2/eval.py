@@ -2,7 +2,14 @@ import os
 from dataclasses import asdict
 
 import slurminade
-from dc_triangulation import SAT, Graph_Wrapper, Run_Algbench, SAT_Parameter
+from dc_triangulation import (
+    SAT,
+    Graph_Wrapper,
+    Ortools,
+    Ortools_Parameter,
+    Run_Algbench,
+    SAT_Parameter,
+)
 
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
@@ -20,14 +27,14 @@ outer_parameter = {
                 )
             ),
         },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    intersection=True, degree_exact=True, fix_hull=True, fix_edges=True
-                )
-            ),
-        },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             intersection=True, degree_exact=True, fix_hull=True, fix_edges=True
+        #         )
+        #     ),
+        # },
         {
             "timeout": TIMEOUT,
             "args": asdict(
@@ -36,55 +43,55 @@ outer_parameter = {
                 )
             ),
         },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             intersection=True,
+        #             degree_exact=True,
+        #             fix_hull=True,
+        #             all_edges=True,
+        #             fix_edges=True,
+        #         )
+        #     ),
+        # },
+    ],
+    Ortools: [
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                SAT_Parameter(
-                    intersection=True,
-                    degree_exact=True,
-                    fix_hull=True,
-                    all_edges=True,
-                    fix_edges=True,
+                Ortools_Parameter(intersection=True, degree=True, fix_hull=True)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(
+                    intersection=True, degree=True, fix_hull=True, all_edges=True
                 )
             ),
         },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         Ortools_Parameter(
+        #             intersection=True, degree=True, fix_hull=True, fix_edges=True
+        #         )
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         Ortools_Parameter(
+        #             intersection=True,
+        #             degree=True,
+        #             fix_hull=True,
+        #             fix_edges=True,
+        #             all_edges=True,
+        #         )
+        #     ),
+        # },
     ],
-    # Ortools: [
-    #     {
-    #         "timeout": TIMEOUT,
-    #         "args": asdict(
-    #             Ortools_Parameter(intersection=True, degree=True, fix_hull=True)
-    #         ),
-    #     },
-    #     {
-    #         "timeout": TIMEOUT,
-    #         "args": asdict(
-    #             Ortools_Parameter(
-    #                 intersection=True, degree=True, fix_hull=True, all_edges=True
-    #             )
-    #         ),
-    #     },
-    #     {
-    #         "timeout": TIMEOUT,
-    #         "args": asdict(
-    #             Ortools_Parameter(
-    #                 intersection=True, degree=True, fix_hull=True, fix_edges=True
-    #             )
-    #         ),
-    #     },
-    #     {
-    #         "timeout": TIMEOUT,
-    #         "args": asdict(
-    #             Ortools_Parameter(
-    #                 intersection=True,
-    #                 degree=True,
-    #                 fix_hull=True,
-    #                 fix_edges=True,
-    #                 all_edges=True,
-    #             )
-    #         ),
-    #     },
-    # ],
     # Gurobi: [
     #     {
     #         "timeout": TIMEOUT,
@@ -139,7 +146,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
