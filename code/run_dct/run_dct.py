@@ -144,15 +144,35 @@ def gurobi_algorithm(graph):
     )
 
 
-def cadical_algorithm(graph):
+def cadical_algorithm(graph, nodes=None):
     solver = Cadical(graph)
     para = Cadical_Parameter(
         degree=True,
         intersection=True,
     )
-    logging.info(
-        f"solution found: {solver.solve({'timeout': -1, 'args': asdict(para)})}"
-    )
+    solution = solver.solve({"timeout": -1, "args": asdict(para)})
+    logging.info(f"solution found: {solution}")
+    if nodes is None:
+        return
+    SAVE = "cadical_figures"
+    # wenn es den ordner SAVE gibt leere ihn
+    if os.path.exists(SAVE):
+        import shutil
+
+        shutil.rmtree(SAVE)
+    os.makedirs(SAVE, exist_ok=True)
+
+    max_edges = len(solver.edges)
+    for i, vars in enumerate(solution.get("debug_vars", [])):
+        lokal_graph = Graph_Wrapper(nodes)
+        lokal_graph.name = f"{i}"
+        for j, var in enumerate(vars):
+            if j >= max_edges:
+                break
+            if var == 1:
+                edge = solver.edges[j]
+                lokal_graph.add_edge(edge[0], edge[1])
+        lokal_graph.show_and_save(show=False, save=SAVE)
 
 
 def run_algo():
@@ -192,7 +212,7 @@ def run_algo():
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     # sat_algorithm(graph)
-    cadical_algorithm(graph)
+    cadical_algorithm(graph, nodes)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # gurobi_tri_algorithm(graph)
