@@ -252,54 +252,59 @@ def run_algo():
 
 
 def create_instance():
-    NAME = "d_flips"
-    INST_NAME = f"{NAME}"
-    NUMBER_NODES = 100
-    STEP = 10
     FLIPS = 500
-    RADIUS = 1000
-    for i in [60, 70, 80]:
-        gen = generate.Generate_Edges_Delaunay_Flips(FLIPS)
-        FILE_NAME = f"{NAME}"
-        generate.Generate_Instance(
-            INST_NAME,
-            FILE_NAME,
-            i,
-            2,
-            generate.Generate_Nodes_Random(),
-            gen,
-            path="instance",
-            width=10000,
-            height=10000,
-        ).generate()
-        FILE_NAME = f"{NAME}_impossible_move"
-        generate.Generate_Instance(
-            INST_NAME,
-            FILE_NAME,
-            i,
-            1,
-            generate.Generate_Nodes_Random(),
-            gen,
-            generate.Generate_Impossible_Move_Degree(amount=5, times=10),
-            path="instance",
-            width=10000,
-            height=10000,
-        ).generate()
-        FILE_NAME = f"{NAME}_impossible_change"
-        generate.Generate_Instance(
-            INST_NAME,
-            FILE_NAME,
-            i,
-            1,
-            generate.Generate_Nodes_Random(),
-            gen,
-            generate.Generate_Impossible_Change_Degree(times=10),
-            path="instance",
-            width=10000,
-            height=10000,
-        ).generate()
+    for NAME, gen in zip(
+        ["d_flips", "delaunay", "greedy", "iterative", "random"],
+        [
+            generate.Generate_Edges_Delaunay_Flips(FLIPS),
+            generate.Generate_Edges_Delaunay(),
+            generate.Generate_Edges_Greedy(),
+            generate.Generate_Edges_Iterative(),
+            generate.Generate_Edges_Random(),
+        ],
+    ):
+        INST_NAME = NAME
+        for i in [30, 40, 50, 60]:
+            FILE_NAME = f"{NAME}"
+            generate.Generate_Instance(
+                INST_NAME,
+                FILE_NAME,
+                i,
+                2,
+                generate.Generate_Nodes_Random(),
+                gen,
+                path="instance",
+                width=10000,
+                height=10000,
+            ).generate()
+            FILE_NAME = f"{NAME}_impossible_move"
+            generate.Generate_Instance(
+                INST_NAME,
+                FILE_NAME,
+                i,
+                1,
+                generate.Generate_Nodes_Random(),
+                gen,
+                generate.Generate_Impossible_Move_Degree(amount=5, times=10),
+                path="instance",
+                width=10000,
+                height=10000,
+            ).generate()
+            FILE_NAME = f"{NAME}_impossible_change"
+            generate.Generate_Instance(
+                INST_NAME,
+                FILE_NAME,
+                i,
+                1,
+                generate.Generate_Nodes_Random(),
+                gen,
+                generate.Generate_Impossible_Change_Degree(times=10),
+                path="instance",
+                width=10000,
+                height=10000,
+            ).generate()
 
 
 if __name__ == "__main__":
-    run_algo()
-    # create_instance()
+    # run_algo()
+    create_instance()
