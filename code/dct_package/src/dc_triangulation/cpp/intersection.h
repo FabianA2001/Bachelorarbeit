@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <map>
+#include <set>
 
 typedef std::pair<int, int> Poss;
 typedef std::pair<int, int> Edge;

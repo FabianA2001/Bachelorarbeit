@@ -3,6 +3,9 @@
 
 #include "intersection.h"
 #include "triangles.h"
+#include "cadical_wrapper.h"
+#include <cadical_binding/cadical_solver.h>
+#include <cstdlib>
 
 void intersection_test()
 {
@@ -39,9 +42,83 @@ void triangles_test()
     }
 }
 
+void cadical_solver_test()
+{
+    int max_var = 8;
+    std::vector<Vars_List> clauses = {
+        {
+            -1,
+            -6,
+        },
+        {
+            -6,
+            -1,
+        },
+        {
+            1,
+        },
+        {
+            2,
+        },
+        {
+            3,
+        },
+        {
+            1,
+        },
+        {
+            4,
+        },
+        {
+            5,
+        },
+        {
+            2,
+            4,
+        },
+        {
+            2,
+            6,
+        },
+        {
+            4,
+            6,
+        },
+        {
+            3,
+            5,
+        },
+        {
+            3,
+            6,
+        },
+        {
+            5,
+            6,
+        },
+        {
+            5,
+        },
+        {
+            4,
+        },
+        {
+            2,
+        },
+        {
+            3,
+        },
+        {7, 8}};
+    auto x = cadical_wrapper(max_var, 6, clauses);
+    int index = 0;
+    for (const auto &val : x.first)
+    {
+        std::cout << "Variable " << index++ << ": " << val << "\n";
+    }
+    std::cout << "length of vars_saved: " << x.second.size() << "\n";
+}
+
 int main()
 {
-    std::cout << "Running intersection test..." << std::endl;
-    // triangles_test();
-    intersection_test();
+    cadical_solver_test();
 }

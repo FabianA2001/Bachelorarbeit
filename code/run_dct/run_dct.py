@@ -5,6 +5,8 @@ from dataclasses import asdict
 from dc_triangulation import (
     SAT,
     SAT_TRI,
+    Cadical,
+    Cadical_Parameter,
     Delaunay,
     Graph_Wrapper,
     Greedy,
@@ -41,6 +43,7 @@ def get_solvers():
         Gurobi_Tri,
         Gurobi,
         OrTools_Tri,
+        Cadical,
     ]
 
 
@@ -52,6 +55,7 @@ def get_parameters():
         Gurobi_Tri_Parameter,
         Gurobi_Parameter,
         Ortools_Tri_Parameter,
+        Cadical_Parameter,
     ]
 
 
@@ -59,7 +63,7 @@ time_function
 
 
 def custom_points() -> list[Node]:
-    if False:
+    if True:
         return [
             Node((0, 0), 3),
             Node((1, 1), 3),
@@ -85,6 +89,19 @@ def custom_points() -> list[Node]:
         return graph.get_aktive_graph_nodes()
 
 
+def multiple_solutions() -> list[Node]:
+    return [
+        Node((0, 0), 4),
+        Node((5, 0), 4),
+        Node((5, 5), 4),
+        Node((0, 5), 4),
+        Node((1, 1), 5),
+        Node((4, 1), 4),
+        Node((4, 4), 5),
+        Node((1, 4), 4),
+    ]
+
+
 def ortools_algorithm(graph):
     solver = Ortools(graph)
     para = Ortools_Parameter(
@@ -105,7 +122,6 @@ def sat_algorithm(graph):
     para = SAT_Parameter(
         intersection=True,
         degree_exact=True,
-        degree_encoding=9,
         # fix_hull=True,
         # all_edges=True,
         # exclude_edges=True,
@@ -153,9 +169,41 @@ def gurobi_algorithm(graph):
     )
 
 
+def cadical_algorithm(graph, nodes=None):
+    solver = Cadical(graph)
+    para = Cadical_Parameter(
+        degree=True,
+        intersection=True,
+        fix_hull=True,
+    )
+    solution = solver.solve({"timeout": -1, "args": asdict(para)})
+    logging.info(f"solution found: {solution.get('success', False)}")
+    if nodes is None:
+        return
+    SAVE = "cadical_figures"
+    # wenn es den ordner SAVE gibt leere ihn
+    if os.path.exists(SAVE):
+        import shutil
+
+        shutil.rmtree(SAVE)
+    os.makedirs(SAVE, exist_ok=True)
+
+    max_edges = len(solver.edges)
+    for i, vars in enumerate(solution.get("debug_vars", [])):
+        lokal_graph = Graph_Wrapper(nodes)
+        lokal_graph.name = f"{i}"
+        for j, var in enumerate(vars):
+            if j >= max_edges:
+                break
+            if var == 1:
+                edge = solver.edges[j]
+                lokal_graph.add_edge(edge[0], edge[1])
+        lokal_graph.show_and_save(show=False, save=SAVE)
+
+
 def run_algo():
     PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_40", "002_delaunay_flips.json"
+        os.path.dirname(__file__), "instance", "simple_20", "001_delaunay_flips.json"
     )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
@@ -184,15 +232,18 @@ def run_algo():
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
+    nodes = multiple_solutions()
     graph = Graph_Wrapper(nodes)
     # solver = Greedy(graph)
     # solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     # sat_algorithm(graph)
+    sat_algorithm(graph)
+    # cadical_algorithm(graph, nodes)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
-    ortools_tri_algorithm(graph)
+    # ortools_tri_algorithm(graph)
     # gurobi_tri_algorithm(graph)
     # gurobi_algorithm(graph)
 

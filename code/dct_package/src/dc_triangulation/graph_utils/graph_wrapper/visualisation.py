@@ -1,4 +1,5 @@
 import logging
+import os
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -67,6 +68,8 @@ def show_and_save(
     )
     plt.title("Graph mit festen Koordinaten")
     if save:
+        if not os.path.exists(save):
+            os.makedirs(save)
         plt.savefig(f"{save}/{data.name}.pdf")
     if show:
         logging.info("show Graph")

@@ -225,3 +225,8 @@ class Data_Raw(nx.Graph):
             nodes.append(Node(self.nodes[node]["pos"], self.degree_aktive(node)))
 
         return nodes
+
+    @cached_property
+    def get_all_active_edges(self) -> list[tuple[int, int]]:
+        """Gibt alle aktiven Kanten des Graphen zurück."""
+        return [edge for edge in self.edges if self.edges[edge]["active"]]
