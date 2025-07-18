@@ -45,6 +45,7 @@ public:
 
     void notify_new_observed_vars(const std::vector<Lit> &observed_vars)
     {
+        set_observed_vars(observed_vars);
         Lit max_abs = *std::max_element(observed_vars.begin(), observed_vars.end(),
                                         [](Lit a, Lit b)
                                         {
@@ -229,6 +230,7 @@ public:
      */
     int propagate() override
     {
+        state_tracker.update_vars_saved();
         std::cerr << "PROPAGATE called with observed trail ";
         for (Lit l : state_tracker.get_observed_trail())
         {

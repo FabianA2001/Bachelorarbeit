@@ -115,6 +115,7 @@ void cadical_solver_test()
     {
         std::cout << "Variable " << index++ << ": " << val << "\n";
     }
+    std::cout << "length of vars_saved: " << x.second.size() << "\n";
 }
 
 int main()
