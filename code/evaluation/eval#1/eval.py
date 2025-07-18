@@ -5,48 +5,19 @@ import slurminade
 from dc_triangulation import (
     SAT,
     SAT_TRI,
-    Delaunay,
     Graph_Wrapper,
     Gurobi,
     Gurobi_Parameter,
     Gurobi_Tri,
     Gurobi_Tri_Parameter,
-    Iterative,
     Ortools,
     Ortools_Parameter,
-    Random_Adder,
-    Raw_Flips,
+    OrTools_Tri,
+    Ortools_Tri_Parameter,
     Run_Algbench,
     SAT_Parameter,
     SAT_Tri_Parameter,
 )
-
-asdict
-
-
-def get_solvers():
-    return [
-        Raw_Flips,
-        Delaunay,
-        Iterative,
-        Ortools,
-        SAT,
-        Random_Adder,
-        SAT_TRI,
-        Gurobi_Tri,
-        Gurobi,
-    ]
-
-
-def get_parameters():
-    return [
-        SAT_Parameter,
-        Ortools_Parameter,
-        SAT_Tri_Parameter,
-        Gurobi_Tri_Parameter,
-        Gurobi_Parameter,
-    ]
-
 
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
@@ -164,6 +135,20 @@ outer_parameter = {
             "timeout": TIMEOUT,
             "args": asdict(
                 Gurobi_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
+            ),
+        },
+    ],
+    OrTools_Tri: [
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(Ortools_Tri_Parameter(intersection=True, degree=True)),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Tri_Parameter(
+                    intersection=True, degree=True, exclude_edges=True
+                )
             ),
         },
     ],
