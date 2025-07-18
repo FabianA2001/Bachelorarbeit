@@ -267,6 +267,9 @@ class SAT(Solver):
     def second_run(self, parameter: dict) -> dict:
         """This method is called when the solver is run a second time."""
         try:
+            for edge_list in parameter.get("seen_combinations", []):
+                clause = [-self.get_index(edge) for edge in edge_list]
+                self.solver.add_clause(clause)
             result = self.add_time(self.solver.solve)()
             return {"success": result}
         except TimeoutError:

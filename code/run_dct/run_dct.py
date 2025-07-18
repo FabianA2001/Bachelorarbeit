@@ -7,6 +7,7 @@ from dc_triangulation import (
     SAT_TRI,
     Cadical,
     Cadical_Parameter,
+    Count,
     Delaunay,
     Graph_Wrapper,
     Greedy,
@@ -44,6 +45,7 @@ def get_solvers():
         Gurobi,
         OrTools_Tri,
         Cadical,
+        Count,
     ]
 
 
@@ -155,6 +157,11 @@ def ortools_tri_algorithm(graph):
     )
 
 
+def count_algorithm(graph):
+    solver = Count(graph)
+    logging.info(f"solution found: {solver.solve({'timeout': -1})}")
+
+
 def gurobi_algorithm(graph):
     solver = Gurobi(graph)
     para = Gurobi_Parameter(
@@ -239,8 +246,8 @@ def run_algo():
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     # sat_algorithm(graph)
-    sat_algorithm(graph)
     # cadical_algorithm(graph, nodes)
+    count_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # ortools_tri_algorithm(graph)
@@ -248,7 +255,7 @@ def run_algo():
     # gurobi_algorithm(graph)
 
     # graph.add_all_possible_edges(True)
-    graph.show_and_save()
+    # graph.show_and_save()
 
 
 def create_instance():
@@ -306,5 +313,5 @@ def create_instance():
 
 
 if __name__ == "__main__":
-    # run_algo()
-    create_instance()
+    run_algo()
+    # create_instance()
