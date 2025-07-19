@@ -271,6 +271,11 @@ class SAT(Solver):
                 clause = [-self.get_index(edge) for edge in edge_list]
                 self.solver.add_clause(clause)
             result = self.add_time(self.solver.solve)()
+            model = self.solver.get_model()
+            if model is not None:
+                for var in self.all_vars:
+                    if var in model:
+                        self.graph.activate_edge(self.get_edge(var))
             return {"success": result}
         except TimeoutError:
             self.logger.warning(f"{self.name} timed out.")

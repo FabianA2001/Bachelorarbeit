@@ -209,12 +209,12 @@ def cadical_algorithm(graph, nodes=None):
 
 
 def run_algo():
-    PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_20", "001_delaunay_flips.json"
-    )
     # PATH = os.path.join(
-    #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
+    #     os.path.dirname(__file__), "instance", "simple_20", "001_delaunay_flips.json"
     # )
+    PATH = os.path.join(
+        os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
+    )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_60", "000_delaunay_flips.json"
     # )
@@ -239,7 +239,7 @@ def run_algo():
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
-    nodes = multiple_solutions()
+    # nodes = multiple_solutions()
     graph = Graph_Wrapper(nodes)
     # solver = Greedy(graph)
     # solver.solve({"timeout": -1})

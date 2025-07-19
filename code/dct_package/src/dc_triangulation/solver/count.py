@@ -23,7 +23,6 @@ class Count(Solver):
         assert self.graph.get_all_edges() == [], (
             "Graph is not empty. Please clear the graph before solving."
         )
-        counter = 0
         para = asdict(
             SAT_Parameter(
                 intersection=True, degree_atleast=True, all_edges=True, fix_hull=True
@@ -36,10 +35,10 @@ class Count(Solver):
                 "args": para,
             }
         )
+        counter = 1
         seen_combinations = [self.graph.get_all_active_edges()]
-        print(seen_combinations)
         for _ in range(self.max_try):
-            self.graph.clear_all_edges()
+            self.graph.deactivate_all_edges()
             result = solver.second_run(
                 {
                     "timeout": -1,
@@ -48,9 +47,7 @@ class Count(Solver):
                 },
             )
             seen_combinations.append(self.graph.get_all_active_edges())
-            print(result)
             if result["success"]:
-                self.graph.show_and_save(block=True)
                 counter += 1
             else:
                 self.logger.info("No more solutions found.")
