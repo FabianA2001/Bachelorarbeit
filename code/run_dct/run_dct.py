@@ -208,13 +208,57 @@ def cadical_algorithm(graph, nodes=None):
         lokal_graph.show_and_save(show=False, save=SAVE)
 
 
+def show_all_instanzes():
+    grpahes = []
+    for PATH in [
+        os.path.join(
+            os.path.dirname(__file__),
+            "instance",
+            "d_flips",
+            "004_d_flips_40.json",
+        ),
+        os.path.join(
+            os.path.dirname(__file__),
+            "instance",
+            "delaunay",
+            "004_delaunay_40.json",
+        ),
+        os.path.join(
+            os.path.dirname(__file__),
+            "instance",
+            "greedy",
+            "004_greedy_40.json",
+        ),
+        os.path.join(
+            os.path.dirname(__file__),
+            "instance",
+            "iterative",
+            "004_iterative_40.json",
+        ),
+        os.path.join(
+            os.path.dirname(__file__),
+            "instance",
+            "random",
+            "004_random_40.json",
+        ),
+    ]:
+        nodes = load_nodes_from_json(PATH)
+        grpahes.append(Graph_Wrapper(nodes))
+    for name, graph in zip(
+        ["d_flips", "delaunay", "greedy", "iterative", "random"], grpahes
+    ):
+        sat_algorithm(graph)
+        graph.name = f"graph_{name}"
+        graph.show_and_save(save="figures", block=False)
+
+
 def run_algo():
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__), "instance", "simple_20", "001_delaunay_flips.json"
-    # )
     PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
+        os.path.dirname(__file__), "instance", "simple_20", "001_delaunay_flips.json"
     )
+    # PATH = os.path.join(
+    #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
+    # )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_60", "000_delaunay_flips.json"
     # )
@@ -313,5 +357,6 @@ def create_instance():
 
 
 if __name__ == "__main__":
-    run_algo()
+    # run_algo()
+    show_all_instanzes()
     # create_instance()
