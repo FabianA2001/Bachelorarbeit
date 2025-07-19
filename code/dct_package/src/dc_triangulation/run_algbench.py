@@ -36,7 +36,7 @@ class Run_Algbench:
         inst_path: str,
         outer_parameter: dict,
         ignore_correct: bool = False,
-        host: str = socket.gethostname(),
+        host: list[str] = [socket.gethostname()],
         path_benchmark: str = "",
         figure_path: str = "",
     ) -> None:
@@ -88,7 +88,7 @@ class Run_Algbench:
                 dictionary["parameters"]["args"]["instance_name"],
                 dictionary["parameters"]["args"]["file_name"],
                 dictionary["parameters"]["args"]["parameter"]["args"],
-            ) in delete_list and dictionary["env"]["hostname"] == self.host:
+            ) in delete_list and dictionary["env"]["hostname"] in self.host:
                 return True
             return False
 
@@ -104,7 +104,7 @@ class Run_Algbench:
                 entry["parameters"]["args"]["solver_name"] == solver.NAME
                 and entry["parameters"]["args"]["instance_name"] == inst
                 and entry["parameters"]["args"]["file_name"] == file_name
-                and entry["env"]["hostname"] == self.host
+                and entry["env"]["hostname"] in self.host
                 and entry["parameters"]["args"]["parameter"]["args"] in parameters
             ):
                 logger = entry.get("logging", None)
@@ -217,8 +217,7 @@ class Run_Algbench:
             },
         )
         # Filter nach Host, falls host angegeben ist
-        table = table[table["host"] == self.host]
-        table = table.drop(columns=["host"])
+        table = table[table["host"].isin(self.host)]
 
         if not self.ignore_correct:
             # lösche zeilen wenn nicht correct
@@ -291,9 +290,8 @@ class Run_Algbench:
                 return solver
 
         table["solver_args"] = table.apply(get_solver_args, axis=1)
-        table = table.drop(columns=["solver"])
 
-        table = table.sort_values(by=["instance_file", "solver_args"])
+        table = table.sort_values(by=["host", "solver_args"])
 
         if table.empty:
             logging.warning("Keine Daten für die angegebene Konfiguration gefunden.")
@@ -489,10 +487,6 @@ class Run_Algbench:
                 alpha=0.8,
             )
 
-            # Legende nur beim ersten Plot
-            if idx == 0:
-                ax.legend(fontsize=9)
-
         # Verstecke überschüssige Subplots
         for idx in range(n_instances, len(axes)):
             axes[idx].set_visible(False)
@@ -503,6 +497,23 @@ class Run_Algbench:
             fontsize=16,
             fontweight="bold",
         )
+
+        # Legende im freien Bereich unten rechts mit mehreren Spalten
+        handles, labels = axes[0].get_legend_handles_labels()
+        if handles:
+            # Berechne Anzahl Spalten basierend auf Anzahl der Solver
+            n_cols = min(3, len(handles))  # Maximal 3 Spalten
+            fig.legend(
+                handles,
+                labels,
+                loc="lower right",
+                bbox_to_anchor=(0.94, 0.26),
+                ncol=n_cols,
+                fontsize=9,
+                frameon=True,
+                fancybox=True,
+                shadow=True,
+            )
 
         # Layout optimieren
         fig.tight_layout()
