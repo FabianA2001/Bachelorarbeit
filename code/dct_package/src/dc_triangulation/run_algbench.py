@@ -366,8 +366,29 @@ class Run_Algbench:
         unique_solvers = valid_data["solver_args"].unique()
         unique_instances = valid_data["instance"].unique()
 
-        # Seaborn Farbpalette für Solver
-        colors = sns.color_palette("husl", len(unique_solvers))
+        # Bessere Farbpalette für Solver - verschiedene Optionen je nach Anzahl
+        n_solvers = len(unique_solvers)
+
+        if n_solvers <= 8:
+            # Für wenige Solver: ColorBrewer Dark2 (sehr gut unterscheidbar)
+            colors = sns.color_palette("Dark2", n_solvers)
+        elif n_solvers <= 10:
+            # Für mittlere Anzahl: tab10 (matplotlib standard, gut unterscheidbar)
+            colors = sns.color_palette("tab10", n_solvers)
+        elif n_solvers <= 12:
+            # Für mehr Solver: Set3 (12 helle, unterscheidbare Farben)
+            colors = sns.color_palette("Set3", n_solvers)
+        elif n_solvers <= 20:
+            # Für viele Solver: tab20 (20 verschiedene Farben)
+            colors = sns.color_palette("tab20", n_solvers)
+        elif n_solvers <= 40:
+            # Für sehr viele Solver: tab20 + tab20b kombiniert (40 Farben)
+            colors1 = sns.color_palette("tab20", 20)
+            colors2 = sns.color_palette("tab20b", n_solvers - 20)
+            colors = colors1 + colors2
+        else:
+            # Für extrem viele Solver: husl (unbegrenzt, gleichmäßig verteilt)
+            colors = sns.color_palette("husl", n_solvers)
 
         # Bestimme Layout für Subplots
         n_instances = len(unique_instances)
