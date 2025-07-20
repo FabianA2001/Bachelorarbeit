@@ -193,6 +193,7 @@ class Run_Algbench:
             "evaluation": _graph.evaluate_graph(),
             "triangulation": _graph.get_all_edges(True),
             "info": info,
+            "solution": solution,
         }
 
     def show(
