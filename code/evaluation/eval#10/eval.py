@@ -1,8 +1,12 @@
 import json
+import math
 import os
-from collections import defaultdict
+from collections import Counter, defaultdict
 from dataclasses import asdict
 
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 from dc_triangulation import (
     SAT,
     Graph_Wrapper,
@@ -27,10 +31,24 @@ def sat_algorithm(nodes):
     return graph.get_all_active_edges()
 
 
+def calculate_edge_length(edge, nodes):
+    """Berechnet die Länge einer Kante zwischen zwei Knoten."""
+    node1_id, node2_id = edge
+
+    # Finde die entsprechenden Knoten
+    node1 = next(node for node in nodes if node.id == node1_id)
+    node2 = next(node for node in nodes if node.id == node2_id)
+
+    # Berechne euklidische Distanz
+    dx = node1.x - node2.x
+    dy = node1.y - node2.y
+    return math.sqrt(dx * dx + dy * dy)
+
+
 def analyze_edge_distribution():
-    """Analysiert die Kanten längen verteilung für alle Instanztypen."""
+    """Analysiert die Kantenlängenverteilung für alle Instanztypen."""
     path = os.path.join(os.path.dirname(__file__), "instances")
-    cache_file = os.path.join(os.path.dirname(__file__), "edge_cache.json")
+    cache_file = os.path.join(os.path.dirname(__file__), "edge_lengths_cache.json")
 
     # Lade existierenden Cache falls vorhanden
     cached_data = {}
@@ -47,7 +65,7 @@ def analyze_edge_distribution():
     instance_data = defaultdict(list)
     new_calculations = 0
 
-    # Lade alle Instanzen und sammle Edges
+    # Lade alle Instanzen und sammle Kantenlängen
     for dir_name in os.listdir(path):
         dir_path = os.path.join(path, dir_name)
         if not os.path.isdir(dir_path):
@@ -63,17 +81,22 @@ def analyze_edge_distribution():
                 # Prüfe ob bereits im Cache vorhanden
                 if cache_key in cached_data:
                     print(f"  Verwende gecachte Daten für {file}")
-                    edges = cached_data[cache_key]
+                    edge_lengths = cached_data[cache_key]
                 else:
                     print(f"  Berechne neue Daten für {file}")
                     nodes: list[Node] = load_nodes_from_json(file_path)
                     edges = sat_algorithm(nodes)
 
+                    # Berechne Kantenlängen
+                    edge_lengths = [
+                        calculate_edge_length(edge, nodes) for edge in edges
+                    ]
+
                     # Speichere im Cache
-                    cached_data[cache_key] = edges
+                    cached_data[cache_key] = edge_lengths
                     new_calculations += 1
 
-                instance_data[dir_name].extend(edges)
+                instance_data[dir_name].extend(edge_lengths)
 
             except Exception as e:
                 print(f"Error loading {file_path}: {e}")
@@ -90,5 +113,176 @@ def analyze_edge_distribution():
     return instance_data
 
 
+def create_edge_length_distribution_plots(instance_data):
+    """Erstellt 5 Diagramme für die Kantenlängenverteilung."""
+
+    # Set up the plotting style
+    plt.style.use("default")
+    sns.set_palette(["slategray"])
+
+    # Create figure with subplots
+    fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+    fig.suptitle(
+        "Kantenlängenverteilung nach Instanztyp", fontsize=16, fontweight="bold"
+    )
+
+    # Flatten axes for easier iteration
+    axes_flat = axes.flatten()
+
+    instance_types = list(instance_data.keys())
+
+    for i, instance_type in enumerate(instance_types):
+        ax = axes_flat[i]
+        edge_lengths = instance_data[instance_type]
+
+        if not edge_lengths:
+            ax.text(
+                0.5,
+                0.5,
+                f"Keine Daten für\n{instance_type}",
+                ha="center",
+                va="center",
+                transform=ax.transAxes,
+            )
+            ax.set_title(f"{instance_type.capitalize()}")
+            continue
+
+        # Erstelle Histogramm mit Kurve
+        sns.histplot(edge_lengths, bins=30, kde=True, alpha=0.7, ax=ax)
+
+        # Statistiken berechnen
+        mean_length = sum(edge_lengths) / len(edge_lengths)
+        max_length = max(edge_lengths)
+        min_length = min(edge_lengths)
+
+        # Titel und Labels
+        ax.set_title(
+            f"{instance_type.capitalize()}\nmin={min_length:.2f}, max={max_length:.2f}",
+            fontweight="bold",
+        )
+        ax.set_xlabel("Kantenlänge")
+        ax.set_ylabel("Häufigkeit")
+
+        # Grid für bessere Lesbarkeit
+        ax.grid(True, alpha=0.3)
+
+    # Hide the last subplot if we have exactly 5 instance types
+    if len(instance_types) == 5:
+        axes_flat[5].set_visible(False)
+
+    plt.tight_layout()
+
+    # Save the plot
+    output_path = os.path.join(
+        os.path.dirname(__file__), "edge_length_distribution_plots.pdf"
+    )
+    plt.savefig(output_path, dpi=300, bbox_inches="tight")
+    print(f"Diagramme gespeichert unter: {output_path}")
+
+    plt.show()
+
+
+def create_comparison_plot(instance_data):
+    """Erstellt ein Vergleichsdiagramm aller Instanztypen."""
+
+    plt.figure(figsize=(14, 8))
+
+    # Prepare data for box plot
+    data_for_plot = []
+    labels = []
+
+    for instance_type, edge_lengths in instance_data.items():
+        if edge_lengths:
+            data_for_plot.append(edge_lengths)
+            labels.append(instance_type.capitalize())
+
+    # Create box plot
+    plt.subplot(1, 2, 1)
+    box_plot = plt.boxplot(data_for_plot, patch_artist=True)
+
+    # Set labels manually
+    plt.xticks(range(1, len(labels) + 1), labels)
+
+    # Color the boxes
+    colors = sns.color_palette("husl", len(data_for_plot))
+    for patch, color in zip(box_plot["boxes"], colors):
+        patch.set_facecolor(color)
+        patch.set_alpha(0.7)
+
+    plt.title("Kantenlängenverteilung Vergleich (Boxplot)", fontweight="bold")
+    plt.xlabel("Instanztyp")
+    plt.ylabel("Kantenlänge")
+    plt.xticks(rotation=45)
+    plt.grid(True, alpha=0.3)
+
+    # Create violin plot
+    plt.subplot(1, 2, 2)
+
+    # Prepare data for seaborn
+    plot_data = []
+    for instance_type, edge_lengths in instance_data.items():
+        for length in edge_lengths:
+            plot_data.append(
+                {"Instance Type": instance_type.capitalize(), "Edge Length": length}
+            )
+
+    df = pd.DataFrame(plot_data)
+
+    if not df.empty:
+        sns.violinplot(data=df, x="Instance Type", y="Edge Length", palette="husl")
+        plt.title("Kantenlängenverteilung Vergleich (Violinplot)", fontweight="bold")
+        plt.xticks(rotation=45)
+        plt.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+
+    # Save comparison plot
+    output_path = os.path.join(
+        os.path.dirname(__file__), "edge_length_distribution_comparison.pdf"
+    )
+    plt.savefig(output_path, dpi=300, bbox_inches="tight")
+    print(f"Vergleichsdiagramm gespeichert unter: {output_path}")
+
+    plt.show()
+
+
+def print_statistics(instance_data):
+    """Druckt Statistiken für alle Instanztypen."""
+    print("\n" + "=" * 60)
+    print("KANTENLÄNGENVERTEILUNGSSTATISTIKEN")
+    print("=" * 60)
+
+    for instance_type, edge_lengths in instance_data.items():
+        if not edge_lengths:
+            continue
+
+        print(f"\n{instance_type.upper()}:")
+        print(f"  Anzahl Kanten: {len(edge_lengths)}")
+        print(f"  Mittelwert: {sum(edge_lengths) / len(edge_lengths):.2f}")
+        print(f"  Minimum: {min(edge_lengths):.2f}")
+        print(f"  Maximum: {max(edge_lengths):.2f}")
+        print(
+            f"  Standardabweichung: {(sum((x - sum(edge_lengths) / len(edge_lengths)) ** 2 for x in edge_lengths) / len(edge_lengths)) ** 0.5:.2f}"
+        )
+
+        # Häufigste Kantenlängenbereiche (gerundet auf 1 Dezimalstelle)
+        rounded_lengths = [round(length, 1) for length in edge_lengths]
+        length_counts = Counter(rounded_lengths)
+        most_common = length_counts.most_common(3)
+        print(f"  Häufigste Kantenlängen (gerundet): {most_common}")
+
+
 if __name__ == "__main__":
-    pass
+    print("Analysiere Kantenlängenverteilungen...")
+
+    # Analysiere die Daten
+    instance_data = analyze_edge_distribution()
+
+    # Erstelle Diagramme
+    create_edge_length_distribution_plots(instance_data)
+
+    # Erstelle Vergleichsdiagramm
+    create_comparison_plot(instance_data)
+
+    # Drucke Statistiken
+    print_statistics(instance_data)
