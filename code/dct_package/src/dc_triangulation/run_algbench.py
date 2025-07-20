@@ -177,6 +177,7 @@ class Run_Algbench:
                 "evaluation": 0.0,
                 "triangulation": [],
                 "info": info,
+                "solution": {},
             }
 
         is_triangulation = _graph.check_if_triangulation_with_degree_constrained()
