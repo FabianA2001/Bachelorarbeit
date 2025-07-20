@@ -16,7 +16,6 @@ outer_parameter = {
         },
     ]
 }
-# Test
 
 
 RI = Run_Algbench(
