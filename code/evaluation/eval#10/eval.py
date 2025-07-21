@@ -147,7 +147,10 @@ def create_edge_length_distribution_plots(instance_data, max_x: int, max_y: int)
             continue
 
         # Erstelle Histogramm mit Kurve
-        sns.histplot(edge_lengths, bins=30, kde=True, alpha=0.7, ax=ax)
+        bins = min(
+            50, len(set(edge_lengths))
+        )  # Adaptiere Bin-Anzahl an einzigartige Werte
+        sns.histplot(edge_lengths, bins=bins, kde=True, alpha=0.6, ax=ax)
 
         # Setze Achsengrenzen
         ax.set_xlim(0, max_x)
@@ -282,7 +285,7 @@ if __name__ == "__main__":
     instance_data = analyze_edge_distribution()
 
     # Erstelle Diagramme
-    create_edge_length_distribution_plots(instance_data, 12000, 225)
+    create_edge_length_distribution_plots(instance_data, 12000, 125)
 
     # # Erstelle Vergleichsdiagramm
     # create_comparison_plot(instance_data)
