@@ -60,37 +60,37 @@ Anschließend wird wie beim Iterativen Verfahren jede Mögliche Kante nacheinand
 
 
 \subsection{Nein - Instanzen}
-Nein Instanzen sind hingegen Knotenmengen, bei denen die \(\degrees\)-Funktion Grade liefert, welche keine gradbeschränkte Triangulation ermöglichen.
-Diese Instanzen werden nicht direkt generiert, sondern aus Ja-Instanzen abgeleitet.
-Zu beachten ist das die Summe der Sollgrade durch die Polyeder Formel einfach zu berechnen ist und somit einfach überprüft werden kann.
-Dementsprechend haben die abgeleiteten Nein-Instanzen in Summe die gleichen Sollgrade wie die Ja-Instanzen.
-Außerdem darf kein Sollgrad größer als die Anzahl der Knoten minus eins sein.
-Hierbei werden zwei Methoden verwendet.
 
-\subsubsection{Grad verschieben}
+Nein Instanzen sind Knotenmengen, bei denen die \(\degrees\) Funktion Gradwerte liefert, die keine gradbeschränkte Triangulation zulassen.
+Diese Instanzen entstehen nicht direkt, sondern werden aus Ja Instanzen abgeleitet.
+Nach der Generierung muss zusätzlich geprüft werden, ob die Instanz nicht möglich ist.
+Da die beschriebenen Verfahren nur mit hoher Wahrscheinlichkeit Nein Instanzen erzeugen.
+Es ist zu beachten, dass die Summe der Sollgrade mithilfe der Polyederformel einfach berechnet und überprüft werden kann.
+Daher besitzen die abgeleiteten Nein Instanzen insgesamt die gleichen Sollgrade wie die Ja Instanzen.
+Zusätzlich darf kein Sollgrad größer als die Anzahl der Knoten abzüglich eins sein, da sonnst der Sollgrad nicht erfüllt werden kann da nicht genügend Kanten erzeugt werden können.
 
-Die erste Methode besteht darin, zwei Knoten auszuwählen.
-Vom ersten Knoten wird ein Wert abgezogen und beim zweiten Knoten wieder hinzugefügt.
+Bei der ersten Methode werden zwei Knoten ausgewählt.
+Vom ersten Knoten wird ein Wert abgezogen und beim zweiten Knoten derselbe Wert hinzugefügt.
 Zunächst wird eine zufällige Zahl \(r\) zwischen null und \(c\) gewählt.
-\(c\) ist eine konstante Zahl, die beim Generieren festgelegt wird.
-Danach werden zwei Knoten \(v_1\) und \(v_2\) ausgewählt.
-Dabei müssen folgende Bedingungen erfüllt sein.
+Hierbei ist \(c\) ist eine konstante Zahl, die beim Generieren festgelegt wird.
+Anschließend werden zwei Knoten \(v_1\) und \(v_2\) ausgewählt.
+Dabei müssen folgende Bedingungen erfüllt sein
 \begin{align}
 v_1 &\neq v_2 \\
 \degrees(v_1) &< r + 2 \\
 \degrees(v_2) + r &> n - 1
 \end{align}
-\(n\) bezeichnet die Anzahl der Knoten.
+wobei \(n\) die Anzahl der Knoten ist.
 Wenn beide Knoten die Bedingungen erfüllen, wird der Sollgrad von \(v_1\) um \(r\) verringert.
 Der Sollgrad von \(v_2\) wird um \(r\) erhöht.
 
+Die zweite Methode besteht darin, zwei Knoten auszuwählen und deren Sollgrade zu tauschen.
+Es muss lediglich beachtet werden, dass es sich um zwei verschiedene Knoten handelt.
+
+Beide Ansätze werden mehrfach angewendet, um die Wahrscheinlichkeit zu erhöhen, dass die Instanzen nicht mehr möglich sind.
+Knoten werden dabei nicht mehrfach betrachtet.
 
 
-
-\begin{itemize}
-	% \item Move Point liefert meistens nein Instanzen
-	\item Zwei Sollgrade von zwei Punkten Tauschen
-\end{itemize}
 
 
 \section{Solver}
