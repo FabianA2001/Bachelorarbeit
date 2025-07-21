@@ -60,6 +60,30 @@ Anschließend wird wie beim Iterativen Verfahren jede Mögliche Kante nacheinand
 
 
 \subsection{Nein - Instanzen}
+Nein Instanzen sind hingegen Knotenmengen, bei denen die \(\degrees\)-Funktion Grade liefert, welche keine gradbeschränkte Triangulation ermöglichen.
+Diese Instanzen werden nicht direkt generiert, sondern aus Ja-Instanzen abgeleitet.
+Zu beachten ist das die Summe der Sollgrade durch die Polyeder Formel einfach zu berechnen ist und somit einfach überprüft werden kann.
+Dementsprechend haben die abgeleiteten Nein-Instanzen in Summe die gleichen Sollgrade wie die Ja-Instanzen.
+Außerdem darf kein Sollgrad größer als die Anzahl der Knoten minus eins sein.
+Hierbei werden zwei Methoden verwendet.
+
+\subsubsection{Grad verschieben}
+Die erste Methode besteht darin zwei Knoten auszuwählen und von dem ersten Knoten etwas abzuziehen und dies beim zweiten Knoten wieder hinzuzufügen.
+Dafür wird zunächst eine zufällige Zahl \(r\) zwischen null und \(c\) ausgewählt.
+Wobei \(c\) eine Konstanze Zahl ist welche beim generieren festgelegt wird.
+Anschließend werden zwei Knoten \(v_1\) und \(v_2\) ausgewählt.
+Hierbei müssen folgende Bedingungen erfüllt sein:
+\begin{align}
+	v_1 &\neq v_2 \\
+	\degrees(v_1) &< r +2 \\
+	\degrees(v_2) + r &> n - 1
+\end{align}
+wobei \(n\) die Anzahl der Knoten ist.
+Wenn die beiden Knoten die Bedingungen erfüllt sind, wird der Sollgrad von \(v_1\) um \(r\) verringert und der Sollgrad von \(v_2\) um \(r\) erhöht.
+
+
+
+
 \begin{itemize}
 	\item Move Point liefert meistens nein Instanzen
 	\item Zwei Sollgrade von zwei Punkten Tauschen
