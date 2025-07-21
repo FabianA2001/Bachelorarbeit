@@ -18,13 +18,14 @@ else:
             "instance": result["parameters"]["args"]["instance_name"],
             "file": result["parameters"]["args"]["file_name"],
             "correct": result["result"]["correct"],
-            "args": result["parameters"]["args"]["parameter"]["args"],
+            "args": result["parameters"]["args"]["parameter"].get("args", {}),
             "evaluation": result["result"]["evaluation"],
             "logging": result["logging"],
             "whole_runtime": result["runtime"],
             "timeout": result["parameters"]["args"]["parameter"]["timeout"],
             "time_solver": result["result"].get("time_solver", None),
             "time_pre_solver": result["result"].get("time_pre_solver", None),
+            "count": result["result"].get("solution", {}).get("count", {}),
         },
     )
 
