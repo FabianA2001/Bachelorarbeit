@@ -94,12 +94,15 @@ class Run_Algbench:
 
         self.benchmark.delete_if(func)
 
-    def show_key_from_runlist(self, key: str):
+    def show_key_from_runlist(self, key: str, check_correct: bool = False):
         solver, nodes, possible, inst, file_name = self.get_solver_inst_from_runlist[
             key
         ]
         parameters = [para["args"] for para in self.outer_parameter[solver]]
         for entry in self.benchmark:
+            if not check_correct:
+                if entry["result"]["correct"]:
+                    continue
             if (
                 entry["parameters"]["args"]["solver_name"] == solver.NAME
                 and entry["parameters"]["args"]["instance_name"] == inst
@@ -210,7 +213,7 @@ class Run_Algbench:
                 "instance": result["parameters"]["args"]["instance_name"],
                 "file": result["parameters"]["args"]["file_name"],
                 "correct": result["result"]["correct"],
-                "args": result["parameters"]["args"]["parameter"]["args"],
+                "args": result["parameters"]["args"]["parameter"].get("args", None),
                 "evaluation": result["result"]["evaluation"],
                 "timeout": result["parameters"]["args"]["parameter"]["timeout"],
                 # "runtime": result["runtime"],

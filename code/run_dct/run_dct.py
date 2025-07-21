@@ -125,7 +125,7 @@ def sat_algorithm(graph):
         intersection=True,
         degree_exact=True,
         # fix_hull=True,
-        # all_edges=True,
+        all_edges=True,
         # exclude_edges=True,
     )
     logging.info(
@@ -253,8 +253,14 @@ def show_all_instanzes():
 
 
 def run_algo():
+    # PATH = os.path.join(
+    #     os.path.dirname(__file__), "instance", "simple_20", "001_delaunay_flips.json"
+    # )
     PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_20", "001_delaunay_flips.json"
+        os.path.dirname(__file__),
+        "instance",
+        "abcdefg",
+        "010_iterative_impossible_move_50.json",
     )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
@@ -289,9 +295,9 @@ def run_algo():
     # solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
-    # sat_algorithm(graph)
+    sat_algorithm(graph)
     # cadical_algorithm(graph, nodes)
-    count_algorithm(graph)
+    # count_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # ortools_tri_algorithm(graph)
@@ -357,6 +363,6 @@ def create_instance():
 
 
 if __name__ == "__main__":
-    # run_algo()
-    show_all_instanzes()
+    run_algo()
+    # show_all_instanzes()
     # create_instance()
