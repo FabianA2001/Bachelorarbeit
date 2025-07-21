@@ -12,6 +12,7 @@ class Count(Solver):
     def __init__(self, graph: Graph_Wrapper, max_try: int = 1000) -> None:
         super().__init__(graph)
         self.logger.warning("gibt zusätzlich anzahl zurück")
+        self.logger.warning("kein Timeout")
         self.name = self.NAME
         self.max_try = max_try
 
@@ -22,26 +23,32 @@ class Count(Solver):
         assert self.graph.get_all_edges() == [], (
             "Graph is not empty. Please clear the graph before solving."
         )
-        counter = 0
-        seen_clauses = []
         para = asdict(
             SAT_Parameter(
                 intersection=True, degree_atleast=True, all_edges=True, fix_hull=True
             )
         )
         solver = SAT(self.graph)
+        result = solver.solve(
+            {
+                "timeout": -1,
+                "args": para,
+            }
+        )
+        counter = 1
+        seen_combinations = [self.graph.get_all_active_edges()]
         for _ in range(self.max_try):
-            result = solver.solve(
+            self.graph.deactivate_all_edges()
+            result = solver.second_run(
                 {
-                    "timeout": self.get_remaining_time(),
+                    "timeout": -1,
                     "args": para,
-                    "debug_clauses": seen_clauses,
-                }
+                    "seen_combinations": seen_combinations,
+                },
             )
+            seen_combinations.append(self.graph.get_all_active_edges())
             if result["success"]:
                 counter += 1
-
-                seen_clauses.append([])
             else:
                 self.logger.info("No more solutions found.")
                 break

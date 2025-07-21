@@ -18,20 +18,21 @@ else:
             "instance": result["parameters"]["args"]["instance_name"],
             "file": result["parameters"]["args"]["file_name"],
             "correct": result["result"]["correct"],
-            "args": result["parameters"]["args"]["parameter"]["args"],
+            "args": result["parameters"]["args"]["parameter"].get("args", {}),
             "evaluation": result["result"]["evaluation"],
             "logging": result["logging"],
             "whole_runtime": result["runtime"],
             "timeout": result["parameters"]["args"]["parameter"]["timeout"],
             "time_solver": result["result"].get("time_solver", None),
             "time_pre_solver": result["result"].get("time_pre_solver", None),
+            "count": result["result"].get("solution", {}).get("count", {}),
         },
     )
 
     df["args"] = df["args"].apply(lambda x: format_dictionary(x, new_line=False))
     df["logging"] = df["logging"].apply(lambda x: str(x))
     df.sort_values(
-        by=["host", "solver", "instance", "file"],
+        by=["solver", "instance", "file"],
         inplace=True,
     )
 
