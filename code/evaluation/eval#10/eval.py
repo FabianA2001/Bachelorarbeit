@@ -96,19 +96,21 @@ def analyze_edge_distribution():
                     cached_data[cache_key] = edge_lengths
                     new_calculations += 1
 
+                    # Speichere Cache nach jedem SAT-Lauf
+                    try:
+                        with open(cache_file, "w") as f:
+                            json.dump(cached_data, f, indent=2)
+                        print(f"  Cache aktualisiert für {file}")
+                    except Exception as e:
+                        print(f"  Fehler beim Speichern des Caches für {file}: {e}")
+
                 instance_data[dir_name].extend(edge_lengths)
 
             except Exception as e:
                 print(f"Error loading {file_path}: {e}")
 
-    # Speichere aktualisierten Cache
     if new_calculations > 0:
-        try:
-            with open(cache_file, "w") as f:
-                json.dump(cached_data, f, indent=2)
-            print(f"Cache aktualisiert mit {new_calculations} neuen Berechnungen")
-        except Exception as e:
-            print(f"Fehler beim Speichern des Caches: {e}")
+        print(f"Insgesamt {new_calculations} neue Berechnungen durchgeführt")
 
     return instance_data
 
