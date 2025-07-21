@@ -37,7 +37,7 @@ def analyze_degree_distribution():
     return instance_data
 
 
-def create_degree_distribution_plots(instance_data):
+def create_degree_distribution_plots(instance_data, max_x: int, max_y: float):
     """Erstellt 5 Diagramme für die Gradverteilung."""
 
     # Set up the plotting style
@@ -72,7 +72,13 @@ def create_degree_distribution_plots(instance_data):
             continue
 
         # Erstelle Histogramm mit Kurve
-        sns.histplot(degrees, bins=30, kde=True, alpha=0.7, ax=ax)
+        # Verwende mehr Bins für bessere Verteilung
+        bins = min(50, len(set(degrees)))  # Adaptiere Bin-Anzahl an einzigartige Werte
+        sns.histplot(degrees, bins=bins, kde=True, alpha=0.6, ax=ax, stat="density")
+
+        # Setze Achsengrenzen
+        ax.set_xlim(0, max_x)
+        ax.set_ylim(0, max_y)
 
         # Statistiken berechnen
         mean_degree = sum(degrees) / len(degrees)
@@ -212,11 +218,10 @@ if __name__ == "__main__":
     instance_data = analyze_degree_distribution()
 
     # Erstelle Diagramme
-    create_degree_distribution_plots(instance_data)
+    create_degree_distribution_plots(instance_data, 25, 0.31)
 
     # Erstelle Vergleichsdiagramm
     # create_comparison_plot(instance_data)
 
     # Drucke Statistiken
-    print_statistics(instance_data)
     print_statistics(instance_data)
