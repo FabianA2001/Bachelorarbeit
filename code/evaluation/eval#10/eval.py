@@ -280,8 +280,8 @@ if __name__ == "__main__":
     # Erstelle Diagramme
     create_edge_length_distribution_plots(instance_data)
 
-    # Erstelle Vergleichsdiagramm
-    create_comparison_plot(instance_data)
+    # # Erstelle Vergleichsdiagramm
+    # create_comparison_plot(instance_data)
 
-    # Drucke Statistiken
-    print_statistics(instance_data)
+    # # Drucke Statistiken
+    # print_statistics(instance_data)
