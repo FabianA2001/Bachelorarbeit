@@ -28,20 +28,22 @@ def sat_algorithm(nodes):
     )
     solution = solver.solve({"timeout": -1, "args": asdict(para)})
     assert solution["success"], "SAT solver did not find a solution"
-    return graph.get_all_active_edges()
+    edges = graph.get_all_active_edges()
+    # Berechne Kantenlängen
+    return [
+        calculate_edge_length(
+            graph.get_pos_from_node(edge[0]), graph.get_pos_from_node(edge[1])
+        )
+        for edge in edges
+    ]
 
 
-def calculate_edge_length(edge, nodes):
+def calculate_edge_length(point1: tuple[int, int], point2: tuple[int, int]):
     """Berechnet die Länge einer Kante zwischen zwei Knoten."""
-    node1_id, node2_id = edge
-
-    # Finde die entsprechenden Knoten
-    node1 = next(node for node in nodes if node.id == node1_id)
-    node2 = next(node for node in nodes if node.id == node2_id)
 
     # Berechne euklidische Distanz
-    dx = node1.x - node2.x
-    dy = node1.y - node2.y
+    dx = point1[0] - point2[0]
+    dy = point1[1] - point2[1]
     return math.sqrt(dx * dx + dy * dy)
 
 
@@ -85,12 +87,7 @@ def analyze_edge_distribution():
                 else:
                     print(f"  Berechne neue Daten für {file}")
                     nodes: list[Node] = load_nodes_from_json(file_path)
-                    edges = sat_algorithm(nodes)
-
-                    # Berechne Kantenlängen
-                    edge_lengths = [
-                        calculate_edge_length(edge, nodes) for edge in edges
-                    ]
+                    edge_lengths = sat_algorithm(nodes)
 
                     # Speichere im Cache
                     cached_data[cache_key] = edge_lengths
