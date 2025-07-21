@@ -4,6 +4,7 @@ from .graph_utils.node import Node, load_nodes_from_json, save_nodes_as_json
 from .run_algbench import Run_Algbench
 from .solver.cadial import Cadical
 from .solver.cadial import Parameter as Cadical_Parameter
+from .solver.count import Count
 from .solver.delaunay import Delaunay
 from .solver.greedy import Greedy
 from .solver.gurobi import Gurobi
@@ -55,4 +56,5 @@ __all__ = [
     "Ortools_Tri_Parameter",
     "Cadical",
     "Cadical_Parameter",
+    "Count",
 ]

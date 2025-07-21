@@ -7,6 +7,7 @@ from dc_triangulation import (
     SAT_TRI,
     Cadical,
     Cadical_Parameter,
+    Count,
     Delaunay,
     Graph_Wrapper,
     Greedy,
@@ -44,6 +45,7 @@ def get_solvers():
         Gurobi,
         OrTools_Tri,
         Cadical,
+        Count,
     ]
 
 
@@ -123,7 +125,7 @@ def sat_algorithm(graph):
         intersection=True,
         degree_exact=True,
         # fix_hull=True,
-        # all_edges=True,
+        all_edges=True,
         # exclude_edges=True,
     )
     logging.info(
@@ -153,6 +155,11 @@ def ortools_tri_algorithm(graph):
     logging.info(
         f"solution found: {solver.solve({'timeout': 60, 'args': asdict(para)})}"
     )
+
+
+def count_algorithm(graph):
+    solver = Count(graph)
+    logging.info(f"solution found: {solver.solve({'timeout': -1})}")
 
 
 def gurobi_algorithm(graph):
@@ -201,9 +208,59 @@ def cadical_algorithm(graph, nodes=None):
         lokal_graph.show_and_save(show=False, save=SAVE)
 
 
+def show_all_instanzes():
+    grpahes = []
+    for PATH in [
+        os.path.join(
+            os.path.dirname(__file__),
+            "instance",
+            "d_flips",
+            "004_d_flips_40.json",
+        ),
+        os.path.join(
+            os.path.dirname(__file__),
+            "instance",
+            "delaunay",
+            "004_delaunay_40.json",
+        ),
+        os.path.join(
+            os.path.dirname(__file__),
+            "instance",
+            "greedy",
+            "004_greedy_40.json",
+        ),
+        os.path.join(
+            os.path.dirname(__file__),
+            "instance",
+            "iterative",
+            "004_iterative_40.json",
+        ),
+        os.path.join(
+            os.path.dirname(__file__),
+            "instance",
+            "random",
+            "004_random_40.json",
+        ),
+    ]:
+        nodes = load_nodes_from_json(PATH)
+        grpahes.append(Graph_Wrapper(nodes))
+    for name, graph in zip(
+        ["d_flips", "delaunay", "greedy", "iterative", "random"], grpahes
+    ):
+        sat_algorithm(graph)
+        graph.name = f"graph_{name}"
+        graph.show_and_save(save="figures", block=False)
+
+
 def run_algo():
+    # PATH = os.path.join(
+    #     os.path.dirname(__file__), "instance", "simple_20", "001_delaunay_flips.json"
+    # )
     PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_20", "001_delaunay_flips.json"
+        os.path.dirname(__file__),
+        "instance",
+        "abcdefg",
+        "010_iterative_impossible_move_50.json",
     )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
@@ -232,15 +289,15 @@ def run_algo():
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
-    nodes = multiple_solutions()
+    # nodes = multiple_solutions()
     graph = Graph_Wrapper(nodes)
     # solver = Greedy(graph)
     # solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
-    # sat_algorithm(graph)
     sat_algorithm(graph)
     # cadical_algorithm(graph, nodes)
+    # count_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # ortools_tri_algorithm(graph)
@@ -248,7 +305,7 @@ def run_algo():
     # gurobi_algorithm(graph)
 
     # graph.add_all_possible_edges(True)
-    graph.show_and_save()
+    # graph.show_and_save()
 
 
 def create_instance():
@@ -306,5 +363,6 @@ def create_instance():
 
 
 if __name__ == "__main__":
-    # run_algo()
-    create_instance()
+    run_algo()
+    # show_all_instanzes()
+    # create_instance()

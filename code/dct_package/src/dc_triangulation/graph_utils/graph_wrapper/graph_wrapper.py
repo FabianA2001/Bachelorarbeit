@@ -268,6 +268,13 @@ class Graph_Wrapper:
         self.clear_cache()
         self._data.clear_edges()
 
+    def deactivate_all_edges(self) -> None:
+        """Deaktiviert alle Kanten des Graphen."""
+        logging.info("Deactivating all edges in the graph.")
+        self.clear_cache()
+        for edge in self._data.get_all_edges():
+            self._data.deactivate_edge(edge)
+
     def number_of_correct_nodes(self) -> int:
         """Gibt die Anzahl der Knoten im Graphen zurück."""
         counter = 0
