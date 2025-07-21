@@ -112,7 +112,7 @@ def analyze_edge_distribution():
     return instance_data
 
 
-def create_edge_length_distribution_plots(instance_data):
+def create_edge_length_distribution_plots(instance_data, max_x: int, max_y: int):
     """Erstellt 5 Diagramme für die Kantenlängenverteilung."""
 
     # Set up the plotting style
@@ -148,6 +148,10 @@ def create_edge_length_distribution_plots(instance_data):
 
         # Erstelle Histogramm mit Kurve
         sns.histplot(edge_lengths, bins=30, kde=True, alpha=0.7, ax=ax)
+
+        # Setze Achsengrenzen
+        ax.set_xlim(0, max_x)
+        ax.set_ylim(0, max_y)
 
         # Statistiken berechnen
         mean_length = sum(edge_lengths) / len(edge_lengths)
@@ -278,7 +282,7 @@ if __name__ == "__main__":
     instance_data = analyze_edge_distribution()
 
     # Erstelle Diagramme
-    create_edge_length_distribution_plots(instance_data)
+    create_edge_length_distribution_plots(instance_data, 12000, 225)
 
     # # Erstelle Vergleichsdiagramm
     # create_comparison_plot(instance_data)
