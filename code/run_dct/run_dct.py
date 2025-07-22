@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import random
@@ -318,15 +319,25 @@ def permute_instance():
     TARGET_DIR = "delaunay"
     NUMBER_PERMUTATION = 5 - 1
     for i in range(NUMBER_PERMUTATION):
-        for file_name in os.listdir(CURRENT_PATH):
-            nodes = load_nodes_from_json(os.path.join(CURRENT_PATH, file_name))
-            # Permute the nodes
+        for filename in os.listdir(CURRENT_PATH):
+            nodes = load_nodes_from_json(os.path.join(CURRENT_PATH, filename))
+            with open(os.path.join(CURRENT_PATH, filename), "r") as f:
+                data = json.load(f)
+            possible = data.get("possible", None)
             random.shuffle(nodes)
+            lokal_target_path = os.path.join(TARGET_PATH, f"{TARGET_DIR}_{i + 2}")
             save_nodes_as_json(
                 nodes,
-                os.path.join(TARGET_PATH, f"{TARGET_DIR}_{i + 2}"),
-                filename=file_name,
+                lokal_target_path,
+                filename=filename,
             )
+            if possible is not None:
+                path = os.path.join(lokal_target_path, filename)
+                with open(path, "r") as f:
+                    data = json.load(f)
+                data["possible"] = possible
+                with open(path, "w") as f:
+                    json.dump(data, f, indent=4)
 
 
 def create_instance():
