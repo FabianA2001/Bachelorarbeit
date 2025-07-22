@@ -223,8 +223,65 @@ def show_ortools():
     ri.show(block=False)
 
 
+def gesamt():
+    outer_parameter = {
+        SAT: [
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    SAT_Parameter(intersection=True, degree_exact=True, all_edges=True)
+                ),
+            }
+        ],
+        Gurobi: [
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    Gurobi_Parameter(intersection=True, degree=True, exclude_edges=True)
+                ),
+            },
+        ],
+        Ortools: [
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    Ortools_Parameter(intersection=True, degree=True, all_edges=True)
+                ),
+            }
+        ],
+        Gurobi_Tri: [
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
+            }
+        ],
+        OrTools_Tri: [
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(Ortools_Tri_Parameter(intersection=True, degree=True)),
+            }
+        ],
+        SAT_TRI: [
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
+            }
+        ],
+    }
+
+    ri = Run_Algbench(
+        inst_path=path,
+        outer_parameter=outer_parameter,
+        figure_path=figure_path,
+        host=HOST,
+        name="gesamt",
+    )
+    ri.show(block=False)
+
+
 if __name__ == "__main__":
     show_tri()
     show_sat()
     show_gurobi()
     show_ortools()
+    gesamt()

@@ -2,7 +2,6 @@ import json
 import logging
 import os
 import socket
-from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -327,7 +326,7 @@ class Run_Algbench:
         legend = legend[:-1]
         legend += "\n" + "=" * 50
         if self.name:
-            with open(os.path.join(self.figure_path, self.name), "w") as f:
+            with open(os.path.join(self.figure_path, f"{self.name}.txt"), "w") as f:
                 f.write(legend)
         logging.info(legend)
         return table
@@ -355,7 +354,6 @@ class Run_Algbench:
         y: str,
         block: bool = False,
         timelimit: int = 300,
-        name: Optional[str] = None,
     ):
         """
         Erstellt einen Cactus Plot für die Benchmark-Daten.
