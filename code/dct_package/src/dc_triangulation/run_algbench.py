@@ -181,13 +181,16 @@ class Run_Algbench:
                 "triangulation": [],
                 "info": info,
                 "solution": {},
+                "big_error": True,
             }
 
         is_triangulation = _graph.check_if_triangulation_with_degree_constrained()
         result = solution["success"] and is_triangulation
         correct = _possible == result
+        big_error = False
         if is_triangulation and not _possible:
             info += f"{solver.name} on {instance_name}_{file_name} should not be possible, but triangulation was found.\n"
+            big_error = True
 
         return {
             "correct": correct,
@@ -198,6 +201,7 @@ class Run_Algbench:
             "triangulation": _graph.get_all_edges(True),
             "info": info,
             "solution": solution,
+            "big_error": big_error,
         }
 
     def show(
