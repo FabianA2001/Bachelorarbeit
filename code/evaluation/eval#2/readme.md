@@ -1,4 +1,4 @@
-* 60 bis 80 Knoten 
-* besten Solver 
-* Instanzen zwei normal, zwei unmöglich 
-* greedy, iterative, random, Delaunay, Flips
+* 80 bis 90 Knoten 
+* SAT mit besten parametern
+* Instanzen delauney zwei normal, zwei unmöglich
+* Permutationen der gleichen instanze
