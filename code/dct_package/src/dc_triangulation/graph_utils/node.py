@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import random
+from pathlib import Path
 
 from . import graph_const
 
@@ -24,7 +25,8 @@ def save_nodes_as_json(
     path = os.path.join(path, filename)
     """Speichert eine Liste von Knoten in einer JSON-Datei."""
     # Erstelle den Ordner, falls er nicht existiert
-    path_list = path.split("/")
+    path_obj = Path(path)
+    path_list = path_obj.parts
     pre_path = ""
     # print(path_list)
     for directory in path_list[:-1]:
