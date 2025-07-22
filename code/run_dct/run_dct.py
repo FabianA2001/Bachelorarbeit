@@ -1,5 +1,7 @@
+import json
 import logging
 import os
+import random
 from dataclasses import asdict
 
 from dc_triangulation import (
@@ -27,6 +29,7 @@ from dc_triangulation import (
     SAT_Tri_Parameter,
     generate,
     load_nodes_from_json,
+    save_nodes_as_json,
     time_function,
 )
 
@@ -308,20 +311,51 @@ def run_algo():
     # graph.show_and_save()
 
 
+def permute_instance():
+    CURRENT_PATH = os.path.join(
+        os.path.dirname(__file__), "eval_instance", "delaunay_1"
+    )
+    TARGET_PATH = os.path.join(os.path.dirname(__file__), "eval_instance")
+    TARGET_DIR = "delaunay"
+    NUMBER_PERMUTATION = 5 - 1
+    for i in range(NUMBER_PERMUTATION):
+        for filename in os.listdir(CURRENT_PATH):
+            nodes = load_nodes_from_json(os.path.join(CURRENT_PATH, filename))
+            with open(os.path.join(CURRENT_PATH, filename), "r") as f:
+                data = json.load(f)
+            possible = data.get("possible", None)
+            random.shuffle(nodes)
+            lokal_target_path = os.path.join(TARGET_PATH, f"{TARGET_DIR}_{i + 2}")
+            save_nodes_as_json(
+                nodes,
+                lokal_target_path,
+                filename=filename,
+            )
+            if possible is not None:
+                path = os.path.join(lokal_target_path, filename)
+                with open(path, "r") as f:
+                    data = json.load(f)
+                data["possible"] = possible
+                with open(path, "w") as f:
+                    json.dump(data, f, indent=4)
+
+
 def create_instance():
     FLIPS = 500
+    PATH = "eval_instance"
     for NAME, gen in zip(
-        ["d_flips", "delaunay", "greedy", "iterative", "random"],
+        # ["d_flips", "delaunay", "greedy", "iterative", "random"],
+        ["delaunay"],
         [
-            generate.Generate_Edges_Delaunay_Flips(FLIPS),
+            # generate.Generate_Edges_Delaunay_Flips(FLIPS),
             generate.Generate_Edges_Delaunay(),
-            generate.Generate_Edges_Greedy(),
-            generate.Generate_Edges_Iterative(),
-            generate.Generate_Edges_Random(),
+            # generate.Generate_Edges_Greedy(),
+            # generate.Generate_Edges_Iterative(),
+            # generate.Generate_Edges_Random(),
         ],
     ):
         INST_NAME = NAME
-        for i in [30, 40, 50, 60]:
+        for i in [80, 90]:
             FILE_NAME = f"{NAME}"
             generate.Generate_Instance(
                 INST_NAME,
@@ -330,7 +364,7 @@ def create_instance():
                 2,
                 generate.Generate_Nodes_Random(),
                 gen,
-                path="instance",
+                path=PATH,
                 width=10000,
                 height=10000,
             ).generate()
@@ -343,7 +377,7 @@ def create_instance():
                 generate.Generate_Nodes_Random(),
                 gen,
                 generate.Generate_Impossible_Move_Degree(amount=5, times=10),
-                path="instance",
+                path=PATH,
                 width=10000,
                 height=10000,
             ).generate()
@@ -356,13 +390,14 @@ def create_instance():
                 generate.Generate_Nodes_Random(),
                 gen,
                 generate.Generate_Impossible_Change_Degree(times=10),
-                path="instance",
+                path=PATH,
                 width=10000,
                 height=10000,
             ).generate()
 
 
 if __name__ == "__main__":
-    run_algo()
+    # run_algo()
     # show_all_instanzes()
     # create_instance()
+    permute_instance()

@@ -1,4 +1,3 @@
-import logging
 import os
 from dataclasses import asdict
 
@@ -27,16 +26,16 @@ path = os.path.join(os.path.dirname(__file__), "instances")
 if False:
     outer_parameter = {
         SAT: [
-            # {
-            #     "timeout": TIMEOUT,
-            #     "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
-            # },
-            # {
-            #     "timeout": TIMEOUT,
-            #     "args": asdict(
-            #         SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
-            #     ),
-            # },
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
+            },
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
+                ),
+            },
             {
                 "timeout": TIMEOUT,
                 "args": asdict(
@@ -256,17 +255,17 @@ if __name__ == "__main__":
         # for key in RI.get_run_list():
         #     RI.delete_key_from_runlist(key)
         #     # RI.show_key_from_runlist(key)
-        # RI.show()
-        counter = 0
-        for key in RI.get_run_list():
-            counter += 1
-            solver, nodes, possible, inst, file_name = RI.get_solver_inst_from_runlist[
-                key
-            ]
-            if solver.NAME != "SAT":
-                continue
-            if "iterative" not in inst:
-                continue
-            RI.show_key_from_runlist(key, check_correct=True)
+        RI.show()
+        # counter = 0
+        # for key in RI.get_run_list():
+        #     counter += 1
+        #     solver, nodes, possible, inst, file_name = RI.get_solver_inst_from_runlist[
+        #         key
+        #     ]
+        #     if solver.NAME != "SAT":
+        #         continue
+        #     if "iterative" not in inst:
+        #         continue
+        #     RI.show_key_from_runlist(key, check_correct=True)
 
-        logging.info(f"Total entries in run list: {counter}")
+        # print(f"Total entries in run list: {counter}")
