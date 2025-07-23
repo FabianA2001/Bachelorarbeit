@@ -256,15 +256,15 @@ def show_all_instanzes():
 
 
 def run_algo():
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__), "instance", "simple_20", "001_delaunay_flips.json"
-    # )
     PATH = os.path.join(
-        os.path.dirname(__file__),
-        "instance",
-        "abcdefg",
-        "010_iterative_impossible_move_50.json",
+        os.path.dirname(__file__), "instance", "simple_20", "001_delaunay_flips.json"
     )
+    # PATH = os.path.join(
+    #     os.path.dirname(__file__),
+    #     "instance",
+    #     "abcdefg",
+    #     "010_iterative_impossible_move_50.json",
+    # )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
     # )
@@ -298,8 +298,8 @@ def run_algo():
     # solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
-    sat_algorithm(graph)
-    # cadical_algorithm(graph, nodes)
+    # sat_algorithm(graph)
+    cadical_algorithm(graph, nodes)
     # count_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
@@ -397,7 +397,7 @@ def create_instance():
 
 
 if __name__ == "__main__":
-    # run_algo()
+    run_algo()
     # show_all_instanzes()
-    create_instance()
+    # create_instance()
     # permute_instance()
