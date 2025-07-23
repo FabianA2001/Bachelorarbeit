@@ -8,6 +8,7 @@ NODE_COLOR_TRUE = "green"
 NODE_COLOR_FALSE = "red"
 EDGE_COLOR_TRUE = "green"
 EDGE_COLOR_FALSE = "red"
+EDGE_COLOR_SET_FALSE = "blue"
 GRAPH_NAME = "Graph"
 
 

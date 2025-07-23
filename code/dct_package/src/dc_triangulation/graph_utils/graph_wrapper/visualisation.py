@@ -17,10 +17,11 @@ def show_and_save(
     show: bool,
     save: str,
     block: bool,
+    show_set_false: bool = False,
 ) -> None:
     """Zeichnet den Graphen mit den festgelegten Positionen und Farben."""
     logging.info("starte show_and_save")
-    local_graph = data.get_aktive_graph()
+    local_graph = data.get_aktive_graph(show_set_false)
     num_active_edges = len(local_graph.edges)
     # logging.info(f"aktive kanten: {num_active_edges}")
     if num_active_edges != number_edges_in_Triangulation:
@@ -47,13 +48,22 @@ def show_and_save(
         for node, degree in degrees.items()
     ]
 
-    edge_colors = [
-        graph_const.EDGE_COLOR_TRUE
-        # Beispielbedingung
-        if not check.check_for_intersection_with_all_edges_and_nodes(edge)
-        else graph_const.EDGE_COLOR_FALSE
-        for edge in local_graph.edges
-    ]
+    # edge_colors = [
+    #     graph_const.EDGE_COLOR_TRUE
+    #     # Beispielbedingung
+    #     if not check.check_for_intersection_with_all_edges_and_nodes(edge)
+    #     else graph_const.EDGE_COLOR_FALSE
+    #     for edge in local_graph.edges
+    # ]
+    edge_colors = []
+    for edge in local_graph.edges:
+        if local_graph.edges[edge].get("active"):
+            if not check.check_for_intersection_with_all_edges_and_nodes(edge):
+                edge_colors.append(graph_const.EDGE_COLOR_TRUE)
+            else:
+                edge_colors.append(graph_const.EDGE_COLOR_FALSE)
+        elif local_graph.edges[edge].get("show_false"):
+            edge_colors.append(graph_const.EDGE_COLOR_SET_FALSE)
 
     # Zeichne den Graphen
     plt.clf()

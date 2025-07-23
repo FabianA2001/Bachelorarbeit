@@ -118,7 +118,11 @@ class Graph_Wrapper:
         return triangles_intersection(triangles, triangles_pos)
 
     def show_and_save(
-        self, show: bool = True, save: str = "", block: bool = True
+        self,
+        show: bool = True,
+        save: str = "",
+        block: bool = True,
+        show_set_false: bool = False,
     ) -> None:
         visualisation.show_and_save(
             self._data,
@@ -127,6 +131,7 @@ class Graph_Wrapper:
             show=show,
             save=save,
             block=block,
+            show_set_false=show_set_false,
         )
 
     def add_edge(self, node1: int, node2: int, active: bool = True) -> None:
@@ -145,6 +150,12 @@ class Graph_Wrapper:
         """Aktiviert eine Kante zwischen zwei Knoten."""
         self.clear_cache()
         self._data.active_edge(node1, node2)
+
+    def edge_show_false(
+        self, node1: Union[int, Tuple[int, int]], node2: Optional[int] = None
+    ) -> None:
+        """Setzt eine Kante auf 'show_false'."""
+        self._data.edge_show_false(node1, node2)
 
     def deactivate_edge(
         self, node1: Union[int, Tuple[int, int]], node2: Optional[int] = None
