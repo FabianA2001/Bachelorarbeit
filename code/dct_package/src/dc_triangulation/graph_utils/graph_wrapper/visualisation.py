@@ -106,9 +106,12 @@ def draw_with_set_false(
     colors = [
         graph_const.NODE_COLOR_TRUE
         if degree
-        == local_graph.degree(
-            # type: ignore
-            node
+        == len(
+            [
+                edge
+                for edge in local_graph.edges(node)
+                if local_graph.edges[edge].get("active")
+            ]
         )
         else graph_const.NODE_COLOR_FALSE
         for node, degree in degrees.items()
