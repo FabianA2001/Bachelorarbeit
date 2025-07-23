@@ -31,7 +31,7 @@ class SAT_TRI(Solver):
     def setup(self, parameter: Parameter):
         self.graph.add_all_possible_edges(default_for_active=False)
         if not parameter.add_allEdges_or_exlucde_edges:
-            edges = self.graph.exclude_edge_partition
+            edges = self.graph.exclude_edges
             for edge in edges:
                 try:
                     self.graph.remove_edge(edge)
@@ -130,7 +130,7 @@ class SAT_TRI(Solver):
         self.timeout_error()
 
     def exclude_triangles_constraint(self):
-        for edge in self.graph.exclude_edge_partition:
+        for edge in self.graph.exclude_edges:
             tris = self.get_triangles_from_edge(edge)
             for tri in tris:
                 self.solver.add_clause([-tri])

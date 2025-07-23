@@ -42,7 +42,7 @@ class SAT(Solver):
     def setup(self, parameter: Parameter):
         self.graph.add_all_possible_edges(default_for_active=False)
         if not parameter.add_allEdges_or_exclude_edges:
-            edges = self.graph.exclude_edge_partition
+            edges = self.graph.exclude_edges
             for edge in edges:
                 try:
                     self.graph.remove_edge(edge)
@@ -134,7 +134,7 @@ class SAT(Solver):
             raise TimeoutError()
 
     def exclude_edges_constraint(self):
-        for edge in self.graph.exclude_edge_partition:
+        for edge in self.graph.exclude_edges:
             index = self.get_index(edge)
             # Setze die Kante als inaktiv
             self.solver.add_clause([-index])
