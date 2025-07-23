@@ -60,26 +60,6 @@ def compress_results():
     RI.compress()
 
 
-def sort_by_inst(table: pd.DataFrame) -> pd.DataFrame:
-    """Sort and group instances, similar to apply_args but for instances."""
-    # Create mapping from unique instances to numbers
-    unique_instances = table["instance"].drop_duplicates().tolist()
-    instance_mapping = {}
-
-    for i, instance in enumerate(unique_instances):
-        instance_mapping[instance] = i + 1
-
-    def get_instance_label(row):
-        instance = row["instance"]
-        number = instance_mapping[instance]
-        return f"{instance}-{number}"
-
-    table["instance_label"] = table.apply(get_instance_label, axis=1)
-    table = table.sort_values(by=["instance_label", "solver"])
-
-    return table
-
-
 def create_cactus(
     table: pd.DataFrame, y: str, block: bool = True, timelimit: int = 300
 ):
@@ -102,7 +82,7 @@ def create_cactus(
         return
 
     # Eindeutige Instanzen ermitteln
-    unique_instances = valid_data["instance_label"].unique()
+    unique_instances = valid_data["instance"].unique()
 
     # Bessere Farbpalette für Instanzen - verschiedene Optionen je nach Anzahl
     n_instances = len(unique_instances)
@@ -122,9 +102,7 @@ def create_cactus(
     for i, instance_label in enumerate(unique_instances):
         # Extrahiere den ursprünglichen Instanznamen (ohne Nummer)
         instance = instance_label.split("-")[0]
-        instance_data = valid_data[valid_data["instance_label"] == instance_label][
-            y
-        ].values
+        instance_data = valid_data[valid_data["instance"] == instance_label][y].values
 
         if len(instance_data) == 0:
             continue
@@ -213,7 +191,8 @@ def create_cactus(
 def lokal_show():
     table = RI.get_table()
     table["total_runtime"] = table["pre_time"] + table["runtime"]
-    table = sort_by_inst(table)
+    table = table.sort_values(by=["instance"])
+    # table = sort_by_inst(table)
 
     create_cactus(
         table=table,
