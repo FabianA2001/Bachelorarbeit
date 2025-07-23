@@ -345,29 +345,29 @@ def create_instance():
     PATH = "eval_instance"
     for NAME, gen in zip(
         # ["d_flips", "delaunay", "greedy", "iterative", "random"],
-        ["delaunay"],
+        ["iterative"],
         [
             # generate.Generate_Edges_Delaunay_Flips(FLIPS),
-            generate.Generate_Edges_Delaunay(),
+            # generate.Generate_Edges_Delaunay(),
             # generate.Generate_Edges_Greedy(),
-            # generate.Generate_Edges_Iterative(),
+            generate.Generate_Edges_Iterative(),
             # generate.Generate_Edges_Random(),
         ],
     ):
         INST_NAME = NAME
-        for i in [80, 90]:
-            FILE_NAME = f"{NAME}"
-            generate.Generate_Instance(
-                INST_NAME,
-                FILE_NAME,
-                i,
-                2,
-                generate.Generate_Nodes_Random(),
-                gen,
-                path=PATH,
-                width=10000,
-                height=10000,
-            ).generate()
+        for i in [50]:
+            # FILE_NAME = f"{NAME}"
+            # generate.Generate_Instance(
+            #     INST_NAME,
+            #     FILE_NAME,
+            #     i,
+            #     2,
+            #     generate.Generate_Nodes_Random(),
+            #     gen,
+            #     path=PATH,
+            #     width=10000,
+            #     height=10000,
+            # ).generate()
             FILE_NAME = f"{NAME}_impossible_move"
             generate.Generate_Instance(
                 INST_NAME,
@@ -381,23 +381,23 @@ def create_instance():
                 width=10000,
                 height=10000,
             ).generate()
-            FILE_NAME = f"{NAME}_impossible_change"
-            generate.Generate_Instance(
-                INST_NAME,
-                FILE_NAME,
-                i,
-                1,
-                generate.Generate_Nodes_Random(),
-                gen,
-                generate.Generate_Impossible_Change_Degree(times=10),
-                path=PATH,
-                width=10000,
-                height=10000,
-            ).generate()
+            # FILE_NAME = f"{NAME}_impossible_change"
+            # generate.Generate_Instance(
+            #     INST_NAME,
+            #     FILE_NAME,
+            #     i,
+            #     1,
+            #     generate.Generate_Nodes_Random(),
+            #     gen,
+            #     generate.Generate_Impossible_Change_Degree(times=10),
+            #     path=PATH,
+            #     width=10000,
+            #     height=10000,
+            # ).generate()
 
 
 if __name__ == "__main__":
     # run_algo()
     # show_all_instanzes()
-    # create_instance()
-    permute_instance()
+    create_instance()
+    # permute_instance()

@@ -92,7 +92,7 @@ class Run_Algbench:
                 dictionary["parameters"]["args"]["solver_name"],
                 dictionary["parameters"]["args"]["instance_name"],
                 dictionary["parameters"]["args"]["file_name"],
-                dictionary["parameters"]["args"]["parameter"]["args"],
+                dictionary["parameters"]["args"]["parameter"].get("args", {}),
             ) in delete_list and dictionary["env"]["hostname"] in self.host:
                 return True
             return False
