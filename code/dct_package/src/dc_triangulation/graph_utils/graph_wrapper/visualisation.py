@@ -150,7 +150,7 @@ def draw_with_set_false(
     nx.draw_networkx_nodes(
         local_graph,
         pos=pos,
-        node_color=colors,
+        node_color=colors,  # type: ignore
         node_size=graph_const.NODE_SIZE,
     )
 
