@@ -82,7 +82,7 @@ class Ortools(Solver):
             self.model.Add(self.vars[edge] == 1)
 
     def constraint_exclude_edges(self):
-        for edge in self.graph.exclude_edge_partition:
+        for edge in self.graph.exclude_edges:
             self.model.Add(self.vars[edge] == 0)
 
     def constraint_set_number_edges(self, number_edges: int):

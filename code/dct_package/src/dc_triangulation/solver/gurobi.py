@@ -71,7 +71,7 @@ class Gurobi(Solver):
             self.model.addConstr(summ == degree)  # type: ignore[reportCallIssue]
 
     def exclude_edges_constraint(self):
-        for edge in self.graph.exclude_edge_partition:
+        for edge in self.graph.exclude_edges:
             self.model.addConstr(self.vars[edge] == 0)
 
     def all_edges_constraint(self):

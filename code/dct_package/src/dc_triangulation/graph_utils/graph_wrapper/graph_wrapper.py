@@ -388,7 +388,7 @@ class Graph_Wrapper:
         return max(self.get_desired_degree_node(node) for node in self.get_all_nodes())
 
     @cached_property
-    def exclude_edge_partition(self) -> list[tuple[int, int]]:
+    def exclude_edges(self) -> list[tuple[int, int]]:
         edges = Exclude_Edge_Partition(self._data, self.impossible_edges)()
         return [edge for edge in edges if edge not in self.impossible_edges]
 
