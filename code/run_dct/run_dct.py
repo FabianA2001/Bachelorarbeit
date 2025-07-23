@@ -260,18 +260,18 @@ def show_all_instanzes():
 
 
 def run_algo():
-    PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_20", "002_delaunay_flips.json"
-    )
+    # PATH = os.path.join(
+    #     os.path.dirname(__file__), "instance", "simple_20", "002_delaunay_flips.json"
+    # )
     # PATH = os.path.join(
     #     os.path.dirname(__file__),
     #     "instance",
     #     "abcdefg",
     #     "010_iterative_impossible_move_50.json",
     # )
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
-    # )
+    PATH = os.path.join(
+        os.path.dirname(__file__), "instance", "simple_80", "003_random.json"
+    )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_60", "000_delaunay_flips.json"
     # )
@@ -298,12 +298,14 @@ def run_algo():
     # nodes = custom_points()
     # nodes = multiple_solutions()
     graph = Graph_Wrapper(nodes)
+    graph.add_all_possible_edges(False)
+    (print(len(graph.exclude_edges)))
     # solver = Greedy(graph)
     # solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     # sat_algorithm(graph)
-    cadical_algorithm(graph, nodes)
+    # cadical_algorithm(graph, nodes)
     # count_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)

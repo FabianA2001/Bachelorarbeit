@@ -8,6 +8,7 @@ class Exclude_Edge_Intersection:
         self, data: Data, intersections: dict[tuple[int, int], set[tuple[int, int]]]
     ) -> None:
         self.data = data
+        assert len(self.data.edges) > 0, "Graph has no edges"
         self.intersections = intersections
 
     def __call__(self) -> set[tuple[int, int]]:
@@ -25,7 +26,6 @@ class Exclude_Edge_Intersection:
                 self.data.degree(node) - node_counter[node]
                 < self.data.nodes[node]["degree"]
             ):
-                print("-----------------", node, "----", edge)
                 return True
         return False
 

@@ -74,19 +74,32 @@ class Exclude_Edge_Partition:
         num_edges_1 = 3 * len(nodes1) - 3 - len(poly1_nodes)
         num_edges_2 = 3 * len(nodes2) - 3 - len(poly2_nodes)
 
-        y1 = 2 * num_edges_1 - degree_sum_1 - 2
-        y2 = (
-            degree_sum_2
-            + self.data.nodes[a]["degree"]
-            + self.data.nodes[b]["degree"]
-            - 2 * num_edges_2
-        )
-        if y1 != y2:
-            assert y1 >= 0, f"y1 and y2 must be non-negative for {a, b} split"
-            assert (
-                y1 <= self.data.nodes[a]["degree"] + self.data.nodes[b]["degree"] - 2
-            ), "y1 and y2 must be less than the sum of the degrees of a and b minus 2"
-            return False
+        x1 = degree_sum_2 - 2 * num_edges_2
+        x2 = degree_sum_1 - 2 * num_edges_1
+
+        if x1 < 2 or x2 < 2:
+            # das kann nicht sein; mindestens 2 Kanten sind immer da
+            return True
+
+        if x1 == 2:
+            return len(nodes1) != 3
+
+        if x2 == 2:
+            return len(nodes2) != 3
+
+        # y1 = 2 * num_edges_1 - degree_sum_1 - 2
+        # y2 = (
+        #     degree_sum_2
+        #     + self.data.nodes[a]["degree"]
+        #     + self.data.nodes[b]["degree"]
+        #     - 2 * num_edges_2
+        # )
+        # if y1 != y2:
+        #     assert y1 >= 0, f"y1 and y2 must be non-negative for {a, b} split"
+        #     assert (
+        #         y1 <= self.data.nodes[a]["degree"] + self.data.nodes[b]["degree"] - 2
+        #     ), "y1 and y2 must be less than the sum of the degrees of a and b minus 2"
+        #     return False
 
         return True
 
@@ -108,24 +121,24 @@ class Exclude_Edge_Partition:
 
             poly_nodes_0 = self.hull_nodes[index1:] + self.hull_nodes[: index0 + 1]
             poly_nodes_1 = self.hull_nodes[index0 : index1 + 1]
-            for half in [poly_nodes_0, poly_nodes_1]:
-                if not self.__possible_half(half, [com[0], com[1]]):
-                    edges.add((min(com[0], com[1]), max(com[0], com[1])))
-                    continue
+            # for half in [poly_nodes_0, poly_nodes_1]:
+            #     if not self.__possible_half(half, [com[0], com[1]]):
+            #         edges.add((min(com[0], com[1]), max(com[0], com[1])))
+            #         continue
 
-        # TODO liefert keine Ergebnis
-        # if not self.__degree_split_possible(
-        #     poly_nodes_0, poly_nodes_1, com[0], com[1]
+            # TODO liefert keine Ergebnis
+            if not self.__degree_split_possible(
+                poly_nodes_0, poly_nodes_1, com[0], com[1]
+            ):
+                # edges.add((min(com[0], com[1]), max(com[0], com[1])))
+                continue
+
+        # for node1, node2, node3 in zip(
+        #     self.hull_nodes,
+        #     self.hull_nodes[1:] + self.hull_nodes[:-1],
+        #     self.hull_nodes[2:] + self.hull_nodes[:-2],
         # ):
-        #     edges.add((min(com[0], com[1]), max(com[0], com[1])))
-        #     continue
-
-        for node1, node2, node3 in zip(
-            self.hull_nodes,
-            self.hull_nodes[1:] + self.hull_nodes[:-1],
-            self.hull_nodes[2:] + self.hull_nodes[:-2],
-        ):
-            if self.data.nodes[node2]["degree"] != 2:
-                edges.add((min(node1, node3), max(node1, node3)))
+        #     if self.data.nodes[node2]["degree"] != 2:
+        #         edges.add((min(node1, node3), max(node1, node3)))
 
         return list(edges)
