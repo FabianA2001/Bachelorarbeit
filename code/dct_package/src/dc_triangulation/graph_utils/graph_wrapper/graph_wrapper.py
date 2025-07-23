@@ -124,15 +124,24 @@ class Graph_Wrapper:
         block: bool = True,
         show_set_false: bool = False,
     ) -> None:
-        visualisation.show_and_save(
-            self._data,
-            self._check,
-            self._data.get_number_edges_triangulation,
-            show=show,
-            save=save,
-            block=block,
-            show_set_false=show_set_false,
-        )
+        if not show_set_false:
+            visualisation.draw(
+                self._data,
+                self._check,
+                self._data.get_number_edges_triangulation,
+                show=show,
+                save=save,
+                block=block,
+            )
+        else:
+            visualisation.draw_with_set_false(
+                self._data,
+                self._check,
+                self._data.get_number_edges_triangulation,
+                show=show,
+                save=save,
+                block=block,
+            )
 
     def add_edge(self, node1: int, node2: int, active: bool = True) -> None:
         """Fügt eine Kante zwischen zwei Knoten hinzu."""
