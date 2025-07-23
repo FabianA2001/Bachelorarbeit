@@ -16,6 +16,7 @@ from .data import Data
 from .data_raw import Data_Raw
 from .file_system import save_graph_as_json
 from .operation import flip_edge, move_node
+from .operation.exclude_edge_intersection import Exclude_Edge_Intersection
 from .operation.exclude_edge_partition import Exclude_Edge_Partition
 
 
@@ -390,6 +391,9 @@ class Graph_Wrapper:
     @cached_property
     def exclude_edges(self) -> list[tuple[int, int]]:
         edges = Exclude_Edge_Partition(self._data, self.impossible_edges)()
+        edges.extend(
+            Exclude_Edge_Intersection(self._data, self.get_all_intersections_cpp())()
+        )
         return [edge for edge in edges if edge not in self.impossible_edges]
 
     @cached_property
