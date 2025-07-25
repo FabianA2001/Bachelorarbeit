@@ -104,7 +104,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if False:
+    if True:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
@@ -114,8 +114,9 @@ if __name__ == "__main__":
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
         )
         run_list = RI.get_run_list()
-        for key in run_list:
-            run_solver_on_inst.distribute(key)
+        with slurminade.JobBundling(max_size=10):
+            for key in run_list:
+                run_solver_on_inst.distribute(key)
 
         slurminade.join()
         compress_results.distribute()
