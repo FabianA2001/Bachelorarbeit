@@ -281,7 +281,7 @@ def test_exclude_edges():
     # outer_graph.show_and_save(show=False, save=".")
     for edge in [
         edge
-        for edge in outer_graph.exclude_edge_partition
+        for edge in outer_graph.exclude_edges
         if edge not in outer_graph.impossible_edges
     ]:
         graph = Graph_Wrapper(nodes)

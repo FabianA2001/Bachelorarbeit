@@ -16,6 +16,7 @@ from .data import Data
 from .data_raw import Data_Raw
 from .file_system import save_graph_as_json
 from .operation import flip_edge, move_node
+from .operation.exclude_edge_intersection import Exclude_Edge_Intersection
 from .operation.exclude_edge_partition import Exclude_Edge_Partition
 
 
@@ -118,16 +119,30 @@ class Graph_Wrapper:
         return triangles_intersection(triangles, triangles_pos)
 
     def show_and_save(
-        self, show: bool = True, save: str = "", block: bool = True
+        self,
+        show: bool = True,
+        save: str = "",
+        block: bool = True,
+        show_set_false: bool = False,
     ) -> None:
-        visualisation.show_and_save(
-            self._data,
-            self._check,
-            self._data.get_number_edges_triangulation,
-            show=show,
-            save=save,
-            block=block,
-        )
+        if not show_set_false:
+            visualisation.draw(
+                self._data,
+                self._check,
+                self._data.get_number_edges_triangulation,
+                show=show,
+                save=save,
+                block=block,
+            )
+        else:
+            visualisation.draw_with_set_false(
+                self._data,
+                self._check,
+                self._data.get_number_edges_triangulation,
+                show=show,
+                save=save,
+                block=block,
+            )
 
     def add_edge(self, node1: int, node2: int, active: bool = True) -> None:
         """Fügt eine Kante zwischen zwei Knoten hinzu."""
@@ -145,6 +160,12 @@ class Graph_Wrapper:
         """Aktiviert eine Kante zwischen zwei Knoten."""
         self.clear_cache()
         self._data.active_edge(node1, node2)
+
+    def edge_show_false(
+        self, node1: Union[int, Tuple[int, int]], node2: Optional[int] = None
+    ) -> None:
+        """Setzt eine Kante auf 'show_false'."""
+        self._data.edge_show_false(node1, node2)
 
     def deactivate_edge(
         self, node1: Union[int, Tuple[int, int]], node2: Optional[int] = None
@@ -368,8 +389,11 @@ class Graph_Wrapper:
         return max(self.get_desired_degree_node(node) for node in self.get_all_nodes())
 
     @cached_property
-    def exclude_edge_partition(self) -> list[tuple[int, int]]:
+    def exclude_edges(self) -> list[tuple[int, int]]:
         edges = Exclude_Edge_Partition(self._data, self.impossible_edges)()
+        edges.extend(
+            Exclude_Edge_Intersection(self._data, self.get_all_intersections_cpp())()
+        )
         return [edge for edge in edges if edge not in self.impossible_edges]
 
     @cached_property

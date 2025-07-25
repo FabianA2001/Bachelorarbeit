@@ -291,6 +291,7 @@ class Generate_Impossible_Move_Degree(Generate_Make_Impossible):
     def generate_instance(self, nodes: list[Node]) -> tuple[list[Node], bool]:
         """Generiert eine Instanz des Graphen mit den gegebenen Knoten."""
         blacklist = []
+        length_nodes = len(nodes)
         for _ in range(self.times):
             for _ in range(1000):
                 node1: Node = choice(nodes)
@@ -298,7 +299,9 @@ class Generate_Impossible_Move_Degree(Generate_Make_Impossible):
                 lokal_amount = randint(1, self.amount)
                 if node1 == node2:
                     continue
-                if node1.degree <= lokal_amount + 1:
+                if node1.degree < lokal_amount + 2:
+                    continue
+                if node2.degree + lokal_amount > length_nodes - 1:
                     continue
                 if node1 in blacklist or node2 in blacklist:
                     continue

@@ -56,4 +56,5 @@ class Count(Solver):
         return {
             "success": True,
             "count": counter,
+            "seen_combinations": seen_combinations,
         }

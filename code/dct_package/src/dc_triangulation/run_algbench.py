@@ -39,11 +39,14 @@ class Run_Algbench:
         host: list[str] = [socket.gethostname()],
         path_benchmark: str = "",
         figure_path: str = "",
+        name: str = "",
     ) -> None:
         self.inst_path = inst_path
         self.instances = self.get_instances(self.inst_path)
         self.outer_parameter = outer_parameter
         self.solvers = [solver for solver in self.outer_parameter.keys()]
+
+        self.solvers_name = [solver.NAME for solver in self.solvers]
         self.ignore_correct = ignore_correct
         self.host = host
         if path_benchmark == "":
@@ -51,6 +54,8 @@ class Run_Algbench:
         else:
             self.path_benchmark = path_benchmark
         self.figure_path = figure_path
+        self.name = name
+
         self.get_solver_inst_from_runlist: dict[
             str, tuple[type[Solver], list[Node], bool, str, str]
         ] = {}
@@ -78,7 +83,7 @@ class Run_Algbench:
                         solver.NAME,
                         inst,
                         file_name,
-                        para["args"],
+                        para.get("args", {}),
                     )
                 )
 
@@ -87,7 +92,7 @@ class Run_Algbench:
                 dictionary["parameters"]["args"]["solver_name"],
                 dictionary["parameters"]["args"]["instance_name"],
                 dictionary["parameters"]["args"]["file_name"],
-                dictionary["parameters"]["args"]["parameter"]["args"],
+                dictionary["parameters"]["args"]["parameter"].get("args", {}),
             ) in delete_list and dictionary["env"]["hostname"] in self.host:
                 return True
             return False
@@ -181,13 +186,16 @@ class Run_Algbench:
                 "triangulation": [],
                 "info": info,
                 "solution": {},
+                "big_error": True,
             }
 
         is_triangulation = _graph.check_if_triangulation_with_degree_constrained()
         result = solution["success"] and is_triangulation
         correct = _possible == result
+        big_error = False
         if is_triangulation and not _possible:
             info += f"{solver.name} on {instance_name}_{file_name} should not be possible, but triangulation was found.\n"
+            big_error = True
 
         return {
             "correct": correct,
@@ -198,13 +206,12 @@ class Run_Algbench:
             "triangulation": _graph.get_all_edges(True),
             "info": info,
             "solution": solution,
+            "big_error": big_error,
         }
 
-    def show(
-        self,
-        timelimit: int = 300,
-        old: bool = False,
-    ):
+    def get_table(self) -> pd.DataFrame:
+        pass
+
         table = read_as_pandas(
             self.path_benchmark,
             lambda result: {
@@ -237,13 +244,19 @@ class Run_Algbench:
             ]
             table = table[table["file"].isin(all_instance)]
 
-        solvers_name = [solver.NAME for solver in self.solvers]
-        table = table[table["solver"].isin(solvers_name)]
+        table = table[table["solver"].isin(self.solvers_name)]
+        return table
 
+    def applay_instanze(
+        self,
+        table: pd.DataFrame,
+    ) -> pd.DataFrame:
         # Kombiniere Instanz und Dateiname für die x-Achse
         table["instance_file"] = table["instance"] + "/" + table["file"]
         table = table.drop(columns=["file"])
+        return table
 
+    def apply_args(self, table: pd.DataFrame) -> pd.DataFrame:
         all_args = []
         for arg_list in self.outer_parameter.values():
             for arg in arg_list:
@@ -271,13 +284,12 @@ class Run_Algbench:
         table = table.drop(columns=["timeout_rank"])
 
         if table.empty:
-            logging.warning("Keine Daten für die angegebene Konfiguration gefunden.")
-            return
+            raise ValueError("Keine Daten für die angegebene Konfiguration gefunden.")
 
         # Create mapping from unique args to numbers, grouped by solver
         solver_args_mapping = {}
         solver_args_multiple = {}
-        for solver in solvers_name:
+        for solver in self.solvers_name:
             solver_table = table[table["solver"] == solver]
             unique_args = solver_table["args"].drop_duplicates().tolist()
             solver_args_mapping[solver] = {}
@@ -299,8 +311,7 @@ class Run_Algbench:
         table = table.sort_values(by=["host", "solver_args"])
 
         if table.empty:
-            logging.warning("Keine Daten für die angegebene Konfiguration gefunden.")
-            return
+            raise ValueError("Keine Daten für die angegebene Konfiguration gefunden.")
 
         legend = ""
         legend += "\nArgs Legend Mapping (by Solver):"
@@ -314,33 +325,26 @@ class Run_Algbench:
                 legend += f"\n|#{number} in {number_args[2]}s: {format_dictionary(args_dict, 2)}\n"
         legend = legend[:-1]
         legend += "\n" + "=" * 50
+        if self.name:
+            with open(os.path.join(self.figure_path, f"{self.name}.txt"), "w") as f:
+                f.write(legend)
         logging.info(legend)
+        return table
 
-        # als Balkendiagramm darstellen
-        if old:
-            self.create_plt(
-                table=table,
-                y="pre_time",
-                block=False,
-            )
-            self.create_plt(
-                table=table,
-                y="runtime",
-                block=True,
-            )
-            return
+    def show(
+        self,
+        timelimit: int = 300,
+        block: bool = True,
+    ):
+        table = self.get_table()
+        table = self.applay_instanze(table)
+        table = self.apply_args(table)
 
-        # Erstelle Cactus Plot
+        table["total_runtime"] = table["pre_time"] + table["runtime"]
         self.create_cactus(
             table=table,
-            y="pre_time",
-            block=False,
-            timelimit=timelimit,
-        )
-        self.create_cactus(
-            table=table,
-            y="runtime",
-            block=True,
+            y="total_runtime",
+            block=block,
             timelimit=timelimit,
         )
 
@@ -356,7 +360,6 @@ class Run_Algbench:
         In einem Cactus Plot wird die Zeit (y-Achse) gegen die Anzahl der gelösten
         Instanzen (x-Achse) dargestellt, sortiert nach Laufzeit.
         """
-
         # Seaborn Style setzen
         sns.set_style("whitegrid")
 
@@ -544,10 +547,11 @@ class Run_Algbench:
         # Layout optimieren
         fig.tight_layout()
 
+        fig_name = self.name if self.name else f"cactus_{y}"
         # Speichern falls Pfad angegeben
         if self.figure_path:
             fig.savefig(
-                os.path.join(self.figure_path, f"cactus_{y}.pdf"),
+                os.path.join(self.figure_path, f"{fig_name}.pdf"),
                 dpi=300,
                 bbox_inches="tight",
             )

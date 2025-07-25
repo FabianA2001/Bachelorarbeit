@@ -82,7 +82,7 @@ class Ortools(Solver):
             self.model.Add(self.vars[edge] == 1)
 
     def constraint_exclude_edges(self):
-        for edge in self.graph.exclude_edge_partition:
+        for edge in self.graph.exclude_edges:
             self.model.Add(self.vars[edge] == 0)
 
     def constraint_set_number_edges(self, number_edges: int):
@@ -114,24 +114,6 @@ class Ortools(Solver):
             assert x is not None, "Evaluation value cannot be None"
             evaluation += x
         self.model.Maximize(evaluation)
-
-    def degree_direction(self):
-        nodes = self.graph.get_all_nodes()
-        max_degree = self.graph.get_max_degree
-        self.vars_int = {
-            node: self.model.NewIntVar(0, max_degree, f"degree_{node}")
-            for node in nodes
-        }
-        for node in nodes:
-            desired_degree = self.graph.get_desired_degree_node(node)
-            degree = sum(
-                self.vars[(min(edge[0], edge[1]), max(edge[0], edge[1]))]
-                for edge in self.graph.get_edges_of_node(node)
-            )
-            self.model.Add(self.vars_int[node] >= degree - desired_degree)
-            self.model.Add(self.vars_int[node] >= desired_degree - degree)
-
-        self.model.Maximize(sum(self.vars_int.values()))
 
     def fix_edges_constraint(self):
         for edge in self.graph.fix_edges:
@@ -183,12 +165,6 @@ class Ortools(Solver):
             if timeout == -1:
                 self.logger.warning("Es sollte ein Timeout gesetzt werden.")
             self.add_time(self.evaluation_direction)()
-            stop_after_first_solution = False
-
-        if parameter_data.degree_direction:
-            if timeout == -1:
-                self.logger.warning("Es sollte ein Timeout gesetzt werden.")
-            self.add_time(self.degree_direction)()
             stop_after_first_solution = False
 
         return stop_after_first_solution

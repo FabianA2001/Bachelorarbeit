@@ -2,7 +2,7 @@ import shapely
 
 from ..check import Check
 from ..data import Data
-from ..visualisation import show_and_save
+from ..visualisation import draw
 
 
 def flip_edge(data: Data, check: Check, edge: tuple[int, int]) -> bool:
@@ -29,7 +29,7 @@ def flip_edge(data: Data, check: Check, edge: tuple[int, int]) -> bool:
         while len(triangles) > 2:
             counter += 1
             if counter > 500:
-                show_and_save(
+                draw(
                     data,
                     check,
                     data.get_number_edges_triangulation,
@@ -64,7 +64,7 @@ def flip_edge(data: Data, check: Check, edge: tuple[int, int]) -> bool:
     if len(triangles) > 2:
         triangles = reduce_to_two_tri(triangles)
     if len(triangles) != 2:
-        show_and_save(
+        draw(
             data,
             check,
             data.get_number_edges_triangulation,

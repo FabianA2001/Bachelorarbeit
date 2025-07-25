@@ -75,7 +75,12 @@ class Data_Raw(nx.Graph):
             nodes.append(Node(self.nodes[node]["pos"], self.nodes[node]["degree"]))
         graph = Data_Raw(nodes)
         for edge in self.get_all_edges():
-            graph.add_edge(edge[0], edge[1], self.edges[edge].get("active"))
+            graph.add_edge(
+                edge[0],
+                edge[1],
+                self.edges[edge].get("active"),
+                self.edges[edge].get("show_false"),
+            )
         return graph
 
     # TODO löschen um sicher cache zu nutzen
@@ -87,10 +92,13 @@ class Data_Raw(nx.Graph):
         else:
             return [edge for edge in all_edges if self.edges[edge].get("active")]
 
-    def add_edge(self, node1: int, node2: int, active: bool = True) -> None:
+    def add_edge(
+        self, node1: int, node2: int, active: bool = True, show_false: bool = False
+    ) -> None:
         """Fügt eine Kante zwischen zwei Knoten hinzu."""
-        self.clear_cache()
         assert node1 in self and node2 in self
+        assert not (active and show_false)
+        self.clear_cache()
         super().add_edge(
             node1,
             node2,
@@ -98,6 +106,7 @@ class Data_Raw(nx.Graph):
                 [self.nodes[node1]["point"], self.nodes[node2]["point"]]
             ),
             active=active,
+            show_false=show_false,
         )
 
     def remove_edge(self, edge: tuple[int, int]) -> None:
@@ -132,6 +141,26 @@ class Data_Raw(nx.Graph):
         assert (node1, node2) in self.edges
         self.edges[node1, node2]["active"] = True
 
+    def edge_show_false(
+        self, node1: Union[int, Tuple[int, int]], node2: Optional[int] = None
+    ) -> None:
+        if node2 is None:
+            if (
+                isinstance(node1, tuple)
+                and len(node1) == 2
+                and all(isinstance(x, int) for x in node1)
+            ):
+                node1, node2 = node1
+            else:
+                raise ValueError("Erwarte Tuple[int, int]")
+        else:
+            if not isinstance(node1, int) or not isinstance(node2, int):
+                raise ValueError("Beide Werte müssen Strings sein.")
+
+        assert (node1, node2) in self.edges
+        assert not self.edges[node1, node2].get("active", True)
+        self.edges[node1, node2]["show_false"] = True
+
     def deactivate_edge(
         self, node1: Union[int, Tuple[int, int]], node2: Optional[int] = None
     ) -> None:
@@ -159,9 +188,15 @@ class Data_Raw(nx.Graph):
             raise ValueError(f"Edge {edge} not found in graph.")
         return self.edges[edge].get("active")
 
-    def get_aktive_graph(self) -> "Data_Raw":
+    def get_aktive_graph(
+        self,
+        keep_set_false: bool = False,
+    ) -> "Data_Raw":
         local_graph = self.copy()
         for edge in local_graph.edges:
+            if keep_set_false:
+                if local_graph.edges[edge].get("show_false"):
+                    continue
             if local_graph.edges[edge].get("active") is False:
                 local_graph.remove_edge(edge)
         return local_graph

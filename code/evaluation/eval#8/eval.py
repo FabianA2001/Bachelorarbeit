@@ -120,4 +120,5 @@ if __name__ == "__main__":
         slurminade.join()
         compress_results.distribute()
     else:
-        show_lokal()
+        # show_lokal()
+        RI.delete_runlist()

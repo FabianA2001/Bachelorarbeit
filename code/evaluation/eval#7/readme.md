@@ -1,3 +1,3 @@
-* 60 bis 80 Knoten
-* sat testen welche Grad Encoding am besten ist
-* Instanzen sollten möglich und nicht möglichs sein
+* 30 bis 60 Knoten in 10 Schritten
+* Sat, OrTools, Gurobi testen ob 5 mal die gleiche Instanze gleiche ergebnisse
+

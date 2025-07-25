@@ -14,36 +14,113 @@ outer_parameter = {
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                SAT_Parameter(
-                    intersection=True,
-                    degree_exact=True,
-                    fix_hull=True,
-                    # all_edges=True,
-                )
+                SAT_Parameter(intersection=True, degree_exact=True, degree_encoding=1)
             ),
         },
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                SAT_Parameter(
-                    intersection=True,
-                    degree_atleast=True,
-                    fix_hull=True,
-                    # all_edges=True,
-                )
+                SAT_Parameter(intersection=True, degree_exact=True, degree_encoding=2)
             ),
         },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             intersection=True,
-        #             degree_subset=True,
-        #             fix_hull=True,
-        #             all_edges=True,
-        #         )
-        #     ),
-        # },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_exact=True, degree_encoding=3)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_exact=True, degree_encoding=6)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_exact=True, degree_encoding=7)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_exact=True, degree_encoding=8)
+            ),
+        },
+        # atleast
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_atleast=True, degree_encoding=1)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_atleast=True, degree_encoding=2)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_atleast=True, degree_encoding=3)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_atleast=True, degree_encoding=6)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_atleast=True, degree_encoding=7)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_atleast=True, degree_encoding=8)
+            ),
+        },
+        # subset
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=1)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=2)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=3)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=6)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=7)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=8)
+            ),
+        },
     ]
 }
 
@@ -84,7 +161,7 @@ if __name__ == "__main__":
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
-            constraint="alggen02",  # Which workstations within the partition to use
+            constraint="alggen03",  # Which workstations within the partition to use
             exclusive=True,  # To use all cores on a node exclusively
             mail_type="FAIL",  # Send mail on failure
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address

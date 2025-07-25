@@ -1,0 +1,80 @@
+
+Args Legend Mapping (by Solver):
+==================================================
+
+SAT:
+|#1 in 300s: 
+||solver_name:                        Glucose42
+||add_allEdges_or_exclude_edges:      True
+||number_edges:                       False
+||intersection:                       True
+||all_edges:                          False
+||degree_exact:                       True
+||degree_atleast:                     False
+||degree_encoding:                    1
+||degree_subset:                      False
+||fix_hull:                           False
+||exclude_edges:                      False
+||hack_eval6:                         False
+||fix_edges:                          False
+
+|#2 in 300s: 
+||solver_name:                        Glucose42
+||add_allEdges_or_exclude_edges:      True
+||number_edges:                       False
+||intersection:                       True
+||all_edges:                          False
+||degree_exact:                       True
+||degree_atleast:                     False
+||degree_encoding:                    1
+||degree_subset:                      False
+||fix_hull:                           True
+||exclude_edges:                      False
+||hack_eval6:                         False
+||fix_edges:                          False
+
+|#3 in 300s: 
+||solver_name:                        Glucose42
+||add_allEdges_or_exclude_edges:      True
+||number_edges:                       False
+||intersection:                       True
+||all_edges:                          True
+||degree_exact:                       True
+||degree_atleast:                     False
+||degree_encoding:                    1
+||degree_subset:                      False
+||fix_hull:                           False
+||exclude_edges:                      False
+||hack_eval6:                         False
+||fix_edges:                          False
+
+|#4 in 300s: 
+||solver_name:                        Glucose42
+||add_allEdges_or_exclude_edges:      True
+||number_edges:                       False
+||intersection:                       True
+||all_edges:                          False
+||degree_exact:                       True
+||degree_atleast:                     False
+||degree_encoding:                    1
+||degree_subset:                      False
+||fix_hull:                           False
+||exclude_edges:                      True
+||hack_eval6:                         False
+||fix_edges:                          False
+
+|#5 in 300s: 
+||solver_name:                        Glucose42
+||add_allEdges_or_exclude_edges:      True
+||number_edges:                       False
+||intersection:                       True
+||all_edges:                          False
+||degree_exact:                       True
+||degree_atleast:                     False
+||degree_encoding:                    1
+||degree_subset:                      False
+||fix_hull:                           False
+||exclude_edges:                      False
+||hack_eval6:                         False
+||fix_edges:                          True
+==================================================
