@@ -83,7 +83,7 @@ class Run_Algbench:
                         solver.NAME,
                         inst,
                         file_name,
-                        para["args"],
+                        para.get("args", {}),
                     )
                 )
 
