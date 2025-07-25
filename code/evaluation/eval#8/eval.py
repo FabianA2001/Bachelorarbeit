@@ -1,12 +1,10 @@
 import logging
 import os
-from dataclasses import asdict
 
 import slurminade
 from algbench import read_as_pandas
-from dc_triangulation import Count, Graph_Wrapper, Run_Algbench
+from dc_triangulation import Count, Graph_Wrapper, Run_Algbench, load_nodes_from_json
 
-asdict
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
 
@@ -44,6 +42,9 @@ def show_lokal():
             "runtime": result["result"]["time_solver"],
             "pre_time": result["result"]["time_pre_solver"],
             "count": result["result"].get("solution", {}).get("count", {}),
+            "seen_combinations": result["result"]
+            .get("solution", {})
+            .get("seen_combinations", {}),
         },
     )
     # Filter nach Host, falls host angegeben ist
@@ -62,7 +63,6 @@ def show_lokal():
 
     # Kombiniere Instanz und Dateiname für die x-Achse
     table["instance_file"] = table["instance"] + "/" + table["file"]
-    table = table.drop(columns=["file"])
 
     if table.empty:
         logging.warning("Keine Daten für die angegebene Konfiguration gefunden.")
@@ -71,12 +71,36 @@ def show_lokal():
     table = table.sort_values(by=["instance_file"])
 
     # show werte von count für jede Zeile in instance_file
-    print("Count values for each instance_file:")
+    info = ""
+    info += f"Anzahl der Instanzen: {len(table['instance_file'].unique())}\n"
     for _, row in table.iterrows():
         str_row = f"{row['instance_file']}: count = "
         str_row = str_row.ljust(50)
         str_row += str(row["count"])
-        print(str_row)
+        info += str_row + "\n"
+        if row["count"] > 1:
+            for i, vlaue in enumerate(row["seen_combinations"][:-1]):
+                nodes = load_nodes_from_json(
+                    os.path.join(
+                        os.path.dirname(__file__),
+                        "instances",
+                        row["instance"],
+                        f"{row['file']}.json",
+                    )
+                )
+                graphe = Graph_Wrapper(nodes)
+                for edge in vlaue:
+                    graphe.add_edge(edge[0], edge[1])
+                graphe.name = str(f"{row['instance_file']}_{i}")
+                graphe.show_and_save(
+                    show=False,
+                    block=False,
+                    save=os.path.join(
+                        os.path.dirname(__file__),
+                        "figures",
+                    ),
+                )
+    logging.info(info)
 
 
 @slurminade.slurmify()
@@ -104,7 +128,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
@@ -121,5 +145,4 @@ if __name__ == "__main__":
         slurminade.join()
         compress_results.distribute()
     else:
-        # show_lokal()
-        RI.delete_runlist()
+        show_lokal()
