@@ -97,7 +97,11 @@ class Run_Algbench:
                 return True
             return False
 
+        bevor_delete = len(self.benchmark)
         self.benchmark.delete_if(func)
+        logging.info(
+            f"Anzahl der Einträge von {bevor_delete} zu {len(self.benchmark)} reduziert."
+        )
 
     def show_key_from_runlist(self, key: str, check_correct: bool = False):
         solver, nodes, possible, inst, file_name = self.get_solver_inst_from_runlist[
