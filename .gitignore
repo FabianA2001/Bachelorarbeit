@@ -2,11 +2,11 @@
 *pdf
 !**/code/evaluation/**/*.pdf
 !**/thesis.pdf
+!**/TEX/**/*.pdf
 *png
 .vscode/
 **/.degree-constrained-triangulation/
 **/degree_constrained_triangulation.egg-info
-!TEX/figures/*
 **/build/
 **/instance/error
 **/.conan/
