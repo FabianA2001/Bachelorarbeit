@@ -129,6 +129,7 @@ RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
+    host=["algry01", "algry02", "algry03", "algry04"],
 )
 
 
@@ -157,7 +158,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
@@ -175,3 +176,4 @@ if __name__ == "__main__":
         compress_results.distribute()
     else:
         RI.show()
+        # RI.delete_runlist()
