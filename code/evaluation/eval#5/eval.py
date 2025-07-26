@@ -85,42 +85,42 @@ outer_parameter = {
             ),
         },
         # subset
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=1)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=2)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=3)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=6)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=7)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=8)
-            ),
-        },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=1)
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=2)
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=3)
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=6)
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=7)
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=8)
+        #     ),
+        # },
     ]
 }
 
@@ -129,6 +129,7 @@ RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
+    host=["algry01", "algry02", "algry03", "algry04"],
 )
 
 
@@ -175,3 +176,4 @@ if __name__ == "__main__":
         compress_results.distribute()
     else:
         RI.show()
+        # RI.delete_runlist()
