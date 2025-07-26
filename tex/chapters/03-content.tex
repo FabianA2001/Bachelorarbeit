@@ -1,94 +1,5 @@
 \chapter{Content}
 
-\section{Instanzen Generation}
-\subsection{Ja - Instanzen}
-Bei den Ja-Instanzen handelt es sich um Knotenmengen, bei denen die \(\degrees\)-Funktion Grade liefert, welche eine gradbeschränkte Triangulation ermöglichen.
-Hierbei ist nicht bekannt, wie viele mögliche Lösungen existieren, sondern nur, dass es mindestens eine gibt.
-
-Der generelle Ablauf zur Erzeugung von Ja-Instanzen beginnt mit einer zufälligen Knotenmenge.
-Dabei wird lediglich die Anzahl der Knoten vorgegeben.
-Anschließend wird mit einem klassischen Triangulationsverfahren eine initiale Triangulation erstellt.
-Von dieser werden dann die Grade und die Knotenkoordinaten gespeichert, um sie als Eingabe für die zu testenden Algorithmen zu verwenden.
-
-\subsubsection{Delaunay}
-Das erste klassische Verfahren zur Gradbestimmung verwendet die Delaunay-Triangulation.
-Die Delaunay-Triangulation wurde bereits im Kapitel~\cref{sec:delaunay_triangulation} vorgestellt.
-Für die Erstellung der Delaunay-Triangulation wird die Bibliothek \texttt{scipy} genutzt.
-
-\subsubsection{Delaunay mit zufälligen Flips}
-\label{sec:Delaunay_mit_zufällig_Flips}
-Das zweite Verfahren zur Erzeugung von Ja-Instanzen basiert auf der Delaunay-Triangulation, zusätzlich werden jedoch zufällige Flips durchgeführt.
-Zunächst wird eine Delaunay-Triangulation der Knotenmenge erstellt.
-Auf dieser Triangulation werden anschließend \(k\) zufällige Flips gemäß~\cref{def:flip} durchgeführt.
-Für jeden Flip wird zufällig eine Kante \(e_0\) ausgewählt.
-Für diese Kante werden zunächst alle Dreiecke gesucht, die diese Kante enthalten.
-Dies geschieht, indem für die beiden Knoten \(x_{0,0}\) und \(x_{0,1}\) der Kante \(e_0\) alle ausgehenden Kanten verglichen werden.
-Sollten zwei dieser Kanten den gleichen Knoten \(v\) haben, muss das Tripel (\(x_{0,0}, x_{0,1}, v\)) ein Dreieck bilden, welches die Kante \(e_0\) enthält.
-
-Sollten mehr als zwei Dreiecke gefunden werden, so müssen die beiden Dreiecke ausgewählt werden, welche leer sind (keine weiteren Knoten enthalten).
-Da es in einer Triangulation nicht zu Überschneidungen kommen darf, kann es nur zwei leere Dreiecke geben.
-Aus diesen beiden Dreiecken (\(x_{0,0}, x_{0,1}, v_0\)) und (\(x_{0,0}, x_{0,1}, v_1\)) wird dann die Kante \(e_0\) entfernt und durch die neue Kante, bestehend aus \(v_0\) und \(v_1\), ersetzt.
-
-Dieser Prozess verändert die lokale Struktur der Triangulation und erzeugt so Knotenmengen mit unterschiedlichen Gradverteilungen, behält aber die Triangulationseigenschaft bei.
-
-\subsubsection{Zufällige Kantenerzeugung}
-Das nächste Verfahren basiert auf der zufälligen Auswahl von Kanten.
-Hierbei werden zunächst alle geometrisch möglichen Kanten zwischen den Punkten identifiziert.
-In diesem Schritt werden Kanten ausgeschlossen, welche durch andere Knoten der Knotenmenge verlaufen würden.
-
-Die verbleibenden gültigen Kanten werden dann in einer zufälligen Reihenfolge betrachtet.
-Bei der Auswahl der finalen Kanten wird für jede Kandidatenkante geprüft, ob sie eine der bereits ausgewählten Kanten schneidet.
-Nur wenn keine Schnitte entstehen, wird die Kante der Triangulation hinzugefügt.
-
-Dieses Verfahren ist maximal da alle möglichen Kanten betrachten wurden.
-
-\subsubsection{Iteration}
-Ein weiteres Verfahren zur Erzeugung von Ja-Instanzen basiert auf der Iteration.
-Hierbei werden zunächst alle möglichen Kanten zwischen den Punkten identifiziert.
-Diese werden nun nacheinander betrachtet und wenn sie keine andere Kante schneiden hinzugefügt.
-Diese Verfahren ist ebenfalls maximal, da alle möglichen Kanten betrachtet wurden.
-Beim Iterativen Verfahren ist zu beachten das Triangulationen erzeugt werden welche einen Knoten haben welcher einen sehr hohen Sollgrad hat.
-Dies basiert darauf das die Kanten in der Reinfolge betrachtet werden wie sie erstellt werden. 
-Das hat den Effekt das die alle Kanten des ersten Knoten hinzugefügt werden können da es noch keine anderen Kanten gibt welche diese schneiden könnten.
-
-\subsubsection{Greedy}
-Das letze Verfahren ist das Greedy Verfahren.
-Hierbei werden auch alle möglichen Kanten zwischen den Punkten identifiziert.
-Allerdings werden sie im gegensatz zum Iterativen Verfahren zunächst nach der Länge sortiert.
-Hierbei ist es möglich mit der kürzesten oder der längsten Kante zu beginnen.
-Anschließend wird wie beim Iterativen Verfahren jede Mögliche Kante nacheinander hinzugefügt.
-
-
-\subsection{Nein - Instanzen}
-
-Nein Instanzen sind Knotenmengen, bei denen die \(\degrees\) Funktion Gradwerte liefert, die keine gradbeschränkte Triangulation zulassen.
-Diese Instanzen entstehen nicht direkt, sondern werden aus Ja Instanzen abgeleitet.
-Nach der Generierung muss zusätzlich geprüft werden, ob die Instanz nicht möglich ist.
-Da die beschriebenen Verfahren nur mit hoher Wahrscheinlichkeit Nein Instanzen erzeugen.
-Es ist zu beachten, dass die Summe der Sollgrade mithilfe der Polyederformel einfach berechnet und überprüft werden kann.
-Daher besitzen die abgeleiteten Nein Instanzen insgesamt die gleichen Sollgrade wie die Ja Instanzen.
-Zusätzlich darf kein Sollgrad größer als die Anzahl der Knoten abzüglich eins sein, da sonnst der Sollgrad nicht erfüllt werden kann da nicht genügend Kanten erzeugt werden können.
-
-Bei der ersten Methode werden zwei Knoten ausgewählt.
-Vom ersten Knoten wird ein Wert abgezogen und beim zweiten Knoten derselbe Wert hinzugefügt.
-Zunächst wird eine zufällige Zahl \(r\) zwischen null und \(c\) gewählt.
-Hierbei ist \(c\) ist eine konstante Zahl, die beim Generieren festgelegt wird.
-Anschließend werden zwei Knoten \(v_1\) und \(v_2\) ausgewählt.
-Dabei müssen folgende Bedingungen erfüllt sein
-\begin{align}
-v_1 &\neq v_2 \\
-\degrees(v_1) &< r + 2 \\
-\degrees(v_2) + r &> n - 1
-\end{align}
-wobei \(n\) die Anzahl der Knoten ist.
-Wenn beide Knoten die Bedingungen erfüllen, wird der Sollgrad von \(v_1\) um \(r\) verringert.
-Der Sollgrad von \(v_2\) wird um \(r\) erhöht.
-
-Die zweite Methode besteht darin, zwei Knoten auszuwählen und deren Sollgrade zu tauschen.
-Es muss lediglich beachtet werden, dass es sich um zwei verschiedene Knoten handelt.
-
-Beide Ansätze werden mehrfach angewendet, um die Wahrscheinlichkeit zu erhöhen, dass die Instanzen nicht mehr möglich sind.
-Knoten werden dabei nicht mehrfach betrachtet.
 
 
 
@@ -490,7 +401,6 @@ Theoretische könnte man eine Minimierung auch mit folgenden Bedingungen darstel
 \end{align*}
 aber OrTools nutzt den Umweg über die Maximierung.
 
-
 % TODO glaube das ist einfach nur abs das ist glaube nicht gleichwertig.
 % Es gibt auch eine zweite Zielfunktion welche weniger Integer-Hilfsvariablen verwendet.
 % Für jeden Knoten wird bei dieser Zielfunktion nur eine Integer-Hilfsvariable \(j_i\) und keine besonderen Funktionen verwendet.
@@ -500,6 +410,96 @@ aber OrTools nutzt den Umweg über die Maximierung.
 % 	j_i &\geq \degree(i) - \degrees(i) 
 % \end{align*}
 % Die Summe aus \(j_i\) wird dann als Zielfunktion maximiert.
+
+\section{Instanzen Generation}
+\subsection{Ja - Instanzen}
+Bei den Ja-Instanzen handelt es sich um Knotenmengen, bei denen die \(\degrees\)-Funktion Grade liefert, welche eine gradbeschränkte Triangulation ermöglichen.
+Hierbei ist nicht bekannt, wie viele mögliche Lösungen existieren, sondern nur, dass es mindestens eine gibt.
+
+Der generelle Ablauf zur Erzeugung von Ja-Instanzen beginnt mit einer zufälligen Knotenmenge.
+Dabei wird lediglich die Anzahl der Knoten vorgegeben.
+Anschließend wird mit einem klassischen Triangulationsverfahren eine initiale Triangulation erstellt.
+Von dieser werden dann die Grade und die Knotenkoordinaten gespeichert, um sie als Eingabe für die zu testenden Algorithmen zu verwenden.
+
+\subsubsection{Delaunay}
+Das erste klassische Verfahren zur Gradbestimmung verwendet die Delaunay-Triangulation.
+Die Delaunay-Triangulation wurde bereits im Kapitel~\cref{sec:delaunay_triangulation} vorgestellt.
+Für die Erstellung der Delaunay-Triangulation wird die Bibliothek \texttt{scipy} genutzt.
+
+\subsubsection{Delaunay mit zufälligen Flips}
+\label{sec:Delaunay_mit_zufällig_Flips}
+Das zweite Verfahren zur Erzeugung von Ja-Instanzen basiert auf der Delaunay-Triangulation, zusätzlich werden jedoch zufällige Flips durchgeführt.
+Zunächst wird eine Delaunay-Triangulation der Knotenmenge erstellt.
+Auf dieser Triangulation werden anschließend \(k\) zufällige Flips gemäß~\cref{def:flip} durchgeführt.
+Für jeden Flip wird zufällig eine Kante \(e_0\) ausgewählt.
+Für diese Kante werden zunächst alle Dreiecke gesucht, die diese Kante enthalten.
+Dies geschieht, indem für die beiden Knoten \(x_{0,0}\) und \(x_{0,1}\) der Kante \(e_0\) alle ausgehenden Kanten verglichen werden.
+Sollten zwei dieser Kanten den gleichen Knoten \(v\) haben, muss das Tripel (\(x_{0,0}, x_{0,1}, v\)) ein Dreieck bilden, welches die Kante \(e_0\) enthält.
+
+Sollten mehr als zwei Dreiecke gefunden werden, so müssen die beiden Dreiecke ausgewählt werden, welche leer sind (keine weiteren Knoten enthalten).
+Da es in einer Triangulation nicht zu Überschneidungen kommen darf, kann es nur zwei leere Dreiecke geben.
+Aus diesen beiden Dreiecken (\(x_{0,0}, x_{0,1}, v_0\)) und (\(x_{0,0}, x_{0,1}, v_1\)) wird dann die Kante \(e_0\) entfernt und durch die neue Kante, bestehend aus \(v_0\) und \(v_1\), ersetzt.
+
+Dieser Prozess verändert die lokale Struktur der Triangulation und erzeugt so Knotenmengen mit unterschiedlichen Gradverteilungen, behält aber die Triangulationseigenschaft bei.
+
+\subsubsection{Zufällige Kantenerzeugung}
+Das nächste Verfahren basiert auf der zufälligen Auswahl von Kanten.
+Hierbei werden zunächst alle geometrisch möglichen Kanten zwischen den Punkten identifiziert.
+In diesem Schritt werden Kanten ausgeschlossen, welche durch andere Knoten der Knotenmenge verlaufen würden.
+
+Die verbleibenden gültigen Kanten werden dann in einer zufälligen Reihenfolge betrachtet.
+Bei der Auswahl der finalen Kanten wird für jede Kandidatenkante geprüft, ob sie eine der bereits ausgewählten Kanten schneidet.
+Nur wenn keine Schnitte entstehen, wird die Kante der Triangulation hinzugefügt.
+
+Dieses Verfahren ist maximal da alle möglichen Kanten betrachten wurden.
+
+\subsubsection{Iteration}
+Ein weiteres Verfahren zur Erzeugung von Ja-Instanzen basiert auf der Iteration.
+Hierbei werden zunächst alle möglichen Kanten zwischen den Punkten identifiziert.
+Diese werden nun nacheinander betrachtet und wenn sie keine andere Kante schneiden hinzugefügt.
+Diese Verfahren ist ebenfalls maximal, da alle möglichen Kanten betrachtet wurden.
+Beim Iterativen Verfahren ist zu beachten das Triangulationen erzeugt werden welche einen Knoten haben welcher einen sehr hohen Sollgrad hat.
+Dies basiert darauf das die Kanten in der Reinfolge betrachtet werden wie sie erstellt werden. 
+Das hat den Effekt das die alle Kanten des ersten Knoten hinzugefügt werden können da es noch keine anderen Kanten gibt welche diese schneiden könnten.
+
+\subsubsection{Greedy}
+Das letze Verfahren ist das Greedy Verfahren.
+Hierbei werden auch alle möglichen Kanten zwischen den Punkten identifiziert.
+Allerdings werden sie im gegensatz zum Iterativen Verfahren zunächst nach der Länge sortiert.
+Hierbei ist es möglich mit der kürzesten oder der längsten Kante zu beginnen.
+Anschließend wird wie beim Iterativen Verfahren jede Mögliche Kante nacheinander hinzugefügt.
+
+
+\subsection{Nein - Instanzen}
+
+Nein Instanzen sind Knotenmengen, bei denen die \(\degrees\) Funktion Gradwerte liefert, die keine gradbeschränkte Triangulation zulassen.
+Diese Instanzen entstehen nicht direkt, sondern werden aus Ja Instanzen abgeleitet.
+Nach der Generierung muss zusätzlich geprüft werden, ob die Instanz nicht möglich ist.
+Da die beschriebenen Verfahren nur mit hoher Wahrscheinlichkeit Nein Instanzen erzeugen.
+Es ist zu beachten, dass die Summe der Sollgrade mithilfe der Polyederformel einfach berechnet und überprüft werden kann.
+Daher besitzen die abgeleiteten Nein Instanzen insgesamt die gleichen Sollgrade wie die Ja Instanzen.
+Zusätzlich darf kein Sollgrad größer als die Anzahl der Knoten abzüglich eins sein, da sonnst der Sollgrad nicht erfüllt werden kann da nicht genügend Kanten erzeugt werden können.
+
+Bei der ersten Methode werden zwei Knoten ausgewählt.
+Vom ersten Knoten wird ein Wert abgezogen und beim zweiten Knoten derselbe Wert hinzugefügt.
+Zunächst wird eine zufällige Zahl \(r\) zwischen null und \(c\) gewählt.
+Hierbei ist \(c\) ist eine konstante Zahl, die beim Generieren festgelegt wird.
+Anschließend werden zwei Knoten \(v_1\) und \(v_2\) ausgewählt.
+Dabei müssen folgende Bedingungen erfüllt sein
+\begin{align}
+v_1 &\neq v_2 \\
+\degrees(v_1) &< r + 2 \\
+\degrees(v_2) + r &> n - 1
+\end{align}
+wobei \(n\) die Anzahl der Knoten ist.
+Wenn beide Knoten die Bedingungen erfüllen, wird der Sollgrad von \(v_1\) um \(r\) verringert.
+Der Sollgrad von \(v_2\) wird um \(r\) erhöht.
+
+Die zweite Methode besteht darin, zwei Knoten auszuwählen und deren Sollgrade zu tauschen.
+Es muss lediglich beachtet werden, dass es sich um zwei verschiedene Knoten handelt.
+
+Beide Ansätze werden mehrfach angewendet, um die Wahrscheinlichkeit zu erhöhen, dass die Instanzen nicht mehr möglich sind.
+Knoten werden dabei nicht mehrfach betrachtet.
 
 
 \section{Theoretische Mehrere Lösungen}
