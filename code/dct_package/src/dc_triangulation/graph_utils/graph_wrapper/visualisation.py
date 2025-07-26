@@ -178,7 +178,7 @@ def draw_with_set_false(
     if save:
         if not os.path.exists(save):
             os.makedirs(save)
-        plt.savefig(f"{save}/{data.name}.pdf")
+        plt.savefig(f"{save}/{(data.name).replace('/', '_')}.pdf")
     if show:
         logging.info("show Graph")
         plt.show(block=block)

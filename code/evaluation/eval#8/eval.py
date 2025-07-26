@@ -26,6 +26,19 @@ RI = Run_Algbench(
 )
 
 
+from functools import reduce
+
+
+def berechne_schnitt(*listen):
+    """Gibt die gemeinsamen Elemente aller Listen zurück (als Set)."""
+    return set.intersection(*(set(l) for l in listen))
+
+
+def berechne_ausser_schnitt(*listen):
+    """Gibt alle Elemente zurück, die nicht in allen Listen vorkommen (symmetrische Differenz)."""
+    return reduce(lambda a, b: a ^ b, (set(l) for l in listen))
+
+
 def show_lokal():
     table = read_as_pandas(
         RI.path_benchmark,
@@ -79,7 +92,15 @@ def show_lokal():
         str_row += str(row["count"])
         info += str_row + "\n"
         if row["count"] > 1:
-            for i, vlaue in enumerate(row["seen_combinations"][:-1]):
+            vlaue = row["seen_combinations"][:-1]
+            assert len(vlaue) <= 2, (
+                f"Größer nicht implementiert, für größe {len(vlaue)}"
+            )
+            sets = [
+                set((edge[0], edge[1]) for edge in vlaue[i]) for i in range(len(vlaue))
+            ]
+            schnitt = sets[0].intersection(sets[1])
+            for i in range(2):
                 nodes = load_nodes_from_json(
                     os.path.join(
                         os.path.dirname(__file__),
@@ -88,17 +109,23 @@ def show_lokal():
                         f"{row['file']}.json",
                     )
                 )
-                graphe = Graph_Wrapper(nodes)
-                for edge in vlaue:
-                    graphe.add_edge(edge[0], edge[1])
-                graphe.name = str(f"{row['instance_file']}_{i}")
-                graphe.show_and_save(
+                graph = Graph_Wrapper(nodes)
+                # Kanten die in sets[i] sind aber nicht im anderen Set
+                auuser_schnitt = sets[i] - sets[1 - i]
+                for edge in auuser_schnitt:
+                    graph.add_edge(edge[0], edge[1])
+                for edge in schnitt:
+                    graph.add_edge(edge[0], edge[1], False)
+                    graph.edge_show_false(edge[0], edge[1])
+                graph.name = str(f"{row['instance_file']}_{i}")
+                graph.show_and_save(
                     show=False,
                     block=False,
                     save=os.path.join(
                         os.path.dirname(__file__),
                         "figures",
                     ),
+                    show_set_false=True,
                 )
     logging.info(info)
 
