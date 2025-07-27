@@ -58,14 +58,23 @@ public:
     {
         for (Lit l : assignments)
         {
-            // assert(is_open(l) && "Should not assign a value to an already assigned literal.");
-            observed_trail.push_back(l);
-            std::size_t index = p_var_index(l);
-            assert(index + 1 < observed_values.size() && "Observed values vector is too small.");
-            observed_values[index] = true;        // mark the variable as assigned
-            observed_values[index + 1] = (l > 0); // store the value
+            if (is_open(l))
+            {
+                observed_trail.push_back(l);
+                std::size_t index = p_var_index(l);
+                assert(index + 1 < observed_values.size() && "Observed values vector is too small.");
+                observed_values[index] = true;        // mark the variable as assigned
+                observed_values[index + 1] = (l > 0); // store the value
+                if (std::find(observed_vars.begin(), observed_vars.end(), l) != observed_vars.end())
+                {
+                    has_changes = true; // mark that we have changes
+                }
+            }
+            else
+            {
+                assert(is_true(l) && "Trying to assign an already assigned observed literal.");
+            }
         }
-        has_changes = true;
     }
 
     /**

@@ -83,7 +83,7 @@ class Run_Algbench:
                         solver.NAME,
                         inst,
                         file_name,
-                        para["args"],
+                        para.get("args", {}),
                     )
                 )
 
@@ -92,12 +92,16 @@ class Run_Algbench:
                 dictionary["parameters"]["args"]["solver_name"],
                 dictionary["parameters"]["args"]["instance_name"],
                 dictionary["parameters"]["args"]["file_name"],
-                dictionary["parameters"]["args"]["parameter"]["args"],
+                dictionary["parameters"]["args"]["parameter"].get("args", {}),
             ) in delete_list and dictionary["env"]["hostname"] in self.host:
                 return True
             return False
 
+        bevor_delete = len(self.benchmark)
         self.benchmark.delete_if(func)
+        logging.info(
+            f"Anzahl der Einträge von {bevor_delete} zu {len(self.benchmark)} reduziert."
+        )
 
     def show_key_from_runlist(self, key: str, check_correct: bool = False):
         solver, nodes, possible, inst, file_name = self.get_solver_inst_from_runlist[

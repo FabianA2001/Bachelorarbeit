@@ -117,7 +117,7 @@ class OrTools_Tri(Solver):
             self.model.add(summ == degree)  # type: ignore[reportCallIssue]
 
     def exclude_edges_constraint(self):
-        for edge in self.graph.exclude_edge_partition:
+        for edge in self.graph.exclude_edges:
             for tri in self.get_triangles_from_edge(edge):
                 self.model.add(self.vars[tri] == 0)
 

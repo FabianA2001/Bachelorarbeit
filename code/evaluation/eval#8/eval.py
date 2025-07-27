@@ -1,12 +1,10 @@
 import logging
 import os
-from dataclasses import asdict
 
 import slurminade
 from algbench import read_as_pandas
-from dc_triangulation import Count, Graph_Wrapper, Run_Algbench
+from dc_triangulation import Count, Graph_Wrapper, Run_Algbench, load_nodes_from_json
 
-asdict
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
 
@@ -28,6 +26,19 @@ RI = Run_Algbench(
 )
 
 
+from functools import reduce
+
+
+def berechne_schnitt(*listen):
+    """Gibt die gemeinsamen Elemente aller Listen zurück (als Set)."""
+    return set.intersection(*(set(l) for l in listen))
+
+
+def berechne_ausser_schnitt(*listen):
+    """Gibt alle Elemente zurück, die nicht in allen Listen vorkommen (symmetrische Differenz)."""
+    return reduce(lambda a, b: a ^ b, (set(l) for l in listen))
+
+
 def show_lokal():
     table = read_as_pandas(
         RI.path_benchmark,
@@ -44,6 +55,9 @@ def show_lokal():
             "runtime": result["result"]["time_solver"],
             "pre_time": result["result"]["time_pre_solver"],
             "count": result["result"].get("solution", {}).get("count", {}),
+            "seen_combinations": result["result"]
+            .get("solution", {})
+            .get("seen_combinations", {}),
         },
     )
     # Filter nach Host, falls host angegeben ist
@@ -62,7 +76,6 @@ def show_lokal():
 
     # Kombiniere Instanz und Dateiname für die x-Achse
     table["instance_file"] = table["instance"] + "/" + table["file"]
-    table = table.drop(columns=["file"])
 
     if table.empty:
         logging.warning("Keine Daten für die angegebene Konfiguration gefunden.")
@@ -71,12 +84,50 @@ def show_lokal():
     table = table.sort_values(by=["instance_file"])
 
     # show werte von count für jede Zeile in instance_file
-    print("Count values for each instance_file:")
+    info = ""
+    info += f"Anzahl der Instanzen: {len(table['instance_file'].unique())}\n"
     for _, row in table.iterrows():
         str_row = f"{row['instance_file']}: count = "
         str_row = str_row.ljust(50)
         str_row += str(row["count"])
-        print(str_row)
+        info += str_row + "\n"
+        if row["count"] > 1:
+            vlaue = row["seen_combinations"][:-1]
+            assert len(vlaue) <= 2, (
+                f"Größer nicht implementiert, für größe {len(vlaue)}"
+            )
+            sets = [
+                set((edge[0], edge[1]) for edge in vlaue[i]) for i in range(len(vlaue))
+            ]
+            schnitt = sets[0].intersection(sets[1])
+            for i in range(2):
+                nodes = load_nodes_from_json(
+                    os.path.join(
+                        os.path.dirname(__file__),
+                        "instances",
+                        row["instance"],
+                        f"{row['file']}.json",
+                    )
+                )
+                graph = Graph_Wrapper(nodes)
+                # Kanten die in sets[i] sind aber nicht im anderen Set
+                auuser_schnitt = sets[i] - sets[1 - i]
+                for edge in auuser_schnitt:
+                    graph.add_edge(edge[0], edge[1])
+                for edge in schnitt:
+                    graph.add_edge(edge[0], edge[1], False)
+                    graph.edge_show_false(edge[0], edge[1])
+                graph.name = str(f"{row['instance_file']}_{i}")
+                graph.show_and_save(
+                    show=False,
+                    block=False,
+                    save=os.path.join(
+                        os.path.dirname(__file__),
+                        "figures",
+                    ),
+                    show_set_false=True,
+                )
+    logging.info(info)
 
 
 @slurminade.slurmify()
@@ -114,8 +165,9 @@ if __name__ == "__main__":
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
         )
         run_list = RI.get_run_list()
-        for key in run_list:
-            run_solver_on_inst.distribute(key)
+        with slurminade.JobBundling(max_size=10):
+            for key in run_list:
+                run_solver_on_inst.distribute(key)
 
         slurminade.join()
         compress_results.distribute()

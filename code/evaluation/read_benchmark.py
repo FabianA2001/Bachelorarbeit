@@ -25,7 +25,8 @@ else:
             "timeout": result["parameters"]["args"]["parameter"]["timeout"],
             "time_solver": result["result"].get("time_solver", None),
             "time_pre_solver": result["result"].get("time_pre_solver", None),
-            "count": result["result"].get("solution", {}).get("count", {}),
+            "count": result["result"].get("solution", {}).get("count", None),
+            "solution": result["result"].get("solution", None),
         },
     )
 

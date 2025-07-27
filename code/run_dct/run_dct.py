@@ -208,7 +208,11 @@ def cadical_algorithm(graph, nodes=None):
             if var == 1:
                 edge = solver.edges[j]
                 lokal_graph.add_edge(edge[0], edge[1])
-        lokal_graph.show_and_save(show=False, save=SAVE)
+            if var == 0:
+                edge = solver.edges[j]
+                lokal_graph.add_edge(edge[0], edge[1], active=False)
+                lokal_graph.edge_show_false(edge[0], edge[1])
+        lokal_graph.show_and_save(show=False, save=SAVE, show_set_false=True)
 
 
 def show_all_instanzes():
@@ -256,15 +260,15 @@ def show_all_instanzes():
 
 
 def run_algo():
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__), "instance", "simple_20", "001_delaunay_flips.json"
-    # )
     PATH = os.path.join(
-        os.path.dirname(__file__),
-        "instance",
-        "abcdefg",
-        "010_iterative_impossible_move_50.json",
+        os.path.dirname(__file__), "instance", "simple_20", "002_delaunay_flips.json"
     )
+    # PATH = os.path.join(
+    #     os.path.dirname(__file__),
+    #     "instance",
+    #     "abcdefg",
+    #     "010_iterative_impossible_move_50.json",
+    # )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
     # )
@@ -298,8 +302,8 @@ def run_algo():
     # solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
-    sat_algorithm(graph)
-    # cadical_algorithm(graph, nodes)
+    # sat_algorithm(graph)
+    cadical_algorithm(graph, nodes)
     # count_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
@@ -308,7 +312,7 @@ def run_algo():
     # gurobi_algorithm(graph)
 
     # graph.add_all_possible_edges(True)
-    # graph.show_and_save()
+    # graph.show_and_save(show_set_false=True)
 
 
 def permute_instance():
@@ -345,29 +349,29 @@ def create_instance():
     PATH = "eval_instance"
     for NAME, gen in zip(
         # ["d_flips", "delaunay", "greedy", "iterative", "random"],
-        ["delaunay"],
+        ["iterative"],
         [
             # generate.Generate_Edges_Delaunay_Flips(FLIPS),
-            generate.Generate_Edges_Delaunay(),
+            # generate.Generate_Edges_Delaunay(),
             # generate.Generate_Edges_Greedy(),
-            # generate.Generate_Edges_Iterative(),
+            generate.Generate_Edges_Iterative(),
             # generate.Generate_Edges_Random(),
         ],
     ):
         INST_NAME = NAME
-        for i in [80, 90]:
-            FILE_NAME = f"{NAME}"
-            generate.Generate_Instance(
-                INST_NAME,
-                FILE_NAME,
-                i,
-                2,
-                generate.Generate_Nodes_Random(),
-                gen,
-                path=PATH,
-                width=10000,
-                height=10000,
-            ).generate()
+        for i in [50]:
+            # FILE_NAME = f"{NAME}"
+            # generate.Generate_Instance(
+            #     INST_NAME,
+            #     FILE_NAME,
+            #     i,
+            #     2,
+            #     generate.Generate_Nodes_Random(),
+            #     gen,
+            #     path=PATH,
+            #     width=10000,
+            #     height=10000,
+            # ).generate()
             FILE_NAME = f"{NAME}_impossible_move"
             generate.Generate_Instance(
                 INST_NAME,
@@ -381,23 +385,23 @@ def create_instance():
                 width=10000,
                 height=10000,
             ).generate()
-            FILE_NAME = f"{NAME}_impossible_change"
-            generate.Generate_Instance(
-                INST_NAME,
-                FILE_NAME,
-                i,
-                1,
-                generate.Generate_Nodes_Random(),
-                gen,
-                generate.Generate_Impossible_Change_Degree(times=10),
-                path=PATH,
-                width=10000,
-                height=10000,
-            ).generate()
+            # FILE_NAME = f"{NAME}_impossible_change"
+            # generate.Generate_Instance(
+            #     INST_NAME,
+            #     FILE_NAME,
+            #     i,
+            #     1,
+            #     generate.Generate_Nodes_Random(),
+            #     gen,
+            #     generate.Generate_Impossible_Change_Degree(times=10),
+            #     path=PATH,
+            #     width=10000,
+            #     height=10000,
+            # ).generate()
 
 
 if __name__ == "__main__":
-    # run_algo()
+    run_algo()
     # show_all_instanzes()
     # create_instance()
-    permute_instance()
+    # permute_instance()
