@@ -1,3 +1,4 @@
+import time
 from dataclasses import dataclass
 
 from ortools.sat.python import cp_model
@@ -15,6 +16,7 @@ class Parameter:
     fix_hull: bool = False
     number_edges: bool = False
     evaluation_direction: bool = False
+    save_state_after_solution: bool = False
     degree_direction: bool = False
     maximize_edges: bool = False
     exclude_edges: bool = False
@@ -32,6 +34,22 @@ class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
             self.StopSearch()  # Stop after the first solution
         # self.logger.info(
         #     f"Anzahl Kanten bei dieser Lösung: {self.ObjectiveValue()}")
+
+
+class Save_State_Of_Solution(cp_model.CpSolverSolutionCallback):
+    def __init__(self, vars_dict) -> None:
+        cp_model.CpSolverSolutionCallback.__init__(self)
+        self.stats = []
+        self.vars_dict = vars_dict
+
+    def on_solution_callback(self):
+        # Sammle die aktiven Kanten für diese Lösung
+        active_edges = []
+        for edge, var in self.vars_dict.items():
+            if self.BooleanValue(var):
+                active_edges.append(edge)
+
+        self.stats.append((time.time(), active_edges))
 
 
 class Ortools(Solver):
@@ -211,23 +229,29 @@ class Ortools(Solver):
         solver.parameters.max_time_in_seconds = self.get_remaining_time()
         self.logger.info("Start solving...")
 
+        stats = []
+        start_solve = time.time()
         if stop_after_first_solution:
+            assert parameter_data.save_state_after_solution is False, (
+                "Stop after first solution"
+            )
             status = self.time_solver(solver.Solve)(
                 self.model,
                 FirstSolutionStop(self.graph.get_number_edges_in_Triangulation()),
             )
         else:
-            status = self.time_solver(solver.Solve)(self.model)
+            if parameter_data.save_state_after_solution:
+                save_state_callback = Save_State_Of_Solution(self.vars)
+                status = self.time_solver(solver.Solve)(self.model, save_state_callback)
+                stats = save_state_callback.stats
+            else:
+                status = self.time_solver(solver.Solve)(self.model)
         # status = solver.Solve(self.model)
         print(status)
         if not (status == cp_model.OPTIMAL or status == cp_model.FEASIBLE):
             self.logger.warning("No solution found.")
-            return {
-                "success": False,
-            }
+            return {"success": False, "stats": stats, "start_solve": start_solve}
         for edge, var in zip(self.graph.get_all_edges(), self.vars.values()):
             if solver.BooleanValue(var):
                 self.graph.activate_edge(edge)
-        return {
-            "success": True,
-        }
+        return {"success": True, "stats": stats, "start_solve": start_solve}
