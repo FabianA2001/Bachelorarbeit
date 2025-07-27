@@ -7,6 +7,7 @@ from dc_triangulation import SAT, Graph_Wrapper, Run_Algbench, SAT_Parameter
 asdict
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
+# path = os.path.join(os.path.dirname(__file__), "instances_backup")
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
 outer_parameter = {
@@ -85,42 +86,42 @@ outer_parameter = {
             ),
         },
         # subset
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=1)
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=2)
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=3)
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=6)
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=7)
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=8)
-        #     ),
-        # },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=1)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=2)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=3)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=6)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=7)
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=8)
+            ),
+        },
     ]
 }
 
