@@ -121,11 +121,8 @@ class Ortools(Solver):
                 for edge in self.graph.get_edges_of_node(node)
             )
             max_degree = self.graph.get_max_degree
-            diff = self.model.NewIntVar(-max_degree, max_degree, "diff")
-            self.model.Add(diff == degree - desired_degree)
-
             abs_diff = self.model.NewIntVar(0, max_degree, "abs_diff")
-            self.model.AddAbsEquality(abs_diff, diff)
+            self.model.AddAbsEquality(abs_diff, degree - desired_degree)
             min_var = self.model.NewIntVar(0, max_degree, "min_var")
             self.model.AddMinEquality(min_var, [abs_diff, desired_degree])
             x = desired_degree - min_var
