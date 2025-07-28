@@ -21,16 +21,17 @@ NUMBER_RUNS = 5
 outer_parameter = defaultdict(list)
 for i in range(NUMBER_RUNS):
     sat_args = asdict(SAT_Parameter(intersection=True, degree_exact=True))
-    sat_args["version"] = i
-    outer_parameter[SAT].append({"timeout": TIMEOUT, "args": sat_args})
+    outer_parameter[SAT].append({"timeout": TIMEOUT, "args": sat_args, "version": i})
 
     ortools_args = asdict(Ortools_Parameter(intersection=True, degree=True))
-    ortools_args["version"] = i
-    outer_parameter[Ortools].append({"timeout": TIMEOUT, "args": ortools_args})
+    outer_parameter[Ortools].append(
+        {"timeout": TIMEOUT, "args": ortools_args, "version": i}
+    )
 
     gurobi_args = asdict(Gurobi_Parameter(intersection=True, degree=True))
-    gurobi_args["version"] = i
-    outer_parameter[Gurobi].append({"timeout": TIMEOUT, "args": gurobi_args})
+    outer_parameter[Gurobi].append(
+        {"timeout": TIMEOUT, "args": gurobi_args, "version": i}
+    )
 
 
 RI = Run_Algbench(
