@@ -303,16 +303,16 @@ def run_algo():
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     # sat_algorithm(graph)
-    cadical_algorithm(graph, nodes)
+    # cadical_algorithm(graph, nodes)
     # count_algorithm(graph)
     # sat_Tri_algorithm(graph)
-    # ortools_algorithm(graph)
+    ortools_algorithm(graph)
     # ortools_tri_algorithm(graph)
     # gurobi_tri_algorithm(graph)
     # gurobi_algorithm(graph)
 
     # graph.add_all_possible_edges(True)
-    # graph.show_and_save(show_set_false=True)
+    graph.show_and_save()
 
 
 def permute_instance():
