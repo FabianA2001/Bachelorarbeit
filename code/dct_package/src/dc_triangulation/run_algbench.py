@@ -179,9 +179,11 @@ class Run_Algbench:
         info = ""
         try:
             solver = _solver_type(_graph)
+            solver.logger.info(f"Running {solver.name} on {instance_name}_{file_name}")
             solution: dict = solver.solve(parameter)
         except Exception as e:
             info += f"Error while solving: {e}\n"
+            solver.logger.info(f"Error while solving: {e}")
             return {
                 "correct": False,
                 "time_solver": -1,
@@ -201,6 +203,11 @@ class Run_Algbench:
             info += f"{solver.name} on {instance_name}_{file_name} should not be possible, but triangulation was found.\n"
             big_error = True
 
+        solver.logger.info(f"Finished with: {correct}")
+        if big_error:
+            solver.logger.error(
+                f"{solver.name} on {instance_name}_{file_name} should not be possible, but triangulation was found.\n"
+            )
         return {
             "correct": correct,
             "time_pre_solver": solver.pre_solve_time,
