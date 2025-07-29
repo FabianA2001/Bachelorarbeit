@@ -19,6 +19,7 @@ class Parameter:
     fix_hull: bool = False
     all_edges: bool = False
     fix_edges: bool = False
+    run_num: int = 0
 
 
 class Gurobi(Solver):

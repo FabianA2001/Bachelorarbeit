@@ -30,6 +30,7 @@ class Parameter:
     exclude_edges: bool = False
     hack_eval6: bool = False
     fix_edges: bool = False
+    run_num: int = 0
 
 
 class SAT(Solver):

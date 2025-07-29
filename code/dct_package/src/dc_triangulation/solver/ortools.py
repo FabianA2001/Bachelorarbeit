@@ -19,6 +19,7 @@ class Parameter:
     maximize_edges: bool = False
     exclude_edges: bool = False
     fix_edges: bool = False
+    run_num: int = 0
 
 
 class FirstSolutionStop(cp_model.CpSolverSolutionCallback):
