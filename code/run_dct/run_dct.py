@@ -314,7 +314,7 @@ def run_algo():
     # gurobi_algorithm(graph)
 
     # graph.add_all_possible_edges(True)
-    logging.info(f"evluation: {graph.evaluate_graph()}")
+    logging.info(f"evluation: {graph.evaluate()}")
     graph.show_and_save()
 
 
