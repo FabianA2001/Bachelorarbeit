@@ -338,7 +338,7 @@ class Graph_Wrapper:
             raise ValueError(f"Node {node} does not exist in the graph.")
         return self._data.degree(node)
 
-    def evaluate_graph(self) -> float:
+    def evaluate(self) -> float:
         evaluation = 0.0
         number_of_nodes = len(self.get_all_nodes())
         for node in self.get_all_nodes():

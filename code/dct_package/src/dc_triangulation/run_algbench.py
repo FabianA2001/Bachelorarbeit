@@ -213,7 +213,7 @@ class Run_Algbench:
             "time_pre_solver": solver.pre_solve_time,
             "time_solver": solver.solve_time,
             "timing": solver.timing,
-            "evaluation": _graph.evaluate_graph(),
+            "evaluation": _graph.evaluate(),
             "triangulation": _graph.get_all_edges(True),
             "info": info,
             "solution": solution,
@@ -237,6 +237,7 @@ class Run_Algbench:
                 # "runtime": result["runtime"],
                 "runtime": result["result"]["time_solver"],
                 "pre_time": result["result"]["time_pre_solver"],
+                "solution": result["result"].get("solution", None),
             },
         )
         # Filter nach Host, falls host angegeben ist
@@ -264,7 +265,6 @@ class Run_Algbench:
     ) -> pd.DataFrame:
         # Kombiniere Instanz und Dateiname für die x-Achse
         table["instance_file"] = table["instance"] + "/" + table["file"]
-        table = table.drop(columns=["file"])
         return table
 
     def apply_args(self, table: pd.DataFrame) -> pd.DataFrame:
@@ -337,6 +337,8 @@ class Run_Algbench:
         legend = legend[:-1]
         legend += "\n" + "=" * 50
         if self.name:
+            if not os.path.exists(self.figure_path):
+                os.makedirs(self.figure_path)
             with open(os.path.join(self.figure_path, f"{self.name}.txt"), "w") as f:
                 f.write(legend)
         logging.info(legend)

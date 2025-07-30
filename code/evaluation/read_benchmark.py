@@ -1,3 +1,5 @@
+import socket
+
 import streamlit as st
 from algbench import describe, read_as_pandas
 
@@ -26,11 +28,13 @@ else:
             "time_pre_solver": result["result"].get("time_pre_solver", None),
             "count": result["result"].get("solution", {}).get("count", None),
             "solution": result["result"].get("solution", None),
+            "data": result["timestamp"],
         },
     )
 
     # df["args"] = df["args"].apply(lambda x: format_dictionary(x, new_line=False))
     df["logging"] = df["logging"].apply(lambda x: str(x))
+    df = df[df["host"].isin([socket.gethostname()])]
     df.sort_values(
         by=["solver", "instance", "file"],
         inplace=True,
