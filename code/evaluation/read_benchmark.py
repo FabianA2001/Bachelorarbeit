@@ -1,5 +1,3 @@
-import socket
-
 import streamlit as st
 from algbench import describe, read_as_pandas
 
@@ -18,6 +16,7 @@ else:
             "solver": result["parameters"]["args"]["solver_name"],
             "instance": result["parameters"]["args"]["instance_name"],
             "file": result["parameters"]["args"]["file_name"],
+            "run_number": result["parameters"]["args"]["run_number"],
             "correct": result["result"]["correct"],
             "args": result["parameters"]["args"]["parameter"].get("args", {}),
             "evaluation": result["result"]["evaluation"],
@@ -34,7 +33,7 @@ else:
 
     # df["args"] = df["args"].apply(lambda x: format_dictionary(x, new_line=False))
     df["logging"] = df["logging"].apply(lambda x: str(x))
-    df = df[df["host"].isin([socket.gethostname()])]
+    # df = df[df["host"].isin([socket.gethostname()])]
     df.sort_values(
         by=["solver", "instance", "file"],
         inplace=True,
