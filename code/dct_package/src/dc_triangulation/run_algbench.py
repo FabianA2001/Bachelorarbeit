@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import slurminade
 from algbench import Benchmark, read_as_pandas
 
 from .graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
@@ -672,3 +673,21 @@ class Run_Algbench:
 
     def compress(self):
         self.benchmark.compress()
+
+    @slurminade.slurmify()
+    @staticmethod
+    def run_solver_on_inst(key: str, RI: "Run_Algbench"):
+        solver, nodes, possible, inst, file_name = RI.get_solver_inst_from_runlist[key]
+        parameters = RI.outer_parameter[solver]
+        for parameter in parameters:
+            graph = Graph_Wrapper(nodes)
+            RI.benchmark.add(
+                RI.create_benchmark_entry,
+                solver_name=solver.NAME,
+                parameter=parameter,
+                instance_name=inst,
+                file_name=file_name,
+                _possible=possible,
+                _solver_type=solver,
+                _graph=graph,
+            )

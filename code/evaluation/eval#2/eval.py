@@ -6,7 +6,15 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import slurminade
-from dc_triangulation import SAT, Graph_Wrapper, Run_Algbench, SAT_Parameter
+from dc_triangulation import (
+    SAT,
+    Gurobi,
+    Gurobi_Parameter,
+    Ortools,
+    Ortools_Parameter,
+    Run_Algbench,
+    SAT_Parameter,
+)
 
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
@@ -25,7 +33,33 @@ outer_parameter = {
                 )
             ),
         },
-    ]
+    ],
+    Gurobi: [
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Gurobi_Parameter(
+                    intersection=True,
+                    degree=True,
+                    fix_hull=True,
+                    all_edges=True,
+                )
+            ),
+        },
+    ],
+    Ortools: [
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(
+                    intersection=True,
+                    degree=True,
+                    fix_hull=True,
+                    all_edges=True,
+                )
+            ),
+        },
+    ],
 }
 RI = Run_Algbench(
     inst_path=path,
@@ -34,24 +68,6 @@ RI = Run_Algbench(
     host=["algry01", "algry02", "algry03", "algry04"],
     name="permutation",
 )
-
-
-@slurminade.slurmify()
-def run_solver_on_inst(key: str):
-    solver, nodes, possible, inst, file_name = RI.get_solver_inst_from_runlist[key]
-    parameters = RI.outer_parameter[solver]
-    for parameter in parameters:
-        graph = Graph_Wrapper(nodes)
-        RI.benchmark.add(
-            RI.create_benchmark_entry,
-            solver_name=solver.NAME,
-            parameter=parameter,
-            instance_name=inst,
-            file_name=file_name,
-            _possible=possible,
-            _solver_type=solver,
-            _graph=graph,
-        )
 
 
 @slurminade.slurmify(mail_type="ALL")
@@ -203,7 +219,7 @@ def lokal_show():
 
 
 if __name__ == "__main__":
-    if False:
+    if True:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
@@ -215,7 +231,7 @@ if __name__ == "__main__":
         run_list = RI.get_run_list()
         with slurminade.JobBundling(max_size=10):
             for key in run_list:
-                run_solver_on_inst.distribute(key)
+                RI.run_solver_on_inst.distribute(key, RI)
 
         slurminade.join()
         compress_results.distribute()
