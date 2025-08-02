@@ -5,8 +5,6 @@ import slurminade
 from dc_triangulation import (
     SAT,
     Graph_Wrapper,
-    Gurobi,
-    Gurobi_Parameter,
     Run_Algbench,
     SAT_Parameter,
 )
@@ -27,14 +25,14 @@ outer_parameter = {
         #         "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
         #     },
     ],
-    Gurobi: [
-        {
-            "timeout": -1,
-            "args": asdict(
-                Gurobi_Parameter(intersection=True, degree=True, fix_hull=True)
-            ),
-        },
-    ],
+    # Gurobi: [
+    #     {
+    #         "timeout": -1,
+    #         "args": asdict(
+    #             Gurobi_Parameter(intersection=True, degree=True, fix_hull=True)
+    #         ),
+    #     },
+    # ],
 }
 
 RI = Run_Algbench(
@@ -73,11 +71,11 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if False:
+    if True:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
-            constraint="alggen01",  # Which workstations within the partition to use
+            constraint="alggen03",  # Which workstations within the partition to use
             exclusive=True,  # To use all cores on a node exclusively
             mail_type="FAIL",  # Send mail on failure
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
