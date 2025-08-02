@@ -1,0 +1,70 @@
+
+Args Legend Mapping (by Solver):
+==================================================
+
+Ortools:
+|#1 in 300s: 
+||intersection:                       True
+||all_edges:                          False
+||degree:                             True
+||fix_hull:                           False
+||number_edges:                       False
+||evaluation_direction:               False
+||degree_direction:                   False
+||maximize_edges:                     False
+||exclude_edges:                      False
+||fix_edges:                          False
+||run_num:                            0
+
+|#2 in 300s: 
+||intersection:                       True
+||all_edges:                          False
+||degree:                             True
+||fix_hull:                           False
+||number_edges:                       False
+||evaluation_direction:               False
+||degree_direction:                   False
+||maximize_edges:                     False
+||exclude_edges:                      False
+||fix_edges:                          False
+||run_num:                            1
+
+|#3 in 300s: 
+||intersection:                       True
+||all_edges:                          False
+||degree:                             True
+||fix_hull:                           False
+||number_edges:                       False
+||evaluation_direction:               False
+||degree_direction:                   False
+||maximize_edges:                     False
+||exclude_edges:                      False
+||fix_edges:                          False
+||run_num:                            2
+
+|#4 in 300s: 
+||intersection:                       True
+||all_edges:                          False
+||degree:                             True
+||fix_hull:                           False
+||number_edges:                       False
+||evaluation_direction:               False
+||degree_direction:                   False
+||maximize_edges:                     False
+||exclude_edges:                      False
+||fix_edges:                          False
+||run_num:                            3
+
+|#5 in 300s: 
+||intersection:                       True
+||all_edges:                          False
+||degree:                             True
+||fix_hull:                           False
+||number_edges:                       False
+||evaluation_direction:               False
+||degree_direction:                   False
+||maximize_edges:                     False
+||exclude_edges:                      False
+||fix_edges:                          False
+||run_num:                            4
+==================================================
