@@ -70,6 +70,11 @@ RI = Run_Algbench(
 )
 
 
+@slurminade.slurmify()
+def run_solver_on_inst(key: str):
+    RI.add_entrys(key)
+
+
 @slurminade.slurmify(mail_type="ALL")
 def compress_results():
     # Compress the results to save significant disk space
@@ -231,7 +236,7 @@ if __name__ == "__main__":
         run_list = RI.get_run_list()
         with slurminade.JobBundling(max_size=10):
             for key in run_list:
-                RI.run_solver_on_inst.distribute(key, RI)
+                run_solver_on_inst.distribute(key)
 
         slurminade.join()
         compress_results.distribute()

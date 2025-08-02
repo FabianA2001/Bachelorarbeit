@@ -1,13 +1,13 @@
 import json
 import logging
 import os
+import random
 import socket
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import slurminade
 from algbench import Benchmark, read_as_pandas
 
 from .graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
@@ -15,16 +15,9 @@ from .graph_utils.node import Node, load_nodes_from_json
 from .solver.solver import Solver
 from .utils import format_dictionary
 
-"""
-        insts: list[str],
-        solvers: list[type[Solver]],
-        outer_parameter: dict,
-        ignore_correct: bool = False,
-        host: str = socket.gethostname(),
-        run: bool = True,
-        show: bool = True,
-
-"""
+NUMBER_RUNS_FOR_AVG = (
+    5  # Anzahl der Durchläufe der gleichen Instanze für den Durchschnitt
+)
 
 
 # TODO sollte aus dem Packet ausgelagert werden, verschieben bis es stört
@@ -64,9 +57,14 @@ class Run_Algbench:
 
         self.benchmark = Benchmark(self.path_benchmark)
         self.benchmark.capture_logger(Solver.LOGGER_NAME)
+        self.number_benchmark_rows = len(self.benchmark)
         pd.set_option("display.max_rows", None)
         pd.set_option("display.max_columns", None)
         pd.set_option("display.width", 200)
+
+    def get_run_number(self) -> int:
+        self.number_benchmark_rows += 1
+        return self.number_benchmark_rows
 
     def delete_runlist(self):
         delete_list = []
@@ -166,60 +164,6 @@ class Run_Algbench:
                 if file.endswith(".json")
             }
         return instances
-
-    @staticmethod
-    def create_benchmark_entry(
-        solver_name: str,
-        parameter: dict,
-        instance_name: str,
-        file_name: str,
-        _possible: bool,
-        _solver_type: type[Solver],
-        _graph: Graph_Wrapper,
-    ):
-        info = ""
-        try:
-            solver = _solver_type(_graph)
-            solver.logger.info(f"Running {solver.name} on {instance_name}_{file_name}")
-            solution: dict = solver.solve(parameter)
-        except Exception as e:
-            info += f"Error while solving: {e}\n"
-            solver.logger.info(f"Error while solving: {e}")
-            return {
-                "correct": False,
-                "time_solver": -1,
-                "time_pre_solver": -1,
-                "evaluation": 0.0,
-                "triangulation": [],
-                "info": info,
-                "solution": {},
-                "big_error": True,
-            }
-
-        is_triangulation = _graph.check_if_triangulation_with_degree_constrained()
-        result = solution["success"] and is_triangulation
-        correct = _possible == result
-        big_error = False
-        if is_triangulation and not _possible:
-            info += f"{solver.name} on {instance_name}_{file_name} should not be possible, but triangulation was found.\n"
-            big_error = True
-
-        solver.logger.info(f"Finished with: {correct}")
-        if big_error:
-            solver.logger.error(
-                f"{solver.name} on {instance_name}_{file_name} should not be possible, but triangulation was found.\n"
-            )
-        return {
-            "correct": correct,
-            "time_pre_solver": solver.pre_solve_time,
-            "time_solver": solver.solve_time,
-            "timing": solver.timing,
-            "evaluation": _graph.evaluate(),
-            "triangulation": _graph.get_all_edges(True),
-            "info": info,
-            "solution": solution,
-            "big_error": big_error,
-        }
 
     def get_table(self) -> pd.DataFrame:
         pass
@@ -674,20 +618,84 @@ class Run_Algbench:
     def compress(self):
         self.benchmark.compress()
 
-    @slurminade.slurmify()
-    @staticmethod
-    def run_solver_on_inst(key: str, RI: "Run_Algbench"):
-        solver, nodes, possible, inst, file_name = RI.get_solver_inst_from_runlist[key]
-        parameters = RI.outer_parameter[solver]
+    def add_entrys(
+        self,
+        key: str,
+    ):
+        solver, nodes, possible, inst, file_name = self.get_solver_inst_from_runlist[
+            key
+        ]
+        parameters = self.outer_parameter[solver]
         for parameter in parameters:
-            graph = Graph_Wrapper(nodes)
-            RI.benchmark.add(
-                RI.create_benchmark_entry,
-                solver_name=solver.NAME,
-                parameter=parameter,
-                instance_name=inst,
-                file_name=file_name,
-                _possible=possible,
-                _solver_type=solver,
-                _graph=graph,
+            for _ in range(NUMBER_RUNS_FOR_AVG):
+                run_number = self.get_run_number()
+                random.seed(run_number)  # Seed für Reproduzierbarkeit
+                random.shuffle(nodes)  # Zufällige Reihenfolge der Knoten
+                graph = Graph_Wrapper(nodes)
+
+                self.benchmark.add(
+                    self.create_benchmark_entry,
+                    solver_name=solver.NAME,
+                    parameter=parameter,
+                    instance_name=inst,
+                    file_name=file_name,
+                    run_number=run_number,
+                    _possible=possible,
+                    _solver_type=solver,
+                    _graph=graph,
+                )
+
+    @staticmethod
+    def create_benchmark_entry(
+        solver_name: str,
+        parameter: dict,
+        instance_name: str,
+        file_name: str,
+        run_number: int,
+        _possible: bool,
+        _solver_type: type[Solver],
+        _graph: Graph_Wrapper,
+    ):
+        info = ""
+        try:
+            solver = _solver_type(_graph)
+            solver.logger.info(f"Running {solver.name} on {instance_name}_{file_name}")
+            solution: dict = solver.solve(parameter)
+        except Exception as e:
+            info += f"Error while solving: {e}\n"
+            solver.logger.info(f"Error while solving: {e}")
+            return {
+                "correct": False,
+                "time_solver": -1,
+                "time_pre_solver": -1,
+                "evaluation": 0.0,
+                "triangulation": [],
+                "info": info,
+                "solution": {},
+                "big_error": True,
+            }
+
+        is_triangulation = _graph.check_if_triangulation_with_degree_constrained()
+        result = solution["success"] and is_triangulation
+        correct = _possible == result
+        big_error = False
+        if is_triangulation and not _possible:
+            info += f"{solver.name} on {instance_name}_{file_name} should not be possible, but triangulation was found.\n"
+            big_error = True
+
+        solver.logger.info(f"Finished with: {correct}")
+        if big_error:
+            solver.logger.error(
+                f"{solver.name} on {instance_name}_{file_name} should not be possible, but triangulation was found.\n"
             )
+        return {
+            "correct": correct,
+            "time_pre_solver": solver.pre_solve_time,
+            "time_solver": solver.solve_time,
+            "timing": solver.timing,
+            "evaluation": _graph.evaluate(),
+            "triangulation": _graph.get_all_edges(True),
+            "info": info,
+            "solution": solution,
+            "big_error": big_error,
+        }
