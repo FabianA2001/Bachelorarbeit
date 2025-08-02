@@ -501,6 +501,73 @@ Es muss lediglich beachtet werden, dass es sich um zwei verschiedene Knoten hand
 Beide Ansätze werden mehrfach angewendet, um die Wahrscheinlichkeit zu erhöhen, dass die Instanzen nicht mehr möglich sind.
 Knoten werden dabei nicht mehrfach betrachtet.
 
+\section{CDCL}
+\emph{Conflict-driven clause learning} (CDCL) ist ein Ansatz um effizient SAT Probleme zu lösen.
+Generall funktionieren SAT Solver einfach runtergebrochen das so, das sie jede Möglichkeit austesten.
+Dies kann als Baum dargestellt werden (siehe~\cref{fig:sat_tree}).
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=1\linewidth]{figures/sat_tree.png}
+	\label{fig:sat_tree}
+    \caption{Enter Caption}
+\end{figure}
+Das Besondere bei dem CDCL Ansatz ist das nicht die Äste Iterativ abgearbeitet wrden sondern das es einen Pfad gibt.
+Hierbei ist der Pfad eine Aktuelle Teilbelegung der Lieterale also Theoretische ein Ast im Baum, aber die Auswahl der belegung basiert nicht auf dem Baum.
+Auch muss für jedes belegte Lieteral eine Begründung angegeben werden. 
+Diese Begründungen werden bei Konflikten relevant.
+
+\subsection{Pfad Erweiterung}
+Der Grundansatz um den Pfad zu erweitern ist es \emph{Unit Klauseln} zu finden.
+Das sind Klauseln wo nur ein Literal offen ist und die Klauseln nicht erfüllt ist.
+Zum Beispiel kann durch die Klausel \((\overline{x_1} \lor x_2 \lor \overline{x_3})\) und dem Pfad: \((\overline{x_2}, x_3)\) das Literal \(\overline{x_1}\) dem Pfad hinzugefügt werden und die Klausel als begründung angegeben werden.
+TODO vlt hinzufügen mit immer nur zwei Literale betrachten
+
+Sollte es keine weiteren \emph{Unit Klauseln} geben, wird basierend auf Heuristiken ein Literal belegt.
+Bei dieser Art der Belegung wird aber intern vermerkt das eine neue Entscheidungsebene erreicht wurde.
+Die Entscheidungsebenen werden später noch wichtig, hierbei ist nur zu Beachten das wir jeden Abschnitt des Pfades einer Entscheidungsebene zuordnen können.
+Und ein Literal welches sich weiter rechts im Pfad befindert einer höheren Entscheidungsebene zugeordnet wird.
+
+\subsection{Konflikte}
+Ein Konflikte tritt auf wenn ein Literal zum zweiten Mal dem Pfad hinzugefügt werden soll, das Literal aber bereits eine andere Belegung hat.
+Hier zeigt sich nun der Spezielle Ansatz von CDCL.
+Sollte es zu einem Konflikt kommen wird nicht einfach zu einer vorigen Entscheidungsebene zurückgekehrt, sondern die Informationen wie es zu dem Konflikt kommen konnte werden mitgenommen.
+Sei \[
+c = (\overline{l} \lor \overline{a_1} \lor \ldots \lor \overline{a_k})
+\]
+eine Klausel welche einen Konflikt hat. 
+Das heißt alle Literale wurden dem Pfad hinzugefügt und die Klausel ist nicht erfüllt.
+
+Es kann angenommen werden das \(l\) und eine weiteres Literal \(a_i\) aus c, auf der höchsten Entscheidungsebene \(d\) liegen.
+Da \(c\) sonnst ein \emph{Unit Klausel} und somit \(l\) auf \(d-1\) belegt worden wäre.
+Desweiteren kann angenommen werden das, dass Literal \(l\) das rechteste Literal von allen Literal aus \(c\) im Pfad ist.
+Also das Literal aus \(c\) welches zuletzt belget wurde.
+Daraus folgt das \(l\) keine neue Entscheidungsebene erzeugt hat, da zumindest \(a_i\) vor \(l\) auf der Entscheidungsebene \(d\) belegt wurde.
+
+Wir haben also eine Begründung \[
+(\overline{l} \lor \overline{r_1} \lor \ldots \lor \overline{r_k})
+\] 
+für die Belegung von \(l\).
+Damit kann folgende Klausel erzeugt werden
+\[
+c' = (\overline{a_1} \lor \ldots \lor \overline{a_k} \lor \overline{r_1} \lor \ldots \lor \overline{r_k})
+\]
+Wobei \(c'\) mindestens eine Belegung aus der Entscheidungsebene \(d\) enthält.
+Sollte es allerdings ein weiteres Literal außer \(a_i\) geben welches auf der Entscheidungsebene \(d\) belegt wurde ist \(c'\) auch eine Konfliktklausel.
+Hier wird dann Rekursive \(c'\) so lange erzeugt bis es genau ein Lieteral \(\overline{x}\) gibt welches auf Entscheidungsebene \(d\) belegt wurde.
+Von den restlichen Literalen wird dann die höchste Entscheidungsebene gesucht und zu dieser zurückgekehrt.
+Hier wird dann \(\overline{x}\) dem aktuellen Pfad hinzugefügt und \(c'\) als Begründung für die Belegung von \(\overline{x}\) genutzt.
+TODO als Bild veranschaulichen? keine Idee wie
+
+TODO Gelernte Klauseln reduzieren glaube nicht revant
+TODO Pfad zurücksetzen ohne Konflikt glaube nicht relevant
+
+
+
+
+
+
+
+
 
 \section{Theoretische Mehrere Lösungen}
 TODO Wo soll das hin
