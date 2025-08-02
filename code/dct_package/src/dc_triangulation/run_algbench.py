@@ -3,6 +3,7 @@ import logging
 import os
 import random
 import socket
+import uuid
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -628,8 +629,8 @@ class Run_Algbench:
         parameters = self.outer_parameter[solver]
         for parameter in parameters:
             for _ in range(NUMBER_RUNS_FOR_AVG):
-                run_number = self.get_run_number()
-                random.seed(run_number)  # Seed für Reproduzierbarkeit
+                run_seed = int(uuid.uuid4())
+                random.seed(run_seed)  # Seed für Reproduzierbarkeit
                 random.shuffle(nodes)  # Zufällige Reihenfolge der Knoten
                 graph = Graph_Wrapper(nodes)
 
@@ -639,7 +640,7 @@ class Run_Algbench:
                     parameter=parameter,
                     instance_name=inst,
                     file_name=file_name,
-                    run_number=run_number,
+                    run_seed=run_seed,
                     _possible=possible,
                     _solver_type=solver,
                     _graph=graph,
@@ -651,7 +652,7 @@ class Run_Algbench:
         parameter: dict,
         instance_name: str,
         file_name: str,
-        run_number: int,
+        run_seed: int,
         _possible: bool,
         _solver_type: type[Solver],
         _graph: Graph_Wrapper,
