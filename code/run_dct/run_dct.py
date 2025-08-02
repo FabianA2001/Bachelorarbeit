@@ -361,8 +361,20 @@ def create_instance():
         ],
     ):
         INST_NAME = NAME
-        for i in [80, 90, 100]:
+        for i in [70, 80, 90]:
             FILE_NAME = f"{NAME}"
+            generate.Generate_Instance(
+                INST_NAME,
+                FILE_NAME,
+                i,
+                2,
+                generate.Generate_Nodes_Random(),
+                gen,
+                path=PATH,
+                width=10000,
+                height=10000,
+            ).generate()
+            FILE_NAME = f"{NAME}_impossible_move"
             generate.Generate_Instance(
                 INST_NAME,
                 FILE_NAME,
@@ -370,36 +382,24 @@ def create_instance():
                 1,
                 generate.Generate_Nodes_Random(),
                 gen,
+                generate.Generate_Impossible_Move_Degree(amount=5, times=10),
                 path=PATH,
                 width=10000,
                 height=10000,
             ).generate()
-            # FILE_NAME = f"{NAME}_impossible_move"
-            # generate.Generate_Instance(
-            #     INST_NAME,
-            #     FILE_NAME,
-            #     i,
-            #     1,
-            #     generate.Generate_Nodes_Random(),
-            #     gen,
-            #     generate.Generate_Impossible_Move_Degree(amount=5, times=10),
-            #     path=PATH,
-            #     width=10000,
-            #     height=10000,
-            # ).generate()
-            # FILE_NAME = f"{NAME}_impossible_change"
-            # generate.Generate_Instance(
-            #     INST_NAME,
-            #     FILE_NAME,
-            #     i,
-            #     1,
-            #     generate.Generate_Nodes_Random(),
-            #     gen,
-            #     generate.Generate_Impossible_Change_Degree(times=10),
-            #     path=PATH,
-            #     width=10000,
-            #     height=10000,
-            # ).generate()
+            FILE_NAME = f"{NAME}_impossible_change"
+            generate.Generate_Instance(
+                INST_NAME,
+                FILE_NAME,
+                i,
+                1,
+                generate.Generate_Nodes_Random(),
+                gen,
+                generate.Generate_Impossible_Change_Degree(times=10),
+                path=PATH,
+                width=10000,
+                height=10000,
+            ).generate()
 
 
 if __name__ == "__main__":
