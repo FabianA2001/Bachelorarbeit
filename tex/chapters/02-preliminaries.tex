@@ -1,4 +1,4 @@
-\chapter{Preliminaries}
+\chapter{Definitionen}
 
 \begin{definition}[Überschneidung]
     Zwei Kanten gelten als überschneidend, wenn sie sich in der Ebene kreuzen.
@@ -32,4 +32,10 @@
     Die konvexe Hülle einer Punktmenge ist die kleinste konvexe Menge, die alle Punkte enthält.
     Die Randpunkte sind die Punkte, die auf dem Rand der konvexen Hülle liegen, einschließlich solcher, die nicht an einer Ecke liegen.
     Die konvexe Hülle inklusive Randpunkte wird durch die Funktion \(\convexhull: \mathcal{P}(\mathbb{Q}^2) \to \mathcal{P}(\mathbb{Q}^2)\) definiert.
+\end{definition}
+
+\begin{definition}[Konjunktive Normalform]
+    Eine Formel in konjunktiver Normalform (KNF) ist eine logische Formel, die als Konjunktion (UND-Verknüpfung) von Klauseln dargestellt wird, wobei jede Klausel eine Disjunktion (ODER-Verknüpfung) von Literalen ist.
+    Ein Literal ist entweder eine Variable oder ihre Negation.
+    Ein Beispiel für eine KNF ist \[(x_1 \lor \overline{x_2}) \land (x_2 \lor x_3)\] ,wobei \(x_1\), \(x_2\) und \(x_3\) Variablen sind. Eine Negation wird durch das Symbol \(\overline{x}\) dargestellt.
 \end{definition}

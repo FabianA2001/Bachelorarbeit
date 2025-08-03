@@ -9,8 +9,41 @@
 	\item \dots
 \end{itemize}
 
-\section{Grund Solver (Eval1)}
+\section{Permutation Instanz (Eval2)}
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=1\linewidth]{figures/eval2/permutation.pdf}
+    \caption{Eval2 Permutation Instanz}
+\end{figure}
+Testen ob die Permutationen einer Instanze die Laufzeit beeinflussen.
 
+\section{selber solver selbe instanz (Eval7)}
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=1\linewidth]{figures/eval7/gurobi.pdf}
+    \caption{Eval7 Selbe Solver Selbe Instanz Gurobi}
+\end{figure}
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=1\linewidth]{figures/eval7/ortools.pdf}
+    \caption{Eval7 Selbe Solver Selbe Instanz OrTools}
+\end{figure}
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=1\linewidth]{figures/eval7/sat.pdf}
+    \caption{Eval7 Selbe Solver Selbe Instanz SAT}
+\end{figure}
+Testen ob wenn ich den gleichen Solver mit gleichen Argumenten auf er gleichen Instanze lasse, ob die Laufzeit gleich ist.
+
+\section{Sat Coodierung (Eval5)}
+Teste welche von den degree Coodierungen am besten funktionieren.
+also: subset, atleast, exact
+auch welche Coodierung von pysat für Kardinalität am besten funktioniert.
+
+\section{Sat Solver Vergleich (Eval3)}
+Teste alle möglichen Sat solver aus
+
+\section{Grund Solver (Eval1)}
 \subsection{Dreiecke}
 \begin{figure}[tb]
     \centering
@@ -45,35 +78,17 @@
     \includegraphics[width=1\linewidth]{figures/eval1/gesamt.pdf}
     \caption{Eval1 Gesamt}
 \end{figure}
+Lasse alle Solver mit allen Parametern einzeln aktiv laufen
 
+\section{Kanten vorab berechnen (Eval6)}
+Kanten vorab für nein/ja Berechen um testen ob exclude nur bei kleinen Mengen schlecht ist
 
-\section{Permutation Instanz (Eval2)}
+\section{Zielfunktion (Eval11)}
+Davor in ganz klein wie gut Flips Funktionieren
+Gucken wie orTools mit Zielfunktion funktioniert.
 
-\begin{figure}[tb]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/eval2/permutation.pdf}
-    \caption{Eval2 Permutation Instanz}
-\end{figure}
-
-\section{Selbe Instanz (Eval7)}
-\begin{figure}[tb]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/eval7/gurobi.pdf}
-    \caption{Eval7 Selbe Solver Selbe Instanz Gurobi}
-\end{figure}
-\begin{figure}[tb]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/eval7/ortools.pdf}
-    \caption{Eval7 Selbe Solver Selbe Instanz OrTools}
-\end{figure}
-\begin{figure}[tb]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/eval7/sat.pdf}
-    \caption{Eval7 Selbe Solver Selbe Instanz SAT}
-\end{figure}
-
-
-\section{Anzahl Lösungen  (Eval8)}
+\section{Instanzen Schwierigkeit}
+\subsection{Anzahl Lösungen  (Eval8)}
 \begin{figure}[tb]
     \centering
     \includegraphics[width=0.48\linewidth]{figures/eval8/delaunay_009_delaunay_80_0.pdf}\hfill
@@ -86,5 +101,13 @@
     \includegraphics[width=0.48\linewidth]{figures/eval8/greedy_009_greedy_80_1.pdf}
     \caption{Eval8 Anzahl Lösungen Greedy}
 \end{figure}
+gucken wie viele Mögliche Lösungen es pro Instanz gibt.
+
+\subsection{Grad Verteilung (Eval8)}
+gucken wie die Grad Verteilung ist
+
+\subsection{Kanten Verteilung (Eval9)}
+gucken wie die Kantenlängen Verteilung ist
+
 
 
