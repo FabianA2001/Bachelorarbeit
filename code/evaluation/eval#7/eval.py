@@ -5,7 +5,6 @@ from dataclasses import asdict
 import slurminade
 from dc_triangulation import (
     SAT,
-    Graph_Wrapper,
     Gurobi,
     Gurobi_Parameter,
     Ortools,
@@ -39,7 +38,7 @@ RI = Run_Algbench(
 
 @slurminade.slurmify()
 def run_solver_on_inst(key: str):
-    RI.add_entrys(key)
+    RI.add_entrys(key, number_runs=1)
 
 
 @slurminade.slurmify(mail_type="ALL")
