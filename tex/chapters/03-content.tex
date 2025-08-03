@@ -354,10 +354,11 @@ Diese Funktion wird mit den folgenden Variablenpaaren aufgerufen.
 Für die Zielfunktion wird eine Funktion erstellt, die der Gleichung~\eqref{eq:total_evaluation} ähnelt.
 Die Teiler in~\eqref{eq:total_evaluation} und~\eqref{eq:evaluation} werden entfernt. Diese sind für die Maximierung nicht relevant.
 Da OrTools keine Betragsfunktion in Formeln erlaubt, muss die Funktion \emph{AddAbsEquality} verwendet werden.
-Diese erzeugt den Betrag mit diesen beiden Bedingung
+Diese erzeugt den Betrag mit diesen Bedingung
 \begin{align*}
 	abs_i &\geq \degrees(i) - \degree(i) \\
-	abs_i &\geq \degree(i) - \degrees(i) 
+	abs_i &\geq \degree(i) - \degrees(i) \\
+	abs_i &= (\degrees(i) - \degree(i)) \lor (\degree(i) - \degrees(i) )
 \end{align*}
 Die Variable \(abs_i\) ist hierbei eine Integer-Hilfsvariable, die den Betrag der Differenz erhält.
 Diese Variable kann dann für die Formel~\eqref{eq:difference} genutzt werden.
@@ -372,39 +373,28 @@ Diese nutzt das eine Minimierung mit Folgender Formel in ein Maximierung umgewan
 \[
 	\min(a,b) = -\max(-a, -b)
 \]
-Und eine Maximierung kann mit folgender Formel erzeugt werden
-\begin{align*}
-	min_i &\geq a \\
-	min_i &\geq b 
-\end{align*}
+Eine Betragsfunktions kann auf eine Maximierungfunktions reduziert werden.
+Da dies im obriegen Beispiel passiert ist, können hier die gleichen angepassten Bedingungen genutzt werden.
 
 zusammengefasst bekommen wir folgende Bedingungen
 \begin{align*}
 	abs_i &\geq \degrees(i) - \degree(i) \\
 	abs_i &\geq \degree(i) - \degrees(i) \\
-	min_i &\geq - \text{diff}_i \\
+	abs_i &= (\degrees(i) - \degree(i)) \lor (\degree(i) - \degrees(i) ) \\
+	min_i &\geq - abs_i \\
 	min_i &\geq - \degrees(i) \\
+	min_i &= (-abs_i) \lor (-\degrees(i)) \\
 	e_i &= \degrees(i) - ( - min_i) \\
 	Q_T &= \sum e_i 
 \end{align*}
 Als Zielfunktion wird dann \(Q_T\) maximiert.
 
-Theoretische könnte man eine Minimierung auch mit folgenden Bedingungen darstellen
-\begin{align*}
-	min_i &\leq a \\
-	min_i &\leq b	
-\end{align*}
-aber OrTools nutzt den Umweg über die Maximierung.
-
-% TODO glaube das ist einfach nur abs das ist glaube nicht gleichwertig.
-% Es gibt auch eine zweite Zielfunktion welche weniger Integer-Hilfsvariablen verwendet.
-% Für jeden Knoten wird bei dieser Zielfunktion nur eine Integer-Hilfsvariable \(j_i\) und keine besonderen Funktionen verwendet.
-% Für jeden Knoten \(i\) muss die Hilfsvariable \(j_i\) nur folgende Bedingung erfüllen:
+% Theoretische könnte man eine Minimierung auch mit folgenden Bedingungen darstellen
 % \begin{align*}
-% 	j_i &\geq \degrees(i) - \degree(i) \\
-% 	j_i &\geq \degree(i) - \degrees(i) 
+% 	min_i &\leq a \\
+% 	min_i &\leq b	
 % \end{align*}
-% Die Summe aus \(j_i\) wird dann als Zielfunktion maximiert.
+% aber OrTools nutzt den Umweg über die Maximierung.
 
 \section{Instanzen Generation}
 \subsection{Ja - Instanzen}
