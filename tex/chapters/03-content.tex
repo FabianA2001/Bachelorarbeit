@@ -523,8 +523,25 @@ Bei dieser Art der Belegung wird intern vermerkt, dass eine neue Entscheidungseb
 Die Entscheidungsebenen werden auch bei Konflikten wichtig. Es ist zu beachten, dass jeder Abschnitt des Pfades einer Entscheidungsebene zugeordnet werden kann.
 Ein Literal, das weiter rechts im Pfad steht, wird einer höheren Entscheidungsebene zugeordnet.
 
-\subsection{Konflikte}
 
+\section{Theoretische Mehrere Lösungen}
+
+Bei Ja-Instanzen stellt sich die Frage, ob sie eindeutig sind.
+Das bedeutet, ob es pro Ja-Instanz nur eine Lösung gibt und ob die Instanz nicht mehr erfüllbar ist, sobald eine Kante dieser Lösung verboten wird.
+Die Antwort darauf ist nein, es existieren Instanzen, bei denen mehrere Lösungen möglich sind.
+\begin{figure}[tb]
+	\centering
+	\includegraphics[width=0.7\linewidth]{figures/mehrere_Lösungen.pdf}
+	\caption{Eine Ja-Instanz mit zwei möglichen Lösungen}
+	\label{fig:mehrere_Lösungen}
+\end{figure}
+Wie in \cref{fig:mehrere_Lösungen} zu erkennen ist, existieren zwei verschiedene Lösungen für die gleiche Ja-Instanz.
+Die Zahlen an den Knoten geben hierbei den Sollgrad an.
+Bei den Kanten ist zu beobachten, dass die roten Kanten kreisförmig den Grad erfüllen.
+
+
+
+\subsection{Konflikte}
 Ein Konflikt tritt auf, wenn ein Literal zum zweiten Mal dem Pfad hinzugefügt werden soll, das Literal aber bereits eine andere Belegung besitzt.
 Hier zeigt sich der besondere Ansatz von CDCL.
 Kommt es zu einem Konflikt, wird nicht einfach zu einer vorherigen Entscheidungsebene zurückgekehrt. Stattdessen werden die Informationen, wie es zu dem Konflikt kam, genutzt.
@@ -567,10 +584,5 @@ TODO Pfad zurücksetzen ohne Konflikt vermutlich nicht relevant
 
 
 
-\section{Theoretische Mehrere Lösungen}
-TODO Wo soll das hin
-\begin{itemize}
-	\item 3 und 4 Knoten ist Gradbeschränkte Triangulation immer eindeutig
-	\item ab 8 bis unentlich gibt es mehrere Lösungen
-	\item instaze zeigen und erklären wie mehr Punkt hinzufügen
-\end{itemize}
+
+
