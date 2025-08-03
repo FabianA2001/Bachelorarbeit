@@ -184,6 +184,7 @@ class Run_Algbench:
                 "runtime": result["result"]["time_solver"],
                 "pre_time": result["result"]["time_pre_solver"],
                 "solution": result["result"].get("solution", None),
+                "run_seed": result["parameters"]["args"].get("run_seed", None),
             },
         )
         # Filter nach Host, falls host angegeben ist
@@ -205,7 +206,7 @@ class Run_Algbench:
         table = table[table["solver"].isin(self.solvers_name)]
         return table
 
-    def applay_instanze(
+    def apply_instance(
         self,
         table: pd.DataFrame,
     ) -> pd.DataFrame:
@@ -296,7 +297,7 @@ class Run_Algbench:
         block: bool = True,
     ):
         table = self.get_table()
-        table = self.applay_instanze(table)
+        table = self.apply_instance(table)
         table = self.apply_args(table)
 
         table["total_runtime"] = table["pre_time"] + table["runtime"]
@@ -515,7 +516,8 @@ class Run_Algbench:
                 bbox_inches="tight",
             )
 
-        plt.show(block=block)
+        if block:
+            plt.show(block=block)
 
     def create_plt(
         self,

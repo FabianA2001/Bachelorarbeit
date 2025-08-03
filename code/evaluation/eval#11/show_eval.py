@@ -79,7 +79,7 @@ def draw_instance(instanz: str, data: list[tuple[str, list[tuple[int, float]]]])
 
 def eval_table(ri: Run_Algbench):
     table = ri.get_table()
-    table = ri.applay_instanze(table)
+    table = ri.apply_instance(table)
     table = ri.apply_args(table)
     inst_to_data = defaultdict(list)
     # rufe für jede Instanz eval_inst_file auf
