@@ -47,6 +47,7 @@ RI = Run_Algbench(
 )
 
 
+# TODO Permution hinzufügen
 @slurminade.slurmify()
 def run_solver_on_inst(key: str):
     solver, nodes, possible, inst, file_name = RI.get_solver_inst_from_runlist[key]
