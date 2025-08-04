@@ -123,38 +123,42 @@ Von diesen gefundenen Kanten wird jetzt ein Prozentsatz zufällig ausgewählt.
 Diese Kanten können sicher fixiert werden.
 Für ausschließbare Kanten werden alle Kanten betrachtet welche nicht genutzt wurden.
 Von diesen Kanten wird ebenfalls ein zufälliger Prozentsatz ausgewählt.
-Diese ausgewählten Kanten werden nacheinander bei einem Solver verboten.
-Sollte der Solver keine Lösung mehr finden, wird die Kante als ausschließbar markiert.
+Nun muss unterschieden werden wie viele Lösungen die Instanz hat.
+Sollte es nur eine Lösung geben, kann angenommen werden das die Kanten sicher ausgeschlossen werden können.
+Sollte es mehr als eine Lösung geben werden diese ausgewählten Kanten nacheinander bei einem Solver verboten.
+Sollte der Solver mit dieser ausgeschlossenen Kante keine Lösung mehr finden, wird die Kante als ausschließbar markiert.
 
-Für alle Solver wird angenommen das \(E\) die Menge aller möglicher Kanten sei. Also Kanten die keine Punkte schneiden.
+\section{Implementierung der Kanten Formulierung}
+Für alle Solver wird angenommen das \(V\) die Menge aller Knoten und \(E\) die Menge aller möglicher Kanten sei. Also Kanten die keine Punkte schneiden.
 Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
 Diese Variable ist wahr wenn die Kante \(e\) in der Triangulation enthalten ist.
+
 \subsubsection{OrTools und Gurobi}
-Für ein exaktes Ergebnis kann sowohl OrTools als auch Gurobi verwendet werden.
-Da beide Solver eine ähnliche Art der Formulierung verwenden werden sie hier zusammengefasst.
-TODO Reinfolge geändert
-Die Überschneidungsbeschränkung wird wie in~\cref{sec:ortools_heu} implementiert.
-Gurobi nutzt hier äquivalent:
+Da OrTools und Gurobi eine ähnliche Art der Formulierung verwenden werden sie hier zusammengefasst.
+Für die Überschneidungsbeschränkung wird die Funktion \emph{add\_at\_most\_one} von OrTools verwendet.
+Diese Funktion wird mit den folgenden Variablenpaaren aufgerufen.
+\[
+	( x_{e_1}, x_{e_2}) \hspace{3cm} \forall e_1, e_2 \in E : e_2 \in \intersection(e_1)
+\]
+Gurobi nutzt hier äquivalent
 
 \[
-	\texttt{model.addConstr(\(x_{e_1} + x_{e_2} \leq 1\))}
+	x_{e_1} + x_{e_2} \leq 1 \hspace{3cm} \forall e_1, e_2 \in E : e_2 \in \intersection(e_1)
 \]
 Für die Gradbeschränkung wird die Summe der booleschen Variablen \(x_e\) für alle ausgehenden Kanten eines Knotens \(i\) auf den Sollgrad \(\degrees(i)\) beschränkt.
 
 Für die Gradbeschränkung werden folgende Bedingungen hinzugefügt:
-TODO anpassen wie zwischen OrTools und Gurobi add/addConstr dargestellt wird
 \[
-	\texttt{model.(add | addConstr)(\(\sum x_{e_i} = \degrees(i)\))}
+	\sum x_{e_i} = \degrees(i) \hspace{3cm} \forall i \in V
 \]
-Wobei \(i\) der Knoten ist und \(e_i\) alle Kanten für diesen Knoten.
+Wobei \(e_i\) alle Kanten für den Knoten \(i\) sind.
 
-Für die \emph{all\_edges} Beschränkung werden folgende Bedingungen hinzugefügt:
+Für die \emph{alternative Kanten} Beschränkung werden folgende Bedingungen hinzugefügt:
 \[
-	\texttt{model.(add | addConstr)(\((\sum_{j \in \intersection(e)}{x_{j}}) + x_e \leq 1\))}
+	\sum_{j \in \intersection(e)}{x_{j}} + x_e \leq 1 \hspace{3cm} \forall e \in E
 \]
 
-Für die \emph{fix\_hull} Beschränkung werden die Kanten der konvexen Hülle fest gesetzt in dem die dazugehörige Variable auf \emph{eins} gesetzt wird.
-Eqivaltend werden für \emph{exclude\_edges} und die zuvor berechnenten Kanten die Variablen auf \emph{null} gesetzt.
+Für die fixierung der Kanten werden die zugehöhrigen Variablen auf \emph{Wahr} oder \emph{Falsch} gesetzt.
 
 \subsubsection{PySat}
 Da PySat eine SAT Formulierung verwendet müssen die Bedingungen etwas angepasst werden.
@@ -167,10 +171,10 @@ Dies kann allerdings mit folgendem Verfahren gelöst werden.
 TODO rausfinden wie das geht
 
 
-Die Beschränkungen \emph{fix\_hull},\emph{exclude\_edges} und die vorab berechnen Kanten können analog wie in OrTools und Gurobi umgesetzt werden.
-Hierbei werden anstatt die Variablen auf \emph{null} und \emph{eins} zu setzen, die Klausen \((\neg x_e)\) und \((x_e)\) hinzugefügt.
+Die fixierung von Kanten kann analog wie in OrTools und Gurobi umgesetzt werden.
+Hierbei werden anstatt die Variablen auf \emph{Wahr} und \emph{Falsch} zu setzen, die Klausen \((x_e)\) und \((\neg x_e)\) hinzugefügt.
 
-Für die \emph{all\_edges} Beschränkung kann folgende Klauseln genutzt werden:
+Für die \emph{alternative Kanten} Beschränkung können folgende Klauseln genutzt werden:
 \[
 x_e \lor \bigvee_{e_j \in I(e)} x_{e_j} \qquad \forall e \in E
 \]
@@ -196,73 +200,6 @@ x_e \lor \bigvee_{e_j \in I(e)} x_{e_j} \qquad \forall e \in E
 	\item implementiert äguivalten zu Kanten
 	\item TODO kann man genau noch mal erklären gucken ob relevant weil Dreiecke schlecht wirken
 \end{itemize}
-
-% \begin{itemize}
-% 	\item Exakte Ergebnise Liefern die Triangulation und Gradbeschränkung erfüllen
-% 	\item alle Solver desten ob sum(degree) = 2* Kanten für Triangulation
-% \end{itemize}
-% \subsection{SAT mit Kanten}
-% TODO Rausfinden wie SAT degree gemacht wird
-% Zunächst sei \(E\) die Menge aller Kanten und \(E\) die Menge aller möglicher Kanten. Also Kanten die keine Punkte schneiden.
-% Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
-% Diese Variable ist wahr wenn die Kante \(e\) in der Triangulation enthalten ist.
-% Für den Überschneidungs Konstriend werden folgende Klauseln dem OrTools Modeln hinzugefügt.
-% \[
-% \neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E: e_2 \in \intersection(e_1)
-% \]
-% \begin{itemize}
-% 	\item Alle möglichen Kanten als Bool Variable wie OrTools
-% 	\item Intersection Konstriend wie OrTools
-% 	\item Degree sat mit eingebauter Funktion(Infos raussuchen)
-% 	\begin{itemize}
-% 		\item Hilfsveriablen ab max(len(all\_vars), höchste var in solver) + 1
-% 	\end{itemize}
-% 	\item das waren Grundlagen jetzt Verbesserungen
-% 	\item Kanten Anzahl fest setzen
-% 	\item Convexe Hülle festsetzen
-% 	\item Intersection mit Algo Von Michael
-% 	\item Satformel aus Paper von Michael, Fekete und Phillip Alle Edges
-% 	\item Subset degree
-% 	\begin{itemize}
-% 		\item alle Knoten durchgehen
-% 		\item alle Kombinationen der größe len(enges) - (degree -1) bilden
-% 		\item als Klauseln hinzufügen
-% 		\item Als Bild erklären
-% 	\end{itemize}
-% 	\item Bei degree nicht genau degree sondern nur mindestens degree
-% 	\item muss reichen weil sonnst ein anderer Knoten nicht genügend Kanten bekommt
-% 	\item exclude Edges
-% 	\begin{itemize}
-% 		\item alle Kanten betrachten welche die Punkt menge teilen
-% 		\item testen ob anzahl kanten * 2 = sum(degree) 
-% 	\end{itemize}
-% \end{itemize}
-% \subsection{OrTools}
-% % \begin{itemize}
-% % 	\item gleicher Solver jetzt mit Gradbeschränkung
-% % 	\item Kanten Variblen und Intersection Konstriend wie in~\cref{sec:ortools_heu}
-% % 	\item Zwei Grundansätze
-% % 	\begin{itemize}
-% % 		\item Kanten Maximieren und dann nach Lösung abbrechen welche richtige Anzahl Kanten hat
-% % 		\item Kanten Anzahl festsetzen und ohne Zielfunktion lösen
-% % 	\end{itemize}
-% % 	\item Ansatz für die Gradbeschränkung
-% % 	\item für jeden Knoten die summe der x für ausgehende Kanten varibalen gleich dem Sollgrad
-% % \end{itemize}
-
-
-% Eine weitere Möglichkeit besteht darin, als Zielfunktion die Summe der booleschen Variablen \(x_e\) zu maximieren.
-% In diesem Fall wird die Anzahl der Kanten maximiert, die in der Triangulation enthalten sind.
-% Da die Anzahl der Kanten in einer Triangulation allerdings bekannt sind, kann die Lösung abgebrochen werden, sobald die Anzahl der Kanten erreicht wurde.
-% \subsection{SAT/Gurobi mit Dreicken}
-% \begin{itemize}
-% 	\item Alle möglichen Dreiecke erstellen
-% 	\item Spätere Verbesserung nur Leere Dreiecke
-% 	\item jedes Dreieck als Bool Variable
-% 	\item Intersection Konstriend wie bei Kanten
-% 	\item Degree normaler Knoten degree = sum(Dreicke)
-% 	\item Degree auf Convexe Hülle degree - 1 = sum(Dreicke)
-% \end{itemize}
 
 \section{Optimierungsproblem}
 \begin{itemize}
