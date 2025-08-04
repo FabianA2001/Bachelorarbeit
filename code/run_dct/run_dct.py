@@ -361,7 +361,7 @@ def create_instance():
         ],
     ):
         INST_NAME = NAME
-        for i in [70, 80, 90]:
+        for i in [100, 110, 120]:
             FILE_NAME = f"{NAME}"
             generate.Generate_Instance(
                 INST_NAME,
