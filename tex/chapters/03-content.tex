@@ -1,35 +1,32 @@
 \chapter{Theoretisch Hintergrund}
 \section{Solver}
 \subsection{Solver arten}
-\begin{itemize}
-	\item PySat
-	\begin{itemize}
-		\item Solver zum Lösen für CNF
-		\item PySat ist Python Bibliothek mit mehreren Solvern
-		\item Einfache Möglihckeit viele Solver zu testen, da gleiche Schnittstelle
-		\item Bietet kardinalitäten Codierung
-		\item Sat nur für Entscheidungsprobleme Möglich
-		\item open source und Kostenlos 
-	\end{itemize}
-	\item OrTools
-	\begin{itemize}
-		\item Google Optimization Tools (OrTools)
-		\item von Google
-		\item unterstützt lineare Programmierung (LP), gemischt-ganzzahlige Programmierung (MIP), Constraint Programming (CP), routing-Algorithmen
-		\item wir nutzen Constraint Programming
-		\item ist eine cpp Bibliothek mit Python Schnittstelle
-		\item Bietet Möglichkeit für Entscheidungsproblem und Optimierungsproblem 
-		\item Erlaubt direkt kardinalitäten
-		\item open source und Kostenlos (Apache License 2.0)
-		\item 
-	\end{itemize}
-	\item Gurobi
-	\begin{itemize}
-		\item lineare Programmierung (LP), gemischt-ganzzahlige Programmierung (MIP), quadratische Programmierung (QP), 
-		\item Kostet mit Kostenlos in der Forschung
-		\item Schnittstelle für Python
-	\end{itemize}
-\end{itemize}
+In dieser Arbeit werden drei verschiedene Solver verwendet
+PySat, OrTools und Gurobi.
+
+PySat ist eine Python-Bibliothek, die eine Sammlung von SAT-Solvern bereitstellt.
+Diese Solver entscheiden, ob eine CNF-Formel erfüllbar ist.
+Dementsprechend kann PySat nur Entscheidungsprobleme, aber keine Optimierungsprobleme lösen.
+Alle Solver sind in C++ implementiert und es wird eine einheitliche Schnittstelle für alle Solver in Python bereitgestellt.
+Zusätzlich werden verschiedene Kardinalitätscodierungen angeboten.
+Das bedeutet, man gibt eine Kardinalitätsbedingung ein und erhält eine CNF-Formel, die diese Bedingung abbildet.
+PySat stellt hierfür verschiedene Codierungen mit Implementierung bereit.
+PySat ist open source und kostenlos.
+
+Der zweite Solver ist OrTools (Google Optimization Tools) von Google.
+Dieser unterstützt verschiedene Modellierungsarten wie lineare Programmierung (LP), gemischt-ganzzahlige Programmierung (MIP), Constraint Programming (CP) und Routing-Algorithmen.
+Auch hier sind die Solver in C++ implementiert und es wird eine Python-Schnittstelle bereitgestellt.
+Mit OrTools können sowohl Entscheidungsprobleme als auch Optimierungsprobleme gelöst werden.
+Kardinalitäten werden direkt unterstützt und müssen nicht codiert werden.
+OrTools ist open source und kostenlos unter der Apache License 2.0.
+
+Der letzte Solver ist Gurobi.
+Es werden ebenfalls Modellierungen wie LP, MIP und quadratische Programmierung (QP) unterstützt.
+Auch hier wird eine Schnittstelle für Python bereitgestellt.
+Gurobi ist kostenpflichtig, bietet jedoch eine kostenlose Lizenz für Forschung an.
+
+TODO fühlt sich nicht sehr Technisch an aber ich weiß nicht was ich noch schreiben soll oder wo ich nachschauen kann.
+
 \subsection{Kanten Formulierung}
 Es gibt zwei notwendige Beschränkungen für eine gradbeschränkte Triangulation.
 Die erste Beschränkung ist die Überschneidungsbeschränkung.
