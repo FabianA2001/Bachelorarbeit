@@ -414,9 +414,23 @@ Es muss lediglich beachtet werden, dass es sich um zwei verschiedene Knoten hand
 Beide Ansätze werden mehrfach angewendet, um die Wahrscheinlichkeit zu erhöhen, dass die Instanzen nicht mehr möglich sind.
 Knoten werden dabei nicht mehrfach betrachtet.
 
-\section{CDCL}
+\section{Theoretische Mehrere Lösungen}
+Bei Ja-Instanzen stellt sich die Frage, ob sie eindeutig sind.
+Das bedeutet, ob es pro Ja-Instanz nur eine Lösung gibt und ob die Instanz nicht mehr erfüllbar ist, sobald eine Kante dieser Lösung verboten wird.
+Die Antwort darauf ist nein, es existieren Instanzen, bei denen mehrere Lösungen möglich sind.
+\begin{figure}[tb]
+	\centering
+	\includegraphics[width=0.7\linewidth]{figures/mehrere_Lösungen.pdf}
+	\caption{Eine Ja-Instanz mit zwei möglichen Lösungen}
+	\label{fig:mehrere_Lösungen}
+\end{figure}
+Wie in \cref{fig:mehrere_Lösungen} zu erkennen ist, existieren zwei verschiedene Lösungen für die gleiche Ja-Instanz.
+Die Zahlen an den Knoten geben hierbei den Sollgrad an.
+Bei den Kanten ist zu beobachten, dass die roten Kanten kreisförmig den Grad erfüllen.
 
+\section{CDCL}
 \emph{Conflict-driven clause learning} (CDCL) ist ein Ansatz, um SAT-Probleme effizient zu lösen.
+Die in diesem Kapitel vorgestellen Informationen stammen aus dem Buch \emph{The Art of Computer Programming, Volume 4, Fascicle 6: Satisfiability}~\cite{The_Art_of_Computer_Programming_Volume_4_Fascicle_6_Satisfiability}
 Im Allgemeinen funktionieren SAT-Solver so, dass sie jede Möglichkeit ausprobieren.
 Dies lässt sich als Baum darstellen (siehe~\cref{fig:sat_tree}).
 \begin{figure}[tb]
@@ -442,20 +456,7 @@ Die Entscheidungsebenen werden auch bei Konflikten wichtig. Es ist zu beachten, 
 Ein Literal, das weiter rechts im Pfad steht, wird einer höheren Entscheidungsebene zugeordnet.
 
 
-\section{Theoretische Mehrere Lösungen}
 
-Bei Ja-Instanzen stellt sich die Frage, ob sie eindeutig sind.
-Das bedeutet, ob es pro Ja-Instanz nur eine Lösung gibt und ob die Instanz nicht mehr erfüllbar ist, sobald eine Kante dieser Lösung verboten wird.
-Die Antwort darauf ist nein, es existieren Instanzen, bei denen mehrere Lösungen möglich sind.
-\begin{figure}[tb]
-	\centering
-	\includegraphics[width=0.7\linewidth]{figures/mehrere_Lösungen.pdf}
-	\caption{Eine Ja-Instanz mit zwei möglichen Lösungen}
-	\label{fig:mehrere_Lösungen}
-\end{figure}
-Wie in \cref{fig:mehrere_Lösungen} zu erkennen ist, existieren zwei verschiedene Lösungen für die gleiche Ja-Instanz.
-Die Zahlen an den Knoten geben hierbei den Sollgrad an.
-Bei den Kanten ist zu beobachten, dass die roten Kanten kreisförmig den Grad erfüllen.
 
 
 
