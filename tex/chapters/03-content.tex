@@ -3,8 +3,32 @@
 \subsection{Solver arten}
 \begin{itemize}
 	\item PySat
+	\begin{itemize}
+		\item Solver zum Lösen für CNF
+		\item PySat ist Python Bibliothek mit mehreren Solvern
+		\item Einfache Möglihckeit viele Solver zu testen, da gleiche Schnittstelle
+		\item Bietet kardinalitäten Codierung
+		\item Sat nur für Entscheidungsprobleme Möglich
+		\item open source und Kostenlos 
+	\end{itemize}
 	\item OrTools
+	\begin{itemize}
+		\item Google Optimization Tools (OrTools)
+		\item von Google
+		\item unterstützt lineare Programmierung (LP), gemischt-ganzzahlige Programmierung (MIP), Constraint Programming (CP), routing-Algorithmen
+		\item wir nutzen Constraint Programming
+		\item ist eine cpp Bibliothek mit Python Schnittstelle
+		\item Bietet Möglichkeit für Entscheidungsproblem und Optimierungsproblem 
+		\item Erlaubt direkt kardinalitäten
+		\item open source und Kostenlos (Apache License 2.0)
+		\item 
+	\end{itemize}
 	\item Gurobi
+	\begin{itemize}
+		\item lineare Programmierung (LP), gemischt-ganzzahlige Programmierung (MIP), quadratische Programmierung (QP), 
+		\item Kostet mit Kostenlos in der Forschung
+		\item Schnittstelle für Python
+	\end{itemize}
 \end{itemize}
 \subsection{Kanten Formulierung}
 Es gibt zwei notwendige Beschränkungen für eine gradbeschränkte Triangulation.
@@ -59,8 +83,8 @@ Wie man im Bild sieht können die Kanten \(e_2\) und \(e_3\) gleichzeitig aktiv 
 Eine weitere optionale Beschränkung ist zuvor berechnete Kanten zu fixieren oder auszuschließen.
 \begin{figure}[tb]
 \centering
-\label{fig:excludeGrad2}
 \includegraphics[scale=0.7]{ecludegrade2.pdf}
+\label{fig:excludeGrad2}
 \caption{Ein Ausschnitt der Hülle}
 \end{figure}
 Eine Möglichkeit um Kanten zu fixieren ist es immer drei aufeinander folgende Knoten der Hülle zu betrachten.
@@ -71,9 +95,18 @@ Sie würden sonst den Grad von \(v_2\) erhöhen.
 Analog dazu kann die Kante \(e_1\) ausgeschlossen werden sollte \(\degrees(v_2) > 2\).
 Sonst kann der Sollgrad nicht erreicht werden.
 
-TODO genau formal nochmal klären für die Kanten ausschließen.
+Zwei weitere Bedingungen um Kanten auszuschließen basieren auf der Teilung der Punktmenge.
+Es können alle Kanten betrachtet werden welche beide Knoten auf der Hülle haben.
+Sollte eine der beiden folgenden Bedingungen verletzt werden kann die Kante ausgeschlossen werden.
+Die Bedingungen können für beide Hälften getestet werden welche durch die Teilung entstehen.
+Sei \(V\) die Menge aller Knoten in der betrachteten Hälfte.
+Analog sei \(V_H \subseteq V\) die Menge der Knoten auf der Hülle. 
+\begin{align*}
+	\text{Anzahl Kanten} &> \sum_{v \in V} \degrees(v) \\
+	\forall v \in (V \setminus V_H): \degrees(v) &> \left| V \right|
+\end{align*}
 
-Die nächste Bedingung ist nur theoretischer Test.
+Die nächste Bedingung ist nur ein theoretischer Test.
 Mit den bisher genannten Beschränkungen können nicht viele Kanten ausgeschlossen werden.
 Es kann also nicht betrachtet werden welchen Einfluss große Mengen von ausgeschlossenen oder fixierten Kanten auf die Laufzeit haben.
 Daher werden für einzelne Instanzen Kanten berechnet welche sicher ausgeschlossen oder fixiert werden können.
