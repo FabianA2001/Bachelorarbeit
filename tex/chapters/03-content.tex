@@ -73,14 +73,13 @@ Diese Beschränkung nutzt aus das der Graph maximal sein muss.
 Damit dies der Fall sein kann muss für jede Kante gelten das entweder die Kante aktiv ist oder eine der Schnittkanten aktiv ist.
 Wie man in~\cref{fig:allEdges} sieht, ist \(e_1\) die ausgewählte Kante und \(e_2\) und \(e_3\) die Schnittkanten.
 Weiter unten im Bild ist zu sehen das alle möglichen Triangulation mindestens eine der drei Kanten verwendet.
-Zu beachten ist allerdings das die Anzahl der Schnittkanten nicht gleich eins sein darf.
-Nur mindestens eine sollte die Kante nicht aktiv sein.
-Wie man im Bild sieht können die Kanten \(e_2\) und \(e_3\) gleichzeitig aktiv sein.
+Zu beachten ist allerdings das die Anzahl der Schnittkanten nicht gleich eins gesetzt werden darf sondern nur auf mindestens eine.
+Wie man in~\cref{fig:allEdges} sieht können die Kanten \(e_2\) und \(e_3\) gleichzeitig aktiv sein.
 
 Eine weitere optionale Beschränkung ist zuvor berechnete Kanten zu fixieren oder auszuschließen.
 \begin{figure}[tb]
 \centering
-\includegraphics[scale=0.7]{ecludegrade2.pdf}
+\includegraphics[scale=0.7]{exclude_edges/ecludegrade2.pdf}
 \label{fig:excludeGrad2}
 \caption{Ein Ausschnitt der Hülle}
 \end{figure}
@@ -93,15 +92,27 @@ Analog dazu kann die Kante \(e_1\) ausgeschlossen werden sollte \(\degrees(v_2) 
 Sonst kann der Sollgrad nicht erreicht werden.
 
 Zwei weitere Bedingungen um Kanten auszuschließen basieren auf der Teilung der Punktmenge.
-Es können alle Kanten betrachtet werden welche beide Knoten auf der Hülle haben.
-Sollte eine der beiden folgenden Bedingungen verletzt werden kann die Kante ausgeschlossen werden.
+Es können also alle Kanten betrachtet werden, welche beide Knoten auf der Hülle haben.
+Sollte eine der beiden folgenden Bedingungen wahr werden kann die Kante ausgeschlossen werden.
 Die Bedingungen können für beide Hälften getestet werden welche durch die Teilung entstehen.
-Sei \(V\) die Menge aller Knoten in der betrachteten Hälfte.
-Analog sei \(V_H \subseteq V\) die Menge der Knoten auf der Hülle. 
 \begin{align*}
-	\text{Anzahl Kanten} &> \sum_{v \in V} \degrees(v) \\
-	\forall v \in (V \setminus V_H): \degrees(v) &> \left| V \right|
+	\text{Anzahl Kanten} * 2 &> \sum_{v \in V} \degrees(v) \\
+	\forall v \in (V \setminus V_H): \degrees(v) &> \left| V \right| - 1
 \end{align*}
+Dabei sei \(V\) die Menge aller Knoten in der betrachteten Hälfte.
+Analog sei \(V_H \subseteq V\) die Menge der Knoten auf der Hülle. 
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=0.48\linewidth]{figures/exclude_edges/exclude_edge_0.pdf}\hfill
+    \includegraphics[width=0.48\linewidth]{figures/exclude_edges/exclude_edge_1.pdf}
+    \caption{Zwei Teilinstanzen in welcher die rote Kante ausgeschlossen werden kann. Links da die Gradsumme die Anzahl der Kanten unterschreitet und rechts da der mittlere rote Knoten nicht genügend Kanten erzeugen könnte.}
+	\label{fig:exclude_edges_first}
+\end{figure}
+
+Zwei Beispiele sind in~\cref{fig:exclude_edges_first} zu sehen.
+Dabei ist Links eine Teilinstanz in welcher die Anzahl der Kanten (\(28\)) größer ist als die Summe der Grade (\(27\)) ist.
+Auf der rechten Seite ist eine Teilinstanz in welcher der mittlere rote Knoten mit Grad \(5\) größer ist als die Anzahl der Knoten minus eins (\(3\)).
 
 Die nächste Bedingung ist nur ein theoretischer Test.
 Mit den bisher genannten Beschränkungen können nicht viele Kanten ausgeschlossen werden.
@@ -114,56 +125,6 @@ Für ausschließbare Kanten werden alle Kanten betrachtet welche nicht genutzt w
 Von diesen Kanten wird ebenfalls ein zufälliger Prozentsatz ausgewählt.
 Diese ausgewählten Kanten werden nacheinander bei einem Solver verboten.
 Sollte der Solver keine Lösung mehr finden, wird die Kante als ausschließbar markiert.
-
-
-
-
-\begin{itemize}
-	% \item Intersection Konstriend
-	% \begin{itemize}
-	% 	\item Triangulation darf keine Überschneidungen haben
-	% 	\item Alle Kantenpaare max eine aktiv
-	% 	\item algo von Michael mit Orientierung
-	% \end{itemize}
-	% \item Gradbeschränkung
-	% \begin{itemize}
-	% 	\item Knoten müssen Sollgrad erfüllen
-	% 	\item für jeden Knoten Anzahl ausgehender Kanten gleich Sollgrad
-	% \end{itemize}
-	% \item fix hull
-	% \begin{itemize}
-	% 	\item Kanten der konvexen Hülle müssen aktiv sein da keine alternative und maximal
-	% \end{itemize}
-	% \item all Edges
-	% \begin{itemize}
-	% 	\item nicht notwendig aber mehr Einschrängugnen könnten die Laufzeit verbessern
-	% 	\item Alle Kanten und ihre Schnittkanten betrachten
-	% 	\item mindestens eine davon muss aktiv sein
-	% 	\item in~\cref{fig:all_edges} ist \(e_1\) die ausgewählt Kante und die restlichen Kanten sind mögliche Schnittkanten.
-	% 	\item wenn e1 nicht hinzugefügt wird muss mindestens eine andere da sonst nicht Maximal
-	% 	\item darf nicht gleich 1 sein da zwei Schnittkanten können gleichzeitig aktiv sein
-	% 	\item z.B. e4 und e5 können gleichzeitig aktive sein.
-	% 	\item Exact Algorithms for Minimum Dilation Triangulation
-	% \end{itemize}
-	\item Exclude Edges
-	\begin{itemize}
-		% \item wenn auf der äußeren Hülle ein Knoten höher als Grad 2 kann die Kante zwichen den beiden Knoten nicht aktiv sein.
-		\item Knoten mengen halbieren, gucken ob Gradbeschränkung erfüllbar ist
-		\item \url{https://www.notion.so/Fragen-2-20eb105ff608808895e5fd5389915074?source=copy_link#216b105ff60880c1bc3ce905e0bd8d94}
-	\end{itemize}
-	% \item vorab berechnete Kanten ausschließen
-	% \begin{itemize}
-	% 	\item Nur für Theorite testen ob Kanten ausschließen Sinn ergibt
-	% 	\item Instanz berechnen
-	% 	\item Kanten betrachten welche nicht genutzt wurden
-	% 	\item Davon eine Kante zufällig auswählen und bei Solver verbieten
-	% 	\item gucken ob es noch Möglich ist
-	% 	\item wenn nein Kante auswählen
-	% 	\item So lange bis Prozentzahl z.B. 10\% aller Kanten gefunden wurden
-	% \end{itemize}
-	% \item 
-\end{itemize}
-
 
 Für alle Solver wird angenommen das \(E\) die Menge aller möglicher Kanten sei. Also Kanten die keine Punkte schneiden.
 Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
