@@ -156,7 +156,7 @@ if __name__ == "__main__":
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
         )
         run_list = RI.get_run_list()
-        with slurminade.JobBundling(max_size=10):
+        with slurminade.JobBundling(max_size=3):
             for key in run_list:
                 run_solver_on_inst.distribute(key)
 
