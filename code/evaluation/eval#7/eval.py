@@ -15,10 +15,10 @@ from dc_triangulation import (
 
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
-NUMBER_RUNS = 5
+NUMBER_SOLVER_RUNS = 5
 
 outer_parameter = defaultdict(list)
-for i in range(NUMBER_RUNS):
+for i in range(NUMBER_SOLVER_RUNS):
     sat_args = asdict(SAT_Parameter(intersection=True, degree_exact=True, run_num=i))
     outer_parameter[SAT].append({"timeout": TIMEOUT, "args": sat_args})
 
