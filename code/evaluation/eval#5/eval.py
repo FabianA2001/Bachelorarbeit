@@ -2,12 +2,12 @@ import os
 from dataclasses import asdict
 
 import slurminade
-from dc_triangulation import SAT, Graph_Wrapper, Run_Algbench, SAT_Parameter
+from dc_triangulation import SAT, Run_Algbench, SAT_Parameter
 
 asdict
 TIMEOUT = 300
-path = os.path.join(os.path.dirname(__file__), "instances")
-# path = os.path.join(os.path.dirname(__file__), "instances_backup")
+# path = os.path.join(os.path.dirname(__file__), "instances")
+path = os.path.join(os.path.dirname(__file__), "instances_30")
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
 outer_parameter = {
