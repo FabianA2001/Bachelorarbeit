@@ -132,7 +132,56 @@ Die nächste Bedingung ist nur ein theoretischer Test.
 Mit den bisher genannten Beschränkungen können nicht viele Kanten ausgeschlossen werden.
 Es kann also nicht betrachtet werden welchen Einfluss große Mengen von ausgeschlossenen oder fixierten Kanten auf die Laufzeit haben.
 Daher werden für einzelne Instanzen Kanten berechnet welche sicher ausgeschlossen oder fixiert werden können.
-Die Idee ist es zunächst die Instanz mit einem beliebigen Lösungsansatz zu lösen.
+
+\section{Implementierung der Kanten Formulierung}
+Für alle Solver wird angenommen das \(V\) die Menge aller Knoten und \(E\) die Menge aller möglicher Kanten sei. Also Kanten die keine Punkte schneiden.
+Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
+Diese Variable ist wahr wenn die Kante \(e\) in der Triangulation enthalten ist.
+
+\subsection{Graph operationen}
+Alle Kanten werden mit der Bibliothek \emph{Networkx} verwaltet.
+Mit dieser können auch einfach die Ausgehenden Kanten eines Knotens abgefragt werden.
+Beim Erstellen der Kanten muss getestet werden ob die Kanten keinen Knoten Schneiden.
+Dies wird mit der Bibliothek \emph{Shapely} getestet.
+Bei er Berechnung der Hülle muss beachtet werden das alle Knoten welche auf der Hülle liegen betrachtet werden.
+Die \emph{convex\_hull} Funktion von Shapely liefert nur die Eckpunkte der Hülle. 
+Damit auch Punkte auf einer Graden zwischen zwei Eckpunkten betrachtet werden, muss nach der Berechnung der Convexen Hülle noch der Schnitt zwischen Convexer Hülle und allen Punkten berechnet werden.
+In diesem Schnitt sind dann alle Punkte enthalten welche auf der Hülle liegen.
+
+\subsection{Schnittkanten}
+Für die Schnittkanten wird ein Algorithmus basierend auf \emph{Rechts}-\emph{Linkskruven } verwendet.
+Für diesen ist notwendig das ein Vollständiger Graphe genutzt wird, da angenommen wird das zwischen allen Knoten eine Kante ist.
+Es wird iterativ jede Kante \(e_i\) (bestehend aus \(e_{i,1}\) und \(e_{i,2}\)) betrachtet.
+Dann werden zwei Knoten \(v_1\),\(v_2\) gesucht welche auf verschiedenen Seiten der Kante liegen.
+Also Dementsprechend zwischen \((e_{i,1}, e_{i,2},v_1)\) ist eine Rechtskurve und zwischen \((e_{i,1}, e_{i,2},v_2)\) eine Linkskurve.
+Anschließend muss bestätigt werden das \(e_{i,1}\) und \(e_{i,2}\) auf verschiedenen Seite der Kante liegen welche durch \(v_1\) und \(v_2\) gebildet wird.
+Sollten alle diese Bedingungen erfüllt werden ist die Kante (\(v_1\),\(v_2\)) eine Schnittkante von \(e_i\).
+TODO @Michael @Phillip sollte ich hier noch den Algorithmus in den Anhang als Psoudocode schreiben
+
+\subsection{Schnittkanten ausschließen}
+Um die Kanten zu finden bei denen die Schnittkanten zu viele Kanten ausschließen, wird jede Kante einzeln betrachtet.
+Für jede Kante wird folgender Algorithmsus aufgerufen:
+\begin{algorithm}[H]
+	\caption{EXCLUDE EDGE INTERSECTION(\(e\))}
+	\begin{algorithmic}[1]
+		\STATE erstelle \emph{Map} node\_count mit \emph{Key} Knoten und \emph{Value} Integer 
+		\FOR{\(e_{i} \in \intersection(e)\)}
+			\STATE seien \(v_1\) und \(v_2\) die Knoten von \(e_i\)
+			\STATE node\_count[\(v_1\)] += 1
+			\STATE node\_count[\(v_2\)] += 1
+		\ENDFOR
+		\FOR{\(v \in node\_count\)}
+			% \IF{\(\degree(v_1)\) - node\_count[\(v\)] > \(\degrees(v_1)\)}
+			\IF{\(\degree(v_1) - \text{node\_count[}v\text{]} > \degrees(v_1)\)}
+				\RETURN \emph{False}
+			\ENDIF
+		\ENDFOR
+		\RETURN \emph{True}
+	\end{algorithmic}
+\end{algorithm}
+
+\subsection{Kanten Theoretisch ausschließen}
+Damit Kanten ausgeschlossen werden können muss zunächst die Instanz mit einem beliebigen Lösungsansatz gelöst werden.
 Von diesen gefundenen Kanten wird jetzt ein Prozentsatz zufällig ausgewählt.
 Diese Kanten können sicher fixiert werden.
 Für ausschließbare Kanten werden alle Kanten betrachtet welche nicht genutzt wurden.
@@ -142,32 +191,9 @@ Sollte es nur eine Lösung geben, kann angenommen werden das die Kanten sicher a
 Sollte es mehr als eine Lösung geben werden diese ausgewählten Kanten nacheinander bei einem Solver verboten.
 Sollte der Solver mit dieser ausgeschlossenen Kante keine Lösung mehr finden, wird die Kante als ausschließbar markiert.
 
-\section{Allgemeine Implementierung}
-\begin{itemize}
-	\item Erklären wie Schnittkanten gefunden werden
-	\begin{itemize}
-		\item Algo von Michael einfügen
-		\item Sagen das in C++ implementiert und in python aufgerufen
-		\item in Python cached für weitere Aufrufe
-	\end{itemize}
-	\item Networkx um Ausgehende Kanten eines Knotens zu bekommen
-	\item Konvexe Hülle Betrachten das Knoten auf der Hülle mit betrachtet werden müssen
-	\item Kanten ausschließen mit Halbieren
-	\begin{itemize}
-		\item Alle zweierkombinationen der Hülle durchgehen
-		\item mit shapley Knoten finden welche in der betrachteten Hälfte liegen
-	\end{itemize}
-	\item Kanten ausschließen mit Schnittkanten
-	\begin{itemize}
-		\item als Algo
-	\end{itemize}
-	\item Theoretische kanten ausschließen verschieben
-\end{itemize}
 
-\section{Implementierung der Kanten Formulierung}
-Für alle Solver wird angenommen das \(V\) die Menge aller Knoten und \(E\) die Menge aller möglicher Kanten sei. Also Kanten die keine Punkte schneiden.
-Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
-Diese Variable ist wahr wenn die Kante \(e\) in der Triangulation enthalten ist.
+
+
 
 \subsubsection{OrTools und Gurobi}
 Da OrTools und Gurobi eine ähnliche Art der Formulierung verwenden werden sie hier zusammengefasst.
@@ -274,7 +300,7 @@ Diese wird durch ein klassisches Triangulationsverfahren erzeugt.
 Anschließend werden maximal \(k\) Flips durchgeführt. 
 Ziel ist es, die Gradbeschränkung zu erfüllen. 
 
-Zunächst wird mit dem Algorithmus~\cref{algo:choose_edge} eine Kante ausgewählt. 
+Zunächst wird mit dem~\cref{algo:choose_edge} eine Kante ausgewählt. 
 Diese soll geflippt werden. 
 Der Algorithmus versucht, eine Kante zu finden, deren Knoten nicht den Sollgrad erfüllen. 
 Zusätzlich wird über den Parameter \(p\) eine Wahrscheinlichkeit eingeführt. 
@@ -302,6 +328,7 @@ Nach jedem Flip wird überprüft, ob die Gradbeschränkung für alle Knoten erf�
 		\RETURN e
 	\end{algorithmic}
 \end{algorithm}
+
 \subsection{OrTools mit Zielfunktion}
 \label{sec:ortools_heu}
 
