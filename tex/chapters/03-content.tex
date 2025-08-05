@@ -1,6 +1,5 @@
 \chapter{Theoretisch Hintergrund}
 \section{Solver}
-\subsection{Solver arten}
 In dieser Arbeit werden drei verschiedene Solver verwendet
 PySat, OrTools und Gurobi.
 
@@ -27,8 +26,9 @@ Gurobi ist kostenpflichtig, bietet jedoch eine kostenlose Lizenz für Forschung 
 
 % TODO fühlt sich nicht sehr Technisch an aber ich weiß nicht was ich noch schreiben soll oder wo ich nachschauen kann.
 
-\subsection{Kanten Formulierung}
+\section{Kanten Formulierung}
 Es gibt zwei notwendige Beschränkungen für eine gradbeschränkte Triangulation.
+\subsubsection{notwendig Beschränkungen}
 Die erste Beschränkung ist die Überschneidungsbeschränkung.
 Eine Triangulation darf keine Überschneidungen enthalten.
 Dafür werden alle Kantenpaare berechnet, die sich schneiden.
@@ -53,28 +53,15 @@ Die Anzahl der Kanten kann in folgender Formel genutzt werden, um die Gradbeschr
 \text{Anzahl Kanten} \cdot 2 \overset{!}{=} \sum \degrees(i)
 \]
 
-Alle weiteren Beschränkungen sind optional.
-Sie sind Möglichkeiten, die Laufzeit des Solvers zu verbessern.
+
+\subsubsection{Kanten Fixieren/Ausschluss}
 Die erste und naheliegende Beschränkung ist die \emph{fixierte Hülle} Beschränkung.
 Hierbei werden die Kanten der konvexen Hülle immer hinzugefügt.
 Diese dürfen hinzugefügt werden, da sie keine Schnittkanten besitzen.
 Sie dürfen auch die Gradbeschränkung nicht verletzen.
 Andernfalls wäre der Graph nicht maximal und somit keine Triangulation.
 
-Eine andere mögliche Beschränkung ist die \emph{alternative Kanten} Beschränkung.
-Diese wurde von Sándor P. Fekete et.al.~\cite{Exact_Algorithms_for_Minimum_Dilation_Triangulation} übernommen.
-\begin{figure}[htb]
-\centering
-\includegraphics[scale=0.5]{all_edges.pdf}
-\caption{Ein Vollständiger Graph mit allen möglichen Triangulation. Die Kanten \(e_2\) und \(e_3\) sind Schnittkanten von \(e_1\). Es ist zu sehen das \(e_1\) oder eine der Schnittkanten aktiv sein muss damit eine Triangulation möglich ist.} 
-\label{fig:allEdges}
-\end{figure}
-Diese Beschränkung nutzt aus das der Graph maximal sein muss.
-Damit dies der Fall sein kann muss für jede Kante gelten das entweder die Kante aktiv ist oder eine der Schnittkanten aktiv ist.
-Wie man in~\cref{fig:allEdges} sieht, ist \(e_1\) die ausgewählte Kante und \(e_2\) und \(e_3\) die Schnittkanten.
-Weiter unten im Bild ist zu sehen das alle möglichen Triangulation mindestens eine der drei Kanten verwendet.
-Zu beachten ist allerdings das die Anzahl der Schnittkanten nicht gleich eins gesetzt werden darf sondern nur auf mindestens eine.
-Wie man in~\cref{fig:allEdges} sieht können die Kanten \(e_2\) und \(e_3\) gleichzeitig aktiv sein.
+
 
 Eine weitere optionale Beschränkung ist zuvor berechnete Kanten zu fixieren oder auszuschließen.
 \begin{figure}[htb]
@@ -133,12 +120,28 @@ Mit den bisher genannten Beschränkungen können nicht viele Kanten ausgeschloss
 Es kann also nicht betrachtet werden welchen Einfluss große Mengen von ausgeschlossenen oder fixierten Kanten auf die Laufzeit haben.
 Daher werden für einzelne Instanzen Kanten berechnet welche sicher ausgeschlossen oder fixiert werden können.
 
-\section{Implementierung der Kanten Formulierung}
+\subsubsection{\emph{alternative Kanten}}
+Eine andere mögliche Beschränkung ist die \emph{alternative Kanten} Beschränkung.
+Diese wurde von Sándor P. Fekete et.al.~\cite{Exact_Algorithms_for_Minimum_Dilation_Triangulation} übernommen.
+\begin{figure}[htb]
+\centering
+\includegraphics[scale=0.5]{all_edges.pdf}
+\caption{Ein Vollständiger Graph mit allen möglichen Triangulation. Die Kanten \(e_2\) und \(e_3\) sind Schnittkanten von \(e_1\). Es ist zu sehen das \(e_1\) oder eine der Schnittkanten aktiv sein muss damit eine Triangulation möglich ist.} 
+\label{fig:allEdges}
+\end{figure}
+Diese Beschränkung nutzt aus das der Graph maximal sein muss.
+Damit dies der Fall sein kann muss für jede Kante gelten das entweder die Kante aktiv ist oder eine der Schnittkanten aktiv ist.
+Wie man in~\cref{fig:allEdges} sieht, ist \(e_1\) die ausgewählte Kante und \(e_2\) und \(e_3\) die Schnittkanten.
+Weiter unten im Bild ist zu sehen das alle möglichen Triangulation mindestens eine der drei Kanten verwendet.
+Zu beachten ist allerdings das die Anzahl der Schnittkanten nicht gleich eins gesetzt werden darf sondern nur auf mindestens eine.
+Wie man in~\cref{fig:allEdges} sieht können die Kanten \(e_2\) und \(e_3\) gleichzeitig aktiv sein.
+
+\subsection{Implementierung der Kanten Formulierung}
 Für alle Solver wird angenommen das \(V\) die Menge aller Knoten und \(E\) die Menge aller möglicher Kanten sei. Also Kanten die keine Punkte schneiden.
 Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
 Diese Variable ist wahr wenn die Kante \(e\) in der Triangulation enthalten ist.
 
-\subsection{Graph operationen}
+\subsubsection{Graph operationen}
 Alle Kanten werden mit der Bibliothek \emph{Networkx} verwaltet.
 Mit dieser können auch einfach die Ausgehenden Kanten eines Knotens abgefragt werden.
 Beim Erstellen der Kanten muss getestet werden ob die Kanten keinen Knoten Schneiden.
@@ -148,7 +151,7 @@ Die \emph{convex\_hull} Funktion von Shapely liefert nur die Eckpunkte der Hüll
 Damit auch Punkte auf einer Graden zwischen zwei Eckpunkten betrachtet werden, muss nach der Berechnung der Convexen Hülle noch der Schnitt zwischen Convexer Hülle und allen Punkten berechnet werden.
 In diesem Schnitt sind dann alle Punkte enthalten welche auf der Hülle liegen.
 
-\subsection{Schnittkanten}
+\subsubsection{Schnittkanten}
 Für die Schnittkanten wird ein Algorithmus basierend auf \emph{Rechts}-\emph{Linkskruven } verwendet.
 Für diesen ist notwendig das ein Vollständiger Graphe genutzt wird, da angenommen wird das zwischen allen Knoten eine Kante ist.
 Es wird iterativ jede Kante \(e_i\) (bestehend aus \(e_{i,1}\) und \(e_{i,2}\)) betrachtet.
@@ -158,7 +161,7 @@ Anschließend muss bestätigt werden das \(e_{i,1}\) und \(e_{i,2}\) auf verschi
 Sollten alle diese Bedingungen erfüllt werden ist die Kante (\(v_1\),\(v_2\)) eine Schnittkante von \(e_i\).
 TODO @Michael @Phillip sollte ich hier noch den Algorithmus in den Anhang als Psoudocode schreiben
 
-\subsection{Schnittkanten ausschließen}
+\subsubsection{Schnittkanten ausschließen}
 Um die Kanten zu finden bei denen die Schnittkanten zu viele Kanten ausschließen, wird jede Kante einzeln betrachtet.
 Für jede Kante wird folgender Algorithmsus aufgerufen:
 \begin{algorithm}[H]
@@ -180,7 +183,7 @@ Für jede Kante wird folgender Algorithmsus aufgerufen:
 	\end{algorithmic}
 \end{algorithm}
 
-\subsection{Kanten Theoretisch ausschließen}
+\subsubsection{Kanten Theoretisch ausschließen}
 Damit Kanten ausgeschlossen werden können muss zunächst die Instanz mit einem beliebigen Lösungsansatz gelöst werden.
 Von diesen gefundenen Kanten wird jetzt ein Prozentsatz zufällig ausgewählt.
 Diese Kanten können sicher fixiert werden.
@@ -245,25 +248,37 @@ x_e \lor \bigvee_{e_j \in I(e)} x_{e_j} \qquad \forall e \in E
 
 
 
-\subsection{Dreieck Formulierung}
-\begin{itemize}
-	\item Alle möglichen Dreiecke erstellen
-	\item jedes Dreieck als Bool Variable
-	\item Überschneidung können sich überschneidene Dreiecke verwendet werden
-	\begin{itemize}
-		\item Sehr langam und schwer zu berechnen
-	\end{itemize}
-	\item Für grad können Sollgrad gleich dreieck anzahl und hülle sollgrad mindus eins
-	\begin{itemize}
-		\item vlt zeigen an einem Bild
-	\end{itemize}
-	\item exclude edges dreiecke verbieten welche exclude edges nutzen
-\end{itemize}
-\subsubsection{OrTools/Gurobi}
-\begin{itemize}
-	\item implementiert äguivalten zu Kanten
-	\item TODO kann man genau noch mal erklären gucken ob relevant weil Dreiecke schlecht wirken
-\end{itemize}
+\section{Dreieck Formulierung}
+Bei der Dreiecksformulierung wird nicht jeder Kante eine Variable zugeordnet. 
+Stattdessen erhält jedes mögliche Dreieck eine eigene Variable.
+Die Überschneidungsbedingung kann wie bei der Kantenformulierung übernommen werden, da die Variablen entsprechend angepasst wurden.
+Auch die Gradbeschränkung kann aus der Kantenformulierung übernommen werden.
+Lediglich die Knoten auf der Hülle müssen gesondert betrachtet werden.
+Für diese Knoten muss der Sollgrad um eins reduziert werden, da ein Dreieck am Rand beide Kanten stellt.
+Auch bei der Dreiecksformulierung können Dreiecke ausgeschlossen werden.
+Dafür können die gleichen Bedingungen wie beim Ausschluss von Kanten verwendet werden.
+Es werden dann alle Dreiecke ausgeschlossen, die eine ausgeschlossene Kante enthalten.
+
+\subsection{Implementierung der Dreiecksformulierung}
+Die Implementierung der Dreiecke kann in weiten Teilen von der Implementierung der Kanten übernommen werden.
+Angepasst werden müssen lediglich die Berechnung der Dreiecke, deren Überschneidung sowie die Bestimmung aller Dreiecke, die einen bestimmten Knoten enthalten.
+
+Zur Erstellung aller Dreiecke werden zunächst alle möglichen Kanten hinzugefügt. 
+Es werden also wieder alle Kanten betrachtet, die keinen Knoten schneiden.
+Anschließend werden alle Knoten nacheinander durchlaufen.
+Für jeden Knoten werden alle Nachbarn bestimmt und mit diesen Nachbarn alle möglichen Zweierkombinationen gebildet.
+Wenn eine dieser Zweierkombinationen eine Kante besitzt, wird ein Dreieck erstellt.
+Für eine Triangulation sind jedoch nur die Dreiecke relevant, die keine weiteren Knoten enthalten.
+Es werden daher nur die Dreiecke gespeichert, die keine zusätzlichen Knoten enthalten.
+Zusätzlich wird darauf geachtet das jedes Dreieck nur einmal gespeichert wird, da mit dieser Methode jedes Dreieck theoretisch bis zu drei Mal betrachtet werden kann.
+
+Die Überschneidung wird mit der \emph{Shapely} Bibliothek berechnet.
+Dafür werden alle Dreiecke paarweise verglichen.
+Sie müssen sich überschneiden, dürfen sich jedoch nicht nur berühren.
+
+Die Formulierungen für OrTools, Gurobi und PySat können analog zur Kantenformulierung umgesetzt werden.
+
+TODO @Michael @Phillip Sollte ich hier erwähnen, dass ich dies auch mit CGAL implementiert habe, es jedoch langsamer ist?
 
 \section{Optimierungsproblem}
 \begin{itemize}
