@@ -65,9 +65,9 @@ Eine andere mögliche Beschränkung ist die \emph{alternative Kanten} Beschränk
 Diese wurde von Sándor P. Fekete et.al.~\cite{Exact_Algorithms_for_Minimum_Dilation_Triangulation} übernommen.
 \begin{figure}[htb]
 \centering
-\label{fig:allEdges}
 \includegraphics[scale=0.5]{all_edges.pdf}
-\caption{Ein Vollständiger Graph mit allen möglichen Triangulation. Die Kanten \(e_2\) und \(e_3\) sind Schnittkanten von \(e_1\).}
+\caption{Ein Vollständiger Graph mit allen möglichen Triangulation. Die Kanten \(e_2\) und \(e_3\) sind Schnittkanten von \(e_1\). Es ist zu sehen das \(e_1\) oder eine der Schnittkanten aktiv sein muss damit eine Triangulation möglich ist.} 
+\label{fig:allEdges}
 \end{figure}
 Diese Beschränkung nutzt aus das der Graph maximal sein muss.
 Damit dies der Fall sein kann muss für jede Kante gelten das entweder die Kante aktiv ist oder eine der Schnittkanten aktiv ist.
@@ -80,8 +80,8 @@ Eine weitere optionale Beschränkung ist zuvor berechnete Kanten zu fixieren ode
 \begin{figure}[htb]
 \centering
 \includegraphics[scale=0.7]{exclude_edges/ecludegrade2.pdf}
+\caption{Abhängig von dem Sollgrad von \(v_2\) kann entschieden werden ob \(e_1\) aktiv oder nicht aktiv sein muss. Sollte \(\degrees(v_2) = 2\) sein, dann muss \(e_1\) aktiv sein damit alle Kanten wie \(e_2\) nicht aktiv sein können. Sollte \(\degrees(v_2) > 2\) sein, dann muss \(e_1\) nicht aktiv sein damit der Sollgrad erreicht werden kann.}
 \label{fig:excludeGrad2}
-\caption{Ein Ausschnitt der Hülle}
 \end{figure}
 Eine Möglichkeit um Kanten zu fixieren ist es immer drei aufeinander folgende Knoten der Hülle zu betrachten.
 Ein mögliches Beispiel ist in~\cref{fig:excludeGrad2} zu sehen.
@@ -141,6 +141,28 @@ Nun muss unterschieden werden wie viele Lösungen die Instanz hat.
 Sollte es nur eine Lösung geben, kann angenommen werden das die Kanten sicher ausgeschlossen werden können.
 Sollte es mehr als eine Lösung geben werden diese ausgewählten Kanten nacheinander bei einem Solver verboten.
 Sollte der Solver mit dieser ausgeschlossenen Kante keine Lösung mehr finden, wird die Kante als ausschließbar markiert.
+
+\section{Allgemeine Implementierung}
+\begin{itemize}
+	\item Erklären wie Schnittkanten gefunden werden
+	\begin{itemize}
+		\item Algo von Michael einfügen
+		\item Sagen das in C++ implementiert und in python aufgerufen
+		\item in Python cached für weitere Aufrufe
+	\end{itemize}
+	\item Networkx um Ausgehende Kanten eines Knotens zu bekommen
+	\item Konvexe Hülle Betrachten das Knoten auf der Hülle mit betrachtet werden müssen
+	\item Kanten ausschließen mit Halbieren
+	\begin{itemize}
+		\item Alle zweierkombinationen der Hülle durchgehen
+		\item mit shapley Knoten finden welche in der betrachteten Hälfte liegen
+	\end{itemize}
+	\item Kanten ausschließen mit Schnittkanten
+	\begin{itemize}
+		\item als Algo
+	\end{itemize}
+	\item Theoretische kanten ausschließen verschieben
+\end{itemize}
 
 \section{Implementierung der Kanten Formulierung}
 Für alle Solver wird angenommen das \(V\) die Menge aller Knoten und \(E\) die Menge aller möglicher Kanten sei. Also Kanten die keine Punkte schneiden.
@@ -452,8 +474,8 @@ Dies lässt sich als Baum darstellen (siehe~\cref{fig:sat_tree}).
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=1\linewidth]{figures/sat_tree.png}
+	\caption{Ein Baum welcher die Möglichen Entscheidungen eines SAT-Solvers darstellt. Jeder Ast entspricht Belegungen der Literale}
 	\label{fig:sat_tree}
-	\caption{Enter Caption}
 \end{figure}
 Das Besondere am CDCL-Ansatz ist, dass nicht die Äste iterativ abgearbeitet werden, sondern dass es einen Pfad gibt.
 Der Pfad ist eine aktuelle Teilbelegung der Literale. Theoretisch entspricht dies einem Ast im Baum, aber die Auswahl der Belegung basiert nicht direkt auf dem Baum.
