@@ -281,11 +281,16 @@ Die Formulierungen für OrTools, Gurobi und PySat können analog zur Kantenformu
 TODO @Michael @Phillip Sollte ich hier erwähnen, dass ich dies auch mit CGAL implementiert habe, es jedoch langsamer ist?
 
 \section{Optimierungsproblem}
-\begin{itemize}
-	\item eine Triangulation erstellen
-	\item den sollGrad möglichst richtig
-	\item Werden mit folgender Formel bewertet
-\end{itemize}
+Im Gegensatz zu den vorherigen Ansätzen wird das Problem in diesem Abschnitt nicht als Entscheidungsproblem betrachtet sondern als Optimierungsproblem.
+Dafür wurde die Formel~\eqref{eq:total_evaluation} eingeführt.
+Diese Formel bewertet wie weit die durchschnittliche Gradabweichung von der Sollgradbeschränkung entfernt ist.
+Es werden drei Ansätze vorgestellt.
+Der erste ist ein naiver Ansatz der versucht mit Flips die Gradbeschränkung zu erreichen.
+Die anderen beiden Ansätze verwenden OrTools.
+Hierbei können die Beschränkungen aus der oben beschriebenen Kantenformulierung übernommen werden.
+Nur die Gradbeschränkung wird durch eine Zielfunktion ersetzt.
+Zum einen wird als Zielfunktion die Evaluation~\eqref{eq:total_evaluation} genutzt.
+Der andere Ansatz versucht die maximale Gradabweichung zu minimieren.
 
 \begin{align}
  \text{diff}_i &= \left| \degrees(i) - \degree(i) \right| \label{eq:difference} \\
@@ -344,21 +349,7 @@ Nach jedem Flip wird überprüft, ob die Gradbeschränkung für alle Knoten erf�
 	\end{algorithmic}
 \end{algorithm}
 
-\subsection{OrTools mit Zielfunktion}
-\label{sec:ortools_heu}
-
-Bei dieser Heuristik wird der OrTools-Solver von Google verwendet.
-Der Vorteil dieses Solvers ist, dass nur wenige Beschränkungen vorgegeben werden müssen. Der Solver sucht dann eigenständig eine Lösung.
-In diesem Fall wird eine Überschneidungsbeschränkung vorgegeben. Zusätzlich wird eine Zielfunktion definiert, welche die Evaluation~\eqref{eq:total_evaluation} maximiert.
-
-Im ersten Schritt werden die Kantenvariablen definiert.
-Für jede Kante \(e\) wird eine boolesche Variable \(x_e\) erstellt.
-Für die Überschneidungsbeschränkung wird die Funktion \emph{add\_at\_most\_one} von OrTools verwendet.
-Diese Funktion wird mit den folgenden Variablenpaaren aufgerufen.
-\[
-	( x_{e_1}, x_{e_2}) \hspace{3cm} \forall e_1, e_2 \in E. e_2 \in \intersection(e_1)
-\]
-
+\subsection{OrTools mit Durchschnitts Abweichung}
 Für die Zielfunktion wird eine Funktion erstellt, die der Gleichung~\eqref{eq:total_evaluation} ähnelt.
 Die Teiler in~\eqref{eq:total_evaluation} und~\eqref{eq:evaluation} werden entfernt. Diese sind für die Maximierung nicht relevant.
 Da OrTools keine Betragsfunktion in Formeln erlaubt, muss die Funktion \emph{AddAbsEquality} verwendet werden.
@@ -396,13 +387,6 @@ zusammengefasst bekommen wir folgende Bedingungen
 	Q_T &= \sum e_i 
 \end{align*}
 Als Zielfunktion wird dann \(Q_T\) maximiert.
-
-% Theoretische könnte man eine Minimierung auch mit folgenden Bedingungen darstellen
-% \begin{align*}
-% 	min_i &\leq a \\
-% 	min_i &\leq b	
-% \end{align*}
-% aber OrTools nutzt den Umweg über die Maximierung.
 
 \section{Instanzen Generation}
 \subsection{Ja - Instanzen}
