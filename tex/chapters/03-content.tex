@@ -25,7 +25,7 @@ Es werden ebenfalls Modellierungen wie LP, MIP und quadratische Programmierung (
 Auch hier wird eine Schnittstelle für Python bereitgestellt.
 Gurobi ist kostenpflichtig, bietet jedoch eine kostenlose Lizenz für Forschung an.
 
-TODO fühlt sich nicht sehr Technisch an aber ich weiß nicht was ich noch schreiben soll oder wo ich nachschauen kann.
+% TODO fühlt sich nicht sehr Technisch an aber ich weiß nicht was ich noch schreiben soll oder wo ich nachschauen kann.
 
 \subsection{Kanten Formulierung}
 Es gibt zwei notwendige Beschränkungen für eine gradbeschränkte Triangulation.
@@ -33,7 +33,7 @@ Die erste Beschränkung ist die Überschneidungsbeschränkung.
 Eine Triangulation darf keine Überschneidungen enthalten.
 Dafür werden alle Kantenpaare berechnet, die sich schneiden.
 Von jedem dieser Paare darf nur eine Kante aktiv sein.
-TODO Algorithmus erklären oder darauf verweisen.
+% TODO Algorithmus erklären oder darauf verweisen.
 Die Schnittpaare werden mit dem Algorithmus berechnet.
 
 Die zweite Beschränkung ist die Gradbeschränkung.
@@ -167,8 +167,10 @@ Die Überschneidungsbeschränkung kann sehr ähnlich mit folgender Formel umgese
 \neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E: e_2 \in \intersection(e_1)
 \]
 Für die Gradbeschränkung ist das Problem das bei PySat für eine Menge von Variablen nicht festgelegt werden kann wie viele von ihnen wahr sein müssen.
-Dies kann allerdings mit folgendem Verfahren gelöst werden.
-TODO rausfinden wie das geht
+Von den verschiedenen Kardinalitätscodierungen die PySat anbietet kommen für die Gradbeschränkung nur \emph{sequential counters}\cite{sequential_counters}, \emph{sorting networks}\cite{sorting_networks}, \emph{cardinality networks}\cite{cardinality_networks}, \emph{totalizer}\cite{totalizer}, \emph{modulo totalizer}\cite{modulo_totalizer} und \emph{modulo totalizer for k-cardinality}\cite{modulo_totalizer_for_k_cardinality} in Frage.
+Die Restlichen Codierungen bieten keine Möglichkeit um k-Kardinalitäten zu erzeugen. 
+Also das k viele Variablen wahr sind.
+TODO @Michael @Phillip sollte ich hier noch nennen wie der \emph{sequential counter} funktioniert weil dieser am Ende am besten ist. Ich müsste dann aus den Experimenten vorgreifen. Auch brauche ich Information nicht wirklich da ich PySat hier als Blackbox nutzen kann. 
 
 
 Die fixierung von Kanten kann analog wie in OrTools und Gurobi umgesetzt werden.
@@ -448,7 +450,7 @@ Für jedes belegte Literal muss eine Begründung angegeben werden. Diese Begrün
 Der Grundansatz zur Erweiterung des Pfades besteht darin, \emph{Unit-Klauseln} zu finden.
 Das sind Klauseln, in denen nur ein Literal noch nicht belegt ist und die Klausel nicht erfüllt ist.
 Zum Beispiel kann durch die Klausel \((\overline{x_1} \lor x_2 \lor \overline{x_3})\) und den Pfad \((\overline{x_2}, x_3)\) das Literal \(\overline{x_1}\) dem Pfad hinzugefügt werden. Die Klausel dient dabei als Begründung.
-TODO eventuell ergänzen, dass immer nur zwei Literale betrachtet werden
+% TODO eventuell ergänzen, dass immer nur zwei Literale betrachtet werden
 
 Sollten keine weiteren \emph{Unit-Klauseln} existieren, wird basierend auf Heuristiken ein Literal belegt.
 Bei dieser Art der Belegung wird intern vermerkt, dass eine neue Entscheidungsebene erreicht wurde.
@@ -484,16 +486,16 @@ Damit kann folgende Klausel erzeugt werden
 \[
 c' = (\overline{a_1} \lor \ldots \lor \overline{a_k} \lor \overline{r_1} \lor \ldots \lor \overline{r_k})
 \]
-Wobei \(c'\) mindestens eine Belegung aus der Entscheidungsebene \(d\) enthält.
+obei \(c'\) mindestens eine Belegung aus der Entscheidungsebene \(d\) enthält.
 Sollte es ein weiteres Literal außer \(a_i\) geben, das auf der Entscheidungsebene \(d\) belegt wurde, ist \(c'\) ebenfalls eine Konfliktklausel.
 In diesem Fall wird \(c'\) rekursiv so lange erzeugt bis es genau ein Literal \(\overline{x}\) gibt, das auf Entscheidungsebene \(d\) belegt wurde.
 Der rekursive Aufruf fügt dabei die Begründung des zweiten Literals aus Entscheidungsebene \(d\) ohne dieses Literal zu \(c'\) hinzu.
 Von den restlichen Literalen in \(c'\) wird dann die höchste Entscheidungsebene bestimmt und zu dieser zurückgekehrt.
 Anschließend wird \(\overline{x}\) dem aktuellen Pfad hinzugefügt und \(c'\) als Begründung für die Belegung verwendet.
-TODO als Bild veranschaulichen? keine Idee wie
+% TODO als Bild veranschaulichen? keine Idee wie
 
-TODO Gelernte Klauseln reduzieren vermutlich nicht relevant
-TODO Pfad zurücksetzen ohne Konflikt vermutlich nicht relevant
+% TODO Gelernte Klauseln reduzieren vermutlich nicht relevant
+% TODO Pfa4d zurücksetzen ohne Konflikt vermutlich nicht relevant
 
 
 
