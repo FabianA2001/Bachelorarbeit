@@ -103,16 +103,30 @@ Dabei sei \(V\) die Menge aller Knoten in der betrachteten Hälfte.
 Analog sei \(V_H \subseteq V\) die Menge der Knoten auf der Hülle. 
 
 \begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.35\linewidth]{figures/exclude_edges/exclude_edge_0.pdf}\hfill
-    \includegraphics[width=0.35\linewidth]{figures/exclude_edges/exclude_edge_1.pdf}
-    \caption{Zwei Teilinstanzen in welcher die rote Kante ausgeschlossen werden kann. Links da die Gradsumme die Anzahl der Kanten unterschreitet und rechts da der mittlere rote Knoten nicht genügend Kanten erzeugen könnte.}
+	\centering
+	\includegraphics[width=0.35\linewidth]{figures/exclude_edges/exclude_edge_0.pdf}\hfill
+	\includegraphics[width=0.35\linewidth]{figures/exclude_edges/exclude_edge_1.pdf}
+	\caption{Zwei Teilinstanzen in welcher die rote Kante ausgeschlossen werden kann. Links da die Gradsumme die Anzahl der Kanten unterschreitet und rechts da der mittlere rote Knoten nicht genügend Kanten erzeugen könnte.}
 	\label{fig:exclude_edges_first}
 \end{figure}
 
 Zwei Beispiele sind in~\cref{fig:exclude_edges_first} zu sehen.
 Dabei ist Links eine Teilinstanz in welcher die Anzahl der Kanten (\(28\)) größer ist als die Summe der Grade (\(27\)) ist.
 Auf der rechten Seite ist eine Teilinstanz in welcher der mittlere rote Knoten mit Grad \(5\) größer ist als die Anzahl der Knoten minus eins (\(3\)).
+
+Eine weitere Möglichkeit, Kanten auszuschließen, besteht darin, ihre Schnittkanten zu betrachten
+Wenn eine Kante \(e_1\) zu viele Kanten eines Knotens \(v_1\) blockiert, sodass dieser seinen Sollgrad nicht mehr erreichen kann, kann \(e_1\) ausgeschlossen werden
+
+\begin{figure}[htb]
+\centering
+\includegraphics[scale=0.8]{exclude_edges/exclude_edge_intersection.pdf}
+\caption{In der Abbildung hat der Knoten \(v_1\) einen Sollgrad von 3. Da die Kante \(e_1\) drei von fünf möglichen Kanten blockiert, kann \(v_1\) seinen Sollgrad nicht erreichen. Daher kann \(e_1\) ausgeschlossen werden}
+\label{fig:excludeEdgeIntersection}
+\end{figure}
+
+In~\cref{fig:excludeEdgeIntersection} ist zu erkennen, dass \(e_2\), \(e_3\) und \(e_4\) durch \(e_1\) blockiert werden
+Da \(v_1\) jedoch einen Sollgrad von 3 besitzt und nur 5 mögliche Kanten existieren, kann \(v_1\) mit aktiver Kante \(e_1\) seinen Sollgrad nicht erreichen
+
 
 Die nächste Bedingung ist nur ein theoretischer Test.
 Mit den bisher genannten Beschränkungen können nicht viele Kanten ausgeschlossen werden.
