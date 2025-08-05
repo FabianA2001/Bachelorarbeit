@@ -8,7 +8,7 @@ from dc_triangulation import (
     Run_Algbench,
 )
 
-TIMEOUT = 300
+TIMEOUT = 40
 path = os.path.join(os.path.dirname(__file__), "instances")
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module

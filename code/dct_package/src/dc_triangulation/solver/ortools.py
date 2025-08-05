@@ -50,7 +50,12 @@ class Save_State_Of_Solution(cp_model.CpSolverSolutionCallback):
             if self.BooleanValue(var):
                 active_edges.append(edge)
 
-        self.stats.append((time.time(), active_edges))
+        state = {}
+        state["timestamp"] = time.time()
+        state["active_edges"] = active_edges
+        state["objective_value"] = self.ObjectiveValue()
+        state["best_objective_bound"] = self.best_objective_bound
+        self.stats.append(state)
 
 
 class Ortools(Solver):

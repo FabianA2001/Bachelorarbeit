@@ -19,7 +19,9 @@ figure_path = os.path.join(os.path.dirname(__file__), "figures")
 HOST = ["algry01", "algry02", "algry03", "algry04"]
 
 
-def eval_inst_file(table: pd.DataFrame) -> list[tuple[int, float]]:
+def eval_inst_file(
+    table: pd.DataFrame,
+) -> list[dict[str, float | list[tuple[int, int]]]]:
     assert not table.empty, (
         "Die Tabelle ist leer. Bitte überprüfen Sie die Eingabedaten."
     )
@@ -28,25 +30,29 @@ def eval_inst_file(table: pd.DataFrame) -> list[tuple[int, float]]:
     assert type(solution) is dict
     solve_start = solution.get("start_solve", None)
     assert solve_start is not None, "start_solve fehlt in der Lösung."
-    stats = solution.get("stats", None)
+    stats: None | list[dict[str, float | list[tuple[int, int]]]] = solution.get(
+        "stats", None
+    )
     assert stats is not None, "stats fehlen in der Lösung."
     assert type(stats) is list, "stats sollte eine Liste sein."
     nodes = load_nodes_from_json(
         os.path.join(path, table["instance"].iloc[0], f"{table['file'].iloc[0]}.json")
     )
-    result = []
-    for timestamp, value in stats:
+    for value in stats:
         graph = Graph_Wrapper(nodes)
-        for edge in value:
+        for edge in value["active_edges"]:
             graph.add_edge(edge[0], edge[1])
         eval = graph.evaluate()
         # graph.name = table["instance_file"].iloc[0]
         # graph.show_and_save(show=False, save=figure_path)
-        result.append((timestamp - solve_start, eval))
-    return result
+        value["start_time"] = value["timestamp"] - solve_start
+        value["eval"] = eval
+    return stats
 
 
-def draw_instance(instanz: str, data: list[tuple[str, list[tuple[int, float]]]]):
+def draw_instance(
+    instanz: str, data: list[tuple[str, list[dict[str, float | list[tuple[int, int]]]]]]
+) -> None:
     """
     Erstellt ein Liniendiagramm für eine Instanz mit mehreren instance_files.
 
@@ -56,10 +62,13 @@ def draw_instance(instanz: str, data: list[tuple[str, list[tuple[int, float]]]])
     """
     plt.figure(figsize=(10, 6))
 
-    for instance_file, time_value_pairs in data:
-        if time_value_pairs:  # Nur plotten wenn Daten vorhanden sind
-            times = [t for t, v in time_value_pairs]
-            values = [v for t, v in time_value_pairs]
+    for instance_file, value in data:
+        if value:  # Nur plotten wenn Daten vorhanden sind
+            times = []
+            values = []
+            for entry in value:
+                times.append(entry["start_time"])
+                values.append(entry["eval"])
             plt.plot(times, values, label=instance_file, marker="o")
 
     plt.xlabel("Zeit")
