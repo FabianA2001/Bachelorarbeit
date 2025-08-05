@@ -624,13 +624,14 @@ class Run_Algbench:
     def add_entrys(
         self,
         key: str,
+        number_runs: int = NUMBER_RUNS_FOR_AVG,
     ):
         solver, nodes, possible, inst, file_name = self.get_solver_inst_from_runlist[
             key
         ]
         parameters = self.outer_parameter[solver]
         for parameter in parameters:
-            for _ in range(NUMBER_RUNS_FOR_AVG):
+            for _ in range(number_runs):
                 run_seed = int(uuid.uuid4())
                 random.seed(run_seed)  # Seed für Reproduzierbarkeit
                 random.shuffle(nodes)  # Zufällige Reihenfolge der Knoten

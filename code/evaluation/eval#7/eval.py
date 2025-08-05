@@ -5,7 +5,6 @@ from dataclasses import asdict
 import slurminade
 from dc_triangulation import (
     SAT,
-    Graph_Wrapper,
     Gurobi,
     Gurobi_Parameter,
     Ortools,
@@ -16,10 +15,10 @@ from dc_triangulation import (
 
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
-NUMBER_RUNS = 5
+NUMBER_SOLVER_RUNS = 5
 
 outer_parameter = defaultdict(list)
-for i in range(NUMBER_RUNS):
+for i in range(NUMBER_SOLVER_RUNS):
     sat_args = asdict(SAT_Parameter(intersection=True, degree_exact=True, run_num=i))
     outer_parameter[SAT].append({"timeout": TIMEOUT, "args": sat_args})
 
@@ -39,20 +38,7 @@ RI = Run_Algbench(
 
 @slurminade.slurmify()
 def run_solver_on_inst(key: str):
-    solver, nodes, possible, inst, file_name = RI.get_solver_inst_from_runlist[key]
-    parameters = RI.outer_parameter[solver]
-    for parameter in parameters:
-        graph = Graph_Wrapper(nodes)
-        RI.benchmark.add(
-            RI.create_benchmark_entry,
-            solver_name=solver.NAME,
-            parameter=parameter,
-            instance_name=inst,
-            file_name=file_name,
-            _possible=possible,
-            _solver_type=solver,
-            _graph=graph,
-        )
+    RI.add_entrys(key, number_runs=1)
 
 
 @slurminade.slurmify(mail_type="ALL")

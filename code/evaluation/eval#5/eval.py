@@ -2,12 +2,12 @@ import os
 from dataclasses import asdict
 
 import slurminade
-from dc_triangulation import SAT, Graph_Wrapper, Run_Algbench, SAT_Parameter
+from dc_triangulation import SAT, Run_Algbench, SAT_Parameter
 
 asdict
 TIMEOUT = 300
-path = os.path.join(os.path.dirname(__file__), "instances")
-# path = os.path.join(os.path.dirname(__file__), "instances_backup")
+# path = os.path.join(os.path.dirname(__file__), "instances")
+path = os.path.join(os.path.dirname(__file__), "instances_30")
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
 outer_parameter = {
@@ -136,20 +136,7 @@ RI = Run_Algbench(
 
 @slurminade.slurmify()
 def run_solver_on_inst(key: str):
-    solver, nodes, possible, inst, file_name = RI.get_solver_inst_from_runlist[key]
-    parameters = RI.outer_parameter[solver]
-    for parameter in parameters:
-        graph = Graph_Wrapper(nodes)
-        RI.benchmark.add(
-            RI.create_benchmark_entry,
-            solver_name=solver.NAME,
-            parameter=parameter,
-            instance_name=inst,
-            file_name=file_name,
-            _possible=possible,
-            _solver_type=solver,
-            _graph=graph,
-        )
+    RI.add_entrys(key)
 
 
 @slurminade.slurmify(mail_type="ALL")
@@ -169,7 +156,7 @@ if __name__ == "__main__":
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
         )
         run_list = RI.get_run_list()
-        with slurminade.JobBundling(max_size=10):
+        with slurminade.JobBundling(max_size=3):
             for key in run_list:
                 run_solver_on_inst.distribute(key)
 
