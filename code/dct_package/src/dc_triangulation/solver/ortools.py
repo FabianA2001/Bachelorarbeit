@@ -131,6 +131,22 @@ class Ortools(Solver):
             evaluation += x
         self.model.Maximize(evaluation)
 
+    def evaluation_max_min(self):
+        nodes = self.graph.get_all_nodes()
+        var_max_min = self.model.NewIntVar(0, len(nodes), "max_min")
+        self.model.Add(var_max_min >= 0)
+        for node in nodes:
+            desired_degree = self.graph.get_desired_degree_node(node)
+            degree = sum(
+                self.vars[(min(edge[0], edge[1]), max(edge[0], edge[1]))]
+                for edge in self.graph.get_edges_of_node(node)
+            )
+            max_degree = self.graph.get_max_degree
+            abs_diff = self.model.NewIntVar(0, max_degree, "abs_diff")
+            self.model.AddAbsEquality(abs_diff, degree - desired_degree)
+            self.model.Add(abs_diff <= var_max_min)
+        self.model.Minimize(var_max_min)
+
     def fix_edges_constraint(self):
         for edge in self.graph.fix_edges:
             if edge not in self.vars:
@@ -181,6 +197,15 @@ class Ortools(Solver):
             if timeout == -1:
                 self.logger.warning("Es sollte ein Timeout gesetzt werden.")
             self.add_time(self.evaluation_direction)()
+            stop_after_first_solution = False
+
+        # HACK Das ist unfassbar dumm. Ich würde die Flag gerne umbenennen von degree_direction zu min_max_direction,
+        # aber dann müsste ich in den Evaluationen die schon gelaufen sind die Flag auch umbennen da die mit der ganzen Parameter Klasse identifiziert werden.
+        # es ist einfach die Flag einfach so zu lassen
+        if parameter_data.degree_direction:
+            if timeout == -1:
+                self.logger.warning("Es sollte ein Timeout gesetzt werden.")
+            self.add_time(self.evaluation_max_min)()
             stop_after_first_solution = False
 
         return stop_after_first_solution

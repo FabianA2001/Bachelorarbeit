@@ -114,9 +114,10 @@ def ortools_algorithm(graph):
         # degree=True,
         # fix_hull=True,
         # all_edges=True,
+        # degree_direction=True,
         evaluation_direction=True,
         # exclude_edges=True,
-        save_state_after_solution=True,
+        # save_state_after_solution=True,
     )
     logging.info(
         f"solution found: {solver.solve({'timeout': 50, 'args': asdict(para)})}"
@@ -179,6 +180,11 @@ def gurobi_algorithm(graph):
     logging.info(
         f"solution found: {solver.solve({'timeout': 300, 'args': asdict(para)})}"
     )
+
+
+def raw_flips_algorithm(graph):
+    solver = Raw_Flips(graph)
+    logging.info(f"solution found: {solver.solve({'timeout': 50})}")
 
 
 def cadical_algorithm(graph, nodes=None):
@@ -263,7 +269,7 @@ def show_all_instanzes():
 
 def run_algo():
     # PATH = os.path.join(
-    #     os.path.dirname(__file__), "instance", "simple_60", "000_delaunay_flips.json"
+    #     os.path.dirname(__file__), "instance", "simple_40", "000_delaunay_flips.json"
     # )
     # PATH = os.path.join(
     #     os.path.dirname(__file__),
@@ -308,10 +314,11 @@ def run_algo():
     # cadical_algorithm(graph, nodes)
     # count_algorithm(graph)
     # sat_Tri_algorithm(graph)
-    ortools_algorithm(graph)
+    # ortools_algorithm(graph)
     # ortools_tri_algorithm(graph)
     # gurobi_tri_algorithm(graph)
     # gurobi_algorithm(graph)
+    raw_flips_algorithm(graph)
 
     # graph.add_all_possible_edges(True)
     logging.info(f"evluation: {graph.evaluate()}")
@@ -403,7 +410,7 @@ def create_instance():
 
 
 if __name__ == "__main__":
-    # run_algo()
+    run_algo()
     # show_all_instanzes()
-    create_instance()
+    # create_instance()
     # permute_instance()
