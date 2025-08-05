@@ -17,7 +17,7 @@ class Parameter:
     number_edges: bool = False
     evaluation_direction: bool = False
     save_state_after_solution: bool = False
-    degree_direction: bool = False
+    min_max_direction: bool = False
     maximize_edges: bool = False
     exclude_edges: bool = False
     fix_edges: bool = False
@@ -199,10 +199,7 @@ class Ortools(Solver):
             self.add_time(self.evaluation_direction)()
             stop_after_first_solution = False
 
-        # HACK Das ist unfassbar dumm. Ich würde die Flag gerne umbenennen von degree_direction zu min_max_direction,
-        # aber dann müsste ich in den Evaluationen die schon gelaufen sind die Flag auch umbennen da die mit der ganzen Parameter Klasse identifiziert werden.
-        # es ist einfach die Flag einfach so zu lassen
-        if parameter_data.degree_direction:
+        if parameter_data.min_max_direction:
             if timeout == -1:
                 self.logger.warning("Es sollte ein Timeout gesetzt werden.")
             self.add_time(self.evaluation_max_min)()
