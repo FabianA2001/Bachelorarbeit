@@ -26,6 +26,18 @@ outer_parameter = {
                 )
             ),
         },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(
+                    intersection=True,
+                    all_edges=True,
+                    fix_hull=True,
+                    min_max_direction=True,
+                    save_state_after_solution=True,
+                )
+            ),
+        },
     ]
 }
 
@@ -40,7 +52,7 @@ RI = Run_Algbench(
 
 @slurminade.slurmify()
 def run_solver_on_inst(key: str):
-    RI.add_entrys(key)
+    RI.add_entrys(key, 2)
 
 
 @slurminade.slurmify(mail_type="ALL")

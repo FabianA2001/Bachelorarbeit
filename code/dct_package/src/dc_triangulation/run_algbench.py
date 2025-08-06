@@ -221,7 +221,7 @@ class Run_Algbench:
                 all_args.append(arg["args"])
 
         # Filter table to only include rows where args are in all_args
-        table = table[table["args"].isin(all_args)]
+        table = table[table["args"].isin(all_args)].copy()
         table["args_str"] = table["args"].apply(lambda x: str(x))
 
         # --- Timeout-Filter: Behalte nur Zeilen mit maximalem Timeout pro solver/instance_file ---
