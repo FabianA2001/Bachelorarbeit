@@ -211,5 +211,5 @@ def show_subset():
 
 if __name__ == "__main__":
     show_exact()
-    # show_atleast()
-    # show_subset()
+    show_atleast()
+    show_subset()

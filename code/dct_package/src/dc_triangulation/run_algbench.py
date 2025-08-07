@@ -291,6 +291,56 @@ class Run_Algbench:
         logging.info(legend)
         return table
 
+    def get_mean(self, table: pd.DataFrame) -> pd.DataFrame:
+        # Verwende pandas groupby mit agg für effizientere Berechnung
+        grouped = table.groupby(["instance_file", "solver_args"])
+
+        # Überprüfe dass alle Werte in diesen Spalten identisch sind
+        for case in [
+            "solver",
+            "file",
+            "instance",
+            "args",
+            "instance_file",
+            "solver_args",
+        ]:
+            if case in table.columns:
+                if case == "args":
+                    # Spezielle Behandlung für Dictionary-Spalte args
+                    for name, group in grouped:
+                        args_strings = group["args"].apply(
+                            lambda x: str(x) if x is not None else "None"
+                        )
+                        if args_strings.nunique() > 1:
+                            raise AssertionError(
+                                f"Fehler bei {case} in Gruppe {name}: unterschiedliche Werte gefunden"
+                            )
+                else:
+                    # Normale Behandlung für andere Spalten
+                    unique_counts = grouped[case].nunique()
+                    if (unique_counts > 1).any():
+                        problematic_groups = unique_counts[
+                            unique_counts > 1
+                        ].index.tolist()
+                        raise AssertionError(
+                            f"Fehler bei {case} in Gruppen: {problematic_groups}"
+                        )
+            else:
+                raise AssertionError(f"'{case}' Spalte fehlt in der Tabelle.")
+
+        # Erstelle neue Tabelle durch Aggregation
+        agg_dict = {
+            "solver": "first",
+            "file": "first",
+            "instance": "first",
+            "args": "first",
+            "runtime": "mean",
+            "pre_time": "mean",
+        }
+
+        new_table = grouped.agg(agg_dict).reset_index()
+        return new_table
+
     def show(
         self,
         timelimit: int = 300,
@@ -299,15 +349,7 @@ class Run_Algbench:
         table = self.get_table()
         table = self.apply_instance(table)
         table = self.apply_args(table)
-
-        for idx, groubdf in table.groupby(["instance_file", "solver_args"]):
-            info = ""
-            # for index, row in groubdf.iterrows():
-            #     info += format_dictionary(row["args"])
-            assert len(groubdf) == 5, (
-                f" mehr als 5 instanzen,length: {len(groubdf)} \n{info}"
-            )
-        return
+        table = self.get_mean(table)
         table["total_runtime"] = table["pre_time"] + table["runtime"]
         self.create_cactus(
             table=table,
