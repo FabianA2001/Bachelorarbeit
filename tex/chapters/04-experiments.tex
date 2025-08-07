@@ -28,70 +28,69 @@
 
 
 
-\section{Sat Coodierung (Eval5)}
-\begin{figure}[tb]
-    \centering
-    \includegraphics[width=1\linewidth]{eval5/subset.pdf}
-    \caption{Die \emph{subset} Methode für die Gradbeschränkung  in einem SAT Solver, wurde mit verschiedenen Kardinalitätsbedingung getestet.}
-    \label{fig:eval5_subset}
-\end{figure}
-\begin{figure}[tb]
-    \centering
-    \includegraphics[width=1\linewidth]{eval5/exact.pdf}
-    \caption{Die \emph{exact} Methode für die Gradbeschränkung  in einem SAT Solver, wurde mit verschiedenen Kardinalitätsbedingung getestet.}
-    \label{fig:eval5_exact}
-\end{figure}
-\begin{figure}[tb]
-    \centering
-    \includegraphics[width=1\linewidth]{eval5/atleast.pdf}
-    \caption{Die \emph{atleast} Methode für die Gradbeschränkung  in einem SAT Solver, wurde mit verschiedenen Kardinalitätsbedingung getestet.}
-    \label{fig:eval5_atleast}
-\end{figure}
-\begin{figure}[tb]
+\section{Sat Gradbeschränkung (Eval5)}
+In diesem Experiment werden Verschiedene Methoden der Gradbeschränkung in einem SAT Solver vergleichen.
+Hierbei wurden für alle drei Methoden, also \emph{subset}, Kardinalität mit exaktem Sollgrad und Kardinalität mit Mindest Sollgrad, die Laufzeiten gemessen.
+Bei den Kardinalitäts Codierugen von PySat wurden auch alle möglichen Codierugen Getestet.
+Das Ziel ist es die Gradbeschränkung zu finden mit der besten Laufzeit, welche in den Folgenden Experimenten verwendet wird.
+Für die Knotengröße wurden Instanzen der Größe 30 bis 90 verwendet.
+Bei der \emph{subset} Methode wurde nur die Instanz mit 30 Knoten verwendet. 
+Da bei größeren Knotenmengen der Arbeitsspeicher zu klein war.
+Für die Exakte Methode sieht man in~\cref{fig:eval5_exact} das \emph{sequential counters} die besten Ergebnisse erzielen.
+Auch für den Mindest Sollgrad ist \emph{sequential counters} die beste Variante wie man in~\cref{fig:eval5_atleast} sieht.
+\begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval5/gesamt.pdf}
     \caption{die besten Ergebnisse der verschiedenen Gradbeschränkungen in einem SAT Solver.}
     \label{fig:eval5_gesamt}
 \end{figure}
+Der Vergleich der drei Methoden ist in~\cref{fig:eval5_gesamt} zu sehen.
+Hier ist klar erkennbar das \emph{subset} die schlechteste Methode ist.
+Das lässt sich leicht daran erklären das nur die kleinsten Instanzgrößen gelöst werden konnten.
+Die anderen beiden Methoden unterscheiden sich nicht signifikant.
+Es ist zu sehen das öfter die Methode mit dem exakten Sollgrad langsamer ist.
+Dementsprechend werden in folgenden Experimenten die Kardinalitätsbeschränkung mit Mindest Sollgrad und \emph{sequential counters} Codierung verwendet.
 
-Teste welche von den degree Coodierungen am besten funktionieren.
-also: subset, atleast, exact
-auch welche Coodierung von pysat für Kardinalität am besten funktioniert.
+
+
+% Teste welche von den degree Coodierungen am besten funktionieren.
+% also: subset, atleast, exact
+% auch welche Coodierung von pysat für Kardinalität am besten funktioniert.
 
 \section{Sat Solver Vergleich (Eval3)}
 Teste alle möglichen Sat solver aus
 
 \section{Grund Solver (Eval1)}
 \subsection{Dreiecke}
-\begin{figure}[tb]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{figures/eval1/tri.pdf}
     \caption{Eval1 Dreiecke}
 \end{figure}
 
 \subsection{Sat}
-\begin{figure}[tb]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{figures/eval1/sat.pdf}
     \caption{Eval1 Sat}
 \end{figure}
 
 \subsection{OrTools}
-\begin{figure}[tb]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{figures/eval1/ortools.pdf}
     \caption{Eval1 OrTools}
 \end{figure}
 
 \subsection{Gurobi}
-\begin{figure}[tb]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{figures/eval1/gurobi.pdf}
     \caption{Eval1 Gurobi}
 \end{figure}
 
 \subsection{Gesamt}
-\begin{figure}[tb]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{figures/eval1/gesamt.pdf}
     \caption{Eval1 Gesamt}
@@ -107,13 +106,13 @@ Gucken wie orTools mit Zielfunktion funktioniert.
 
 \section{Instanzen Schwierigkeit}
 \subsection{Anzahl Lösungen  (Eval8)}
-\begin{figure}[tb]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=0.48\linewidth]{figures/eval8/delaunay_009_delaunay_80_0.pdf}\hfill
     \includegraphics[width=0.48\linewidth]{figures/eval8/delaunay_009_delaunay_80_1.pdf}
     \caption{Eval8 Anzahl Lösungen Delaunay}
 \end{figure}
-\begin{figure}[tb]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=0.48\linewidth]{figures/eval8/greedy_009_greedy_80_0.pdf}\hfill
     \includegraphics[width=0.48\linewidth]{figures/eval8/greedy_009_greedy_80_1.pdf}
