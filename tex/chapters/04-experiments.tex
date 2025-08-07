@@ -6,44 +6,27 @@
 	\item What are you testing? (e.g., runtime, space needed, fps, \dots)
 	\item What are the results? Show fancy figures!
 	\item What does the results mean? (e.g., give a little discussion on your results)
-	\item \dots
 \end{itemize}
 
-\section{Permutation Instanz (Eval2)}
-\begin{figure}[tb]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/eval2/gurobi.pdf}
-    \caption{Eval2 Permutation Instanz Gurobi}
-\end{figure}
-\begin{figure}[tb]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/eval2/Ortools.pdf}
-    \caption{Eval2 Permutation Instanz OrTools}
-\end{figure}
-\begin{figure}[tb]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/eval2/SAT.pdf}
-    \caption{Eval2 Permutation Instanz SAT}
-\end{figure}
-Testen ob die Permutationen einer Instanze die Laufzeit beeinflussen.
+\begin{itemize}
+    \item Algbench und Slurminade, Pandas
+    \item plt und Seaborn
+    \item Alles in python Teileweise Algos in c++ ausgelagert mit pybind11
+    \item AMD Ryzen 7 5800X @ 8x 3.8GHz-4.7GHz, 128GB RAM
+    \item Timeout von 5 min (300 Sekunden)
+    \item Jede Instanze Generiungs möglichkeit (5 aufzählen)
+    \begin{itemize}
+        \item zwei normale
+        \item eine move
+        \item eine change
+        \item größe 30 bis 120 in 10er Schritten
+        \item Jeder Run wird 5 mal durchgeführt und der Durchschnitt genommen wenn nicht anders gesagt
+        \item Da Permuation anders und Laufzeit bei mehrmals vorallem bei OrTools auch anders
+    \end{itemize}
+    \item Gesamte Laufzeit dargestellt Model konstruktion plus solve zeit
+\end{itemize}
 
-\section{selber solver selbe instanz (Eval7)}
-\begin{figure}[tb]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/eval7/gurobi.pdf}
-    \caption{Eval7 Selbe Solver Selbe Instanz Gurobi}
-\end{figure}
-\begin{figure}[tb]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/eval7/ortools.pdf}
-    \caption{Eval7 Selbe Solver Selbe Instanz OrTools}
-\end{figure}
-\begin{figure}[tb]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/eval7/sat.pdf}
-    \caption{Eval7 Selbe Solver Selbe Instanz SAT}
-\end{figure}
-Testen ob wenn ich den gleichen Solver mit gleichen Argumenten auf er gleichen Instanze lasse, ob die Laufzeit gleich ist.
+
 
 \section{Sat Coodierung (Eval5)}
 \begin{figure}[tb]
