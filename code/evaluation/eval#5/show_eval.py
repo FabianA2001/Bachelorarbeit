@@ -8,8 +8,9 @@ from dc_triangulation import (
 )
 
 TIMEOUT = 300
-path = os.path.join(os.path.dirname(__file__), "instances_backup")
+path = os.path.join(os.path.dirname(__file__), "instances")
 figure_path = os.path.join(os.path.dirname(__file__), "figures")
+lokal_benchmark_path = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
 HOST = ["algry01", "algry02", "algry03", "algry04"]
 
 
@@ -71,6 +72,7 @@ def show_exact():
         inst_path=path,
         outer_parameter=outer_parameter,
         figure_path=figure_path,
+        path_benchmark=lokal_benchmark_path,
         host=HOST,
         name="exact",
     )
@@ -135,6 +137,7 @@ def show_atleast():
         inst_path=path,
         outer_parameter=outer_parameter,
         figure_path=figure_path,
+        path_benchmark=lokal_benchmark_path,
         host=HOST,
         name="atleast",
     )
@@ -199,6 +202,7 @@ def show_subset():
         inst_path=path,
         outer_parameter=outer_parameter,
         figure_path=figure_path,
+        path_benchmark=lokal_benchmark_path,
         host=HOST,
         name="subset",
     )
@@ -207,5 +211,5 @@ def show_subset():
 
 if __name__ == "__main__":
     show_exact()
-    show_atleast()
-    show_subset()
+    # show_atleast()
+    # show_subset()

@@ -220,7 +220,7 @@ class Run_Algbench:
                 all_args.append(arg["args"])
 
         # Filter table to only include rows where args are in all_args
-        table = table[table["args"].isin(all_args)]
+        table = table[table["args"].isin(all_args)].copy()
         table["args_str"] = table["args"].apply(lambda x: str(x))
 
         # --- Timeout-Filter: Behalte nur Zeilen mit maximalem Timeout pro solver/instance_file ---
@@ -299,6 +299,14 @@ class Run_Algbench:
         table = self.applay_instanze(table)
         table = self.apply_args(table)
 
+        for idx, groubdf in table.groupby(["instance_file", "solver_args"]):
+            info = ""
+            # for index, row in groubdf.iterrows():
+            #     info += format_dictionary(row["args"])
+            assert len(groubdf) == 5, (
+                f" mehr als 5 instanzen,length: {len(groubdf)} \n{info}"
+            )
+        return
         table["total_runtime"] = table["pre_time"] + table["runtime"]
         self.create_cactus(
             table=table,
@@ -629,7 +637,7 @@ class Run_Algbench:
         ]
         parameters = self.outer_parameter[solver]
         for parameter in parameters:
-            for _ in range(number_runs):
+            for i in range(number_runs):
                 run_seed = int(uuid.uuid4())
                 random.seed(run_seed)  # Seed für Reproduzierbarkeit
                 random.shuffle(nodes)  # Zufällige Reihenfolge der Knoten
@@ -641,7 +649,8 @@ class Run_Algbench:
                     parameter=parameter,
                     instance_name=inst,
                     file_name=file_name,
-                    run_seed=run_seed,
+                    run_number=i,
+                    _run_seed=run_seed,
                     _possible=possible,
                     _solver_type=solver,
                     _graph=graph,
@@ -653,7 +662,8 @@ class Run_Algbench:
         parameter: dict,
         instance_name: str,
         file_name: str,
-        run_seed: int,
+        run_number: int,
+        _run_seed: int,
         _possible: bool,
         _solver_type: type[Solver],
         _graph: Graph_Wrapper,
@@ -675,6 +685,7 @@ class Run_Algbench:
                 "info": info,
                 "solution": {},
                 "big_error": True,
+                "run_seed": _run_seed,
             }
 
         is_triangulation = _graph.check_if_triangulation_with_degree_constrained()
@@ -690,6 +701,7 @@ class Run_Algbench:
             solver.logger.error(
                 f"{solver.name} on {instance_name}_{file_name} should not be possible, but triangulation was found.\n"
             )
+            correct = False
         return {
             "correct": correct,
             "time_pre_solver": solver.pre_solve_time,
@@ -700,4 +712,5 @@ class Run_Algbench:
             "info": info,
             "solution": solution,
             "big_error": big_error,
+            "run_seed": _run_seed,
         }

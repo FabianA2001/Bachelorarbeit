@@ -27,9 +27,13 @@ else:
             "count": result["result"].get("solution", {}).get("count", None),
             "solution": result["result"].get("solution", None),
             "data": result["timestamp"],
-            "run_seed": result["parameters"]["args"]["run_seed"],
+            "run_number": result["parameters"]["args"]["run_number"],
+            "run_seed": result["result"]["run_seed"],
         },
     )
+    if df.empty:
+        st.error("Die Tabelle ist leer. Bitte überprüfen Sie die Eingabedaten.")
+        st.stop()
 
     df["run_seed"] = df["run_seed"].apply(lambda x: str(x))
     # df["logging"] = df["logging"].apply(lambda x: str(x))

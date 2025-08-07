@@ -17,6 +17,7 @@ SAT:
 ||exclude_edges:                      False
 ||hack_eval6:                         False
 ||fix_edges:                          False
+||run_num:                            0
 
 |#2 in 300s: 
 ||solver_name:                        Glucose42
@@ -32,6 +33,7 @@ SAT:
 ||exclude_edges:                      False
 ||hack_eval6:                         False
 ||fix_edges:                          False
+||run_num:                            0
 
 |#3 in 300s: 
 ||solver_name:                        Glucose42
@@ -47,6 +49,7 @@ SAT:
 ||exclude_edges:                      False
 ||hack_eval6:                         False
 ||fix_edges:                          False
+||run_num:                            0
 
 |#4 in 300s: 
 ||solver_name:                        Glucose42
@@ -62,6 +65,7 @@ SAT:
 ||exclude_edges:                      False
 ||hack_eval6:                         False
 ||fix_edges:                          False
+||run_num:                            0
 
 |#5 in 300s: 
 ||solver_name:                        Glucose42
@@ -77,6 +81,7 @@ SAT:
 ||exclude_edges:                      False
 ||hack_eval6:                         False
 ||fix_edges:                          False
+||run_num:                            0
 
 |#6 in 300s: 
 ||solver_name:                        Glucose42
@@ -92,4 +97,5 @@ SAT:
 ||exclude_edges:                      False
 ||hack_eval6:                         False
 ||fix_edges:                          False
+||run_num:                            0
 ==================================================
