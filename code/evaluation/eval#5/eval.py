@@ -6,8 +6,8 @@ from dc_triangulation import SAT, Run_Algbench, SAT_Parameter
 
 asdict
 TIMEOUT = 300
-# path = os.path.join(os.path.dirname(__file__), "instances")
-path = os.path.join(os.path.dirname(__file__), "instances_30")
+path = os.path.join(os.path.dirname(__file__), "instances")
+# path = os.path.join(os.path.dirname(__file__), "instances_30")
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
 outer_parameter = {
@@ -85,43 +85,43 @@ outer_parameter = {
                 SAT_Parameter(intersection=True, degree_atleast=True, degree_encoding=8)
             ),
         },
-        # subset
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=1)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=2)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=3)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=6)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=7)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=8)
-            ),
-        },
+        # # subset
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=1)
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=2)
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=3)
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=6)
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=7)
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(intersection=True, degree_subset=True, degree_encoding=8)
+        #     ),
+        # },
     ]
 }
 
@@ -156,7 +156,7 @@ if __name__ == "__main__":
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
         )
         run_list = RI.get_run_list()
-        with slurminade.JobBundling(max_size=3):
+        with slurminade.JobBundling(max_size=10):
             for key in run_list:
                 run_solver_on_inst.distribute(key)
 
