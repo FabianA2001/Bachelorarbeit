@@ -35,6 +35,7 @@ class Run_Algbench:
         path_benchmark: str = "",
         figure_path: str = "",
         name: str = "",
+        arg_names={},
     ) -> None:
         self.inst_path = inst_path
         self.instances = self.get_instances(self.inst_path)
@@ -50,6 +51,7 @@ class Run_Algbench:
             self.path_benchmark = path_benchmark
         self.figure_path = figure_path
         self.name = name
+        self.arg_names = arg_names
 
         self.get_solver_inst_from_runlist: dict[
             str, tuple[type[Solver], list[Node], bool, str, str]
@@ -254,13 +256,22 @@ class Run_Algbench:
             solver_args_multiple[solver] = len(unique_args) > 1
             for i, args in enumerate(unique_args):
                 timeout = solver_table[solver_table["args"] == args]["timeout"].iloc[0]
+                if self.arg_names and solver in self.arg_names:
+                    names = self.arg_names[solver]
+                    if len(names) > i:
+                        solver_args_mapping[solver][str(args)] = (
+                            names[i],
+                            args,
+                            timeout,
+                        )
+                        continue
                 solver_args_mapping[solver][str(args)] = (i + 1, args, timeout)
 
         def get_solver_args(row):
             solver = row["solver"]
             if solver_args_multiple[solver]:
-                number = (solver_args_mapping[solver][str(row["args"])])[0]
-                return f"{solver}-{number}"
+                name = (solver_args_mapping[solver][str(row["args"])])[0]
+                return f"{solver}-{name}"
             else:
                 return solver
 
@@ -364,6 +375,7 @@ class Run_Algbench:
         y: str,
         block: bool = False,
         timelimit: int = 300,
+        arges_name: dict[str, list] = {},
     ):
         """
         Erstellt einen Cactus Plot für die Benchmark-Daten.
@@ -541,12 +553,13 @@ class Run_Algbench:
         handles, labels = axes[0].get_legend_handles_labels()
         if handles:
             # Berechne Anzahl Spalten basierend auf Anzahl der Solver
-            n_cols = min(3, len(handles))  # Maximal 3 Spalten
+            # n_cols = min(3, len(handles))  # Maximal 3 Spalten
+            n_cols = 1
             fig.legend(
                 handles,
                 labels,
-                loc="lower right",
-                bbox_to_anchor=(0.94, 0.26),
+                loc="upper left",
+                bbox_to_anchor=(0.703, 0.45),
                 ncol=n_cols,
                 fontsize=9,
                 frameon=True,
