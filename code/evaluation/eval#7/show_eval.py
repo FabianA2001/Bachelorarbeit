@@ -58,7 +58,7 @@ def show_ortools():
     ########### hack ######################
 
     table = ri.get_table()
-    table = ri.applay_instanze(table)
+    table = ri.apply_instance(table)
     all_args = []
     for arg_list in ri.outer_parameter.values():
         for arg in arg_list:

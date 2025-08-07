@@ -36,7 +36,7 @@ else:
         st.stop()
 
     df["run_seed"] = df["run_seed"].apply(lambda x: str(x))
-    # df["logging"] = df["logging"].apply(lambda x: str(x))
+    df["logging"] = df["logging"].apply(lambda x: str(x))
     # df = df[df["host"].isin([socket.gethostname()])]
     df.sort_values(
         by=["solver", "instance", "file"],

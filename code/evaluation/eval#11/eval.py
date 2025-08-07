@@ -8,7 +8,7 @@ from dc_triangulation import (
     Run_Algbench,
 )
 
-TIMEOUT = 300
+TIMEOUT = 40
 path = os.path.join(os.path.dirname(__file__), "instances")
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
@@ -22,6 +22,18 @@ outer_parameter = {
                     all_edges=True,
                     fix_hull=True,
                     evaluation_direction=True,
+                    save_state_after_solution=True,
+                )
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(
+                    intersection=True,
+                    all_edges=True,
+                    fix_hull=True,
+                    min_max_direction=True,
                     save_state_after_solution=True,
                 )
             ),
@@ -40,7 +52,7 @@ RI = Run_Algbench(
 
 @slurminade.slurmify()
 def run_solver_on_inst(key: str):
-    RI.add_entrys(key)
+    RI.add_entrys(key, 2)
 
 
 @slurminade.slurmify(mail_type="ALL")
