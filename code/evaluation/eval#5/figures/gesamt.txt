@@ -3,7 +3,7 @@ Args Legend Mapping (by Solver):
 ==================================================
 
 SAT:
-|#degree exact in 300s: 
+|#subsetexakt in 300s: 
 ||solver_name:                        Glucose42
 ||add_allEdges_or_exclude_edges:      True
 ||number_edges:                       False
@@ -19,7 +19,7 @@ SAT:
 ||fix_edges:                          False
 ||run_num:                            0
 
-|#degree atleast in 300s: 
+|#mindestens in 300s: 
 ||solver_name:                        Glucose42
 ||add_allEdges_or_exclude_edges:      True
 ||number_edges:                       False
@@ -29,6 +29,22 @@ SAT:
 ||degree_atleast:                     True
 ||degree_encoding:                    1
 ||degree_subset:                      False
+||fix_hull:                           False
+||exclude_edges:                      False
+||hack_eval6:                         False
+||fix_edges:                          False
+||run_num:                            0
+
+|#3 in 300s: 
+||solver_name:                        Glucose42
+||add_allEdges_or_exclude_edges:      True
+||number_edges:                       False
+||intersection:                       True
+||all_edges:                          False
+||degree_exact:                       False
+||degree_atleast:                     False
+||degree_encoding:                    1
+||degree_subset:                      True
 ||fix_hull:                           False
 ||exclude_edges:                      False
 ||hack_eval6:                         False

@@ -248,6 +248,14 @@ def show_gesamt():
                 "timeout": TIMEOUT,
                 "args": asdict(
                     SAT_Parameter(
+                        intersection=True, degree_subset=True, degree_encoding=1
+                    )
+                ),
+            },
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    SAT_Parameter(
                         intersection=True, degree_exact=True, degree_encoding=1
                     )
                 ),
@@ -264,8 +272,8 @@ def show_gesamt():
     }
     arg_names = {
         "SAT": [
-            "degree exact",
-            "degree atleast",
+            "subsetexakt",
+            "mindestens",
         ]
     }
     ri = Run_Algbench(
