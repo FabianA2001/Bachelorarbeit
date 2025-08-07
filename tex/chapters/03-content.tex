@@ -232,9 +232,31 @@ Die Überschneidungsbeschränkung kann sehr ähnlich mit folgender Formel umgese
 \neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E: e_2 \in \intersection(e_1)
 \]
 Für die Gradbeschränkung ist das Problem das bei PySat für eine Menge von Variablen nicht festgelegt werden kann wie viele von ihnen wahr sein müssen.
-Von den verschiedenen Kardinalitätscodierungen die PySat anbietet kommen für die Gradbeschränkung nur \emph{sequential counters}\cite{sequential_counters}, \emph{sorting networks}\cite{sorting_networks}, \emph{cardinality networks}\cite{cardinality_networks}, \emph{totalizer}\cite{totalizer}, \emph{modulo totalizer}\cite{modulo_totalizer} und \emph{modulo totalizer for k-cardinality}\cite{modulo_totalizer_for_k_cardinality} in Frage.
+Hierfür gibt es zwei Ansätze.
+Der erste Ansatz nutzt die Kardinalitätscodierungen die PySat anbietet.
+Hierfür kommen nur \emph{sequential counters}\cite{sequential_counters}, \emph{sorting networks}\cite{sorting_networks}, \emph{cardinality networks}\cite{cardinality_networks}, \emph{totalizer}\cite{totalizer}, \emph{modulo totalizer}\cite{modulo_totalizer} und \emph{modulo totalizer for k-cardinality}\cite{modulo_totalizer_for_k_cardinality} in Frage.
 Die Restlichen Codierungen bieten keine Möglichkeit um k-Kardinalitäten zu erzeugen. 
 Also das k viele Variablen wahr sind.
+Bei diesem Ansatz gibt es noch die Möglichkeit das man die Kardinalität auf den exakten Sollgrad setzt, oder festlegt das der Knoten mindestens den Sollgrad hat.
+Insgesamt erzielen beide Bedingungen denselben Effekt.
+Wenn jedoch nur gefordert wird, dass der Knoten mindestens den Sollgrad erreicht, müssen weniger Hilfsvariablen eingeführt werden.
+Bei der Exakten Methode könnte der Solver allerdings schneller zu einer Lösung finden da diese Bedindung stärker ist, also mehr Informationen liefert.
+
+Die andere Methode ist die sogennante \emph{subset} Methode.
+Bei dieser Methode wird für jeden Knoten \(i\) eine Menge von Klauseln erstellt.
+Diese Klauseln umfassen alle Kombinationen der Kanten \(E_i\) der Größe
+\[\left|E_i\right| - (\degrees(i) - 1)\]
+wobei \(E_i\) die Menge aller Kanten für den Knoten \(i\) ist.
+Angenommen, der Knoten \(v_1\) besitzt die Kanten \(e_1\), \(e_2\), \(e_3\), \(e_4\) und den Sollgrad \(2\).
+Es werden dann folgende Klauseln erstellt
+\[
+	(x_1 \lor x_2 \lor x_3) \land (x_1 \lor x_2 \lor x_4) \land (x_1 \lor x_3 \lor x_4) \land (x_2 \lor x_3 \lor x_4)
+\]
+Damit diese vier Klauseln erfüllt sind, müssen mindestens zwei der Variablen wahr sein.
+Für jede Klausel wird angenommen, dass nur noch eine Kante zum Erreichen des Sollgrads fehlt und die in der Klausel genannten Kanten noch nicht aktiv sind.
+Insgesamt wird so eine Kardinalitätsbedingung erzeugt.
+Diese Methode hat den Vorteil, dass keine Hilfsvariablen benötigt werden, allerdings entstehen sehr viele Klauseln.
+
 TODO @Michael @Phillip sollte ich hier noch nennen wie der \emph{sequential counter} funktioniert weil dieser am Ende am besten ist. Ich müsste dann aus den Experimenten vorgreifen. Auch brauche ich Information nicht wirklich da ich PySat hier als Blackbox nutzen kann. 
 
 

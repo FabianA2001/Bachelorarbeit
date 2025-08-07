@@ -46,6 +46,31 @@ Testen ob die Permutationen einer Instanze die Laufzeit beeinflussen.
 Testen ob wenn ich den gleichen Solver mit gleichen Argumenten auf er gleichen Instanze lasse, ob die Laufzeit gleich ist.
 
 \section{Sat Coodierung (Eval5)}
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=1\linewidth]{eval5/subset.pdf}
+    \caption{Die \emph{subset} Methode für die Gradbeschränkung  in einem SAT Solver, wurde mit verschiedenen Kardinalitätsbedingung getestet.}
+    \label{fig:eval5_subset}
+\end{figure}
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=1\linewidth]{eval5/exact.pdf}
+    \caption{Die \emph{exact} Methode für die Gradbeschränkung  in einem SAT Solver, wurde mit verschiedenen Kardinalitätsbedingung getestet.}
+    \label{fig:eval5_exact}
+\end{figure}
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=1\linewidth]{eval5/atleast.pdf}
+    \caption{Die \emph{atleast} Methode für die Gradbeschränkung  in einem SAT Solver, wurde mit verschiedenen Kardinalitätsbedingung getestet.}
+    \label{fig:eval5_atleast}
+\end{figure}
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=1\linewidth]{eval5/gesamt.pdf}
+    \caption{die besten Ergebnisse der verschiedenen Gradbeschränkungen in einem SAT Solver.}
+    \label{fig:eval5_gesamt}
+\end{figure}
+
 Teste welche von den degree Coodierungen am besten funktionieren.
 also: subset, atleast, exact
 auch welche Coodierung von pysat für Kardinalität am besten funktioniert.
