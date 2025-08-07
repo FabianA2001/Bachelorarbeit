@@ -5,7 +5,6 @@ import slurminade
 from dc_triangulation import (
     SAT,
     SAT_TRI,
-    Graph_Wrapper,
     Gurobi,
     Gurobi_Parameter,
     Gurobi_Tri,
@@ -27,12 +26,12 @@ outer_parameter = {
     SAT: [
         {
             "timeout": TIMEOUT,
-            "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
+            "args": asdict(SAT_Parameter(intersection=True, degree_atleast=True)),
         },
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
+                SAT_Parameter(intersection=True, degree_atleast=True, fix_hull=True)
             ),
         },
         {
@@ -40,7 +39,7 @@ outer_parameter = {
             "args": asdict(
                 SAT_Parameter(
                     intersection=True,
-                    degree_exact=True,
+                    degree_atleast=True,
                     all_edges=True,
                 )
             ),
@@ -50,7 +49,7 @@ outer_parameter = {
             "args": asdict(
                 SAT_Parameter(
                     intersection=True,
-                    degree_exact=True,
+                    degree_atleast=True,
                     exclude_edges=True,
                 )
             ),
@@ -58,7 +57,7 @@ outer_parameter = {
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                SAT_Parameter(intersection=True, degree_exact=True, fix_edges=True)
+                SAT_Parameter(intersection=True, degree_atleast=True, fix_edges=True)
             ),
         },
     ],

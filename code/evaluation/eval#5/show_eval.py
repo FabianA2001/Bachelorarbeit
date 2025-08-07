@@ -209,7 +209,41 @@ def show_subset():
     ri.show(block=False)
 
 
+def show_gesamt():
+    outer_parameter = {
+        SAT: [
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    SAT_Parameter(
+                        intersection=True, degree_exact=True, degree_encoding=1
+                    )
+                ),
+            },
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    SAT_Parameter(
+                        intersection=True, degree_atleast=True, degree_encoding=1
+                    )
+                ),
+            },
+        ]
+    }
+
+    ri = Run_Algbench(
+        inst_path=path,
+        outer_parameter=outer_parameter,
+        figure_path=figure_path,
+        path_benchmark=lokal_benchmark_path,
+        host=HOST,
+        name="gesamt",
+    )
+    ri.show(block=False)
+
+
 if __name__ == "__main__":
     show_exact()
     show_atleast()
     show_subset()
+    show_gesamt()
