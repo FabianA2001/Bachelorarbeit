@@ -195,32 +195,29 @@ Sollte es mehr als eine Lösung geben werden diese ausgewählten Kanten nacheina
 Sollte der Solver mit dieser ausgeschlossenen Kante keine Lösung mehr finden, wird die Kante als ausschließbar markiert.
 
 
-
-
-
 \subsubsection{OrTools und Gurobi}
 Da OrTools und Gurobi eine ähnliche Art der Formulierung verwenden werden sie hier zusammengefasst.
 Für die Überschneidungsbeschränkung wird die Funktion \emph{add\_at\_most\_one} von OrTools verwendet.
 Diese Funktion wird mit den folgenden Variablenpaaren aufgerufen.
 \[
-	( x_{e_1}, x_{e_2}) \hspace{3cm} \forall e_1, e_2 \in E : e_2 \in \intersection(e_1)
+	( x_{e_1}, x_{e_2}) \myhspace \forall e_1, e_2 \in E : e_2 \in \intersection(e_1)
 \]
 Gurobi nutzt hier äquivalent
 
 \[
-	x_{e_1} + x_{e_2} \leq 1 \hspace{3cm} \forall e_1, e_2 \in E : e_2 \in \intersection(e_1)
+	x_{e_1} + x_{e_2} \leq 1 \myhspace \forall e_1, e_2 \in E : e_2 \in \intersection(e_1)
 \]
 Für die Gradbeschränkung wird die Summe der booleschen Variablen \(x_e\) für alle ausgehenden Kanten eines Knotens \(i\) auf den Sollgrad \(\degrees(i)\) beschränkt.
 
 Für die Gradbeschränkung werden folgende Bedingungen hinzugefügt:
 \[
-	\sum x_{e_i} = \degrees(i) \hspace{3cm} \forall i \in V
+	\sum x_{e_i} = \degrees(i) \myhspace \forall i \in V
 \]
 Wobei \(e_i\) alle Kanten für den Knoten \(i\) sind.
 
 Für die \emph{alternative Kanten} Beschränkung werden folgende Bedingungen hinzugefügt:
 \[
-	\sum_{j \in \intersection(e)}{x_{j}} + x_e \leq 1 \hspace{3cm} \forall e \in E
+	\sum_{j \in \intersection(e)}{x_{j}} + x_e \leq 1 \myhspace \forall e \in E
 \]
 
 Für die fixierung der Kanten werden die zugehöhrigen Variablen auf \emph{Wahr} oder \emph{Falsch} gesetzt.
@@ -229,7 +226,7 @@ Für die fixierung der Kanten werden die zugehöhrigen Variablen auf \emph{Wahr}
 Da PySat eine SAT Formulierung verwendet müssen die Bedingungen etwas angepasst werden.
 Die Überschneidungsbeschränkung kann sehr ähnlich mit folgender Formel umgesetzt werden:
 \[
-\neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E: e_2 \in \intersection(e_1)
+\neg x_{e_1} \lor \neg x_{e_2} \myhspace \forall e_1, e_2 \in E: e_2 \in \intersection(e_1)
 \]
 Für die Gradbeschränkung ist das Problem das bei PySat für eine Menge von Variablen nicht festgelegt werden kann wie viele von ihnen wahr sein müssen.
 Hierfür gibt es zwei Ansätze.
@@ -265,7 +262,7 @@ Hierbei werden anstatt die Variablen auf \emph{Wahr} und \emph{Falsch} zu setzen
 
 Für die \emph{alternative Kanten} Beschränkung können folgende Klauseln genutzt werden:
 \[
-x_e \lor \bigvee_{e_j \in I(e)} x_{e_j} \qquad \forall e \in E
+x_e \lor \bigvee_{e_j \in I(e)} x_{e_j} \myhspace \forall e \in E
 \]
 
 
@@ -372,6 +369,7 @@ Nach jedem Flip wird überprüft, ob die Gradbeschränkung für alle Knoten erf�
 \end{algorithm}
 
 \subsection{OrTools mit Durchschnitts Abweichung}
+\label{sec:OrTools_mit_Durchschnitts_Abweichung}
 Für die Zielfunktion wird eine Funktion erstellt, die der Gleichung~\eqref{eq:total_evaluation} ähnelt.
 Die Teiler in~\eqref{eq:total_evaluation} und~\eqref{eq:evaluation} werden entfernt. Diese sind für die Maximierung nicht relevant.
 Da OrTools keine Betragsfunktion in Formeln erlaubt, muss die Funktion \emph{AddAbsEquality} verwendet werden.
@@ -409,6 +407,17 @@ zusammengefasst bekommen wir folgende Bedingungen
 	Q_T &= \sum e_i 
 \end{align*}
 Als Zielfunktion wird dann \(Q_T\) maximiert.
+
+\subsection{OrTools mit Minimierter Maximaler Abweichung}
+Als zweite Zielfunktion wird für OrTools die maximale Abweichung minimiert.
+Dafür wird eine Integer-Hilfsvariable \(max\_min\) eingeführt.
+Zusätzlich wird die \(abs_i\) Variable mit ihren Bedingungen aus~\cref{sec:OrTools_mit_Durchschnitts_Abweichung} verwendet.
+Anschließend werden folgende Bedingungen eingeführt.
+\begin{align*}
+	max\_min &\geq abs_i \myhspace \forall i \in V \\
+	max\_min &\geq 0
+\end{align*}
+Die Variable \(max\_min\) wird anschließend minimiert.
 
 \section{Instanzen Generation}
 \subsection{Ja - Instanzen}
