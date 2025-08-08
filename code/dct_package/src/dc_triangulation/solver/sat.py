@@ -3,7 +3,7 @@ import threading
 from dataclasses import dataclass
 
 from pysat.card import CardEnc, EncType
-from pysat.formula import CNF
+from pysat.formula import CNF, CNFPlus
 from pysat.solvers import Solver as SatSolver
 
 from ..graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
@@ -97,20 +97,49 @@ class SAT(Solver):
             )
 
     def degree_constraint(self, exact_atleast=True, encoding: int = EncType.seqcounter):
-        for node in self.graph.get_all_nodes():
-            degree = self.graph.get_desired_degree_node(node)
-            if degree == -1:
-                continue
-            edges = self.graph.get_edges_of_node(node)
-            cnf = self.formula_number_vars(
-                [self.get_index(edge) for edge in edges],
-                degree,
-                exact_atleast=exact_atleast,
-                encoding=encoding,
-            )
-            self.solver.append_formula(cnf)
-            if self.reach_timeout():
-                raise TimeoutError()
+        if encoding == 9:
+            for node in self.graph.get_all_nodes():
+                degree = self.graph.get_desired_degree_node(node)
+                if degree == -1:
+                    continue
+                edges = self.graph.get_edges_of_node(node)
+                if exact_atleast:
+                    cnf_plus: CNFPlus = CardEnc.equals(
+                        lits=[self.get_index(edge) for edge in edges],
+                        bound=degree,
+                        encoding=EncType.native,
+                    )
+                else:
+                    cnf_plus: CNFPlus = CardEnc.atleast(
+                        lits=[self.get_index(edge) for edge in edges],
+                        bound=degree,
+                        encoding=EncType.native,
+                    )
+
+                assert self.solver.supports_atmost(), (
+                    "Solver does not support atmost constraints."
+                )
+                # Native AtMost-Constraints direkt hinzufügen
+                for atm in cnf_plus.atmosts:
+                    self.solver.add_atmost(*atm)
+
+                if self.reach_timeout():
+                    raise TimeoutError()
+        else:
+            for node in self.graph.get_all_nodes():
+                degree = self.graph.get_desired_degree_node(node)
+                if degree == -1:
+                    continue
+                edges = self.graph.get_edges_of_node(node)
+                cnf = self.formula_number_vars(
+                    [self.get_index(edge) for edge in edges],
+                    degree,
+                    exact_atleast=exact_atleast,
+                    encoding=encoding,
+                )
+                self.solver.append_formula(cnf)
+                if self.reach_timeout():
+                    raise TimeoutError()
 
     def degree_subset_constraint(self):
         for node in self.graph.get_all_nodes():
