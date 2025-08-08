@@ -392,6 +392,19 @@ class Run_Algbench:
             logging.warning(f"Keine gültigen Daten für {y} Cactus Plot gefunden")
             return
 
+        INSANZE_NAME = "Gesamt"
+        for idx, row in valid_data.iterrows():
+            new_row = row.copy()
+            new_row["instance"] = INSANZE_NAME
+            new_row["instance_file"] = INSANZE_NAME + "/" + row["file"]
+            valid_data = pd.concat(
+                [valid_data, pd.DataFrame([new_row])], ignore_index=True
+            )
+
+        self.instances[INSANZE_NAME] = {}
+        for vlaue in self.instances.copy().values():
+            self.instances[INSANZE_NAME].update(vlaue)
+
         # Eindeutige Solver und Instanzen ermitteln
         unique_solvers = valid_data["solver_args"].unique()
         unique_instances = valid_data["instance"].unique()
