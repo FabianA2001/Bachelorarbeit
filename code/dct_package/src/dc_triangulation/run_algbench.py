@@ -375,7 +375,6 @@ class Run_Algbench:
         y: str,
         block: bool = False,
         timelimit: int = 300,
-        arges_name: dict[str, list] = {},
     ):
         """
         Erstellt einen Cactus Plot für die Benchmark-Daten.
@@ -404,6 +403,8 @@ class Run_Algbench:
         self.instances[INSANZE_NAME] = {}
         for vlaue in self.instances.copy().values():
             self.instances[INSANZE_NAME].update(vlaue)
+
+        print(valid_data)
 
         # Eindeutige Solver und Instanzen ermitteln
         unique_solvers = valid_data["solver_args"].unique()
