@@ -272,8 +272,9 @@ def show_gesamt():
     }
     arg_names = {
         "SAT": [
-            "subsetexakt",
-            "mindestens",
+            "exakt",
+            "mindest",
+            "subset",
         ]
     }
     ri = Run_Algbench(
@@ -291,5 +292,5 @@ def show_gesamt():
 if __name__ == "__main__":
     show_exact()
     show_atleast()
-    show_subset()
+    # show_subset()
     show_gesamt()

@@ -392,7 +392,7 @@ class Run_Algbench:
             logging.warning(f"Keine gültigen Daten für {y} Cactus Plot gefunden")
             return
 
-        INSANZE_NAME = "Gesamt"
+        INSANZE_NAME = "gesamt"
         for idx, row in valid_data.iterrows():
             new_row = row.copy()
             new_row["instance"] = INSANZE_NAME
