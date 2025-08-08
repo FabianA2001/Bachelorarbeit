@@ -72,44 +72,31 @@ Für die Instanzengröße wurden 60 bis 90 Knoten gewählt.
 Das Ziel besteht darin, den Solver zu identifizieren, der die besten Ergebnisse liefert, um diesen in zukünftigen Experimenten einzusetzen.
 
 \section{Grund Solver (Eval1)}
-\subsection{Dreiecke}
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/eval1/tri.pdf}
-    \caption{Eval1 Dreiecke}
-\end{figure}
+\label{sec:eval1:grund_solver}
+In diesem Experiment werden alle möglichen Beschränkungen an die Solver übergeben und einzeln getestet.
+Untersucht werden die Solver SAT, OrTools und Gurobi jeweils mit der Kantenformulierung sowie der Dreiecksformulierung.
+Für alle Durchläufe wurden die Überschneidungsbeschränkung, die Gradbeschränkung und das Ausschließen von Kanten angewendet.
+Bei der Kantenformulierung wurde zusätzlich das Fixieren der Hülle und einzelner Kanten berücksichtigt.
+Zusätzlich kam die \emph{alternative Kanten} Formulierung zum Einsatz.
+Die Instanzengröße liegt bei 30 bis 120 Knoten.
 
-\subsection{Sat}
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/eval1/sat.pdf}
-    \caption{Eval1 Sat}
-\end{figure}
-
-\subsection{OrTools}
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/eval1/ortools.pdf}
-    \caption{Eval1 OrTools}
-\end{figure}
-
-\subsection{Gurobi}
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/eval1/gurobi.pdf}
-    \caption{Eval1 Gurobi}
-\end{figure}
-
-\subsection{Gesamt}
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{figures/eval1/gesamt.pdf}
     \caption{Eval1 Gesamt}
+    \label{fig:eval1:gesamt}
 \end{figure}
-Lasse alle Solver mit allen Parametern einzeln aktiv laufen
+
 
 \section{Kanten vorab berechnen (Eval6)}
-Kanten vorab für nein/ja Berechen um testen ob exclude nur bei kleinen Mengen schlecht ist
+In diesem Experiment wird die theoretische Ausschließung und Fixierung von Kanten untersucht.
+Für eine Auswahl von Instanzen wird vor dem Experiment eine Menge von Kanten bestimmt, die sicher ausgeschlossen oder fixiert werden können.
+Dies basiert auf der theoretischen Beschränkung aus~\cref{sec:exclude_edges:theoretisch_ausschließen}.
+Die Grundlage für dieses Experiment ist die Annahme, dass das Ausschließen und Fixieren von Kanten in~\cref{sec:exclude_edges:theoretisch_ausschließen} nur schlecht performed hat, weil zu wenige Kanten ausgeschlossen wurden.
+In diesem Experiment wurde ausschließlich der SAT Solver verwendet, da SAT und OrTools in~\cref{fig:eval1:gesamt} vergleichbare Ergebnisse liefern und dadurch die Übersichtlichkeit gewahrt bleibt.
+Als weitere Beschränkungen kamen nur die Überschneidungsbeschränkung und die Gradbeschränkung zum Einsatz.
+Für die Knotengröße wurden Instanzen mit 70 bis 90 Knoten gewählt.
+
 
 \section{Zielfunktion (Eval11)}
 Davor in ganz klein wie gut Flips Funktionieren
