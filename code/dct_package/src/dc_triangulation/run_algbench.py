@@ -562,18 +562,19 @@ class Run_Algbench:
             fontweight="bold",
         )
 
-        # Legende im freien Bereich unten rechts mit mehreren Spalten
+        # Entferne Legenden von allen Subplots
+        for ax in axes[:n_instances]:
+            if ax.get_legend():
+                ax.get_legend().remove()
+
+        # Eine gemeinsame Legende für die gesamte Figur - unten links mit Offset platziert
         handles, labels = axes[0].get_legend_handles_labels()
         if handles:
-            # Berechne Anzahl Spalten basierend auf Anzahl der Solver
-            # n_cols = min(3, len(handles))  # Maximal 3 Spalten
-            n_cols = 1
             fig.legend(
                 handles,
                 labels,
-                loc="upper left",
-                bbox_to_anchor=(0.703, 0.45),
-                ncol=n_cols,
+                loc="lower left",
+                bbox_to_anchor=(0.1, 0.2),
                 fontsize=9,
                 frameon=True,
                 fancybox=True,
