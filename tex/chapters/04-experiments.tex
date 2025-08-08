@@ -1,11 +1,11 @@
 \chapter{Auswertung}
 \section{Versuchsumgebung}
 \begin{itemize}
-	\item Implementation details (e.g., libraries, third-party programs, \dots)
-	\item In which environment are you testing (e.g., system specifications)
-	\item What are you testing? (e.g., runtime, space needed, fps, \dots)
-	\item What are the results? Show fancy figures!
-	\item What does the results mean? (e.g., give a little discussion on your results)
+    \item Implementation details (e.g., libraries, third-party programs, \dots)
+    \item In which environment are you testing (e.g., system specifications)
+    \item What are you testing? (e.g., runtime, space needed, fps, \dots)
+    \item What are the results? Show fancy figures!
+    \item What does the results mean? (e.g., give a little discussion on your results)
 \end{itemize}
 
 \begin{itemize}
@@ -31,11 +31,12 @@
 \section{Sat Gradbeschränkung (Eval5)}
 In diesem Experiment werden Verschiedene Methoden der Gradbeschränkung in einem SAT Solver vergleichen.
 Hierbei wurden für alle drei Methoden, also \emph{subset}, Kardinalität mit exaktem Sollgrad und Kardinalität mit Mindest Sollgrad, die Laufzeiten gemessen.
-Bei den Kardinalitäts Codierugen von PySat wurden auch alle möglichen Codierugen Getestet.
+Bei den Kardinalitäts Codierugen von PySat wurden auch alle möglichen Codierungen Getestet.
 Das Ziel ist es die Gradbeschränkung zu finden mit der besten Laufzeit, welche in den Folgenden Experimenten verwendet wird.
 Für die Knotengröße wurden Instanzen der Größe 30 bis 90 verwendet.
 Bei der \emph{subset} Methode wurde nur die Instanz mit 30 Knoten verwendet. 
 Da bei größeren Knotenmengen der Arbeitsspeicher zu klein war.
+Als zusätzliche Bedingung wurde die Überschneidungsbeschränkung verwendet.
 Für die Exakte Methode sieht man in~\cref{fig:eval5_exact} das \emph{sequential counters} die besten Ergebnisse erzielen.
 Auch für den Mindest Sollgrad ist \emph{sequential counters} die beste Variante wie man in~\cref{fig:eval5_atleast} sieht.
 \begin{figure}[htb]
@@ -44,6 +45,8 @@ Auch für den Mindest Sollgrad ist \emph{sequential counters} die beste Variante
     \caption{die besten Ergebnisse der verschiedenen Gradbeschränkungen in einem SAT Solver.}
     \label{fig:eval5_gesamt}
 \end{figure}
+TODO @Michael @Phillip wie und wo platziere ich am besten die Legende?
+
 Der Vergleich der drei Methoden ist in~\cref{fig:eval5_gesamt} zu sehen.
 Hier ist klar erkennbar das \emph{subset} die schlechteste Methode ist.
 Das lässt sich leicht daran erklären das nur die kleinsten Instanzgrößen gelöst werden konnten.
@@ -58,7 +61,15 @@ Dementsprechend werden in folgenden Experimenten die Kardinalitätsbeschränkung
 % auch welche Coodierung von pysat für Kardinalität am besten funktioniert.
 
 \section{Sat Solver Vergleich (Eval3)}
-Teste alle möglichen Sat solver aus
+In diesem Experiment werden die verschiedenen SAT Solver verglichen, die von PySat bereitgestellt werden.
+PySat stellt \emph{Cadical195}, \emph{Gluecard4}, \emph{Glucose42}, \emph{Lingeling}, \emph{MapleChrono}, \emph{MapleCM}, \emph{Maplesat}, \emph{Mergesat3}, \emph{Minicard} und \emph{Minisat22} zur Verfügung. 
+Von diesen wurden jeweils die neuesten verfügbaren Versionen verwendet.
+Bei \emph{Gluecard4} und \emph{Minicard} kam anstelle von \emph{sequential counters} eine native Codierung der Gradbeschränkung zum Einsatz.
+Alle anderen Solver nutzen die \emph{sequential counters} Codierung sowie die Überschneidungsbeschränkung. 
+Weitere Bedingungen wurden nicht berücksichtigt.
+\emph{CryptoMinisat} wurde nicht verwendet, da dieser Solver speziell für XOR-Probleme optimiert ist.
+Für die Instanzengröße wurden 60 bis 90 Knoten gewählt.
+Das Ziel besteht darin, den Solver zu identifizieren, der die besten Ergebnisse liefert, um diesen in zukünftigen Experimenten einzusetzen.
 
 \section{Grund Solver (Eval1)}
 \subsection{Dreiecke}
