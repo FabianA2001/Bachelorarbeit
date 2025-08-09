@@ -12,6 +12,11 @@ struct ObservedLiteralStateTracker
 public:
     using Lit = cdc::CadicalSolver::Lit;
 
+    ObservedLiteralStateTracker(bool save_states = false, bool optimize_propagation = false) : save_states(save_states), optimize_propagation(optimize_propagation)
+
+    {
+    }
+
     void notify_backtrack(std::size_t new_level)
     {
         assert(new_level < level_indices.size() &&
@@ -138,6 +143,10 @@ public:
     }
     void update_vars_saved()
     {
+        if (!save_states)
+        {
+            return;
+        }
         std::vector<int> result = {};
         for (auto l : observed_vars)
         {
@@ -159,6 +168,7 @@ public:
 
 public:
     bool has_changes = false;
+    bool optimize_propagation;
 
 private:
     static std::size_t p_var_index(Lit observed_lit)
@@ -174,6 +184,7 @@ private:
     std::size_t current_decision_level{0};
     std::vector<Lit> observed_vars;
     std::vector<std::vector<int>> vars_saved;
+    bool save_states;
 };
 
 /**
@@ -186,8 +197,7 @@ class ExamplePropagator : public cdc::CadicalSolver::ExternalPropagator
 public:
     using Lit = cdc::CadicalSolver::Lit;
 
-    ExamplePropagator(cdc::CadicalSolver *solver) : cdc::CadicalSolver::ExternalPropagator(solver, true, false),
-                                                    state_tracker()
+    ExamplePropagator(cdc::CadicalSolver *solver, bool save_states = false, bool optimize_propagation = false) : cdc::CadicalSolver::ExternalPropagator(solver, true, false), state_tracker(save_states, optimize_propagation)
     {
     }
 
@@ -202,6 +212,10 @@ public:
 
     void notify_assignment(const std::vector<Lit> &lits) override
     {
+        if (lits.empty())
+        {
+            return; // No assignments to notify
+        }
         state_tracker.notify_assignments(lits);
         std::cerr << "Observed literals assigned: ";
         for (Lit l : lits)
@@ -209,12 +223,12 @@ public:
             std::cerr << l << " ";
         }
         std::cerr << "\n";
-        std::cerr << "Current observed trail: ";
-        for (Lit l : state_tracker.get_observed_trail())
-        {
-            std::cerr << l << " ";
-        }
-        std::cerr << "\n";
+        // std::cerr << "Current observed trail: ";
+        // for (Lit l : state_tracker.get_observed_trail())
+        // {
+        //     std::cerr << l << " ";
+        // }
+        // std::cerr << "\n";
     }
 
     void notify_new_decision_level() override
@@ -251,59 +265,16 @@ public:
         state_tracker.has_changes = false; // Flag zurücksetzen
 
         state_tracker.update_vars_saved();
+        if (!state_tracker.optimize_propagation)
+        {
+            return 0;
+        }
         std::cerr << "PROPAGATE called with observed trail ";
         for (Lit l : state_tracker.get_observed_trail())
         {
             std::cerr << l << " ";
         }
         std::cerr << "\n";
-
-        // for (const auto &clause : hidden_clauses)
-        // {
-        //     bool has_true = false;
-        //     std::size_t num_open = 0;
-        //     Lit unit_lit = 0;
-        //     for (Lit l : clause)
-        //     {
-        //         if (state_tracker.is_true(l))
-        //         {
-        //             has_true = true;
-        //             break;
-        //         }
-        //         else if (state_tracker.is_open(l))
-        //         {
-        //             unit_lit = l;
-        //             ++num_open;
-        //         }
-        //     }
-        //     if (has_true)
-        //     {
-        //         continue; // clause is satisfied
-        //     }
-        //     if (num_open == 0)
-        //     {
-        //         std::cerr << "External clause violated: ";
-        //         for (Lit l : clause)
-        //         {
-        //             std::cerr << l << " ";
-        //         }
-        //         std::cerr << "\n";
-        //         add_external_clause(clause.begin(), clause.end());
-        //         return 0; // clause is violated, return 0 and external clause
-        //     }
-        //     if (num_open == 1)
-        //     {
-        //         std::cerr << "Unit clause: ";
-        //         for (Lit l : clause)
-        //         {
-        //             std::cerr << l << " ";
-        //         }
-        //         std::cerr << "\n";
-        //         std::cerr << "Unit literal: " << unit_lit << "\n";
-        //         state_tracker.store_reason(unit_lit, clause);
-        //         return unit_lit;
-        //     }
-        // }
         return 0;
     }
 
@@ -323,7 +294,11 @@ private:
     std::vector<std::vector<Lit>> hidden_clauses;
 };
 
-std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars, int number_edges_vars, std::vector<Vars_List> clauses)
+std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
+                                                             int number_edges_vars,
+                                                             std::vector<Vars_List> clauses,
+                                                             bool save_state,
+                                                             bool optimize_propagation)
 {
     cdc::CadicalSolver solver;
     std::vector<cdc::CadicalSolver::Lit> v;
@@ -351,7 +326,7 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars, in
         solver.finish_clause();
     }
     // add the propagator
-    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver);
+    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver, save_state, optimize_propagation);
     // observe the variables (must be AFTER the constructor)
     propagator.observe_variables(std::vector<cdc::CadicalSolver::Lit>(v.begin(), v.begin() + number_edges_vars));
     // for (const auto &clause : clauses)

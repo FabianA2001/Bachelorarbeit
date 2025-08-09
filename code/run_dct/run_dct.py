@@ -189,11 +189,7 @@ def raw_flips_algorithm(graph):
 
 def cadical_algorithm(graph, nodes=None):
     solver = Cadical(graph)
-    para = Cadical_Parameter(
-        degree=True,
-        intersection=True,
-        fix_hull=True,
-    )
+    para = Cadical_Parameter(degree=True, intersection=True, fix_hull=True)
     solution = solver.solve({"timeout": -1, "args": asdict(para)})
     logging.info(f"solution found: {solution.get('success', False)}")
     if nodes is None:
@@ -207,7 +203,8 @@ def cadical_algorithm(graph, nodes=None):
     os.makedirs(SAVE, exist_ok=True)
 
     max_edges = len(solver.edges)
-    for i, vars in enumerate(solution.get("debug_vars", [])):
+    debug_vars = solution.get("debug_vars", [])
+    for i, vars in enumerate(debug_vars):
         lokal_graph = Graph_Wrapper(nodes)
         lokal_graph.name = f"{i}"
         for j, var in enumerate(vars):
@@ -269,7 +266,7 @@ def show_all_instanzes():
 
 def run_algo():
     PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_40", "000_delaunay_flips.json"
+        os.path.dirname(__file__), "instance", "simple_20", "000_delaunay_flips.json"
     )
     # PATH = os.path.join(
     #     os.path.dirname(__file__),
@@ -311,17 +308,17 @@ def run_algo():
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     # sat_algorithm(graph)
-    # cadical_algorithm(graph, nodes)
+    cadical_algorithm(graph, nodes)
     # count_algorithm(graph)
     # sat_Tri_algorithm(graph)
-    ortools_algorithm(graph)
+    # ortools_algorithm(graph)
     # ortools_tri_algorithm(graph)
     # gurobi_tri_algorithm(graph)
     # gurobi_algorithm(graph)
     # raw_flips_algorithm(graph)
 
     # graph.add_all_possible_edges(True)
-    logging.info(f"evluation: {graph.evaluate()}")
+    # logging.info(f"evluation: {graph.evaluate()}")
     graph.show_and_save()
 
 
@@ -410,7 +407,7 @@ def create_instance():
 
 
 if __name__ == "__main__":
-    # run_algo()
+    run_algo()
     # show_all_instanzes()
-    create_instance()
+    # create_instance()
     # permute_instance()

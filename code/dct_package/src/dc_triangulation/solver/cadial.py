@@ -13,6 +13,8 @@ class Parameter:
     degree: bool = False
     fix_hull: bool = False
     all_edges: bool = False
+    save_state: bool = False
+    optimize_propagation: bool = False
 
 
 class Cadical(Solver):
@@ -127,7 +129,11 @@ class Cadical(Solver):
         self.time_pre_solve(self.pre_solve)(parameter)
 
         vars, debug_vars = self.time_solver(cadical_wrapper)(
-            self.max_used, len(self.edges), self.clauses
+            self.max_used,
+            len(self.edges),
+            self.clauses,
+            parameter.save_state,
+            parameter.optimize_propagation,
         )
 
         for i in range(len(self.edges)):
