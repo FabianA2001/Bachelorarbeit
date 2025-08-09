@@ -1,12 +1,12 @@
 \chapter{Auswertung}
 \section{Versuchsumgebung}
-\begin{itemize}
-    \item Implementation details (e.g., libraries, third-party programs, \dots)
-    \item In which environment are you testing (e.g., system specifications)
-    \item What are you testing? (e.g., runtime, space needed, fps, \dots)
-    \item What are the results? Show fancy figures!
-    \item What does the results mean? (e.g., give a little discussion on your results)
-\end{itemize}
+% \begin{itemize}
+%     \item Implementation details (e.g., libraries, third-party programs, \dots)
+%     \item In which environment are you testing (e.g., system specifications)
+%     \item What are you testing? (e.g., runtime, space needed, fps, \dots)
+%     \item What are the results? Show fancy figures!
+%     \item What does the results mean? (e.g., give a little discussion on your results)
+% \end{itemize}
 
 \begin{itemize}
     \item Algbench und Slurminade, Pandas
@@ -26,9 +26,28 @@
     \item Gesamte Laufzeit dargestellt Model konstruktion plus solve zeit
 \end{itemize}
 
+\section{Permuation}
+\label{sec:eval2:permuation}
+% (Eval2)
+In diesem Experiment wird untersucht, ob es einen Einfluss hat, in welcher Reihenfolge die Knoten den Solvern übergeben werden.
+Es wurden Instanzen mit 60 bis 90 Knoten betrachtet.
+Als Beschränkungen kamen die Überschneidungsbeschränkung und die Gradbeschränkung zum Einsatz.
+Wie in~\cref{fig:eval2:gurobi},~\cref{fig:eval2:ortools} und~\cref{fig:eval2:sat} zu erkennen ist, unterscheiden sich die Laufzeiten bei allen Solvern.
+Daraus folgt, dass die Permutation der Knotenmenge einen Einfluss auf die Laufzeit hat.
+In den folgenden Experimenten wird für jeden Lauf die Knotenmenge fünfmal in unterschiedlichen Permutationen übergeben und der Durchschnitt berechnet.
+
+\section{Mehrmalige Durchläufe}
+% (Eval7) 
+In diesem Experiment wird untersucht, ob sich bei mehrfachen Durchläufen derselben Instanz mit demselben Solver sich die Laufzeit verändert.
+Auch hier wurden Instanzen mit 60 bis 90 Knoten betrachtet.
+Als Beschränkungen kamen die Überschneidungsbeschränkung und die Gradbeschränkung zum Einsatz.
+In~\cref{fig:eval7:gurobi} und~\cref{fig:eval7:sat} ist zu erkennen, dass alle Durchläufe die gleichen Laufzeiten aufweisen.
+Nur bei OrTools ist in~\cref{fig:eval7:ortools} zu sehen, dass die Laufzeiten unterschiedlich sind.
+Da aufgrund von~\cref{sec:eval2:permuation} bereits mehrere Durchläufe mit unterschiedlichen Permutationen durchgeführt werden, werden die OrTools-Durchläufe nicht zusätzlich mehrfach ausgeführt.
 
 
-\section{Sat Gradbeschränkung (Eval5)}
+\section{Sat Gradbeschränkung}
+% (Eval5)
 In diesem Experiment werden Verschiedene Methoden der Gradbeschränkung in einem SAT Solver vergleichen.
 Hierbei wurden für alle drei Methoden, also \emph{subset}, Kardinalität mit exaktem Sollgrad und Kardinalität mit Mindest Sollgrad, die Laufzeiten gemessen.
 Bei den Kardinalitäts Codierugen von PySat wurden auch alle möglichen Codierungen Getestet.
@@ -60,7 +79,8 @@ Dementsprechend werden in folgenden Experimenten die Kardinalitätsbeschränkung
 % also: subset, atleast, exact
 % auch welche Coodierung von pysat für Kardinalität am besten funktioniert.
 
-\section{Sat Solver Vergleich (Eval3)}
+\section{Sat Solver Vergleich}
+% (Eval3)
 In diesem Experiment werden die verschiedenen SAT Solver verglichen, die von PySat bereitgestellt werden.
 PySat stellt \emph{Cadical195}, \emph{Gluecard4}, \emph{Glucose42}, \emph{Lingeling}, \emph{MapleChrono}, \emph{MapleCM}, \emph{Maplesat}, \emph{Mergesat3}, \emph{Minicard} und \emph{Minisat22} zur Verfügung. 
 Von diesen wurden jeweils die neuesten verfügbaren Versionen verwendet.
@@ -71,7 +91,8 @@ Weitere Bedingungen wurden nicht berücksichtigt.
 Für die Instanzengröße wurden 60 bis 90 Knoten gewählt.
 Das Ziel besteht darin, den Solver zu identifizieren, der die besten Ergebnisse liefert, um diesen in zukünftigen Experimenten einzusetzen.
 
-\section{Grund Solver (Eval1)}
+\section{Grund Solver}
+% (Eval1)
 \label{sec:eval1:grund_solver}
 In diesem Experiment werden alle möglichen Beschränkungen an die Solver übergeben und einzeln getestet.
 Untersucht werden die Solver SAT, OrTools und Gurobi jeweils mit der Kantenformulierung sowie der Dreiecksformulierung.
@@ -88,22 +109,32 @@ Die Instanzengröße liegt bei 30 bis 120 Knoten.
 \end{figure}
 
 
-\section{Kanten vorab berechnen (Eval6)}
+\section{Kanten vorab berechnen}
+% (Eval6)
 In diesem Experiment wird die theoretische Ausschließung und Fixierung von Kanten untersucht.
 Für eine Auswahl von Instanzen wird vor dem Experiment eine Menge von Kanten bestimmt, die sicher ausgeschlossen oder fixiert werden können.
 Dies basiert auf der theoretischen Beschränkung aus~\cref{sec:exclude_edges:theoretisch_ausschließen}.
 Die Grundlage für dieses Experiment ist die Annahme, dass das Ausschließen und Fixieren von Kanten in~\cref{sec:exclude_edges:theoretisch_ausschließen} nur schlecht performed hat, weil zu wenige Kanten ausgeschlossen wurden.
 In diesem Experiment wurde ausschließlich der SAT Solver verwendet, da SAT und OrTools in~\cref{fig:eval1:gesamt} vergleichbare Ergebnisse liefern und dadurch die Übersichtlichkeit gewahrt bleibt.
 Als weitere Beschränkungen kamen nur die Überschneidungsbeschränkung und die Gradbeschränkung zum Einsatz.
-Für die Knotengröße wurden Instanzen mit 70 bis 90 Knoten gewählt.
+Für die Knotengröße wurden Instanzen mit 80 bis 120 Knoten gewählt.
 
 
-\section{Zielfunktion (Eval11)}
-Davor in ganz klein wie gut Flips Funktionieren
-Gucken wie orTools mit Zielfunktion funktioniert.
+\section{Zielfunktion}
+% (Eval11)
+In diesem Experiment werden die drei verschiedenen Optimierungsansätze vergleichen.
+Erste Ansatz ist der Flips Ansatz, die anderen beiden Ansätze sind die Zielfunktionen von OrTools
 
 \section{Instanzen Schwierigkeit}
-\subsection{Anzahl Lösungen  (Eval8)}
+In diesem Abschnitt wird Probiert die Schwierigkeit der Instanzen zu bestimmen.
+Aus den vorigen Experimenten ist bekannt das \emph{Delaunay} und \emph{Delaunay Flips} die schwereren Instanzen sind,\emph{Greedy} im Mittelfeld und \emph{Iterativ} und \emph{Random}die einfacheren Instanzen.
+Im ersten Teil wird geschaut ob die Anzahl der Lösungen pro Instanze einen Einfluss auf die Schwierigkeit haben. 
+Danach im zweiten Teil wird geschaut wie der Grad verteilt ist.
+Also wie oft jeder Grad vertreten wird.
+Im Letzen Teil wird geschaut ob es einen Zusammenhang mit den Kantenlängen und der Schwierigkeit gibt.
+Für alle drei Teile werden Instanzen der größe 30 bis 120 Knoten betrachtet.
+\subsection{Anzahl Lösungen}
+% (Eval8)
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.48\linewidth]{figures/eval8/delaunay_009_delaunay_80_0.pdf}\hfill
@@ -115,13 +146,23 @@ Gucken wie orTools mit Zielfunktion funktioniert.
     \includegraphics[width=0.48\linewidth]{figures/eval8/greedy_009_greedy_80_0.pdf}\hfill
     \includegraphics[width=0.48\linewidth]{figures/eval8/greedy_009_greedy_80_1.pdf}
     \caption{Eval8 Anzahl Lösungen Greedy}
+    \label{fig:eval8:left}
 \end{figure}
-gucken wie viele Mögliche Lösungen es pro Instanz gibt.
+Es ist zu sehen das fast alle Instanzen nur eine Lösungen haben.
+Vorallem ist aber zu sehen das es keinen Zusammenhang zwischen der Anzahl der Lösungen und der Instanze gibt.
+% TODO Tabelle in Anhang einfügen und verweisen
+Es kann also davon ausgegangen werden das die Anzahl der Lösungen keinen Einfluss auf die Schwierigkeit der Instanzen hat.
+Interesannter weiße ist zu sehen das die Kanten welche in einer Instanze unterschiedliche sind Lokal sind.
+Wie man in~\cref{fig:eval8:left} sieht, sind die Kanten in der linken Hälfte der Instanz unterschiedlich, während die rechte Hälfte keine Unterschiede aufweist.
+% TODO besseren Schluss ziehen
 
-\subsection{Grad Verteilung (Eval8)}
-gucken wie die Grad Verteilung ist
+\subsection{Grad Verteilung}
+% (Eval9)
+Wie man in 
+TODO einfügen sieht 
 
-\subsection{Kanten Verteilung (Eval9)}
+\subsection{Kanten Verteilung}
+% (Eval10)
 gucken wie die Kantenlängen Verteilung ist
 
 

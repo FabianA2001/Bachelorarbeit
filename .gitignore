@@ -3,6 +3,8 @@
 !**/code/evaluation/**/*.pdf
 !**/thesis.pdf
 !**/TEX/**/*.pdf
+!**/TEX/**/*.png
+!**/TEX/**/*.jpg
 *png
 .vscode/
 **/.degree-constrained-triangulation/
