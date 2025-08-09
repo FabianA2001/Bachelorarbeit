@@ -368,7 +368,7 @@ def create_instance():
         ],
     ):
         INST_NAME = NAME
-        for i in [100, 110, 120]:
+        for i in [130, 140, 150, 160, 170, 180, 190, 200]:
             FILE_NAME = f"{NAME}"
             generate.Generate_Instance(
                 INST_NAME,
@@ -410,7 +410,7 @@ def create_instance():
 
 
 if __name__ == "__main__":
-    run_algo()
+    # run_algo()
     # show_all_instanzes()
-    # create_instance()
+    create_instance()
     # permute_instance()
