@@ -306,9 +306,67 @@ void cadical_solver_test()
             2,
         },
     };
+    std::vector<Edge_raw> edges = {
+        {
+            {0, 0},
+            {9, 0},
+        },
+        {
+            {0, 0},
+            {0, 9},
+        },
+        {
+            {0, 0},
+            {2, 3},
+        },
+        {
+            {0, 0},
+            {6, 6},
+        },
+        {
+            {9, 0},
+            {9, 9},
+        },
+        {
+            {9, 0},
+            {0, 9},
+        },
+        {
+            {9, 0},
+            {2, 3},
+        },
+        {
+            {9, 0},
+            {6, 6},
+        },
+        {
+            {9, 9},
+            {0, 9},
+        },
+        {
+            {9, 9},
+            {2, 3},
+        },
+        {
+            {9, 9},
+            {6, 6},
+        },
+        {
+            {0, 9},
+            {2, 3},
+        },
+        {
+            {0, 9},
+            {6, 6},
+        },
+        {
+            {2, 3},
+            {6, 6},
+        },
+    };
     int max_var = 14;    // Maximum variable index in the clauses
     int edges_vars = 14; // Number of edge variables, can be adjusted as needed
-    auto x = cadical_wrapper(max_var, edges_vars, clauses, false, true);
+    auto x = cadical_wrapper(max_var, edges_vars, clauses, edges, false, true);
     int index = 1;
     for (const auto &val : x.first)
     {

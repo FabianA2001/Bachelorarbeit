@@ -1,6 +1,13 @@
 
 #include "cadical_wrapper.h"
 
+using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Point_2 = Kernel::Point_2;
+using Segment_2 = Kernel::Segment_2;
+using Polygon_2 = CGAL::Polygon_2<Kernel>;
+using Traits_2 = CGAL::Arr_segment_traits_2<Kernel>;
+using Arrangement_2 = CGAL::Arrangement_2<Traits_2>;
+
 /**
  * Data structure to track the state of our observed literals.
  * May be generally useful to have, e.g., to be able to
@@ -12,8 +19,7 @@ struct ObservedLiteralStateTracker
 public:
     using Lit = cdc::CadicalSolver::Lit;
 
-    ObservedLiteralStateTracker(bool save_states = false, bool optimize_propagation = false) : save_states(save_states), optimize_propagation(optimize_propagation)
-
+    ObservedLiteralStateTracker(bool save_states = false) : save_states(save_states)
     {
     }
 
@@ -168,7 +174,7 @@ public:
 
 public:
     bool has_changes = false;
-    bool optimize_propagation;
+    std::vector<Lit> observed_vars;
 
 private:
     static std::size_t p_var_index(Lit observed_lit)
@@ -182,7 +188,6 @@ private:
     std::vector<Lit> observed_trail;
     std::vector<bool> observed_values;
     std::size_t current_decision_level{0};
-    std::vector<Lit> observed_vars;
     std::vector<std::vector<int>> vars_saved;
     bool save_states;
 };
@@ -197,8 +202,42 @@ class ExamplePropagator : public cdc::CadicalSolver::ExternalPropagator
 public:
     using Lit = cdc::CadicalSolver::Lit;
 
-    ExamplePropagator(cdc::CadicalSolver *solver, bool save_states = false, bool optimize_propagation = false) : cdc::CadicalSolver::ExternalPropagator(solver, true, false), state_tracker(save_states, optimize_propagation)
+    ExamplePropagator(cdc::CadicalSolver *solver, bool save_states = false, bool optimize_propagation = false, std::vector<Edge_raw> edges = {}) : cdc::CadicalSolver::ExternalPropagator(solver, true, false), state_tracker(save_states), optimize_propagation(optimize_propagation)
     {
+        for (const auto &edge : edges)
+        {
+            auto seg = Segment_2(Point_2(edge.first.first, edge.first.second), Point_2(edge.second.first, edge.second.second));
+            this->edges.emplace_back(seg);
+        }
+        for (int i = 0; i < this->edges.size(); ++i)
+        {
+            std::string key = std::to_string(this->edges[i].source().x()) + "," +
+                              std::to_string(this->edges[i].source().y()) + "," +
+                              std::to_string(this->edges[i].target().x()) + "," +
+                              std::to_string(this->edges[i].target().y());
+            edge_to_index[key] = i + 1; // +1 to make it 1-based index
+        }
+    }
+
+    Segment_2 get_edge_from_lit(Lit lit) const
+    {
+        if (lit > edges.size())
+        {
+            throw std::logic_error("Edge index out of bounds for observed literal: " + std::to_string(lit));
+        }
+        return edges.at(lit - 1);
+    }
+
+    Lit get_lit_from_edge(const Segment_2 &edge) const
+    {
+        std::string key = std::to_string(edge.source().x()) + "," +
+                          std::to_string(edge.source().y()) + "," +
+                          std::to_string(edge.target().x()) + "," +
+                          std::to_string(edge.target().y());
+        auto it = edge_to_index.find(key);
+        assert(it != edge_to_index.end() &&
+               "Edge not found in the edge to index map.");
+        return it->second;
     }
 
     void observe_variables(const std::vector<Lit> &observed_vars)
@@ -220,7 +259,15 @@ public:
         std::cerr << "Observed literals assigned: ";
         for (Lit l : lits)
         {
-            std::cerr << l << " ";
+            if (std::find(state_tracker.observed_vars.begin(), state_tracker.observed_vars.end(), l) != state_tracker.observed_vars.end())
+            {
+                std::cerr << l << " ";
+                if (optimize_propagation)
+                {
+
+                    CGAL::insert(arr, get_edge_from_lit(l));
+                }
+            }
         }
         std::cerr << "\n";
         // std::cerr << "Current observed trail: ";
@@ -265,16 +312,24 @@ public:
         state_tracker.has_changes = false; // Flag zurücksetzen
 
         state_tracker.update_vars_saved();
-        if (!state_tracker.optimize_propagation)
+        std::cerr << optimize_propagation << std::endl;
+        if (!optimize_propagation)
         {
             return 0;
         }
-        std::cerr << "PROPAGATE called with observed trail ";
-        for (Lit l : state_tracker.get_observed_trail())
-        {
-            std::cerr << l << " ";
-        }
-        std::cerr << "\n";
+        // std::cerr << "PROPAGATE called with observed trail ";
+        // for (Lit l : state_tracker.get_observed_trail())
+        // {
+        //     std::cerr << l << " ";
+        // }
+        // std::cerr << "\n";
+
+        // Arrangement-Informationen ausgeben
+        std::cerr << "Arrangement info: "
+                  << "Vertices: " << arr.number_of_vertices()
+                  << ", Edges: " << arr.number_of_edges()
+                  << ", Faces: " << arr.number_of_faces() << std::endl;
+
         return 0;
     }
 
@@ -292,14 +347,23 @@ public:
 private:
     ObservedLiteralStateTracker state_tracker;
     std::vector<std::vector<Lit>> hidden_clauses;
+    std::vector<Segment_2> edges;
+    std::unordered_map<std::string, Lit> edge_to_index;
+    Arrangement_2 arr;
+    bool optimize_propagation;
 };
 
 std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
                                                              int number_edges_vars,
                                                              std::vector<Vars_List> clauses,
+                                                             std::vector<Edge_raw> edges,
                                                              bool save_state,
                                                              bool optimize_propagation)
 {
+    if (optimize_propagation)
+    {
+        assert(!edges.empty() && "Edges must be provided when optimize_propagation is true.");
+    }
     cdc::CadicalSolver solver;
     std::vector<cdc::CadicalSolver::Lit> v;
     for (int i = 0; i < number_vars; ++i)
@@ -326,7 +390,7 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
         solver.finish_clause();
     }
     // add the propagator
-    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver, save_state, optimize_propagation);
+    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver, save_state, optimize_propagation, edges);
     // observe the variables (must be AFTER the constructor)
     propagator.observe_variables(std::vector<cdc::CadicalSolver::Lit>(v.begin(), v.begin() + number_edges_vars));
     // for (const auto &clause : clauses)
