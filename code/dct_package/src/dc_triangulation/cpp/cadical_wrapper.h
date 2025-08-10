@@ -6,12 +6,12 @@
 #include <cassert>
 #include <unordered_map>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_batched_point_location.h>
+#include <CGAL/enum.h> // für CGAL::Orientation
 
 typedef int Number_type;
 typedef CGAL::Simple_cartesian<Number_type> Kernel;

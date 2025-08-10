@@ -208,8 +208,10 @@ public:
                           std::to_string(edge.target().x()) + "," +
                           std::to_string(edge.target().y());
         auto it = edge_to_index.find(key);
-        assert(it != edge_to_index.end() &&
-               "Edge not found in the edge to index map.");
+        if (it != edge_to_index.end())
+        {
+            return Lit(0);
+        }
         return it->second;
     }
 
@@ -591,6 +593,7 @@ public:
             int outer_halfedges_count = 0;
             auto circ = face->outer_ccb();
             auto start = circ;
+            std::vector<Point_2> hull_vertices;
             do
             {
                 outer_halfedges_count++;
@@ -602,46 +605,91 @@ public:
             std::cerr << "Anzahl der Kanten: " << outer_halfedges_count << "\n";
             std::vector<Query_result> inside_points;
             locate(state_tracker.arr, state_tracker.nodes.begin(), state_tracker.nodes.end(), std::back_inserter(inside_points));
-            std::vector<Point_2> face_vertices;
+            std::vector<Point_2> vertices;
             for (const auto &result : inside_points)
             {
-                face_vertices.push_back(result.first);
+                vertices.push_back(result.first);
             }
 
-            int max_face_vertices = face_vertices.size();
-            // Generate all possible edges between vertices
-            auto handel_half = [&](int x, int y)
-            {
-                int v1, v2;
-                if (x < y)
-                {
-                    v1 = x;
-                    v2 = y;
-                }
-                else
-                {
-                    v1 = x;
-                    v2 = y;
-                }
-                // Half one
-                for (auto i = v1; i <= v2; ++i)
-                {
-                }
+            Point_2 p1(0, 0);
+            Point_2 p2(5, 0);
+            Segment_2 segment(p1, p2);
 
-                // Half two
-                for (auto i = v2; i < max_face_vertices; ++i)
+            Point_2 test_point(2, 3); // Punkt oberhalb des Segments
+
+            int max_face_vertices = vertices.size();
+            // Generate all possible edges between vertices
+            auto handel_half = [&](const std::vector<Point_2> &points, int k)
+            {
+                int n = points.size();
+                int degree_count = 0;
+                for (const auto &v : points)
                 {
-                }
-                for (auto i = 0; i <= v1; ++i)
-                {
+                    int degree = state_tracker.get_sdegree_from_node(v);
+                    if (degree > n - 1)
+                    {
+                        return true; // If any vertex has a degree greater than n-1, return true
+                    }
+                    degree_count += degree;
                 }
                 return false;
             };
-            for (size_t i = 0; i < face_vertices.size(); ++i)
+            for (size_t x = 0; x < hull_vertices.size(); ++x)
             {
-                for (size_t j = i + 1; j < face_vertices.size(); ++j)
+                for (size_t y = x + 1; y < hull_vertices.size(); ++y)
                 {
-                    handel_half(i, j);
+                    int k_one, k_two = 0;
+                    std::vector<Point_2> half_one;
+                    std::vector<Point_2> half_two;
+                    for (const auto &v : vertices)
+                    {
+                        CGAL::Orientation orient = CGAL::orientation(hull_vertices[x], hull_vertices[y], v);
+                        if (orient == CGAL::LEFT_TURN)
+                        {
+                            half_one.push_back(v);
+                            if (std::find(hull_vertices.begin(), hull_vertices.end(), v) != hull_vertices.end())
+                            {
+                                k_one++;
+                            }
+                        }
+                        else if (orient == CGAL::RIGHT_TURN)
+                        {
+                            half_two.push_back(v);
+                            if (std::find(hull_vertices.begin(), hull_vertices.end(), v) != hull_vertices.end())
+                            {
+                                k_two++;
+                            }
+                        }
+                        else
+                        {
+                            half_one.push_back(v);
+                            half_two.push_back(v);
+                        }
+                        if (handel_half(half_one, k_one) || handel_half(half_two, k_two))
+                        {
+                            auto edge = Segment_2(hull_vertices[x], hull_vertices[y]);
+                            std::cerr << "-------------------------------------------------------------------------------------------------------------------------------------" << "\n";
+                            std::cerr << "-------------------------------------------------------------------------------------------------------------------------------------" << "\n";
+                            std::cerr << "-------------------------------------------------------------------------------------------------------------------------------------" << "\n";
+                            std::cerr << "-------------------------------------------------------------------------------------------------------------------------------------" << "\n";
+                            std::cerr << "can exclude edge: " << hull_vertices[x] << " - " << hull_vertices[y] << "\n";
+                            auto lit = state_tracker.get_lit_from_edge(edge);
+                            if (lit == Lit(0))
+                            {
+                                continue; // Edge not found, skip
+                            }
+                            std::vector<Lit> reason;
+                            for (Lit l : state_tracker.get_observed_trail())
+                            {
+                                if (l > 0)
+                                {
+                                    reason.push_back(l);
+                                }
+                            }
+                            state_tracker.store_reason(-lit, reason);
+                            return -lit; // Return the literal for the edge that can be excluded
+                        }
+                    }
                 }
             }
         }

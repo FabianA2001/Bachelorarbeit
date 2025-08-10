@@ -389,7 +389,7 @@ void cadical_solver_test()
     {
         std::cout << "Variable " << index++ << ": " << val << "\n";
     }
-    std::cout << "length of state saved: " << x.second.size() << "\n";
+    std::cout << "length of state savedd: " << x.second.size() << "\n";
 }
 
 int main()
