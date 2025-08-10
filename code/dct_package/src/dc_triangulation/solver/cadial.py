@@ -140,11 +140,15 @@ class Cadical(Solver):
             pos1 = self.graph.get_pos_from_node(edge[0])
             pos2 = self.graph.get_pos_from_node(edge[1])
             edges_as_pos.append((pos1, pos2))
+        nodes_as_pos = [
+            self.graph.get_pos_from_node(node) for node in self.graph.get_all_nodes()
+        ]
 
         vars, debug_vars = self.time_solver(cadical_wrapper)(
             self.max_used,
             len(self.edges),
             self.clauses,
+            nodes_as_pos,
             edges_as_pos,
             node_to_sdegree,
             parameter.save_state,
