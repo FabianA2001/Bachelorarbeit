@@ -259,76 +259,81 @@ public:
         notify_new_observed_var(max_abs);
     }
 
-    std::pair<Vertex_handle, Vertex_handle> get_vertex_handel_from_face(Arrangement_2::Face_handle face, const Point_2 &point1, const Point_2 &point2)
-    {
-        std::pair<Vertex_handle, Vertex_handle> vertices;
-        if (face->is_unbounded())
-        {
-            // Für unbounded faces gibt es keinen äußeren Rand im klassischen Sinne
-            return vertices;
-        }
+    /*
 
-        // Einen Halfedge des äußeren Rands bekommen
-        Arrangement_2::Ccb_halfedge_circulator circ = face->outer_ccb();
-        Arrangement_2::Ccb_halfedge_circulator start = circ;
+    Die Beiden Funktionieren funktionieren nicht.
+    Sie werden drin gelassen falls ich das doch noch implementieren möchte.
+    */
+    // std::pair<Vertex_handle, Vertex_handle> get_vertex_handel_from_face(Arrangement_2::Face_handle face, const Point_2 &point1, const Point_2 &point2)
+    // {
+    //     std::pair<Vertex_handle, Vertex_handle> vertices;
+    //     if (face->is_unbounded())
+    //     {
+    //         // Für unbounded faces gibt es keinen äußeren Rand im klassischen Sinne
+    //         return vertices;
+    //     }
 
-        // Über alle Halfedges des äußeren Rands iterieren
-        do
-        {
-            if (circ->source()->point() == point1)
-            {
-                vertices.first = circ->source();
-            }
-            else if (circ->source()->point() == point2)
-            {
-                vertices.second = circ->source();
-            }
-            ++circ;
-        } while (circ != start);
+    //     // Einen Halfedge des äußeren Rands bekommen
+    //     Arrangement_2::Ccb_halfedge_circulator circ = face->outer_ccb();
+    //     Arrangement_2::Ccb_halfedge_circulator start = circ;
 
-        return vertices;
-    }
+    //     // Über alle Halfedges des äußeren Rands iterieren
+    //     do
+    //     {
+    //         if (circ->source()->point() == point1)
+    //         {
+    //             vertices.first = circ->source();
+    //         }
+    //         else if (circ->source()->point() == point2)
+    //         {
+    //             vertices.second = circ->source();
+    //         }
+    //         ++circ;
+    //     } while (circ != start);
 
-    void insert_edge(const Segment_2 &edge)
-    {
-        if (tracked_face == Face_handle())
-        {
-            CGAL::insert(arr, edge);
-            auto count = std::distance(arr.faces_begin(), arr.faces_end());
-            if (count == 2)
-            {
-                auto face = arr.faces_begin();
-                if (face->is_unbounded())
-                {
-                    face = ++face; // Skip the unbounded face
-                }
-                tracked_face = face;
-            }
-        }
-        else
-        {
-            auto vertices = get_vertex_handel_from_face(tracked_face, edge.source(), edge.target());
-            if (vertices.first == Vertex_handle() || vertices.second == Vertex_handle())
-            {
-                // If the edge does not connect two vertices in the tracked face, insert it normally
-                CGAL::insert(arr, edge);
-            }
-            else
-            {
-                // Otherwise, create a new halfedge and insert it into the arrangement
-                auto new_halfedge = arr.insert_at_vertices(edge, vertices.first, vertices.second);
-                if (new_halfedge != Halfedge_handle())
-                {
-                    Face_handle face = new_halfedge->face();
-                }
-                else
-                {
-                    std::cerr << "Failed to insert edge: " << edge.source() << " -> " << edge.target() << "\n";
-                    throw std::runtime_error("Failed to insert edge into arrangement.");
-                }
-            }
-        }
-    }
+    //     return vertices;
+    // }
+
+    // void insert_edge(const Segment_2 &edge)
+    // {
+    //     if (tracked_face == Face_handle())
+    //     {
+    //         CGAL::insert(arr, edge);
+    //         auto count = std::distance(arr.faces_begin(), arr.faces_end());
+    //         if (count == 2)
+    //         {
+    //             auto face = arr.faces_begin();
+    //             if (face->is_unbounded())
+    //             {
+    //                 face = ++face; // Skip the unbounded face
+    //             }
+    //             tracked_face = face;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         auto vertices = get_vertex_handel_from_face(tracked_face, edge.source(), edge.target());
+    //         if (vertices.first == Vertex_handle() || vertices.second == Vertex_handle())
+    //         {
+    //             // If the edge does not connect two vertices in the tracked face, insert it normally
+    //             CGAL::insert(arr, edge);
+    //         }
+    //         else
+    //         {
+    //             // Otherwise, create a new halfedge and insert it into the arrangement
+    //             auto new_halfedge = arr.insert_at_vertices(edge, vertices.first, vertices.second);
+    //             if (new_halfedge != Halfedge_handle())
+    //             {
+    //                 Face_handle face = new_halfedge->face();
+    //             }
+    //             else
+    //             {
+    //                 std::cerr << "Failed to insert edge: " << edge.source() << " -> " << edge.target() << "\n";
+    //                 throw std::runtime_error("Failed to insert edge into arrangement.");
+    //             }
+    //         }
+    //     }
+    // }
 
     void notify_assignments(const std::vector<Lit> &assignments)
     {
@@ -365,7 +370,8 @@ public:
 
                 // Insert the edge into the arrangement
                 auto edge = get_edge_from_lit(l);
-                insert_edge(edge);
+                // insert_edge(edge);
+                CGAL::insert(arr, edge);
             }
 
             // Only print if observed variables were found
@@ -570,6 +576,53 @@ public:
         filename << "arrangement_" << std::setfill('0') << std::setw(4) << arrangement_counter++ << ".svg";
         save_arrangement_as_svg(state_tracker.arr, state_tracker.edges, filename.str());
 
+        for (auto face = state_tracker.arr.faces_begin(); face != state_tracker.arr.faces_end(); ++face)
+        {
+            if (face->is_unbounded())
+                continue; // Unbounded faces are not interesting
+
+            // Count outer halfedges using circulator
+            int outer_halfedges_count = 0;
+            auto circ = face->outer_ccb();
+            auto start = circ;
+            std::vector<Point_2> face_vertices;
+            do
+            {
+                outer_halfedges_count++;
+                ++circ;
+                // Extract all vertices of the face
+                face_vertices.push_back(circ->source()->point());
+                std::cerr << "degree:" << circ->source()->degree() << "\n";
+                ++circ;
+            } while (circ != start);
+
+            if (outer_halfedges_count <= 3)
+                continue; // Skip faces with 3 or fewer edges
+
+            std::cerr << "Anzahl der Kanten: " << outer_halfedges_count << "\n";
+
+            std::cerr << "Face vertices: ";
+            for (const auto &vertex : face_vertices)
+            {
+                std::cerr << "(" << vertex.x() << "," << vertex.y() << ") ";
+            }
+            std::cerr << "\n";
+
+            // Generate all possible edges between vertices
+            std::vector<Segment_2> possible_edges;
+            for (size_t i = 0; i < face_vertices.size(); ++i)
+            {
+                for (size_t j = i + 1; j < face_vertices.size(); ++j)
+                {
+                    possible_edges.emplace_back(face_vertices[i], face_vertices[j]);
+                }
+            }
+
+            for (const auto &edge : possible_edges)
+            {
+            }
+        }
+
         return 0;
     }
 
@@ -588,6 +641,7 @@ private:
     ObservedLiteralStateTracker state_tracker;
     std::vector<std::vector<Lit>> hidden_clauses;
     static int arrangement_counter;
+    int edgges_set_to_false_counter = 0;
 };
 
 int ExamplePropagator::arrangement_counter = 0;
