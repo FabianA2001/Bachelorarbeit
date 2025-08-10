@@ -372,9 +372,18 @@ void cadical_solver_test()
         {"2,3", 4},
         {"6,6", 4},
     };
+
+    std::vector<std::pair<int, int>> nodes = {
+        {0, 0},
+        {9, 0},
+        {9, 9},
+        {0, 9},
+        {2, 3},
+        {6, 6},
+    };
     int max_var = 14;    // Maximum variable index in the clauses
     int edges_vars = 14; // Number of edge variables, can be adjusted as needed
-    auto x = cadical_wrapper(max_var, edges_vars, clauses, edges, node_to_sdegree, false, true);
+    auto x = cadical_wrapper(max_var, edges_vars, clauses, nodes, edges, node_to_sdegree, false, true);
     int index = 1;
     for (const auto &val : x.first)
     {

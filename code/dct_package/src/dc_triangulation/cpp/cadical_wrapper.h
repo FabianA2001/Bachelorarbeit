@@ -11,6 +11,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_batched_point_location.h>
 
 typedef int Number_type;
 typedef CGAL::Simple_cartesian<Number_type> Kernel;
@@ -22,6 +23,9 @@ typedef Arrangement_2::Vertex_handle Vertex_handle;
 typedef Arrangement_2::Halfedge_handle Halfedge_handle;
 typedef Arrangement_2::Face_handle Face_handle;
 
+typedef CGAL::Arr_point_location_result<Arrangement_2> Point_location_result;
+typedef std::pair<Point_2, Point_location_result::Type> Query_result;
+
 typedef std::vector<int> Vars_List;
 typedef std::pair<int, int> Point_raw;
 typedef std::pair<Point_raw, Point_raw> Edge_raw;
@@ -29,6 +33,7 @@ typedef std::pair<Point_raw, Point_raw> Edge_raw;
 std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
                                                              int number_edges_vars,
                                                              std::vector<Vars_List> clauses,
+                                                             std::vector<Point_raw> nodes = {},
                                                              std::vector<Edge_raw> edges = {},
                                                              std::unordered_map<std::string, int> node_to_sdegree = {},
                                                              bool save_state = false,

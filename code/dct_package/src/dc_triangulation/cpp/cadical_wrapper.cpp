@@ -170,7 +170,7 @@ struct ObservedLiteralStateTracker
 public:
     using Lit = cdc::CadicalSolver::Lit;
 
-    ObservedLiteralStateTracker(bool save_states_lokal = false, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}) : save_states(save_states_lokal), node_to_sdegree(nodes_to_sdegree)
+    ObservedLiteralStateTracker(bool save_states_lokal = false, std::vector<Point_raw> nodes = {}, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}) : save_states(save_states_lokal), node_to_sdegree(nodes_to_sdegree)
     {
         for (const auto &edge : edges)
         {
@@ -184,6 +184,11 @@ public:
                               std::to_string(this->edges[i].target().x()) + "," +
                               std::to_string(this->edges[i].target().y());
             edge_to_index[key] = i + 1; // +1 to make it 1-based index
+        }
+
+        for (const auto &node : nodes)
+        {
+            this->nodes.push_back(Point_2(node.first, node.second));
         }
     }
 
@@ -494,6 +499,7 @@ public:
     std::vector<Segment_2> edges;
     std::unordered_map<std::string, Lit> edge_to_index;
     std::unordered_map<std::string, int> node_to_sdegree;
+    std::vector<Point_2> nodes; // Store nodes for arrangement
 };
 /**
  * Trivial example propagator that enforces a simple list of additional clauses
@@ -505,7 +511,7 @@ class ExamplePropagator : public cdc::CadicalSolver::ExternalPropagator
 public:
     using Lit = cdc::CadicalSolver::Lit;
 
-    ExamplePropagator(cdc::CadicalSolver *solver, bool save_states = false, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}) : cdc::CadicalSolver::ExternalPropagator(solver, true, false), state_tracker(save_states, edges, nodes_to_sdegree)
+    ExamplePropagator(cdc::CadicalSolver *solver, bool save_states = false, std::vector<Point_raw> nodes = {}, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}) : cdc::CadicalSolver::ExternalPropagator(solver, true, false), state_tracker(save_states, nodes, edges, nodes_to_sdegree)
     {
     }
 
@@ -585,41 +591,58 @@ public:
             int outer_halfedges_count = 0;
             auto circ = face->outer_ccb();
             auto start = circ;
-            std::vector<Point_2> face_vertices;
             do
             {
                 outer_halfedges_count++;
-                ++circ;
-                // Extract all vertices of the face
-                face_vertices.push_back(circ->source()->point());
-                std::cerr << "degree:" << circ->source()->degree() << "\n";
                 ++circ;
             } while (circ != start);
 
             if (outer_halfedges_count <= 3)
                 continue; // Skip faces with 3 or fewer edges
-
             std::cerr << "Anzahl der Kanten: " << outer_halfedges_count << "\n";
-
-            std::cerr << "Face vertices: ";
-            for (const auto &vertex : face_vertices)
+            std::vector<Query_result> inside_points;
+            locate(state_tracker.arr, state_tracker.nodes.begin(), state_tracker.nodes.end(), std::back_inserter(inside_points));
+            std::vector<Point_2> face_vertices;
+            for (const auto &result : inside_points)
             {
-                std::cerr << "(" << vertex.x() << "," << vertex.y() << ") ";
+                face_vertices.push_back(result.first);
             }
-            std::cerr << "\n";
 
+            int max_face_vertices = face_vertices.size();
             // Generate all possible edges between vertices
-            std::vector<Segment_2> possible_edges;
+            auto handel_half = [&](int x, int y)
+            {
+                int v1, v2;
+                if (x < y)
+                {
+                    v1 = x;
+                    v2 = y;
+                }
+                else
+                {
+                    v1 = x;
+                    v2 = y;
+                }
+                // Half one
+                for (auto i = v1; i <= v2; ++i)
+                {
+                }
+
+                // Half two
+                for (auto i = v2; i < max_face_vertices; ++i)
+                {
+                }
+                for (auto i = 0; i <= v1; ++i)
+                {
+                }
+                return false;
+            };
             for (size_t i = 0; i < face_vertices.size(); ++i)
             {
                 for (size_t j = i + 1; j < face_vertices.size(); ++j)
                 {
-                    possible_edges.emplace_back(face_vertices[i], face_vertices[j]);
+                    handel_half(i, j);
                 }
-            }
-
-            for (const auto &edge : possible_edges)
-            {
             }
         }
 
@@ -649,6 +672,7 @@ int ExamplePropagator::arrangement_counter = 0;
 std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
                                                              int number_edges_vars,
                                                              std::vector<Vars_List> clauses,
+                                                             std::vector<Point_raw> nodes,
                                                              std::vector<Edge_raw> edges,
                                                              std::unordered_map<std::string, int> node_to_sdegree,
                                                              bool save_state,
@@ -686,7 +710,7 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
     }
 
     // add the propagator
-    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver, save_state, edges, node_to_sdegree);
+    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver, save_state, nodes, edges, node_to_sdegree);
     // observe the variables (must be AFTER the constructor)
     propagator.observe_variables(std::vector<cdc::CadicalSolver::Lit>(v.begin(), v.begin() + number_edges_vars));
     // for (const auto &clause : clauses)
