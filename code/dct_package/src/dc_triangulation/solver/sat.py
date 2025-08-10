@@ -58,6 +58,18 @@ class SAT(Solver):
         for edge in self.edges:
             self.logger.info(f"Edge: {edge}, Index: {self.get_index(edge)}")
 
+        edges_str = "{"
+        for edge in self.edges:
+            edges_str += "{"
+            point_1 = self.graph.get_point_from_node(edge[0])
+            point_2 = self.graph.get_point_from_node(edge[1])
+            for point in (point_1, point_2):
+                edges_str += f"{{{int(point.x)}, {int(point.y)}}}, "
+            edges_str += "},"
+            point_1 = self.graph.get_point_from_node(edge[0])
+        edges_str += "}"
+        self.logger.info(f"Alle Kanten: {edges_str}")
+
     def get_index(self, edge) -> int:
         if edge in self.edges_to_index:
             return self.edges_to_index[edge] + 1

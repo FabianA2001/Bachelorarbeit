@@ -56,7 +56,7 @@ time_function
 
 
 def custom_points() -> list[Node]:
-    if True:
+    if False:
         return [
             Node((0, 0), 3),
             Node((1, 1), 3),
@@ -65,19 +65,15 @@ def custom_points() -> list[Node]:
         ]
     else:
         nodes = [
-            Node((5, 10)),
-            Node((2, 6)),
-            Node((6, 5)),
-            Node((9, 3)),
-            Node((0, 10)),
-            Node((9, 5)),
-            Node((1, 2)),
-            # Node((8, 6)),
-            # Node((2, 3)),
-            # Node((2, 10)),
+            Node((0, 0)),
+            Node((9, 0)),
+            Node((9, 9)),
+            Node((0, 9)),
+            Node((2, 3)),
+            Node((6, 6)),
         ]
         graph = Graph_Wrapper(nodes)
-        solver = Random_Adder(graph)
+        solver = Delaunay(graph)
         solver.solve({"timeout": -1, "ignore_degree": True})
         return graph.get_aktive_graph_nodes()
 
@@ -174,6 +170,10 @@ def run_algo():
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     nodes = custom_points()
+    nodes_to_sdegree = ""
+    for node in nodes:
+        nodes_to_sdegree += f'{{"{node.pos[0]},{node.pos[1]}",{node.degree}}},'
+    logging.info(f"{nodes_to_sdegree}")
     graph = Graph_Wrapper(nodes)
     # solver = Greedy(graph)
     # solver.solve({"timeout": -1})
@@ -186,7 +186,7 @@ def run_algo():
     # gurobi_algorithm(graph)
 
     # graph.add_all_possible_edges(True)
-    # graph.show_and_save()
+    graph.show_and_save()
 
 
 def create_instance():
