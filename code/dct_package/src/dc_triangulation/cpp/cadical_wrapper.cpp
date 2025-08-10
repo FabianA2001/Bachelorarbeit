@@ -1,4 +1,3 @@
-
 #include "cadical_wrapper.h"
 #include <fstream>
 #include <sstream>
@@ -260,6 +259,77 @@ public:
         notify_new_observed_var(max_abs);
     }
 
+    std::pair<Vertex_handle, Vertex_handle> get_vertex_handel_from_face(Arrangement_2::Face_handle face, const Point_2 &point1, const Point_2 &point2)
+    {
+        std::pair<Vertex_handle, Vertex_handle> vertices;
+        if (face->is_unbounded())
+        {
+            // Für unbounded faces gibt es keinen äußeren Rand im klassischen Sinne
+            return vertices;
+        }
+
+        // Einen Halfedge des äußeren Rands bekommen
+        Arrangement_2::Ccb_halfedge_circulator circ = face->outer_ccb();
+        Arrangement_2::Ccb_halfedge_circulator start = circ;
+
+        // Über alle Halfedges des äußeren Rands iterieren
+        do
+        {
+            if (circ->source()->point() == point1)
+            {
+                vertices.first = circ->source();
+            }
+            else if (circ->source()->point() == point2)
+            {
+                vertices.second = circ->source();
+            }
+            ++circ;
+        } while (circ != start);
+
+        return vertices;
+    }
+
+    void insert_edge(const Segment_2 &edge)
+    {
+        if (tracked_face == Face_handle())
+        {
+            CGAL::insert(arr, edge);
+            auto count = std::distance(arr.faces_begin(), arr.faces_end());
+            if (count == 2)
+            {
+                auto face = arr.faces_begin();
+                if (face->is_unbounded())
+                {
+                    face = ++face; // Skip the unbounded face
+                }
+                tracked_face = face;
+            }
+        }
+        else
+        {
+            auto vertices = get_vertex_handel_from_face(tracked_face, edge.source(), edge.target());
+            if (vertices.first == Vertex_handle() || vertices.second == Vertex_handle())
+            {
+                // If the edge does not connect two vertices in the tracked face, insert it normally
+                CGAL::insert(arr, edge);
+            }
+            else
+            {
+                // Otherwise, create a new halfedge and insert it into the arrangement
+                auto new_halfedge = arr.insert_at_vertices(edge, vertices.first, vertices.second);
+                if (new_halfedge != Halfedge_handle())
+                {
+                    Face_handle face = new_halfedge->face();
+                }
+                else
+                {
+                    std::cerr << "Failed to insert edge: " << edge.source() << " -> " << edge.target() << "\n";
+                    throw std::runtime_error("Failed to insert edge into arrangement.");
+                }
+            }
+        }
+    }
+
     void notify_assignments(const std::vector<Lit> &assignments)
     {
         for (Lit l : assignments)
@@ -295,7 +365,7 @@ public:
 
                 // Insert the edge into the arrangement
                 auto edge = get_edge_from_lit(l);
-                CGAL::insert(arr, edge);
+                insert_edge(edge);
             }
 
             // Only print if observed variables were found
@@ -399,7 +469,7 @@ public:
     bool has_changes = false;
     std::vector<Lit> observed_vars;
     Arrangement_2 arr;
-    Arrangement_2::Face_handle tracked_face; // Track the face with most edges
+    Face_handle tracked_face; // Track the face with most edges
 
     static std::size_t p_var_index(Lit observed_lit)
     {
