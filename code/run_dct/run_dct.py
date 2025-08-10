@@ -272,7 +272,7 @@ def show_all_instanzes():
 
 def run_algo():
     PATH = os.path.join(
-        os.path.dirname(__file__), "instance", "simple_20", "000_delaunay_flips.json"
+        os.path.dirname(__file__), "instance", "simple_10", "000_delaunay_flips.json"
     )
     # PATH = os.path.join(
     #     os.path.dirname(__file__),

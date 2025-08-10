@@ -157,10 +157,10 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
     svg_file.close();
 
     std::cerr << "Arrangement saved as SVG to: " << full_path << std::endl;
-    std::cerr << "Vertices: " << arr.number_of_vertices()
-              << ", Edges: " << arr.number_of_edges()
-              << ", Faces: " << arr.number_of_faces() << std::endl;
-    std::cerr << "Original edges count: " << original_edges.size() << std::endl;
+    // std::cerr << "Vertices: " << arr.number_of_vertices()
+    //           << ", Edges: " << arr.number_of_edges()
+    //           << ", Faces: " << arr.number_of_faces() << std::endl;
+    // std::cerr << "Original edges count: " << original_edges.size() << std::endl;
 }
 
 /**
@@ -191,12 +191,15 @@ public:
         }
         observed_trail.resize(new_size);
         level_indices.resize(new_level);
+        arr = arrangements[new_level];  // Restore the arrangement for the new level
+        arrangements.resize(new_level); // Remove later levels
     }
 
     void notify_new_decision_level()
     {
         ++current_decision_level;
         level_indices.push_back(observed_trail.size());
+        arrangements.push_back(arr); // Store the current arrangement
     }
 
     void notify_new_observed_var(Lit observed_var)
@@ -330,6 +333,7 @@ public:
 public:
     bool has_changes = false;
     std::vector<Lit> observed_vars;
+    Arrangement_2 arr;
 
 private:
     static std::size_t p_var_index(Lit observed_lit)
@@ -345,6 +349,7 @@ private:
     std::size_t current_decision_level{0};
     std::vector<std::vector<int>> vars_saved;
     bool save_states;
+    std::vector<Arrangement_2> arrangements; // Store arrangements for each decision level
 };
 
 /**
@@ -357,7 +362,7 @@ class ExamplePropagator : public cdc::CadicalSolver::ExternalPropagator
 public:
     using Lit = cdc::CadicalSolver::Lit;
 
-    ExamplePropagator(cdc::CadicalSolver *solver, bool save_states = false, bool optimize_propagation = false, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}) : cdc::CadicalSolver::ExternalPropagator(solver, true, false), state_tracker(save_states), optimize_propagation(optimize_propagation), node_to_sdegree(node_to_sdegree)
+    ExamplePropagator(cdc::CadicalSolver *solver, bool save_states = false, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}) : cdc::CadicalSolver::ExternalPropagator(solver, true, false), state_tracker(save_states), node_to_sdegree(node_to_sdegree)
     {
         for (const auto &edge : edges)
         {
@@ -418,20 +423,31 @@ public:
             return; // No assignments to notify
         }
         state_tracker.notify_assignments(lits);
-        std::cerr << "Observed literals assigned: ";
+
+        // Check if any observed variables are found before printing
+        bool found_observed = false;
+        std::vector<Lit> observed_lits;
+
         for (Lit l : lits)
         {
             if (std::find(state_tracker.observed_vars.begin(), state_tracker.observed_vars.end(), l) != state_tracker.observed_vars.end())
             {
-                std::cerr << l << " ";
-                if (optimize_propagation)
-                {
-
-                    CGAL::insert(arr, get_edge_from_lit(l));
-                }
+                found_observed = true;
+                observed_lits.push_back(l);
+                CGAL::insert(state_tracker.arr, get_edge_from_lit(l));
             }
         }
-        std::cerr << "\n";
+
+        // Only print if observed variables were found
+        if (found_observed)
+        {
+            std::cerr << "Observed literals assigned: ";
+            for (Lit l : observed_lits)
+            {
+                std::cerr << l << " ";
+            }
+            std::cerr << "\n";
+        }
         // std::cerr << "Current observed trail: ";
         // for (Lit l : state_tracker.get_observed_trail())
         // {
@@ -461,9 +477,6 @@ public:
         hidden_clauses.push_back(clause);
     }
 
-    /**
-     * Propagation routine; inefficient checking for unit clauses.
-     */
     int propagate() override
     {
         if (!state_tracker.has_changes)
@@ -474,11 +487,6 @@ public:
         state_tracker.has_changes = false; // Flag zurücksetzen
 
         state_tracker.update_vars_saved();
-        std::cerr << optimize_propagation << std::endl;
-        if (!optimize_propagation)
-        {
-            return 0;
-        }
         // std::cerr << "PROPAGATE called with observed trail ";
         // for (Lit l : state_tracker.get_observed_trail())
         // {
@@ -489,7 +497,7 @@ public:
         // Arrangement-Informationen ausgeben
         std::stringstream filename;
         filename << "arrangement_" << std::setfill('0') << std::setw(4) << arrangement_counter++ << ".svg";
-        save_arrangement_as_svg(arr, edges, filename.str());
+        save_arrangement_as_svg(state_tracker.arr, edges, filename.str());
 
         return 0;
     }
@@ -511,8 +519,6 @@ private:
     std::vector<Segment_2> edges;
     std::unordered_map<std::string, Lit> edge_to_index;
     std::unordered_map<std::string, int> node_to_sdegree;
-    Arrangement_2 arr;
-    bool optimize_propagation;
     static int arrangement_counter;
 };
 
@@ -527,10 +533,11 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
                                                              bool save_state,
                                                              bool optimize_propagation)
 {
-    if (optimize_propagation)
-    {
-        assert(!edges.empty() && "Edges must be provided when optimize_propagation is true.");
-    }
+    // if (optimize_propagation)
+    // {
+    //     assert(!edges.empty() && "Edges must be provided when optimize_propagation is true.");
+    // }
+    assert(!edges.empty() && "Edges must be provided when optimize_propagation is true.");
     cdc::CadicalSolver solver;
     std::vector<cdc::CadicalSolver::Lit> v;
     for (int i = 0; i < number_vars; ++i)
@@ -556,8 +563,9 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
         // std::cout << "Finishing clause with 0\n";
         solver.finish_clause();
     }
+
     // add the propagator
-    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver, save_state, optimize_propagation, edges, node_to_sdegree);
+    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver, save_state, edges, node_to_sdegree);
     // observe the variables (must be AFTER the constructor)
     propagator.observe_variables(std::vector<cdc::CadicalSolver::Lit>(v.begin(), v.begin() + number_edges_vars));
     // for (const auto &clause : clauses)
@@ -565,7 +573,6 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
     //     // add the clauses to the propagator
     //     propagator.add_hidden_clause(clause);
     // }
-
     auto result = solver.solve();
     if (!result || !*result)
     {
@@ -588,7 +595,7 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
                 result.push_back(0);
             }
         }
+
         return std::make_pair(result, propagator.get_vars_saved());
-        ;
     }
 }
