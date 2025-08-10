@@ -189,7 +189,13 @@ def raw_flips_algorithm(graph):
 
 def cadical_algorithm(graph, nodes=None):
     solver = Cadical(graph)
-    para = Cadical_Parameter(degree=True, intersection=True, fix_hull=True)
+    para = Cadical_Parameter(
+        degree=True,
+        intersection=True,
+        fix_hull=True,
+        save_state=True,
+        optimize_propagation=True,
+    )
     solution = solver.solve({"timeout": -1, "args": asdict(para)})
     logging.info(f"solution found: {solution.get('success', False)}")
     if nodes is None:

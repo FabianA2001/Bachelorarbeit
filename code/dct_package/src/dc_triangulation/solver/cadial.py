@@ -128,10 +128,25 @@ class Cadical(Solver):
 
         self.time_pre_solve(self.pre_solve)(parameter)
 
+        node_to_sdegree = {}
+        for node in self.graph.get_all_nodes():
+            pos = self.graph.get_pos_from_node(node)
+            pos_str = f"{pos[0]},{pos[1]}"
+            sdegree = self.graph.get_desired_degree_node(node)
+            node_to_sdegree[pos_str] = sdegree
+
+        edges_as_pos = []
+        for edge in self.edges:
+            pos1 = self.graph.get_pos_from_node(edge[0])
+            pos2 = self.graph.get_pos_from_node(edge[1])
+            edges_as_pos.append((pos1, pos2))
+
         vars, debug_vars = self.time_solver(cadical_wrapper)(
             self.max_used,
             len(self.edges),
             self.clauses,
+            edges_as_pos,
+            node_to_sdegree,
             parameter.save_state,
             parameter.optimize_propagation,
         )

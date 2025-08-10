@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iomanip>
 #include <limits>
+#include <filesystem>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_2 = Kernel::Point_2;
@@ -15,10 +16,16 @@ using Arrangement_2 = CGAL::Arrangement_2<Traits_2>;
 // Helper function to save arrangement as SVG file
 void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment_2> &original_edges, const std::string &filename)
 {
-    std::ofstream svg_file(filename);
+    // Create svg_figures directory if it doesn't exist
+    std::filesystem::create_directories("svg_figures");
+
+    // Construct full path with directory
+    std::string full_path = "svg_figures/" + filename;
+
+    std::ofstream svg_file(full_path);
     if (!svg_file.is_open())
     {
-        std::cerr << "Error: Could not open file " << filename << " for writing." << std::endl;
+        std::cerr << "Error: Could not open file " << full_path << " for writing." << std::endl;
         return;
     }
 
@@ -149,7 +156,7 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
     svg_file << "</svg>\n";
     svg_file.close();
 
-    std::cerr << "Arrangement saved as SVG to: " << filename << std::endl;
+    std::cerr << "Arrangement saved as SVG to: " << full_path << std::endl;
     std::cerr << "Vertices: " << arr.number_of_vertices()
               << ", Edges: " << arr.number_of_edges()
               << ", Faces: " << arr.number_of_faces() << std::endl;
