@@ -13,6 +13,10 @@ using Polygon_2 = CGAL::Polygon_2<Kernel>;
 using Traits_2 = CGAL::Arr_segment_traits_2<Kernel>;
 using Arrangement_2 = CGAL::Arrangement_2<Traits_2>;
 
+// Constants for SVG visualization
+const double SCALE_FACTOR = 100.0;
+const double NODE_RADIUS = 5.0;
+
 // Helper function to save arrangement as SVG file
 void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment_2> &original_edges, const std::string &filename)
 {
@@ -42,8 +46,8 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         // Find bounds from arrangement vertices
         for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
         {
-            double x = CGAL::to_double(vit->point().x());
-            double y = CGAL::to_double(vit->point().y());
+            double x = CGAL::to_double(vit->point().x()) * SCALE_FACTOR;
+            double y = CGAL::to_double(vit->point().y()) * SCALE_FACTOR;
             min_x = std::min(min_x, x);
             max_x = std::max(max_x, x);
             min_y = std::min(min_y, y);
@@ -55,10 +59,10 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         // Find bounds from original edges
         for (const auto &edge : original_edges)
         {
-            double x1 = CGAL::to_double(edge.source().x());
-            double y1 = CGAL::to_double(edge.source().y());
-            double x2 = CGAL::to_double(edge.target().x());
-            double y2 = CGAL::to_double(edge.target().y());
+            double x1 = CGAL::to_double(edge.source().x()) * SCALE_FACTOR;
+            double y1 = CGAL::to_double(edge.source().y()) * SCALE_FACTOR;
+            double x2 = CGAL::to_double(edge.target().x()) * SCALE_FACTOR;
+            double y2 = CGAL::to_double(edge.target().y()) * SCALE_FACTOR;
 
             min_x = std::min({min_x, x1, x2});
             max_x = std::max({max_x, x1, x2});
@@ -90,10 +94,10 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
         {
             auto curve = eit->curve();
-            double x1 = CGAL::to_double(curve.source().x()) - min_x + padding;
-            double y1 = CGAL::to_double(curve.source().y()) - min_y + padding;
-            double x2 = CGAL::to_double(curve.target().x()) - min_x + padding;
-            double y2 = CGAL::to_double(curve.target().y()) - min_y + padding;
+            double x1 = CGAL::to_double(curve.source().x()) * SCALE_FACTOR - min_x + padding;
+            double y1 = CGAL::to_double(curve.source().y()) * SCALE_FACTOR - min_y + padding;
+            double x2 = CGAL::to_double(curve.target().x()) * SCALE_FACTOR - min_x + padding;
+            double y2 = CGAL::to_double(curve.target().y()) * SCALE_FACTOR - min_y + padding;
 
             // Flip y-coordinate for SVG (SVG has origin at top-left)
             y1 = height - y1;
@@ -108,10 +112,10 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         svg_file << "<g fill=\"red\">\n";
         for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
         {
-            double x = CGAL::to_double(vit->point().x()) - min_x + padding;
-            double y = CGAL::to_double(vit->point().y()) - min_y + padding;
+            double x = CGAL::to_double(vit->point().x()) * SCALE_FACTOR - min_x + padding;
+            double y = CGAL::to_double(vit->point().y()) * SCALE_FACTOR - min_y + padding;
             y = height - y; // Flip y-coordinate
-            svg_file << "<circle cx=\"" << x << "\" cy=\"" << y << "\" r=\"1\"/>\n";
+            svg_file << "<circle cx=\"" << x << "\" cy=\"" << y << "\" r=\"" << NODE_RADIUS << "\"/>\n";
         }
         svg_file << "</g>\n";
     }
@@ -121,10 +125,10 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         svg_file << "<g stroke=\"blue\" stroke-width=\"1\" fill=\"none\">\n";
         for (const auto &edge : original_edges)
         {
-            double x1 = CGAL::to_double(edge.source().x()) - min_x + padding;
-            double y1 = CGAL::to_double(edge.source().y()) - min_y + padding;
-            double x2 = CGAL::to_double(edge.target().x()) - min_x + padding;
-            double y2 = CGAL::to_double(edge.target().y()) - min_y + padding;
+            double x1 = CGAL::to_double(edge.source().x()) * SCALE_FACTOR - min_x + padding;
+            double y1 = CGAL::to_double(edge.source().y()) * SCALE_FACTOR - min_y + padding;
+            double x2 = CGAL::to_double(edge.target().x()) * SCALE_FACTOR - min_x + padding;
+            double y2 = CGAL::to_double(edge.target().y()) * SCALE_FACTOR - min_y + padding;
 
             // Flip y-coordinate for SVG
             y1 = height - y1;
@@ -139,16 +143,16 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         svg_file << "<g fill=\"blue\">\n";
         for (const auto &edge : original_edges)
         {
-            double x1 = CGAL::to_double(edge.source().x()) - min_x + padding;
-            double y1 = CGAL::to_double(edge.source().y()) - min_y + padding;
-            double x2 = CGAL::to_double(edge.target().x()) - min_x + padding;
-            double y2 = CGAL::to_double(edge.target().y()) - min_y + padding;
+            double x1 = CGAL::to_double(edge.source().x()) * SCALE_FACTOR - min_x + padding;
+            double y1 = CGAL::to_double(edge.source().y()) * SCALE_FACTOR - min_y + padding;
+            double x2 = CGAL::to_double(edge.target().x()) * SCALE_FACTOR - min_x + padding;
+            double y2 = CGAL::to_double(edge.target().y()) * SCALE_FACTOR - min_y + padding;
 
             y1 = height - y1;
             y2 = height - y2;
 
-            svg_file << "<circle cx=\"" << x1 << "\" cy=\"" << y1 << "\" r=\"1\"/>\n";
-            svg_file << "<circle cx=\"" << x2 << "\" cy=\"" << y2 << "\" r=\"1\"/>\n";
+            svg_file << "<circle cx=\"" << x1 << "\" cy=\"" << y1 << "\" r=\"" << NODE_RADIUS << "\"/>\n";
+            svg_file << "<circle cx=\"" << x2 << "\" cy=\"" << y2 << "\" r=\"" << NODE_RADIUS << "\"/>\n";
         }
         svg_file << "</g>\n";
     }
