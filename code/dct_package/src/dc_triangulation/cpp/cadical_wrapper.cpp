@@ -1,5 +1,9 @@
 
 #include "cadical_wrapper.h"
+#include <fstream>
+#include <sstream>
+#include <iomanip>
+#include <limits>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_2 = Kernel::Point_2;
@@ -7,6 +11,150 @@ using Segment_2 = Kernel::Segment_2;
 using Polygon_2 = CGAL::Polygon_2<Kernel>;
 using Traits_2 = CGAL::Arr_segment_traits_2<Kernel>;
 using Arrangement_2 = CGAL::Arrangement_2<Traits_2>;
+
+// Helper function to save arrangement as SVG file
+void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment_2> &original_edges, const std::string &filename)
+{
+    std::ofstream svg_file(filename);
+    if (!svg_file.is_open())
+    {
+        std::cerr << "Error: Could not open file " << filename << " for writing." << std::endl;
+        return;
+    }
+
+    // Calculate bounding box - use original edges if arrangement is empty
+    double min_x = std::numeric_limits<double>::max();
+    double max_x = std::numeric_limits<double>::lowest();
+    double min_y = std::numeric_limits<double>::max();
+    double max_y = std::numeric_limits<double>::lowest();
+
+    bool has_arrangement_data = (arr.number_of_vertices() > 0);
+
+    if (has_arrangement_data)
+    {
+        // Find bounds from arrangement vertices
+        for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
+        {
+            double x = CGAL::to_double(vit->point().x());
+            double y = CGAL::to_double(vit->point().y());
+            min_x = std::min(min_x, x);
+            max_x = std::max(max_x, x);
+            min_y = std::min(min_y, y);
+            max_y = std::max(max_y, y);
+        }
+    }
+    else
+    {
+        // Find bounds from original edges
+        for (const auto &edge : original_edges)
+        {
+            double x1 = CGAL::to_double(edge.source().x());
+            double y1 = CGAL::to_double(edge.source().y());
+            double x2 = CGAL::to_double(edge.target().x());
+            double y2 = CGAL::to_double(edge.target().y());
+
+            min_x = std::min({min_x, x1, x2});
+            max_x = std::max({max_x, x1, x2});
+            min_y = std::min({min_y, y1, y2});
+            max_y = std::max({max_y, y1, y2});
+        }
+    }
+
+    // Add some padding
+    double padding = 50;
+    double width = max_x - min_x + 2 * padding;
+    double height = max_y - min_y + 2 * padding;
+
+    // Ensure minimum size
+    if (width < 200)
+        width = 200;
+    if (height < 200)
+        height = 200;
+
+    // Write SVG header
+    svg_file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    svg_file << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" << width << "\" height=\"" << height << "\">\n";
+    svg_file << "<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n";
+
+    if (has_arrangement_data)
+    {
+        // Draw arrangement edges
+        svg_file << "<g stroke=\"black\" stroke-width=\"1\" fill=\"none\">\n";
+        for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
+        {
+            auto curve = eit->curve();
+            double x1 = CGAL::to_double(curve.source().x()) - min_x + padding;
+            double y1 = CGAL::to_double(curve.source().y()) - min_y + padding;
+            double x2 = CGAL::to_double(curve.target().x()) - min_x + padding;
+            double y2 = CGAL::to_double(curve.target().y()) - min_y + padding;
+
+            // Flip y-coordinate for SVG (SVG has origin at top-left)
+            y1 = height - y1;
+            y2 = height - y2;
+
+            svg_file << "<line x1=\"" << x1 << "\" y1=\"" << y1
+                     << "\" x2=\"" << x2 << "\" y2=\"" << y2 << "\"/>\n";
+        }
+        svg_file << "</g>\n";
+
+        // Draw vertices
+        svg_file << "<g fill=\"red\">\n";
+        for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
+        {
+            double x = CGAL::to_double(vit->point().x()) - min_x + padding;
+            double y = CGAL::to_double(vit->point().y()) - min_y + padding;
+            y = height - y; // Flip y-coordinate
+            svg_file << "<circle cx=\"" << x << "\" cy=\"" << y << "\" r=\"1\"/>\n";
+        }
+        svg_file << "</g>\n";
+    }
+    else
+    {
+        // Draw original edges if arrangement is empty
+        svg_file << "<g stroke=\"blue\" stroke-width=\"1\" fill=\"none\">\n";
+        for (const auto &edge : original_edges)
+        {
+            double x1 = CGAL::to_double(edge.source().x()) - min_x + padding;
+            double y1 = CGAL::to_double(edge.source().y()) - min_y + padding;
+            double x2 = CGAL::to_double(edge.target().x()) - min_x + padding;
+            double y2 = CGAL::to_double(edge.target().y()) - min_y + padding;
+
+            // Flip y-coordinate for SVG
+            y1 = height - y1;
+            y2 = height - y2;
+
+            svg_file << "<line x1=\"" << x1 << "\" y1=\"" << y1
+                     << "\" x2=\"" << x2 << "\" y2=\"" << y2 << "\"/>\n";
+        }
+        svg_file << "</g>\n";
+
+        // Draw endpoints
+        svg_file << "<g fill=\"blue\">\n";
+        for (const auto &edge : original_edges)
+        {
+            double x1 = CGAL::to_double(edge.source().x()) - min_x + padding;
+            double y1 = CGAL::to_double(edge.source().y()) - min_y + padding;
+            double x2 = CGAL::to_double(edge.target().x()) - min_x + padding;
+            double y2 = CGAL::to_double(edge.target().y()) - min_y + padding;
+
+            y1 = height - y1;
+            y2 = height - y2;
+
+            svg_file << "<circle cx=\"" << x1 << "\" cy=\"" << y1 << "\" r=\"1\"/>\n";
+            svg_file << "<circle cx=\"" << x2 << "\" cy=\"" << y2 << "\" r=\"1\"/>\n";
+        }
+        svg_file << "</g>\n";
+    }
+
+    svg_file << "</svg>\n";
+    svg_file.close();
+
+    std::cerr << "Arrangement saved as SVG to: " << filename << std::endl;
+    std::cerr << "Vertices: " << arr.number_of_vertices()
+              << ", Edges: " << arr.number_of_edges()
+              << ", Faces: " << arr.number_of_faces() << std::endl;
+    std::cerr << "Original edges count: " << original_edges.size() << std::endl;
+}
 
 /**
  * Data structure to track the state of our observed literals.
@@ -332,10 +480,9 @@ public:
         // std::cerr << "\n";
 
         // Arrangement-Informationen ausgeben
-        std::cerr << "Arrangement info: "
-                  << "Vertices: " << arr.number_of_vertices()
-                  << ", Edges: " << arr.number_of_edges()
-                  << ", Faces: " << arr.number_of_faces() << std::endl;
+        std::stringstream filename;
+        filename << "arrangement_" << std::setfill('0') << std::setw(4) << arrangement_counter++ << ".svg";
+        save_arrangement_as_svg(arr, edges, filename.str());
 
         return 0;
     }
@@ -359,7 +506,11 @@ private:
     std::unordered_map<std::string, int> node_to_sdegree;
     Arrangement_2 arr;
     bool optimize_propagation;
+    static int arrangement_counter;
 };
+
+// Initialize static counter
+int ExamplePropagator::arrangement_counter = 0;
 
 std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
                                                              int number_edges_vars,
