@@ -248,185 +248,6 @@ public:
                 assert(is_true(l) && "Trying to assign an already assigned observed literal.");
             }
         }
-    }
-
-    /**
-     * Check if the observed literal is true under the current assignment.
-     */
-    bool is_true(Lit observed_lit) const
-    {
-        std::size_t index = p_var_index(observed_lit);
-        return observed_values[index] & ((observed_lit > 0) == observed_values[index + 1]);
-    }
-
-    /**
-     * Check if the observed literal is false under the current assignment.
-     */
-    bool is_false(Lit observed_lit) const
-    {
-        std::size_t index = p_var_index(observed_lit);
-        return observed_values[index] & ((observed_lit > 0) == !observed_values[index + 1]);
-    }
-
-    /**
-     * Check if the observed literal is open, i.e., not currently assigned.
-     */
-    bool is_open(Lit observed_lit) const
-    {
-        return !observed_values[p_var_index(observed_lit)];
-    }
-
-    /**
-     * Get a list of currently fixed observed literals.
-     */
-    const std::vector<Lit> &get_observed_trail() const
-    {
-        return observed_trail;
-    }
-
-    void store_reason(Lit prop_lit, const std::vector<Lit> &reason)
-    {
-        reasons[prop_lit] = reason;
-    }
-
-    void get_reason(Lit prop_lit, std::vector<Lit> &reason)
-    {
-        auto it = reasons.find(prop_lit);
-        if (it == reasons.end())
-        {
-            throw std::logic_error("No reason stored for the propagated literal: " +
-                                   std::to_string(prop_lit));
-        }
-        reason = it->second;
-        reasons.erase(it);
-    }
-
-    void set_observed_vars(const std::vector<Lit> &observed_vars)
-    {
-        this->observed_vars = observed_vars;
-    }
-    std::vector<std::vector<int>> get_vars_saved()
-    {
-        return this->vars_saved;
-    }
-    void update_vars_saved()
-    {
-        if (!save_states)
-        {
-            return;
-        }
-        std::vector<int> result = {};
-        for (auto l : observed_vars)
-        {
-            if (is_true(l))
-            {
-                result.push_back(1);
-            }
-            else if (is_false(l))
-            {
-                result.push_back(0);
-            }
-            else
-            {
-                result.push_back(-1); // -1 for open variables
-            }
-        }
-        vars_saved.push_back(result);
-    }
-
-public:
-    bool has_changes = false;
-    std::vector<Lit> observed_vars;
-    Arrangement_2 arr;
-
-private:
-    static std::size_t p_var_index(Lit observed_lit)
-    {
-        std::size_t var_index = 2 * (std::abs(observed_lit) - 1);
-        return var_index;
-    }
-
-    std::unordered_map<Lit, std::vector<Lit>> reasons;
-    std::vector<std::size_t> level_indices;
-    std::vector<Lit> observed_trail;
-    std::vector<bool> observed_values;
-    std::size_t current_decision_level{0};
-    std::vector<std::vector<int>> vars_saved;
-    bool save_states;
-    std::vector<Arrangement_2> arrangements; // Store arrangements for each decision level
-};
-
-/**
- * Trivial example propagator that enforces a simple list of additional clauses
- * on its observed variables.
- * Note that it uses a quite inefficient way of checking the clauses for unitness.
- */
-class ExamplePropagator : public cdc::CadicalSolver::ExternalPropagator
-{
-public:
-    using Lit = cdc::CadicalSolver::Lit;
-
-    ExamplePropagator(cdc::CadicalSolver *solver, bool save_states = false, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}) : cdc::CadicalSolver::ExternalPropagator(solver, true, false), state_tracker(save_states), node_to_sdegree(node_to_sdegree)
-    {
-        for (const auto &edge : edges)
-        {
-            auto seg = Segment_2(Point_2(edge.first.first, edge.first.second), Point_2(edge.second.first, edge.second.second));
-            this->edges.emplace_back(seg);
-        }
-        for (int i = 0; i < this->edges.size(); ++i)
-        {
-            std::string key = std::to_string(this->edges[i].source().x()) + "," +
-                              std::to_string(this->edges[i].source().y()) + "," +
-                              std::to_string(this->edges[i].target().x()) + "," +
-                              std::to_string(this->edges[i].target().y());
-            edge_to_index[key] = i + 1; // +1 to make it 1-based index
-        }
-    }
-
-    Segment_2 get_edge_from_lit(Lit lit) const
-    {
-        if (lit > edges.size())
-        {
-            throw std::logic_error("Edge index out of bounds for observed literal: " + std::to_string(lit));
-        }
-        return edges.at(lit - 1);
-    }
-
-    Lit get_lit_from_edge(const Segment_2 &edge) const
-    {
-        std::string key = std::to_string(edge.source().x()) + "," +
-                          std::to_string(edge.source().y()) + "," +
-                          std::to_string(edge.target().x()) + "," +
-                          std::to_string(edge.target().y());
-        auto it = edge_to_index.find(key);
-        assert(it != edge_to_index.end() &&
-               "Edge not found in the edge to index map.");
-        return it->second;
-    }
-
-    int get_sdegree_from_node(const Point_2 &node) const
-    {
-        std::string key = std::to_string(node.x()) + "," +
-                          std::to_string(node.y());
-        return node_to_sdegree.at(key);
-    }
-
-    void observe_variables(const std::vector<Lit> &observed_vars)
-    {
-        state_tracker.notify_new_observed_vars(observed_vars);
-        for (Lit l : observed_vars)
-        {
-            observe(l);
-        }
-    }
-
-    void notify_assignment(const std::vector<Lit> &lits) override
-    {
-        if (lits.empty())
-        {
-            return; // No assignments to notify
-        }
-        state_tracker.notify_assignments(lits);
 
         // Check if any observed variables are found before printing
         bool found_observed = false;
@@ -434,172 +255,384 @@ public:
 
         for (Lit l : lits)
         {
-            if (std::find(state_tracker.observed_vars.begin(), state_tracker.observed_vars.end(), l) != state_tracker.observed_vars.end())
+            if (std::find(observed_vars.begin(), observed_vars.end(), l) != observed_vars.end())
             {
                 found_observed = true;
                 observed_lits.push_back(l);
-                CGAL::insert(state_tracker.arr, get_edge_from_lit(l));
-            }
-        }
 
-        // Only print if observed variables were found
-        if (found_observed)
-        {
-            std::cerr << "Observed literals assigned: ";
-            for (Lit l : observed_lits)
+                // Insert the edge and get information about the created faces
+                auto insert_result = CGAL::insert(arr, get_edge_from_lit(l));
+
+                // Handle both faces that are created by the insertion
+                auto face1 = insert_result.first;
+                auto face2 = insert_result.second;
+                assert(!face1->is_unbounded() && "Inserted face1 should not be unbounded.");
+                assert(!face2->is_unbounded() && "Inserted face2 should not be unbounded.");
+
+                // Count the number of edges for each face
+                int face1_edge_count = 0;
+                int face2_edge_count = 0;
+
+                // Count edges of face1
+                auto face1_ccb = face1->outer_ccb();
+                auto face1_curr = face1_ccb;
+                do
+                {
+                    face1_edge_count++;
+                    ++face1_curr;
+                } while (face1_curr != face1_ccb);
+
+                // Count edges of face2
+                auto face2_ccb = face2->outer_ccb();
+                auto face2_curr = face2_ccb;
+                do
+                {
+                    face2_edge_count++;
+                    ++face2_curr;
+                } while (face2_curr != face2_ccb);
+
+                // Store the face with more edges as a class variable
+                this->face_with_more_edges = (face1_edge_count > face2_edge_count) ? face1 : face2;
+            }
+
+            // Only print if observed variables were found
+            if (found_observed)
             {
-                std::cerr << l << " ";
+                std::cerr << "Observed literals assigned: ";
+                for (Lit l : observed_lits)
+                {
+                    std::cerr << l << " ";
+                }
+                std::cerr << "\n";
             }
-            std::cerr << "\n";
         }
-        // std::cerr << "Current observed trail: ";
-        // for (Lit l : state_tracker.get_observed_trail())
-        // {
-        //     std::cerr << l << " ";
-        // }
-        // std::cerr << "\n";
-    }
 
-    void notify_new_decision_level() override
-    {
-        std::cerr << "New decision level started.\n";
-        state_tracker.notify_new_decision_level();
-    }
+        /**
+         * Check if the observed literal is true under the current assignment.
+         */
+        bool is_true(Lit observed_lit) const
+        {
+            std::size_t index = p_var_index(observed_lit);
+            return observed_values[index] & ((observed_lit > 0) == observed_values[index + 1]);
+        }
 
-    void notify_backtrack(std::size_t new_level) override
-    {
-        std::cerr << "Backtracking to level " << new_level << "\n";
-        state_tracker.notify_backtrack(new_level);
-    }
+        /**
+         * Check if the observed literal is false under the current assignment.
+         */
+        bool is_false(Lit observed_lit) const
+        {
+            std::size_t index = p_var_index(observed_lit);
+            return observed_values[index] & ((observed_lit > 0) == !observed_values[index + 1]);
+        }
+
+        /**
+         * Check if the observed literal is open, i.e., not currently assigned.
+         */
+        bool is_open(Lit observed_lit) const
+        {
+            return !observed_values[p_var_index(observed_lit)];
+        }
+
+        /**
+         * Get a list of currently fixed observed literals.
+         */
+        const std::vector<Lit> &get_observed_trail() const
+        {
+            return observed_trail;
+        }
+
+        void store_reason(Lit prop_lit, const std::vector<Lit> &reason)
+        {
+            reasons[prop_lit] = reason;
+        }
+
+        void get_reason(Lit prop_lit, std::vector<Lit> & reason)
+        {
+            auto it = reasons.find(prop_lit);
+            if (it == reasons.end())
+            {
+                throw std::logic_error("No reason stored for the propagated literal: " +
+                                       std::to_string(prop_lit));
+            }
+            reason = it->second;
+            reasons.erase(it);
+        }
+
+        void set_observed_vars(const std::vector<Lit> &observed_vars)
+        {
+            this->observed_vars = observed_vars;
+        }
+        std::vector<std::vector<int>> get_vars_saved()
+        {
+            return this->vars_saved;
+        }
+        void update_vars_saved()
+        {
+            if (!save_states)
+            {
+                return;
+            }
+            std::vector<int> result = {};
+            for (auto l : observed_vars)
+            {
+                if (is_true(l))
+                {
+                    result.push_back(1);
+                }
+                else if (is_false(l))
+                {
+                    result.push_back(0);
+                }
+                else
+                {
+                    result.push_back(-1); // -1 for open variables
+                }
+            }
+            vars_saved.push_back(result);
+        }
+
+    public:
+        bool has_changes = false;
+        std::vector<Lit> observed_vars;
+        Arrangement_2 arr;
+        Arrangement_2::Face_handle face_with_more_edges;
+
+    private:
+        static std::size_t p_var_index(Lit observed_lit)
+        {
+            std::size_t var_index = 2 * (std::abs(observed_lit) - 1);
+            return var_index;
+        }
+
+        std::unordered_map<Lit, std::vector<Lit>> reasons;
+        std::vector<std::size_t> level_indices;
+        std::vector<Lit> observed_trail;
+        std::vector<bool> observed_values;
+        std::size_t current_decision_level{0};
+        std::vector<std::vector<int>> vars_saved;
+        bool save_states;
+        std::vector<Arrangement_2> arrangements; // Store arrangements for each decision level
+    };
 
     /**
-     * Add a hidden clause to the propagator, which it will
-     * give to the SAT solver during propagation.
+     * Trivial example propagator that enforces a simple list of additional clauses
+     * on its observed variables.
+     * Note that it uses a quite inefficient way of checking the clauses for unitness.
      */
-    void add_hidden_clause(const std::vector<Lit> &clause)
+    class ExamplePropagator : public cdc::CadicalSolver::ExternalPropagator
     {
-        hidden_clauses.push_back(clause);
-    }
+    public:
+        using Lit = cdc::CadicalSolver::Lit;
 
-    int propagate() override
-    {
-        if (!state_tracker.has_changes)
+        ExamplePropagator(cdc::CadicalSolver *solver, bool save_states = false, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}) : cdc::CadicalSolver::ExternalPropagator(solver, true, false), state_tracker(save_states), node_to_sdegree(node_to_sdegree)
         {
-            return 0; // Keine Änderungen - früher Ausstieg
+            for (const auto &edge : edges)
+            {
+                auto seg = Segment_2(Point_2(edge.first.first, edge.first.second), Point_2(edge.second.first, edge.second.second));
+                this->edges.emplace_back(seg);
+            }
+            for (int i = 0; i < this->edges.size(); ++i)
+            {
+                std::string key = std::to_string(this->edges[i].source().x()) + "," +
+                                  std::to_string(this->edges[i].source().y()) + "," +
+                                  std::to_string(this->edges[i].target().x()) + "," +
+                                  std::to_string(this->edges[i].target().y());
+                edge_to_index[key] = i + 1; // +1 to make it 1-based index
+            }
         }
 
-        state_tracker.has_changes = false; // Flag zurücksetzen
+        Segment_2 get_edge_from_lit(Lit lit) const
+        {
+            if (lit > edges.size())
+            {
+                throw std::logic_error("Edge index out of bounds for observed literal: " + std::to_string(lit));
+            }
+            return edges.at(lit - 1);
+        }
 
-        state_tracker.update_vars_saved();
-        // std::cerr << "PROPAGATE called with observed trail ";
-        // for (Lit l : state_tracker.get_observed_trail())
+        Lit get_lit_from_edge(const Segment_2 &edge) const
+        {
+            std::string key = std::to_string(edge.source().x()) + "," +
+                              std::to_string(edge.source().y()) + "," +
+                              std::to_string(edge.target().x()) + "," +
+                              std::to_string(edge.target().y());
+            auto it = edge_to_index.find(key);
+            assert(it != edge_to_index.end() &&
+                   "Edge not found in the edge to index map.");
+            return it->second;
+        }
+
+        int get_sdegree_from_node(const Point_2 &node) const
+        {
+            std::string key = std::to_string(node.x()) + "," +
+                              std::to_string(node.y());
+            return node_to_sdegree.at(key);
+        }
+
+        void observe_variables(const std::vector<Lit> &observed_vars)
+        {
+            state_tracker.notify_new_observed_vars(observed_vars);
+            for (Lit l : observed_vars)
+            {
+                observe(l);
+            }
+        }
+
+        void notify_assignment(const std::vector<Lit> &lits) override
+        {
+            if (lits.empty())
+            {
+                return; // No assignments to notify
+            }
+            state_tracker.notify_assignments(lits);
+            // std::cerr << "Current observed trail: ";
+            // for (Lit l : state_tracker.get_observed_trail())
+            // {
+            //     std::cerr << l << " ";
+            // }
+            // std::cerr << "\n";
+        }
+
+        void notify_new_decision_level() override
+        {
+            std::cerr << "New decision level started.\n";
+            state_tracker.notify_new_decision_level();
+        }
+
+        void notify_backtrack(std::size_t new_level) override
+        {
+            std::cerr << "Backtracking to level " << new_level << "\n";
+            state_tracker.notify_backtrack(new_level);
+        }
+
+        /**
+         * Add a hidden clause to the propagator, which it will
+         * give to the SAT solver during propagation.
+         */
+        void add_hidden_clause(const std::vector<Lit> &clause)
+        {
+            hidden_clauses.push_back(clause);
+        }
+
+        int propagate() override
+        {
+            if (!state_tracker.has_changes)
+            {
+                return 0; // Keine Änderungen - früher Ausstieg
+            }
+
+            state_tracker.has_changes = false; // Flag zurücksetzen
+
+            state_tracker.update_vars_saved();
+            // std::cerr << "PROPAGATE called with observed trail ";
+            // for (Lit l : state_tracker.get_observed_trail())
+            // {
+            //     std::cerr << l << " ";
+            // }
+            // std::cerr << "\n";
+
+            // Arrangement-Informationen ausgeben
+            std::stringstream filename;
+            filename << "arrangement_" << std::setfill('0') << std::setw(4) << arrangement_counter++ << ".svg";
+            save_arrangement_as_svg(state_tracker.arr, edges, filename.str());
+
+            return 0;
+        }
+
+        void get_reason_clause(Lit propagated_lit, std::vector<Lit> &reason_buffer) override
+        {
+            std::cerr << "Getting reason clause for propagated literal: " << propagated_lit << "\n";
+            state_tracker.get_reason(propagated_lit, reason_buffer);
+        }
+
+        std::vector<std::vector<int>> get_vars_saved()
+        {
+            return state_tracker.get_vars_saved();
+        }
+
+    private:
+        ObservedLiteralStateTracker state_tracker;
+        std::vector<std::vector<Lit>> hidden_clauses;
+        std::vector<Segment_2> edges;
+        std::unordered_map<std::string, Lit> edge_to_index;
+        std::unordered_map<std::string, int> node_to_sdegree;
+        static int arrangement_counter;
+    };
+
+    // Initialize static counter
+    int ExamplePropagator::arrangement_counter = 0;
+
+    std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
+                                                                 int number_edges_vars,
+                                                                 std::vector<Vars_List> clauses,
+                                                                 std::vector<Edge_raw> edges,
+                                                                 std::unordered_map<std::string, int> node_to_sdegree,
+                                                                 bool save_state,
+                                                                 bool optimize_propagation)
+    {
+        // if (optimize_propagation)
         // {
-        //     std::cerr << l << " ";
+        //     assert(!edges.empty() && "Edges must be provided when optimize_propagation is true.");
         // }
-        // std::cerr << "\n";
-
-        // Arrangement-Informationen ausgeben
-        std::stringstream filename;
-        filename << "arrangement_" << std::setfill('0') << std::setw(4) << arrangement_counter++ << ".svg";
-        save_arrangement_as_svg(state_tracker.arr, edges, filename.str());
-
-        return 0;
-    }
-
-    void get_reason_clause(Lit propagated_lit, std::vector<Lit> &reason_buffer) override
-    {
-        std::cerr << "Getting reason clause for propagated literal: " << propagated_lit << "\n";
-        state_tracker.get_reason(propagated_lit, reason_buffer);
-    }
-
-    std::vector<std::vector<int>> get_vars_saved()
-    {
-        return state_tracker.get_vars_saved();
-    }
-
-private:
-    ObservedLiteralStateTracker state_tracker;
-    std::vector<std::vector<Lit>> hidden_clauses;
-    std::vector<Segment_2> edges;
-    std::unordered_map<std::string, Lit> edge_to_index;
-    std::unordered_map<std::string, int> node_to_sdegree;
-    static int arrangement_counter;
-};
-
-// Initialize static counter
-int ExamplePropagator::arrangement_counter = 0;
-
-std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
-                                                             int number_edges_vars,
-                                                             std::vector<Vars_List> clauses,
-                                                             std::vector<Edge_raw> edges,
-                                                             std::unordered_map<std::string, int> node_to_sdegree,
-                                                             bool save_state,
-                                                             bool optimize_propagation)
-{
-    // if (optimize_propagation)
-    // {
-    //     assert(!edges.empty() && "Edges must be provided when optimize_propagation is true.");
-    // }
-    assert(!edges.empty() && "Edges must be provided when optimize_propagation is true.");
-    cdc::CadicalSolver solver;
-    std::vector<cdc::CadicalSolver::Lit> v;
-    for (int i = 0; i < number_vars; ++i)
-    {
-        v.push_back(solver.new_var());
-    }
-    // add the negated version of each clause directly to the solver
-    for (const auto &clause : clauses)
-    {
-        for (auto l : clause)
+        assert(!edges.empty() && "Edges must be provided when optimize_propagation is true.");
+        cdc::CadicalSolver solver;
+        std::vector<cdc::CadicalSolver::Lit> v;
+        for (int i = 0; i < number_vars; ++i)
         {
-            if (l > 0)
-            {
-                // std::cout << "Adding literal: " << v.at(l - 1) << "\n";
-                solver.add_literal(v.at(l - 1));
-            }
-            else
-            {
-                // std::cout << "Adding negated literal: " << -v.at((-1 * l) - 1) << "\n";
-                solver.add_literal(-v.at((-1 * l) - 1));
-            }
+            v.push_back(solver.new_var());
         }
-        // std::cout << "Finishing clause with 0\n";
-        solver.finish_clause();
-    }
-
-    // add the propagator
-    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver, save_state, edges, node_to_sdegree);
-    // observe the variables (must be AFTER the constructor)
-    propagator.observe_variables(std::vector<cdc::CadicalSolver::Lit>(v.begin(), v.begin() + number_edges_vars));
-    // for (const auto &clause : clauses)
-    // {
-    //     // add the clauses to the propagator
-    //     propagator.add_hidden_clause(clause);
-    // }
-    auto result = solver.solve();
-    if (!result || !*result)
-    {
-        std::cerr << "No solution found\n";
-        return std::make_pair(Vars_List{}, std::vector<Vars_List>{});
-    }
-    else
-    {
-        std::cout << "Solution found\n";
-        auto model = solver.get_model();
-        std::vector<int> result = {};
-        for (auto l : v)
+        // add the negated version of each clause directly to the solver
+        for (const auto &clause : clauses)
         {
-            if (model[l])
+            for (auto l : clause)
             {
-                result.push_back(1);
+                if (l > 0)
+                {
+                    // std::cout << "Adding literal: " << v.at(l - 1) << "\n";
+                    solver.add_literal(v.at(l - 1));
+                }
+                else
+                {
+                    // std::cout << "Adding negated literal: " << -v.at((-1 * l) - 1) << "\n";
+                    solver.add_literal(-v.at((-1 * l) - 1));
+                }
             }
-            else
-            {
-                result.push_back(0);
-            }
+            // std::cout << "Finishing clause with 0\n";
+            solver.finish_clause();
         }
 
-        return std::make_pair(result, propagator.get_vars_saved());
+        // add the propagator
+        auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver, save_state, edges, node_to_sdegree);
+        // observe the variables (must be AFTER the constructor)
+        propagator.observe_variables(std::vector<cdc::CadicalSolver::Lit>(v.begin(), v.begin() + number_edges_vars));
+        // for (const auto &clause : clauses)
+        // {
+        //     // add the clauses to the propagator
+        //     propagator.add_hidden_clause(clause);
+        // }
+        auto result = solver.solve();
+        if (!result || !*result)
+        {
+            std::cerr << "No solution found\n";
+            return std::make_pair(Vars_List{}, std::vector<Vars_List>{});
+        }
+        else
+        {
+            std::cout << "Solution found\n";
+            auto model = solver.get_model();
+            std::vector<int> result = {};
+            for (auto l : v)
+            {
+                if (model[l])
+                {
+                    result.push_back(1);
+                }
+                else
+                {
+                    result.push_back(0);
+                }
+            }
+
+            return std::make_pair(result, propagator.get_vars_saved());
+        }
     }
-}
