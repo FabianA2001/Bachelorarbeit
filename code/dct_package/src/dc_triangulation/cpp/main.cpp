@@ -364,9 +364,17 @@ void cadical_solver_test()
             {6, 6},
         },
     };
+    std::unordered_map<std::string, int> node_to_sdegree = {
+        {"0,0", 3},
+        {"9,0", 4},
+        {"9,9", 3},
+        {"0,9", 4},
+        {"2,3", 4},
+        {"6,6", 4},
+    };
     int max_var = 14;    // Maximum variable index in the clauses
     int edges_vars = 14; // Number of edge variables, can be adjusted as needed
-    auto x = cadical_wrapper(max_var, edges_vars, clauses, edges, false, true);
+    auto x = cadical_wrapper(max_var, edges_vars, clauses, edges, node_to_sdegree, false, true);
     int index = 1;
     for (const auto &val : x.first)
     {

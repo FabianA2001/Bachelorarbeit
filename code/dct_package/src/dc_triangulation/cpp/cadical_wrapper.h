@@ -21,5 +21,6 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
                                                              int number_edges_vars,
                                                              std::vector<Vars_List> clauses,
                                                              std::vector<Edge_raw> edges = {},
+                                                             std::unordered_map<std::string, int> node_to_sdegree = {},
                                                              bool save_state = false,
                                                              bool optimize_propagation = false);

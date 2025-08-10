@@ -202,7 +202,7 @@ class ExamplePropagator : public cdc::CadicalSolver::ExternalPropagator
 public:
     using Lit = cdc::CadicalSolver::Lit;
 
-    ExamplePropagator(cdc::CadicalSolver *solver, bool save_states = false, bool optimize_propagation = false, std::vector<Edge_raw> edges = {}) : cdc::CadicalSolver::ExternalPropagator(solver, true, false), state_tracker(save_states), optimize_propagation(optimize_propagation)
+    ExamplePropagator(cdc::CadicalSolver *solver, bool save_states = false, bool optimize_propagation = false, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}) : cdc::CadicalSolver::ExternalPropagator(solver, true, false), state_tracker(save_states), optimize_propagation(optimize_propagation), node_to_sdegree(node_to_sdegree)
     {
         for (const auto &edge : edges)
         {
@@ -238,6 +238,13 @@ public:
         assert(it != edge_to_index.end() &&
                "Edge not found in the edge to index map.");
         return it->second;
+    }
+
+    int get_sdegree_from_node(const Point_2 &node) const
+    {
+        std::string key = std::to_string(node.x()) + "," +
+                          std::to_string(node.y());
+        return node_to_sdegree.at(key);
     }
 
     void observe_variables(const std::vector<Lit> &observed_vars)
@@ -349,6 +356,7 @@ private:
     std::vector<std::vector<Lit>> hidden_clauses;
     std::vector<Segment_2> edges;
     std::unordered_map<std::string, Lit> edge_to_index;
+    std::unordered_map<std::string, int> node_to_sdegree;
     Arrangement_2 arr;
     bool optimize_propagation;
 };
@@ -357,6 +365,7 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
                                                              int number_edges_vars,
                                                              std::vector<Vars_List> clauses,
                                                              std::vector<Edge_raw> edges,
+                                                             std::unordered_map<std::string, int> node_to_sdegree,
                                                              bool save_state,
                                                              bool optimize_propagation)
 {
@@ -390,7 +399,7 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
         solver.finish_clause();
     }
     // add the propagator
-    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver, save_state, optimize_propagation, edges);
+    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver, save_state, optimize_propagation, edges, node_to_sdegree);
     // observe the variables (must be AFTER the constructor)
     propagator.observe_variables(std::vector<cdc::CadicalSolver::Lit>(v.begin(), v.begin() + number_edges_vars));
     // for (const auto &clause : clauses)
