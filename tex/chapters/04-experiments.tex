@@ -119,6 +119,19 @@ In diesem Experiment wurde ausschließlich der SAT Solver verwendet, da SAT und 
 Als weitere Beschränkungen kamen nur die Überschneidungsbeschränkung und die Gradbeschränkung zum Einsatz.
 Für die Knotengröße wurden Instanzen mit 80 bis 120 Knoten gewählt.
 
+\section{Ja/Nein getrennt}
+% Eval12
+In diesem Experiment wird untersucht, ob der SAT Solver bei Ja-Instanzen oder bei Nein-Instanzen schneller ist.
+Es wird nur der SAT Solver mit den besten Parametern aus~\cref{sec:eval1:grund_solver} verwendet.
+Die Knotenzahl liegt zwischen 80 und 120.
+
+\section{Best Solver}
+% (Eval13)
+In diesem Experiment wird geprüft, welche Instanzen der Solver lösen kann, wenn das Zeitlimit von 5 Minuten auf 30 Minuten erhöht wird.
+Dafür wurden Instanzen mit zunehmender Größe generiert, bis der Solver diese nicht mehr lösen konnte.
+Die Knotenzahl lag am Ende zwischen 130 und 200.
+Es wird erneut der beste Solver aus~\cref{sec:eval1:grund_solver} verwendet.
+
 
 \section{Zielfunktion}
 % (Eval11)
