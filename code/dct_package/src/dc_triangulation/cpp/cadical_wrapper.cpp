@@ -5,6 +5,8 @@
 #include <limits>
 #include <filesystem>
 
+#define PRINT 0 // Enable debug printing
+
 // Constants for SVG visualization
 const double SCALE_FACTOR = 100.0;
 const double NODE_RADIUS = 5.0;
@@ -21,7 +23,9 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
     std::ofstream svg_file(full_path);
     if (!svg_file.is_open())
     {
+#if PRINT
         std::cerr << "Error: Could not open file " << full_path << " for writing." << std::endl;
+#endif
         return;
     }
 
@@ -152,11 +156,13 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
     svg_file << "</svg>\n";
     svg_file.close();
 
+#if PRINT
     std::cerr << "Arrangement saved as SVG to: " << full_path << std::endl;
     // std::cerr << "Vertices: " << arr.number_of_vertices()
     //           << ", Edges: " << arr.number_of_edges()
     //           << ", Faces: " << arr.number_of_faces() << std::endl;
     // std::cerr << "Original edges count: " << original_edges.size() << std::endl;
+#endif
 }
 
 /**
@@ -384,12 +390,14 @@ public:
             // Only print if observed variables were found
             if (found_observed)
             {
+#if PRINT
                 std::cerr << "Observed literals assigned: ";
                 for (Lit l : observed_lits)
                 {
                     std::cerr << l << " ";
                 }
                 std::cerr << "\n";
+#endif
             }
         }
     }
@@ -543,13 +551,17 @@ public:
 
     void notify_new_decision_level() override
     {
+#if PRINT
         std::cerr << "New decision level started.\n";
+#endif
         state_tracker.notify_new_decision_level();
     }
 
     void notify_backtrack(std::size_t new_level) override
     {
+#if PRINT
         std::cerr << "Backtracking to level " << new_level << "\n";
+#endif
         state_tracker.notify_backtrack(new_level);
     }
 
@@ -602,7 +614,9 @@ public:
 
             if (outer_halfedges_count <= 3)
                 continue; // Skip faces with 3 or fewer edges
+#if PRINT
             std::cerr << "Anzahl der Kanten: " << outer_halfedges_count << "\n";
+#endif
             std::vector<Query_result> inside_points;
             locate(state_tracker.arr, state_tracker.nodes.begin(), state_tracker.nodes.end(), std::back_inserter(inside_points));
             std::vector<Point_2> vertices;
@@ -676,11 +690,10 @@ public:
                         if (handel_half(half_one, k_one) || handel_half(half_two, k_two))
                         {
                             auto edge = Segment_2(hull_vertices[x], hull_vertices[y]);
-                            std::cerr << "-------------------------------------------------------------------------------------------------------------------------------------" << "\n";
-                            std::cerr << "-------------------------------------------------------------------------------------------------------------------------------------" << "\n";
-                            std::cerr << "-------------------------------------------------------------------------------------------------------------------------------------" << "\n";
-                            std::cerr << "-------------------------------------------------------------------------------------------------------------------------------------" << "\n";
+                            // #if PRINT
+
                             std::cerr << "can exclude edge: " << hull_vertices[x] << " - " << hull_vertices[y] << "\n";
+                            // #endif
                             auto lit = state_tracker.get_lit_from_edge(edge);
                             if (lit == Lit(0))
                             {
@@ -707,7 +720,9 @@ public:
 
     void get_reason_clause(Lit propagated_lit, std::vector<Lit> &reason_buffer) override
     {
+#if PRINT
         std::cerr << "Getting reason clause for propagated literal: " << propagated_lit << "\n";
+#endif
         state_tracker.get_reason(propagated_lit, reason_buffer);
     }
 
@@ -777,12 +792,16 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
     auto result = solver.solve();
     if (!result || !*result)
     {
+        // #if PRINT
         std::cerr << "No solution found\n";
+        // #endif
         return std::make_pair(Vars_List{}, std::vector<Vars_List>{});
     }
     else
     {
+        // #if PRINT
         std::cout << "Solution found\n";
+        // #endif
         auto model = solver.get_model();
         std::vector<int> result = {};
         for (auto l : v)

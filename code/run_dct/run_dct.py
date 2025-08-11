@@ -193,7 +193,7 @@ def cadical_algorithm(graph, nodes=None):
         degree=True,
         intersection=True,
         fix_hull=True,
-        save_state=True,
+        # save_state=True,
         optimize_propagation=True,
     )
     solution = solver.solve({"timeout": -1, "args": asdict(para)})
