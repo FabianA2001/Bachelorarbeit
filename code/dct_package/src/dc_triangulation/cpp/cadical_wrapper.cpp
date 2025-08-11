@@ -626,11 +626,19 @@ public:
                 for (const auto &v : points)
                 {
                     int degree = state_tracker.get_sdegree_from_node(v);
+                    degree_count += degree;
+                    if (std::find(hull_vertices.begin(), hull_vertices.end(), v) != hull_vertices.end())
+                    {
+                        continue; // Skip hull vertices
+                    }
                     if (degree > n - 1)
                     {
                         return true; // If any vertex has a degree greater than n-1, return true
                     }
-                    degree_count += degree;
+                }
+                if ((3 * n - 3 - k) * 2 > degree_count)
+                {
+                    return true; // If the degree count is less than 2 * edge_count, return true
                 }
                 return false;
             };
