@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-import random
 from dataclasses import asdict
 
 from dc_triangulation import (
@@ -18,6 +17,7 @@ from dc_triangulation import (
     Ortools_Parameter,
     Random_Adder,
     Raw_Flips,
+    Run_Algbench,
     SAT_Parameter,
     SAT_Tri_Parameter,
     load_nodes_from_json,
@@ -52,11 +52,13 @@ def get_parameters():
 time_function
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), "calculated_data.json")
+TIMEOUT = 300
+path = os.path.join(os.path.dirname(__file__), "instances")
 
 
 def load_data(
     file_path: str = DATA_PATH,
-) -> dict[str, dict[str, list[tuple[int, int]]]]:
+) -> dict[str, tuple[list, list]]:
     """
     Lädt Daten aus einer JSON-Datei.
     Falls die Datei nicht existiert, wird ein leeres Dictionary zurückgegeben.
@@ -84,9 +86,7 @@ def load_data(
         return {}
 
 
-def save_data(
-    data: dict[str, dict[str, list[tuple[int, int]]]], file_path: str = DATA_PATH
-) -> bool:
+def save_data(data: dict[str, tuple[list, list]], file_path: str = DATA_PATH) -> bool:
     """
     Speichert Daten in einer JSON-Datei.
 
@@ -110,7 +110,7 @@ def save_data(
         return False
 
 
-def get_edges(PATH, PERCENT, KEY):
+def get_edges(PATH, KEY: str):
     # Definiere den Pfad zur JSON-Datei
 
     # Lade bestehende Daten
@@ -119,62 +119,34 @@ def get_edges(PATH, PERCENT, KEY):
     # Prüfe ob die Berechnung bereits existiert
     if KEY in data:
         # Konvertiere PERCENT zu String für JSON-Schlüssel-Vergleich
-        percent_str = str(PERCENT)
-        if percent_str in data[KEY]:
-            logging.info(
-                f"Daten für {KEY} mit {PERCENT} bereits vorhanden. Gebe gespeicherte Liste zurück."
-            )
-            return data[KEY][percent_str]
+        return data[KEY]
 
     nodes = load_nodes_from_json(PATH)
     graph = Graph_Wrapper(nodes)
     solver = SAT(graph)
     para = SAT_Parameter(
-        intersection=True, degree_exact=True, exclude_edges=True, fix_hull=True
+        intersection=True,
+        degree_exact=True,
+        exclude_edges=True,
+        fix_hull=True,
+        solver_name="Gluecard4",
+        degree_encoding=9,
     )
     solver.solve({"timeout": -1, "args": asdict(para)})
     all_edges = graph.get_all_edges()
     logging.info(f"Anzahl aller Kanten: {len(all_edges)}")
-    num_desiert_edges = int(len(all_edges) * PERCENT)
-    logging.info(f"ziel sind {num_desiert_edges} kanten")
-    aktive_edges = graph.get_aktive_graph().edges
+    aktive_edges = list(graph.get_aktive_graph().edges)
     not_active_edges = [edge for edge in all_edges if edge not in aktive_edges]
-    result = []
 
-    while len(not_active_edges) > 0 and len(result) < num_desiert_edges:
-        edge = random.choice(not_active_edges)
-        not_active_edges.remove(edge)
-        graph2 = Graph_Wrapper(nodes)
-        solver2 = SAT(graph2)
-        para2 = SAT_Parameter(
-            intersection=True,
-            degree_atleast=True,
-            all_edges=True,
-            fix_hull=True,
-        )
-        solution = solver2.solve(
-            {"timeout": -1, "args": asdict(para2), "debug_set_edges": [edge]}
-        )
-        if not solution["success"]:
-            result.append(edge)
-
-    # Speichere die neuen Daten (PERCENT als String-Schlüssel)
-    if KEY not in data:
-        data[KEY] = {}
-    data[KEY][str(PERCENT)] = result
+    data[KEY] = (aktive_edges, not_active_edges)
 
     # Speichere die Daten
     save_data(data)
-
-    return result
+    return (aktive_edges, not_active_edges)
 
 
 if __name__ == "__main__":
-    for INST in ["d_flips", "delaunay", "greedy", "iterative", "random"]:
-        for i in range(3):
-            FILE = f"00{i}_{INST}_50.json"
-            PATH = os.path.join(os.path.dirname(__file__), "instance", INST, FILE)
-            KEY = f"{INST}_{FILE}"
-            PERCENT = 0.2
-
-            edges = time_function(get_edges)(PATH, PERCENT, KEY)
+    instances = Run_Algbench.get_instances(path)
+    for instance, instance_data in instances.items():
+        for file, path in instance_data.items():
+            get_edges(path, f"{instance}_{file}")

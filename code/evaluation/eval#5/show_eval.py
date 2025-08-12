@@ -67,7 +67,16 @@ def show_exact():
             },
         ]
     }
-
+    arg_names = {
+        "SAT": [
+            "sequential counters",
+            "sorting networks",
+            "cardinality networks",
+            "totalizer",
+            "modulo totalizer ",
+            "modulo totalizer for k-cardinality",
+        ]
+    }
     ri = Run_Algbench(
         inst_path=path,
         outer_parameter=outer_parameter,
@@ -75,6 +84,7 @@ def show_exact():
         path_benchmark=lokal_benchmark_path,
         host=HOST,
         name="exact",
+        arg_names=arg_names,
     )
     ri.show(block=False)
 
@@ -132,6 +142,16 @@ def show_atleast():
             },
         ]
     }
+    arg_names = {
+        "SAT": [
+            "sequential counters",
+            "sorting networks",
+            "cardinality networks",
+            "totalizer",
+            "modulo totalizer ",
+            "modulo totalizer for k-cardinality",
+        ]
+    }
 
     ri = Run_Algbench(
         inst_path=path,
@@ -140,6 +160,7 @@ def show_atleast():
         path_benchmark=lokal_benchmark_path,
         host=HOST,
         name="atleast",
+        arg_names=arg_names,
     )
     ri.show(block=False)
 
@@ -197,6 +218,16 @@ def show_subset():
             },
         ]
     }
+    arg_names = {
+        "SAT": [
+            "sequential counters",
+            "sorting networks",
+            "cardinality networks",
+            "totalizer",
+            "modulo totalizer ",
+            "modulo totalizer for k-cardinality",
+        ]
+    }
 
     ri = Run_Algbench(
         inst_path=path,
@@ -205,6 +236,7 @@ def show_subset():
         path_benchmark=lokal_benchmark_path,
         host=HOST,
         name="subset",
+        arg_names=arg_names,
     )
     ri.show(block=False)
 
@@ -212,6 +244,14 @@ def show_subset():
 def show_gesamt():
     outer_parameter = {
         SAT: [
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    SAT_Parameter(
+                        intersection=True, degree_subset=True, degree_encoding=1
+                    )
+                ),
+            },
             {
                 "timeout": TIMEOUT,
                 "args": asdict(
@@ -230,7 +270,13 @@ def show_gesamt():
             },
         ]
     }
-
+    arg_names = {
+        "SAT": [
+            "exakt",
+            "mindest",
+            "subset",
+        ]
+    }
     ri = Run_Algbench(
         inst_path=path,
         outer_parameter=outer_parameter,
@@ -238,6 +284,7 @@ def show_gesamt():
         path_benchmark=lokal_benchmark_path,
         host=HOST,
         name="gesamt",
+        arg_names=arg_names,
     )
     ri.show(block=False)
 
@@ -245,5 +292,5 @@ def show_gesamt():
 if __name__ == "__main__":
     show_exact()
     show_atleast()
-    show_subset()
+    # show_subset()
     show_gesamt()

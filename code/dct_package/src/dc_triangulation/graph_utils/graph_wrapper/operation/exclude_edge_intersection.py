@@ -25,7 +25,7 @@ class Exclude_Edge_Intersection:
                 self.data.degree(node) - node_counter[node]
                 < self.data.nodes[node]["degree"]
             ):
-                print("-----------------", node, "----", edge)
+                # print("-----------------", node, "----", edge)
                 return True
         return False
 

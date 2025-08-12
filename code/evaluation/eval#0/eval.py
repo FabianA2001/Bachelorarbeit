@@ -19,19 +19,11 @@ outer_parameter = {
                 SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
             ),
         },
-        #     {
-        #         "timeout": -1,
-        #         "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
-        #     },
+        {
+            "timeout": -1,
+            "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
+        },
     ],
-    # Gurobi: [
-    #     {
-    #         "timeout": -1,
-    #         "args": asdict(
-    #             Gurobi_Parameter(intersection=True, degree=True, fix_hull=True)
-    #         ),
-    #     },
-    # ],
 }
 
 RI = Run_Algbench(
@@ -54,7 +46,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.

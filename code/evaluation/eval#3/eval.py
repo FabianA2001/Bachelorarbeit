@@ -2,7 +2,7 @@ import os
 from dataclasses import asdict
 
 import slurminade
-from dc_triangulation import SAT, Graph_Wrapper, Run_Algbench, SAT_Parameter
+from dc_triangulation import SAT, Run_Algbench, SAT_Parameter
 
 asdict
 TIMEOUT = 300
@@ -17,8 +17,6 @@ outer_parameter = {
                 SAT_Parameter(
                     intersection=True,
                     degree_exact=True,
-                    fix_hull=True,
-                    all_edges=True,
                 )
             ),
         },
@@ -29,8 +27,6 @@ outer_parameter = {
                     solver_name="Cadical195",
                     intersection=True,
                     degree_exact=True,
-                    fix_hull=True,
-                    all_edges=True,
                 )
             ),
         },
@@ -41,8 +37,7 @@ outer_parameter = {
                     solver_name="Gluecard4",
                     intersection=True,
                     degree_exact=True,
-                    fix_hull=True,
-                    all_edges=True,
+                    degree_encoding=9,
                 )
             ),
         },
@@ -53,8 +48,6 @@ outer_parameter = {
                     solver_name="Lingeling",
                     intersection=True,
                     degree_exact=True,
-                    fix_hull=True,
-                    all_edges=True,
                 )
             ),
         },
@@ -62,23 +55,9 @@ outer_parameter = {
             "timeout": TIMEOUT,
             "args": asdict(
                 SAT_Parameter(
-                    solver_name="Mergesat3",
+                    solver_name="MapleChrono",
                     intersection=True,
                     degree_exact=True,
-                    fix_hull=True,
-                    all_edges=True,
-                )
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    solver_name="Maplesat",
-                    intersection=True,
-                    degree_exact=True,
-                    fix_hull=True,
-                    all_edges=True,
                 )
             ),
         },
@@ -89,8 +68,47 @@ outer_parameter = {
                     solver_name="MapleCM",
                     intersection=True,
                     degree_exact=True,
-                    fix_hull=True,
-                    all_edges=True,
+                )
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    solver_name="Maplesat",
+                    intersection=True,
+                    degree_exact=True,
+                )
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    solver_name="Mergesat3",
+                    intersection=True,
+                    degree_exact=True,
+                )
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    solver_name="Minicard",
+                    intersection=True,
+                    degree_exact=True,
+                    degree_encoding=9,
+                )
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    solver_name="Minisat22",
+                    intersection=True,
+                    degree_exact=True,
                 )
             ),
         },
