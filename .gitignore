@@ -1,5 +1,6 @@
 **/__pycache__/
 *pdf
+code/**/*.svg
 !**/code/evaluation/**/*.pdf
 !**/thesis.pdf
 !**/TEX/**/*.pdf

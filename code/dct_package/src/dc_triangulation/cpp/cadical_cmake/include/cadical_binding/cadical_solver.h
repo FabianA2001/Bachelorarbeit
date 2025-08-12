@@ -1,6 +1,7 @@
 #ifndef CADICAL_BINDINGS_H_INCLUDED_
 #define CADICAL_BINDINGS_H_INCLUDED_
 
+#include <map>
 #include <memory>
 #include <algorithm>
 #include <vector>

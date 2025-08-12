@@ -1,0 +1,504 @@
+[00:00] INFO: Loading nodes from /home/fabian/uni/Bachelorarbeit/bachelorarbeit-fabian-alich/code/run_dct/instance/iterative/000_iterative_30.json
+[00:00] WARNING: Kein Timeout
+[00:00] INFO: Starting Cadical with parameters: 
+|timeout:                            -1
+|args:                               
+||intersection:                       True
+||degree:                             True
+||fix_hull:                           True
+||all_edges:                          False
+||save_state:                         False
+||optimize_propagation:               True
+[00:00] INFO: Function pre_solve                                took   0.0949 seconds
+Observed literals assigned: 1 
+Observed literals assigned: 2 
+Observed literals assigned: 3 
+Observed literals assigned: 4 
+Observed literals assigned: 5 
+Observed literals assigned: 6 
+Observed literals assigned: 7 
+Observed literals assigned: 8 
+Observed literals assigned: 9 
+Observed literals assigned: 10 
+Observed literals assigned: 11 
+Observed literals assigned: 12 
+Observed literals assigned: 13 
+Observed literals assigned: 14 
+Observed literals assigned: 15 
+Observed literals assigned: 16 
+Observed literals assigned: 17 
+Observed literals assigned: 18 
+Observed literals assigned: 19 
+Observed literals assigned: 20 
+Observed literals assigned: 21 
+Observed literals assigned: 22 
+Observed literals assigned: 23 
+Observed literals assigned: 24 
+Observed literals assigned: 25 
+Observed literals assigned: 26 
+Observed literals assigned: 27 
+Observed literals assigned: 28 
+Observed literals assigned: 29 
+Observed literals assigned: 40 
+Observed literals assigned: 52 
+Observed literals assigned: 63 
+Observed literals assigned: 83 
+Observed literals assigned: 91 
+Observed literals assigned: 108 
+Observed literals assigned: 110 
+Observed literals assigned: 113 
+Observed literals assigned: 123 
+Observed literals assigned: 129 
+Observed literals assigned: 131 
+Observed literals assigned: 138 
+Observed literals assigned: 148 
+Observed literals assigned: 161 
+Observed literals assigned: 162 
+Observed literals assigned: 164 
+Observed literals assigned: 166 
+Observed literals assigned: 167 
+Observed literals assigned: 169 
+Observed literals assigned: 171 
+Observed literals assigned: 176 
+Observed literals assigned: 195 
+Observed literals assigned: 198 
+Observed literals assigned: 214 
+Observed literals assigned: 224 
+Observed literals assigned: 239 
+Observed literals assigned: 264 
+Observed literals assigned: 269 
+Observed literals assigned: 294 
+Observed literals assigned: 300 
+Observed literals assigned: 304 
+Observed literals assigned: 307 
+Observed literals assigned: 317 
+Observed literals assigned: 343 
+Observed literals assigned: 365 
+Observed literals assigned: 372 
+Observed literals assigned: 387 
+Observed literals assigned: 390 
+Observed literals assigned: 393 
+Observed literals assigned: 409 
+Observed literals assigned: 412 
+Observed literals assigned: 416 
+Observed literals assigned: 417 
+Observed literals assigned: 423 
+Observed literals assigned: 426 
+Observed literals assigned: 432 
+Observed literals assigned: 434 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 
+Observed literals assigned: 1 2 
+Observed literals assigned: 1 2 
+Observed literals assigned: 1 2 
+Observed literals assigned: 1 2 
+Observed literals assigned: 1 2 
+Observed literals assigned: 1 2 
+Observed literals assigned: 1 2 
+Observed literals assigned: 1 2 
+Observed literals assigned: 1 2 
+Observed literals assigned: 1 2 
+Observed literals assigned: 1 2 
+Observed literals assigned: 1 2 
+Observed literals assigned: 1 2 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 
+Observed literals assigned: 1 2 3 4 5 
+Observed literals assigned: 1 2 3 4 5 
+Observed literals assigned: 1 2 3 4 5 
+Observed literals assigned: 1 2 3 4 5 
+Observed literals assigned: 1 2 3 4 5 
+Observed literals assigned: 1 2 3 4 5 
+Observed literals assigned: 1 2 3 4 5 
+Observed literals assigned: 1 2 3 4 5 
+Observed literals assigned: 1 2 3 4 5 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 
+Observed literals assigned: 1 2 3 4 5 6 7 
+Observed literals assigned: 1 2 3 4 5 6 7 
+Observed literals assigned: 1 2 3 4 5 6 7 
+Observed literals assigned: 1 2 3 4 5 6 7 
+Observed literals assigned: 1 2 3 4 5 6 7 
+Observed literals assigned: 1 2 3 4 5 6 7 
+Observed literals assigned: 1 2 3 4 5 6 7 
+Observed literals assigned: 1 2 3 4 5 6 7 
+Observed literals assigned: 1 2 3 4 5 6 7 
+Observed literals assigned: 1 2 3 4 5 6 7 
+Observed literals assigned: 1 2 3 4 5 6 7 
+Observed literals assigned: 1 2 3 4 5 6 7 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 169 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 169 167 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 169 167 166 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 169 167 166 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 169 167 166 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 169 167 166 164 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 169 167 166 164 162 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 169 167 166 164 162 161 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 169 167 166 164 162 161 198 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 169 167 166 164 162 161 198 195 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 169 167 166 164 162 161 198 195 224 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 169 167 166 164 162 161 198 195 224 214 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 169 167 166 164 162 161 198 195 224 214 239 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 169 167 166 164 162 161 198 195 224 214 239 264 
+Observed literals assigned: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 52 40 83 63 108 91 110 131 129 123 113 148 138 176 171 169 167 166 164 162 161 198 195 224 214 239 264 269 

@@ -359,7 +359,7 @@ class Graph_Wrapper:
         )
         return evaluation
 
-    def check_degree_possible(self) -> bool:
+    def check_degree_possible(self) -> str:
         """Überprüft, ob der Graph eine Triangulation ist und ob die Knotengrade möglich sind."""
         return self._check.check_degree_possible()
 

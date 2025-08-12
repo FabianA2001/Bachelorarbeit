@@ -28,7 +28,7 @@ class Parameter:
     degree_subset: bool = False
     fix_hull: bool = False
     exclude_edges: bool = False
-    hack_eval6: float = 0.0
+    hack_eval6: float = False
     fix_edges: bool = False
     run_num: int = 0
 

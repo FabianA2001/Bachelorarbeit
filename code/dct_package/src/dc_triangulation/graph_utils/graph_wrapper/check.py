@@ -338,17 +338,20 @@ class Check:
             return False
         return True
 
-    def check_degree_possible(self) -> bool:
+    def check_degree_possible(self) -> str:
         degrees = [self.data.nodes[node].get("degree") for node in self.data.nodes]
         summ = sum(degrees)
-        assert summ % 2 == 0, "Summe der Grade ist ungerade"
-        var1 = summ == self.data.get_number_edges_triangulation * 2
+        if not summ % 2 == 0:
+            return "Summe der Grade ist ungerade"
+        if not (summ == self.data.get_number_edges_triangulation * 2):
+            return (
+                f"Summe der Grade {summ} ist nicht gleich der Anzahl der Kanten mal 2: "
+                f"{self.data.get_number_edges_triangulation * 2}"
+            )
 
-        var2 = True
         number_nodes = len(self.data.get_all_nodes_name) - 1
         for degree in degrees:
             if degree > number_nodes:
-                var2 = False
-                break
+                return f"Der Grad {degree} ist größer als die Anzahl der Knoten {number_nodes}"
 
-        return var1 and var2
+        return ""

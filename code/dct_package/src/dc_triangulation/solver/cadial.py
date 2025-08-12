@@ -13,6 +13,8 @@ class Parameter:
     degree: bool = False
     fix_hull: bool = False
     all_edges: bool = False
+    save_state: bool = False
+    optimize_propagation: bool = False
 
 
 class Cadical(Solver):
@@ -126,16 +128,39 @@ class Cadical(Solver):
 
         self.time_pre_solve(self.pre_solve)(parameter)
 
+        node_to_sdegree = {}
+        for node in self.graph.get_all_nodes():
+            pos = self.graph.get_pos_from_node(node)
+            pos_str = f"{pos[0]},{pos[1]}"
+            sdegree = self.graph.get_desired_degree_node(node)
+            node_to_sdegree[pos_str] = sdegree
+
+        edges_as_pos = []
+        for edge in self.edges:
+            pos1 = self.graph.get_pos_from_node(edge[0])
+            pos2 = self.graph.get_pos_from_node(edge[1])
+            edges_as_pos.append((pos1, pos2))
+        nodes_as_pos = [
+            self.graph.get_pos_from_node(node) for node in self.graph.get_all_nodes()
+        ]
+
         vars, debug_vars = self.time_solver(cadical_wrapper)(
-            self.max_used, len(self.edges), self.clauses
+            self.max_used,
+            len(self.edges),
+            self.clauses,
+            nodes_as_pos,
+            edges_as_pos,
+            node_to_sdegree,
+            parameter.save_state,
+            parameter.optimize_propagation,
         )
 
         for i in range(len(self.edges)):
             if vars[i] == 1:
-                self.logger.info(f"var{i}: {vars[i]}")
+                # self.logger.info(f"var{i}: {vars[i]}")
                 self.graph.activate_edge(self.edges[i])
-            else:
-                self.logger.info(f"var{i}: {vars[i]}")
+            # else:
+            # self.logger.info(f"var{i}: {vars[i]}")
 
         return {
             "success": True,
