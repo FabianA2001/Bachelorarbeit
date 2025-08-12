@@ -84,12 +84,12 @@ def show_sat():
         SAT: [
             {
                 "timeout": TIMEOUT,
-                "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
+                "args": asdict(SAT_Parameter(intersection=True, degree_atleast=True)),
             },
             {
                 "timeout": TIMEOUT,
                 "args": asdict(
-                    SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
+                    SAT_Parameter(intersection=True, degree_atleast=True, fix_hull=True)
                 ),
             },
             {
@@ -97,7 +97,7 @@ def show_sat():
                 "args": asdict(
                     SAT_Parameter(
                         intersection=True,
-                        degree_exact=True,
+                        degree_atleast=True,
                         all_edges=True,
                     )
                 ),
@@ -107,7 +107,7 @@ def show_sat():
                 "args": asdict(
                     SAT_Parameter(
                         intersection=True,
-                        degree_exact=True,
+                        degree_atleast=True,
                         exclude_edges=True,
                     )
                 ),
@@ -115,7 +115,9 @@ def show_sat():
             {
                 "timeout": TIMEOUT,
                 "args": asdict(
-                    SAT_Parameter(intersection=True, degree_exact=True, fix_edges=True)
+                    SAT_Parameter(
+                        intersection=True, degree_atleast=True, fix_edges=True
+                    )
                 ),
             },
         ],
@@ -210,7 +212,7 @@ def show_ortools():
                     Ortools_Parameter(intersection=True, degree=True, fix_edges=True)
                 ),
             },
-        ],
+        ]
     }
 
     ri = Run_Algbench(
@@ -249,24 +251,24 @@ def gesamt():
                 ),
             }
         ],
-        Gurobi_Tri: [
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
-            }
-        ],
-        OrTools_Tri: [
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(Ortools_Tri_Parameter(intersection=True, degree=True)),
-            }
-        ],
-        SAT_TRI: [
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
-            }
-        ],
+        # Gurobi_Tri: [
+        #     {
+        #         "timeout": TIMEOUT,
+        #         "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
+        #     }
+        # ],
+        # OrTools_Tri: [
+        #     {
+        #         "timeout": TIMEOUT,
+        #         "args": asdict(Ortools_Tri_Parameter(intersection=True, degree=True)),
+        #     }
+        # ],
+        # SAT_TRI: [
+        #     {
+        #         "timeout": TIMEOUT,
+        #         "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
+        #     }
+        # ],
     }
 
     ri = Run_Algbench(
@@ -280,7 +282,7 @@ def gesamt():
 
 
 if __name__ == "__main__":
-    show_tri()
+    # show_tri()
     show_sat()
     show_gurobi()
     show_ortools()

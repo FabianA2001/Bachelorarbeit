@@ -5,6 +5,7 @@ from collections import Counter, defaultdict
 from dataclasses import asdict
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 from dc_triangulation import (
@@ -15,18 +16,24 @@ from dc_triangulation import (
     load_nodes_from_json,
 )
 
+TITEL_FONT_SIZE = 25
+LABEL_FONT_SIZE = 17
+ACHSEN_FONT_SIZE = 14
+
 
 def sat_algorithm(nodes):
     graph = Graph_Wrapper(nodes)
     solver = SAT(graph)
     para = SAT_Parameter(
         intersection=True,
-        degree_exact=True,
-        # fix_hull=True,
-        # all_edges=True,
+        degree_atleast=True,
+        fix_hull=True,
+        all_edges=True,
         # exclude_edges=True,
+        solver_name="Gluecard4",
+        degree_encoding=9,
     )
-    solution = solver.solve({"timeout": -1, "args": asdict(para)})
+    solution = solver.solve({"timeout": 1200, "args": asdict(para)})
     assert solution["success"], "SAT solver did not find a solution"
     edges = graph.get_all_active_edges()
     # Berechne Kantenlängen
@@ -75,7 +82,7 @@ def analyze_edge_distribution():
 
         print(f"Processing {dir_name}...")
 
-        for file in os.listdir(dir_path):
+        for file in sorted(os.listdir(dir_path)):
             file_path = os.path.join(dir_path, file)
             cache_key = f"{dir_name}/{file}"
 
@@ -121,9 +128,9 @@ def create_edge_length_distribution_plots(instance_data, max_x: int, max_y: int)
 
     # Create figure with subplots
     fig, axes = plt.subplots(2, 3, figsize=(18, 12))
-    fig.suptitle(
-        "Kantenlängenverteilung nach Instanztyp", fontsize=16, fontweight="bold"
-    )
+    # fig.suptitle(
+    #     "Kantenlängenverteilung nach Instanztyp", fontsize=16, fontweight="bold"
+    # )
 
     # Flatten axes for easier iteration
     axes_flat = axes.flatten()
@@ -147,10 +154,18 @@ def create_edge_length_distribution_plots(instance_data, max_x: int, max_y: int)
             continue
 
         # Erstelle Histogramm mit Kurve
-        bins = min(
-            50, len(set(edge_lengths))
-        )  # Adaptiere Bin-Anzahl an einzigartige Werte
-        sns.histplot(edge_lengths, bins=bins, kde=True, alpha=0.6, ax=ax)
+        # bins = range(0, max_x + 1, 0.1)  # Adaptiere Bin-Anzahl an einzigartige Werte
+        # bins = range(50)
+        bins = np.arange(0, 1.04, 0.04)
+        sns.histplot(
+            edge_lengths,
+            bins=bins,
+            kde=True,
+            alpha=0.6,
+            ax=ax,
+            stat="percent",
+            color="#696969",
+        )
 
         # Setze Achsengrenzen
         ax.set_xlim(0, max_x)
@@ -162,12 +177,28 @@ def create_edge_length_distribution_plots(instance_data, max_x: int, max_y: int)
         min_length = min(edge_lengths)
 
         # Titel und Labels
+        ######################
+        # HACK
+        if instance_type == "d_flips":
+            instance_type = "Delaunay-Flips"
+        else:
+            instance_type = instance_type.capitalize()
+        ######################
         ax.set_title(
-            f"{instance_type.capitalize()}\nmin={min_length:.2f}, max={max_length:.2f}",
+            f"{instance_type}",
             fontweight="bold",
+            fontsize=TITEL_FONT_SIZE,
         )
-        ax.set_xlabel("Kantenlänge")
-        ax.set_ylabel("Häufigkeit")
+        # ax.set_title(
+        #     f"{instance_type.capitalize()}\nmin={min_length:.2f}, max={max_length:.2f}",
+        #     fontweight="bold",
+        #     fontsize=TITEL_FONT_SIZE,
+        # )
+        ax.set_xlabel("Kantenlänge", fontsize=LABEL_FONT_SIZE)
+        ax.set_ylabel("Häufigkeit(%)", fontsize=LABEL_FONT_SIZE)
+
+        # Schriftgröße der Achsen-Zahlen anpassen
+        ax.tick_params(axis="both", which="major", labelsize=ACHSEN_FONT_SIZE)
 
         # Grid für bessere Lesbarkeit
         ax.grid(True, alpha=0.3)
@@ -278,14 +309,28 @@ def print_statistics(instance_data):
         print(f"  Häufigste Kantenlängen (gerundet): {most_common}")
 
 
+def mean_data(instance_data_old):
+    instance_data = defaultdict(list)
+    for instance_type, edge_lengths in instance_data_old.items():
+        max_length = max(edge_lengths)
+        for edge_length in edge_lengths:
+            # Normalisiere Kantenlängen auf 0-1 Skala
+            assert max_length > 0, "Maximale Kantenlänge darf nicht 0 sein"
+            normalized_length = edge_length / max_length
+            instance_data[instance_type].append(normalized_length)
+    return instance_data
+
+
 if __name__ == "__main__":
     print("Analysiere Kantenlängenverteilungen...")
 
     # Analysiere die Daten
     instance_data = analyze_edge_distribution()
 
+    instance_data = mean_data(instance_data)
+
     # Erstelle Diagramme
-    create_edge_length_distribution_plots(instance_data, 12000, 125)
+    create_edge_length_distribution_plots(instance_data, 1, 20)
 
     # # Erstelle Vergleichsdiagramm
     # create_comparison_plot(instance_data)

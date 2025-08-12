@@ -6,6 +6,10 @@ import pandas as pd
 import seaborn as sns
 from dc_triangulation import Node, load_nodes_from_json
 
+TITEL_FONT_SIZE = 25
+LABEL_FONT_SIZE = 17
+ACHSEN_FONT_SIZE = 14
+
 
 def analyze_degree_distribution():
     """Analysiert die Gradverteilung für alle Instanztypen."""
@@ -46,9 +50,9 @@ def create_degree_distribution_plots(instance_data, max_x: int, max_y: float):
 
     # Create figure with subplots
     fig, axes = plt.subplots(2, 3, figsize=(18, 12))
-    fig.suptitle(
-        "Gradverteilung der Knoten nach Instanztyp", fontsize=16, fontweight="bold"
-    )
+    # fig.suptitle(
+    #     "Gradverteilung der Knoten nach Instanztyp", fontsize=16, fontweight="bold"
+    # )
 
     # Flatten axes for easier iteration
     axes_flat = axes.flatten()
@@ -73,10 +77,20 @@ def create_degree_distribution_plots(instance_data, max_x: int, max_y: float):
 
         # Erstelle Histogramm mit Kurve
         # Verwende mehr Bins für bessere Verteilung
-        bins = min(50, len(set(degrees)))  # Adaptiere Bin-Anzahl an einzigartige Werte
-        sns.histplot(degrees, bins=bins, kde=True, alpha=0.6, ax=ax, stat="density")
 
-        # Setze Achsengrenzen
+        # bins = min(50, len(set(degrees)))  # Adaptiere Bin-Anzahl an einzigartige Werte
+        # bins = len(set(degrees)) * 5  # Adaptiere Bin-Anzahl an einzigartige Werte
+        sns.histplot(
+            degrees,
+            bins=range(0, max_x + 1),
+            # kde=True,
+            alpha=0.6,
+            ax=ax,
+            stat="percent",
+            color="#696969",
+        )
+
+        # # Setze Achsengrenzen
         ax.set_xlim(0, max_x)
         ax.set_ylim(0, max_y)
 
@@ -86,12 +100,29 @@ def create_degree_distribution_plots(instance_data, max_x: int, max_y: float):
         min_degree = min(degrees)
 
         # Titel und Labels
+        # Titel und Labels
+        ######################
+        # HACK
+        if instance_type == "delaunay_Flips":
+            instance_type = "Delaunay-Flips"
+        else:
+            instance_type = instance_type.capitalize()
+        ######################
         ax.set_title(
-            f"{instance_type.capitalize()}\nmin={min_degree}, max={max_degree}",
+            f"{instance_type}",
             fontweight="bold",
+            fontsize=TITEL_FONT_SIZE,
         )
-        ax.set_xlabel("Grad der Knoten")
-        ax.set_ylabel("Häufigkeit")
+        # ax.set_title(
+        #     f"{instance_type.capitalize()}\nmin={min_degree}, max={max_degree}",
+        #     fontweight="bold",
+        #     fontsize=TITEL_FONT_SIZE,
+        # )
+        ax.set_xlabel("Grad der Knoten", fontsize=LABEL_FONT_SIZE)
+        ax.set_ylabel("Häufigkeit (%)", fontsize=LABEL_FONT_SIZE)
+
+        # Schriftgröße der Achsen-Zahlen anpassen
+        ax.tick_params(axis="both", which="major", labelsize=ACHSEN_FONT_SIZE)
 
         # # Vertikale Linie für Mittelwert
         # ax.axvline(
@@ -113,9 +144,7 @@ def create_degree_distribution_plots(instance_data, max_x: int, max_y: float):
     plt.tight_layout()
 
     # Save the plot
-    output_path = os.path.join(
-        os.path.dirname(__file__), "degree_distribution_plots.pdf"
-    )
+    output_path = os.path.join(os.path.dirname(__file__), "gradverteilung.pdf")
     plt.savefig(output_path, dpi=300, bbox_inches="tight")
     print(f"Diagramme gespeichert unter: {output_path}")
 
@@ -218,7 +247,7 @@ if __name__ == "__main__":
     instance_data = analyze_degree_distribution()
 
     # Erstelle Diagramme
-    create_degree_distribution_plots(instance_data, 25, 0.31)
+    create_degree_distribution_plots(instance_data, 25, 35)
 
     # Erstelle Vergleichsdiagramm
     # create_comparison_plot(instance_data)

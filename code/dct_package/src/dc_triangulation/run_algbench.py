@@ -404,8 +404,6 @@ class Run_Algbench:
         for vlaue in self.instances.copy().values():
             self.instances[INSANZE_NAME].update(vlaue)
 
-        print(valid_data)
-
         # Eindeutige Solver und Instanzen ermitteln
         unique_solvers = valid_data["solver_args"].unique()
         unique_instances = valid_data["instance"].unique()

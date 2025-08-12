@@ -10,10 +10,12 @@ Ortools:
 ||fix_hull:                           False
 ||number_edges:                       False
 ||evaluation_direction:               False
-||degree_direction:                   False
+||save_state_after_solution:          False
+||min_max_direction:                  False
 ||maximize_edges:                     False
 ||exclude_edges:                      False
 ||fix_edges:                          False
+||run_num:                            0
 
 |#2 in 300s: 
 ||intersection:                       True
@@ -22,10 +24,12 @@ Ortools:
 ||fix_hull:                           True
 ||number_edges:                       False
 ||evaluation_direction:               False
-||degree_direction:                   False
+||save_state_after_solution:          False
+||min_max_direction:                  False
 ||maximize_edges:                     False
 ||exclude_edges:                      False
 ||fix_edges:                          False
+||run_num:                            0
 
 |#3 in 300s: 
 ||intersection:                       True
@@ -34,10 +38,12 @@ Ortools:
 ||fix_hull:                           False
 ||number_edges:                       False
 ||evaluation_direction:               False
-||degree_direction:                   False
+||save_state_after_solution:          False
+||min_max_direction:                  False
 ||maximize_edges:                     False
 ||exclude_edges:                      False
 ||fix_edges:                          False
+||run_num:                            0
 
 |#4 in 300s: 
 ||intersection:                       True
@@ -46,10 +52,12 @@ Ortools:
 ||fix_hull:                           False
 ||number_edges:                       False
 ||evaluation_direction:               False
-||degree_direction:                   False
+||save_state_after_solution:          False
+||min_max_direction:                  False
 ||maximize_edges:                     False
 ||exclude_edges:                      True
 ||fix_edges:                          False
+||run_num:                            0
 
 |#5 in 300s: 
 ||intersection:                       True
@@ -58,8 +66,10 @@ Ortools:
 ||fix_hull:                           False
 ||number_edges:                       False
 ||evaluation_direction:               False
-||degree_direction:                   False
+||save_state_after_solution:          False
+||min_max_direction:                  False
 ||maximize_edges:                     False
 ||exclude_edges:                      False
 ||fix_edges:                          True
+||run_num:                            0
 ==================================================
