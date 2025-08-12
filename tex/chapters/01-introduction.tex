@@ -4,15 +4,21 @@
 
 You can write an introduction here!
 
-\section{Results}
-We proof that the \textsc{Traveling Salesmen Problem}(TSP) is NP-complete.
-\begin{verbatim}
-... that the \textsc{Traveling Salesmen Problem}(TSP) is ...
-\end{verbatim}
-You can use abbreviations for your problem names to avoid redundancy.
-Try to use existing abbreviations from related work if possible.
 
-Formel zwischen lagern:
+\section{Das Problem}
+
+TODO Das Problem hier erklären
+
+\section{Results}
+% We proof that the \textsc{Traveling Salesmen Problem}(TSP) is NP-complete.
+% \begin{verbatim}
+% ... that the \textsc{Traveling Salesmen Problem}(TSP) is ...
+% \end{verbatim}
+% You can use abbreviations for your problem names to avoid redundancy.
+% Try to use existing abbreviations from related work if possible.
+
+% Formel zwischen lagern:
+TODO @Michael @Phillip muss/soll ich hier was angeben? Weil ich ja jetzt nich "Das" Ergebnis habe.
 
 
 
@@ -43,11 +49,12 @@ Im Buch von de Berg et al.~\cite{Delaunay_Triangulation} wird diese Variante der
 Triangulations eignen sich durch ihre Struktur besonders gut zur Darstellung von Höhendaten im zweidimensionalen Raum (siehe~\cref{fig:terrain}).
 Dabei kann ausgenutzt werden, dass Dreiecke unterschiedliche Innenwinkel und Kantenlängen besitzen.
 
+	% \caption{\michael{Die caption selbst brauchst du nicht kopieren. Ist ja auf deutsch. Und erst Fig dann Caption.}\emph{A perspective view of a terrain} aus~\cite[p.~183]{Delaunay_Triangulation}}
 \begin{figure}[tb]
-	\caption{\emph{A perspective view of a terrain} aus~\cite[p.~183]{Delaunay_Triangulation}}
 	\centering
-	\label{fig:terrain}
 	\includegraphics[scale=0.2]{Delauney_Tarrain.png}
+	\caption[Delauney Beispiel]{Ein Beispiel für Höhendaten durch eine Triangulation aus~\cite[p.~183]{Delaunay_Triangulation}}
+	\label{fig:terrain}
 \end{figure}
 Das Grundproblem besteht darin, dass die Höhendaten nur an bestimmten Punkten bekannt sind und die restlichen Werte daher geschätzt werden müssen.
 Dies kann durch die Delaunay-Triangulation gut gelöst werden, da die Dreiecke aufgrund ihrer gleichschenkligen Eigenschaft visuell geeignet sind, die fehlenden Daten zu ergänzen.
@@ -84,7 +91,7 @@ Der Vorteil von \( k \)-Flips liegt darin, dass mit einem Schritt größere stru
 \begin{figure}[ht]
   \centering
   \includegraphics[width=\linewidth]{drei_flips.png}
-  \caption{\emph{Examples of edge move, edge rotation, and edge slide} aus~\cite[p.~70]{Flips_in_planar_graphs}}
+  \caption{Beispiel für \emph{edge move}, \emph{edge rotation} und \emph{edge slide} aus~\cite[p.~70]{Flips_in_planar_graphs}}
   \label{fig:drei_flips}
 \end{figure}
 

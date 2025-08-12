@@ -1,4 +1,6 @@
 \chapter{Auswertung}
+\michael{Einführungstext.}
+\michael{Verweise auch auf frühere Kapitel wo die Sachen dargelegt wurden.}
 \section{Versuchsumgebung}
 % \begin{itemize}
 %     \item Implementation details (e.g., libraries, third-party programs, \dots)
@@ -46,7 +48,7 @@ Nur bei OrTools ist in~\cref{fig:eval7:ortools} zu sehen, dass die Laufzeiten un
 Da aufgrund von~\cref{sec:eval2:permuation} bereits mehrere Durchläufe mit unterschiedlichen Permutationen durchgeführt werden, werden die OrTools-Durchläufe nicht zusätzlich mehrfach ausgeführt.
 
 
-\section{Sat Gradbeschränkung}
+\section{SAT Gradbeschränkung}
 % (Eval5)
 In diesem Experiment werden Verschiedene Methoden der Gradbeschränkung in einem SAT Solver vergleichen.
 Hierbei wurden für alle drei Methoden, also \emph{subset}, Kardinalität mit exaktem Sollgrad und Kardinalität mit Mindest Sollgrad, die Laufzeiten gemessen.
@@ -64,7 +66,8 @@ Auch für den Mindest Sollgrad ist \emph{sequential counters} die beste Variante
     \caption{die besten Ergebnisse der verschiedenen Gradbeschränkungen in einem SAT Solver.}
     \label{fig:eval5_gesamt}
 \end{figure}
-TODO @Michael @Phillip wie und wo platziere ich am besten die Legende?
+\michael{Die Plots sind etwas klein/schwer lesbar. Das liegt daran dass du sie in Größe x geplotted hast sie aber hier skaliert werden. Du kannst in Matplotlib die Größe des Plots so einstellen wie er hier rein kommt dann passt die Schrift zusammen.}
+\fabian{ wie und wo platziere ich am besten die Legende in den Plots?}
 
 Der Vergleich der drei Methoden ist in~\cref{fig:eval5_gesamt} zu sehen.
 Hier ist klar erkennbar das \emph{subset} die schlechteste Methode ist.
@@ -74,12 +77,7 @@ Es ist zu sehen das öfter die Methode mit dem exakten Sollgrad langsamer ist.
 Dementsprechend werden in folgenden Experimenten die Kardinalitätsbeschränkung mit Mindest Sollgrad und \emph{sequential counters} Codierung verwendet.
 
 
-
-% Teste welche von den degree Coodierungen am besten funktionieren.
-% also: subset, atleast, exact
-% auch welche Coodierung von pysat für Kardinalität am besten funktioniert.
-
-\section{Sat Solver Vergleich}
+\section{SAT Solver Vergleich}
 % (Eval3)
 In diesem Experiment werden die verschiedenen SAT Solver verglichen, die von PySat bereitgestellt werden.
 PySat stellt \emph{Cadical195}, \emph{Gluecard4}, \emph{Glucose42}, \emph{Lingeling}, \emph{MapleChrono}, \emph{MapleCM}, \emph{Maplesat}, \emph{Mergesat3}, \emph{Minicard} und \emph{Minisat22} zur Verfügung. 
@@ -138,6 +136,47 @@ Es wird erneut der beste Solver aus~\cref{sec:eval1:grund_solver} verwendet.
 In diesem Experiment werden die drei verschiedenen Optimierungsansätze vergleichen.
 Erste Ansatz ist der Flips Ansatz, die anderen beiden Ansätze sind die Zielfunktionen von OrTools
 
+\section{\emph{Propagation} CDCL}
+Der CDCL Solver namens \emph{CaDiCaL}~\cite{cadical} von Armin Biere ermöglicht es, eine neue Entscheidungsebene mit einer eigenen Funktion zu erzeugen.
+Diese Funktion kann dann das nächste Literal setzen.
+Im Folgenden wird diese Funktion \emph{Propagation} genannt.
+Die Idee bei dieser \emph{Propagation} ist es, die Bedingungen aus~\cref{sec:exclude_edges} auf Teilinstanzen anzuwenden.
+
+\subsection{Visualisierung}
+Der erste Schritt war es, die Teilinstanzen, mit denen die \emph{Propagation} aufgerufen wird, zu visualisieren.
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{cdcl/propergation.pdf}
+    \caption{Eine Teilinstanz bei einem \emph{Propagation} Aufruf. Blau auf false gesetzt, grün auf true. Grüner Knoten Sollgrad erfüllt. Zahl in Knoten ist Sollgrad.
+	TODO schön aufschreiben mit finalem Bild und erklären das von rand ausgehend fertig}
+    \label{fig:cdcl:propagation}
+\end{figure}
+In~\cref{fig:cdcl:propagation} ist eine beispielhafte Teilinstanz dargestellt.
+Bei der Visualisierung ist aufgefallen, dass oft vom Rand ausgehend die Instanz gelöst wurde, also es meistens einen \emph{Arm} gab, welcher in die Mitte der Instanz reichte.
+Selten gab es einzelne Konstrukte in der Mitte der Instanz mit keinen Verbindungen zum Rand.
+
+\subsection{Implementierung}
+Die Idee der \emph{Propagation} ist es, die Bedingungen aus~\cref{sec:exclude_edges} zum Halbieren der Instanz zu verwenden.
+Der Vorteil an den Teilinstanzen ist, dass der \emph{Arm} die Instanz meist schon irgendwo zum Teil halbiert.
+Es können also Kanten getestet werden, welche die Halbierung abschließen.
+Dafür wird mit einem Arrangement verfolgt, welche Kanten aktiv sind.
+Es muss nur darauf geachtet werden, dass bei jeder neuen Entscheidungsebene das Arrangement gespeichert und einer Ebene zugeordnet wird.
+Sollte es zu einem Konflikt kommen, wird das Arrangement zu der richtigen Entscheidungsebene zurückgesetzt.
+Wenn die \emph{Propagation} aufgerufen wird, können alle Faces des Arrangements betrachtet werden.
+Hierbei sind nur Faces relevant, welche mehr als drei Kanten haben.
+Bei diesen können alle Teilenden Kanten erzeugt werden, indem alle Zweierkombinationen der Randknoten des Faces betrachtet werden.
+Dadurch wird das Face in zwei Hälften geteilt und die Kante zwischen den Knoten der Zweierkombination kann getestet werden.
+Sollte die Kante zu einem Konflikt führen, kann das zugehörige Literal \(l\) auf \emph{falsch} gesetzt werden.
+Als Begründung kann folgende Klausel verwendet werden:
+\[
+(\overline{l} \lor \bigvee_{e \in E_A}\overline{x_e})
+\]
+Wobei \(E_A\) die Menge der aktiven Kanten ist.
+
+\subsection{Experiment}
+TODO Ich habe den Propergate naiv implemenitert allerdings läuft er noch nicht ganz.
+Ich würde hier beschreiben wie viele und welche Kanten er finden konnte da ich für einen Ansatz der Zeitlich relevant ist keine Zeit mehr habe.
+
 \section{Instanzen Schwierigkeit}
 In diesem Abschnitt wird Probiert die Schwierigkeit der Instanzen zu bestimmen.
 Aus den vorigen Experimenten ist bekannt das \emph{Delaunay} und \emph{Delaunay Flips} die schwereren Instanzen sind,\emph{Greedy} im Mittelfeld und \emph{Iterativ} und \emph{Random}die einfacheren Instanzen.
@@ -171,12 +210,9 @@ Wie man in~\cref{fig:eval8:left} sieht, sind die Kanten in der linken Hälfte de
 
 \subsection{Grad Verteilung}
 % (Eval9)
-Wie man in 
-TODO einfügen sieht 
 
-\subsection{Kanten Verteilung}
+\subsection{Kantenlängen Verteilung}
 % (Eval10)
-gucken wie die Kantenlängen Verteilung ist
 
 
 
