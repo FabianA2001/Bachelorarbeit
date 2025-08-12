@@ -211,10 +211,38 @@ Wie man in~\cref{fig:eval8:left} sieht, sind die Kanten in der linken Hälfte de
 % TODO besseren Schluss ziehen
 
 \subsection{Grad Verteilung}
+In diesem Experiment wird Probiert anhand der Gradverteilung der Knoten zu erkennen ob es einen Zusammenhang zwischen der Schwierigkeit und dem Grad gibt.
+Dafür werden die Ja-Instanzen der Größe 30 bis 120 Knoten betrachtet.
 % (Eval9)
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{gradverteilung.pdf}
+    \caption{Eval8 Anzahl Lösungen Greedy}
+    \label{fig:eval9:gradverteilung}
+\end{figure}
+In~\cref{fig:eval9:gradverteilung} ist die Gradverteilung der Knoten zu sehen.
+Auf den ersten Blick lässt sich vermuten das es einen Zusammenhang zwischen der Schwierigkeit und dem Grad gibt.
+Es ist zu erkennen das Vorallem Random und Iterativ eine Rechtsschiefe Verteilung haben.
+Dazu passend hat Delaunay eher eine zentrierte Verteilung. 
+Auch das Delaunay-Flips Rechtsschiefer als Delaunay ist würde passen, da Delaunay-Flips einfacher als Delaunay sind.
+Leider lässt sich an Greedy erkennen das er keinen direkten Zusammenhang zwischen der Gradverteilung und der Schwierigkeit gibt.
+Greedy ist von der Zentrierung zwischen Delaunay und Delaunay-Flips einzuordnen aber die Greedy Instanzen sind eindeutig einfacher als Delaunay-Flips
+
 
 \subsection{Kantenlängen Verteilung}
 % (Eval10)
+In diesem Experiment wird ebenfalls probiert einen Zusammenhang zwischen der Schwierigkeit und einer Eigenschaft zu finden.
+In diesem Fall werden die Kantenlängen betrachtet.
+Allerdings müssen diese Normiert werden da sonst durch weit auseinander liegende Knoten die Verteilung verzerren würden.
+Die Normierung erfolgt durch das Teilen durch die maximale Kantenlänge.
+Das heißt für jede Instanze wird die maximale Kantenlänge bestimmt und alle Kantenlängen durch diese geteilt.
+Für dieses Experiment wurden nur Ja-Instanzen der größe 30 bis 80 Knoten betrachtet.
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{edge_length_distribution_plots.pdf}
+    \caption{Eval8 Anzahl Lösungen Greedy}
+    \label{fig:eval10:kantenverteilung}
+\end{figure}
 
-
+TODOVLt ist greedy doch schwerer als gedacht.
 
