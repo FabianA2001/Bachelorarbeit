@@ -2,6 +2,7 @@
 \michael{Einführungstext.}
 \michael{Verweise auch auf frühere Kapitel wo die Sachen dargelegt wurden.}
 \section{Versuchsumgebung}
+\fabian{PK: Ist sowas wie Pandas relevant? Das wird doch nur in der Auswertung gebraucht..., Dann ist Slurminade und Algbench doch genauso unrelevant oder?, oder das die Plots mit plt und Seaborn erstellt wurden?}
 % \begin{itemize}
 %     \item Implementation details (e.g., libraries, third-party programs, \dots)
 %     \item In which environment are you testing (e.g., system specifications)
@@ -28,7 +29,7 @@
     \item Gesamte Laufzeit dargestellt Model konstruktion plus solve zeit
 \end{itemize}
 
-\section{Permuation}
+\section{Permutation}
 \label{sec:eval2:permuation}
 % (Eval2)
 In diesem Experiment wird untersucht, ob es einen Einfluss hat, in welcher Reihenfolge die Knoten den Solvern übergeben werden.
@@ -60,6 +61,7 @@ Da bei größeren Knotenmengen der Arbeitsspeicher zu klein war.
 Als zusätzliche Bedingung wurde die Überschneidungsbeschränkung verwendet.
 Für die Exakte Methode sieht man in~\cref{fig:eval5_exact} das \emph{sequential counters} die besten Ergebnisse erzielen.
 Auch für den Mindest Sollgrad ist \emph{sequential counters} die beste Variante wie man in~\cref{fig:eval5_atleast} sieht.
+\michael{ PK: 100 Prozent gelöst und die grüne Plotfarbe sind für meinen Geschmack zu ähnlich}
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval5/gesamt.pdf}

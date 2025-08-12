@@ -70,17 +70,20 @@ Dabei kann ausgenutzt werden, dass Dreiecke unterschiedliche Innenwinkel und Kan
 Das Grundproblem besteht darin, dass die Höhendaten nur an bestimmten Punkten bekannt sind und die restlichen Werte daher geschätzt werden müssen.
 Dies kann durch die Delaunay-Triangulation gut gelöst werden, da die Dreiecke aufgrund ihrer gleichschenkligen Eigenschaft visuell geeignet sind, die fehlenden Daten zu ergänzen.
 
-Es werden auch Formel für die Anzahl der Kanten und Dreiecke in einer Triangulation angegeben.
+Es werden auch Formeln für die Anzahl der Kanten \(\left|E\right|\) und Dreiecke \(\left|F\right|\) in einer Triangulation angegeben.
 Für eine Punktemenge mit \(n\) Punkten und \(k\) Punkten auf der konvexen Hülle gilt:
-\[
-\text{Anzahl Kanten: } 3 n - 3 - k
-\]
-\[
-\text{Anzahl Dreiecke: }2 n - 2 - k
-\]
+\begin{align*}
+    \left|E\right| &= 3 n - 3 - k\\
+    \left|F\right| &= 2 n - 2 - k
+\end{align*}
 
-\subsection{Flips in Triangulations}
-Flips sind Möglichkeiten, um Kanten in einer Triangulation auszutauschen.
+
+\fabian{
+PK: Flips in Triangulationen?\\
+so verständlicher? könnte sie auch Delauney flips nennen.
+In der Zitierten arbeit werden sie auch Flips genannt}
+\subsection{Kantenflips in Triangulations}
+Kantenflips oder kurz Flips sind Möglichkeiten, um Kanten in einer Triangulation auszutauschen.
 Wie oben erwähnt, müssen Triangulation eine feste Anzahl an Kanten besitzen~\cite{Delaunay_Triangulation}.
 Dementsprechend können keine Kanten hinzugefügt oder entfernt werden, um den Grad einer Triangulation zu verändern.
 Daraus folgt, dass für jede entfernte Kante eine andere Kante eingefügt werden muss.
@@ -113,7 +116,7 @@ Die Rotation erfolgt also nur um einen Knoten.
 Die dritte Variante, der \emph{edge slide}, schränkt die \emph{edge rotation} weiter ein.
 Hier darf der veränderte Knoten nur ein Nachbar des ursprünglichen Knotens sein.
 
-\subsection{degree constrained minimum spanning tree}
+\subsection{Degree constrained minimum spanning tree}
 Eine Gradbeschränkung gibt es auch beim Minimum Spanning Tree.
 Hier hat jede Kante ein vorgegebenes Gewicht, welches im Spanning Tree minimiert werden soll.
 Das Besondere am \emph{degree constrained minimum spanning tree} ist, dass ein Minimum Spanning Tree erzeugt werden soll, welcher an jedem Knoten einen maximalen Grad von \( d \) hat.
@@ -124,7 +127,7 @@ Der erste Ansatz ignoriert zu Beginn den Aspekt der Minimalität des Problems.
 Es werden Kanten hinzugefügt, welche die Gradbeschränkung nicht verletzen.
 Im weiteren Verlauf wird versucht, die Anzahl der Kanten zu minimieren.
 
-Ein anderer Ansatz nutzt aus, dass der minimale Spannbaum ohne Grad Beschränkung in polynomialer Zeit gelöst werden kann.
+Ein anderer Ansatz nutzt aus, dass der minimale Spannbaum ohne Gradbeschränkung in polynomialer Zeit gelöst werden kann.
 Dieser Ansatz erzeugt zuerst einen minimalen Spannbaum, welcher die Gradbeschränkung ignoriert.
 Wenn eine Lösung gefunden wurde, werden den Kanten neue Gewichte zugeteilt.
 Diese neuen Gewichte werden mit folgender Formel berechnet,
@@ -227,9 +230,10 @@ Eine Abwandlung des minimalen Spannbaums mit Gradbeschränkung wurde von Ana Mar
 Dabei erweitern sie das Problem um eine Funktion, welche für jeden Knoten einen Mindestgrad vorgibt.
 Dieses Problem wird als \emph{Min-Degree Constrained Minimum Spanning Tree} bezeichnet.
 
-Es wurde das \emph{k-Dimensional Matching Problem} verwendet, um zu zeigen, dass das \emph{Min-Degree Constrained Minimum Spanning Tree} Problem in NP liegt.
+\fabian{ist das \NP\text{-schwer}  so hier richitg, fühlt sich komisch an}
+Es wurde das \emph{k-Dimensional Matching Problem} verwendet, um zu zeigen, dass das \emph{Min-Degree Constrained Minimum Spanning Tree} Problem \NP\text{-schwer} ist.
 Zu erwähnen ist, dass dies in der dritten Dimension nicht gezeigt wurde.
-Allerdings soll das Problem schwieriger sein als das \emph{Degree Constrained Minimum Spanning Tree}, obwohl auch dieses in NP liegt.
+Allerdings soll das Problem schwieriger sein als das \emph{Degree Constrained Minimum Spanning Tree}, obwohl auch dieses Problem \NP\text{-schwer} ist.
 
 Auch in diesem Fall wird das Problem mit einer \emph{Flow based Formulierung} betrachtet.
 Dabei werden zwei Formulierungen angegeben.
