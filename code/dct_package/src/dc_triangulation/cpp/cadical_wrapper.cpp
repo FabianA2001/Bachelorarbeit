@@ -5,7 +5,7 @@
 #include <limits>
 #include <filesystem>
 
-#define PRINT 0 // Enable debug printing
+#define PRINT 1 // Enable debug printing
 
 // Constants for SVG visualization
 const double SCALE_FACTOR = 100.0;
@@ -704,9 +704,10 @@ public:
                             {
                                 if (l > 0)
                                 {
-                                    reason.push_back(l);
+                                    reason.push_back(-l);
                                 }
                             }
+                            reason.push_back(-lit);
                             state_tracker.store_reason(-lit, reason);
                             return -lit; // Return the literal for the edge that can be excluded
                         }
