@@ -193,6 +193,10 @@ def raw_flips_algorithm(graph):
 def cadical_algorithm(graph, nodes=None):
     import shutil
 
+    # print(nodes[3])
+    # print(nodes[27])
+    # return
+
     solver = Cadical(graph)
     para = Cadical_Parameter(
         degree=True,

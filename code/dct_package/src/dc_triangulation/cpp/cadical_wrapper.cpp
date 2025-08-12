@@ -5,11 +5,13 @@
 #include <limits>
 #include <filesystem>
 
-#define PRINT 1 // Enable debug printing
+#define PRINT 0 // Enable debug printing
 
 // Constants for SVG visualization
-const double SCALE_FACTOR = 100.0;
+// const double SCALE_FACTOR = 100.0;
+const double SCALE_FACTOR = 1;
 const double NODE_RADIUS = 5.0;
+static int counter = 0;
 
 // Helper function to save arrangement as SVG file
 void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment_2> &original_edges, const std::string &filename)
@@ -350,6 +352,7 @@ public:
 
     void notify_assignments(const std::vector<Lit> &assignments)
     {
+        // std::cerr << "Notify assignments" << counter++ << "    last literal: " << assignments.at(assignments.size() - 1) << "\n";
         for (Lit l : assignments)
         {
             if (is_open(l))
@@ -383,8 +386,13 @@ public:
 
                 // Insert the edge into the arrangement
                 auto edge = get_edge_from_lit(l);
-                // insert_edge(edge);
                 CGAL::insert(arr, edge);
+                std::cerr << "Inserting edge: " << edge << "for lit: " << l << "for counter: " << counter << "\n";
+                std::stringstream filename;
+                filename << "arrangement_" << std::setfill('0') << std::setw(4) << counter++ << ".svg";
+                save_arrangement_as_svg(arr, edges, filename.str());
+
+                std::cerr << "left\n";
             }
 
             // Only print if observed variables were found
@@ -576,6 +584,10 @@ public:
 
     int propagate() override
     {
+        return 0;
+#if PRINT
+        std::cerr << "Propergate" << std::endl;
+#endif
         if (!state_tracker.has_changes)
         {
             return 0; // Keine Änderungen - früher Ausstieg
@@ -584,7 +596,7 @@ public:
         state_tracker.has_changes = false; // Flag zurücksetzen
 
         state_tracker.update_vars_saved();
-        // std::cerr << "PROPAGATE called with observed trail ";
+        // std::cerr << "PROPAGATE called with observed trail "
         // for (Lit l : state_tracker.get_observed_trail())
         // {
         //     std::cerr << l << " ";
@@ -750,6 +762,7 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
                                                              bool save_state,
                                                              bool optimize_propagation)
 {
+
     // if (optimize_propagation)
     // {
     //     assert(!edges.empty() && "Edges must be provided when optimize_propagation is true.");
@@ -818,5 +831,7 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
         }
 
         return std::make_pair(result, propagator.get_vars_saved());
+        // std::vector<Vars_List> leer;
+        // return std::make_pair(result, leer);
     }
 }

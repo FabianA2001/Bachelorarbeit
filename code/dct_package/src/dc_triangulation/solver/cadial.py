@@ -143,7 +143,8 @@ class Cadical(Solver):
         nodes_as_pos = [
             self.graph.get_pos_from_node(node) for node in self.graph.get_all_nodes()
         ]
-
+        # print(self.edges[108 - 1])
+        # return {}
         vars, debug_vars = self.time_solver(cadical_wrapper)(
             self.max_used,
             len(self.edges),
