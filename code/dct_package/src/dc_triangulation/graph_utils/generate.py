@@ -218,6 +218,21 @@ class Generate_Nodes_Iterativ(Generate_Instance_ABC_Nodes):
         return gen_nodes(number_nodes, width, height)
 
 
+class Generate_Nodes_Given(Generate_Instance_ABC_Nodes):
+    def __init__(self, nodes: list[Node]) -> None:
+        """Initialisiert die Klasse mit einer Liste von Knoten."""
+        self.nodes = nodes
+
+    def generate_nodes(
+        self,
+        number_nodes: int,
+        width: int = graph_const.GEN_WIDTH,
+        height: int = graph_const.GEN_HEIGHT,
+    ) -> list[Node]:
+        """Generiert eine Liste von Knoten mit zufälligen Positionen und Graden."""
+        return self.nodes
+
+
 class Generate_Nodes_Random(Generate_Instance_ABC_Nodes):
     def generate_nodes(
         self,

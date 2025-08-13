@@ -17,6 +17,7 @@ def draw(
     show: bool,
     save: str,
     block: bool,
+    draw_name: bool = True,
 ) -> None:
     """Zeichnet den Graphen mit den festgelegten Positionen und Farben."""
     logging.info("starte show_and_save")
@@ -30,10 +31,14 @@ def draw(
         save_graph_as_json(data, "error/", f"{data.name}_error.json")
 
     pos = nx.get_node_attributes(local_graph, "pos")
+    print(pos[0])
     degrees = nx.get_node_attributes(local_graph, "degree")
 
     # Labels mit Degree-Werten erstellen
-    labels = {node: f"{node}\n{degree}" for node, degree in degrees.items()}
+    if draw_name:
+        labels = {node: f"{node}\n{degree}" for node, degree in degrees.items()}
+    else:
+        labels = {node: f"{degree}" for node, degree in degrees.items()}
 
     # Knotenfarben basierend auf dem Grad erstellen
     colors = [
@@ -84,6 +89,7 @@ def draw_with_set_false(
     show: bool,
     save: str,
     block: bool,
+    draw_name: bool = True,
 ) -> None:
     """Zeichnet den Graphen mit den festgelegten Positionen und Farben."""
     logging.info("starte show_and_save")
@@ -100,7 +106,10 @@ def draw_with_set_false(
     degrees = nx.get_node_attributes(local_graph, "degree")
 
     # Labels mit Degree-Werten erstellen
-    labels = {node: f"{node}\n{degree}" for node, degree in degrees.items()}
+    if draw_name:
+        labels = {node: f"{node}\n{degree}" for node, degree in degrees.items()}
+    else:
+        labels = {node: f"{degree}" for node, degree in degrees.items()}
 
     # Knotenfarben basierend auf dem Grad erstellen
     colors = [

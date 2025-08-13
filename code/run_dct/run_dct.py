@@ -321,15 +321,15 @@ def run_algo():
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
-    nodes = multiple_solutions()
+    # nodes = multiple_solutions()
     graph = Graph_Wrapper(nodes)
     # solver = Greedy(graph)
     # solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
-    # sat_algorithm(graph)
+    sat_algorithm(graph)
     # cadical_algorithm(graph, nodes)
-    count_algorithm(graph)
+    # count_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # ortools_tri_algorithm(graph)
@@ -339,7 +339,7 @@ def run_algo():
 
     # graph.add_all_possible_edges(True)
     # logging.info(f"evluation: {graph.evaluate()}")
-    graph.show_and_save()
+    graph.show_and_save(draw_name=False, save="figures")
 
 
 def permute_instance():
@@ -373,7 +373,7 @@ def permute_instance():
 
 def create_instance():
     FLIPS = 500
-    PATH = "eval_instance"
+    PATH = "instance"
     for NAME, gen in zip(
         ["d_flips", "delaunay", "greedy", "iterative", "random"],
         [
@@ -384,8 +384,8 @@ def create_instance():
             generate.Generate_Edges_Random(),
         ],
     ):
-        INST_NAME = NAME
-        for i in [130, 140, 150, 160, 170, 180, 190, 200]:
+        INST_NAME = "example_20"
+        for i in [20]:
             FILE_NAME = f"{NAME}"
             generate.Generate_Instance(
                 INST_NAME,
@@ -426,8 +426,58 @@ def create_instance():
             ).generate()
 
 
+def generate_example():
+    FLIPS = 500
+    PATH = "instance"
+    nodes = generate.gen_nodes(20, 10000, 10000)
+    for NAME, gen in zip(
+        ["Delaunay_Flips", "Delaunay", "Greedy", "Iterative", "Random"],
+        [
+            generate.Generate_Edges_Delaunay_Flips(FLIPS),
+            generate.Generate_Edges_Delaunay(),
+            generate.Generate_Edges_Greedy(),
+            generate.Generate_Edges_Iterative(),
+            generate.Generate_Edges_Random(),
+        ],
+    ):
+        INST_NAME = "example_20"
+        FILE_NAME = f"{NAME}"
+        generate.Generate_Instance(
+            INST_NAME,
+            FILE_NAME,
+            20,
+            1,
+            generate.Generate_Nodes_Given(nodes),
+            gen,
+            path=PATH,
+            width=10000,
+            height=10000,
+        ).generate()
+
+
+def draw_example():
+    path = os.path.join(
+        os.path.dirname(__file__),
+        "instance",
+        "example_20",
+    )
+    for file, name in zip(
+        os.listdir(path),
+        ["Delaunay_Flips", "Delaunay", "Greedy", "Iterative", "Random"],
+    ):
+        file_path = os.path.join(path, file)
+        nodes = load_nodes_from_json(file_path)
+        graph = Graph_Wrapper(nodes)
+        sat_algorithm(graph)
+        graph.name = file
+        graph.show_and_save(save="figures/example", block=False, draw_name=False)
+        logging.info(f"Graph {name} saved.")
+
+
 if __name__ == "__main__":
-    run_algo()
+    # run_algo()
     # show_all_instanzes()
     # create_instance()
     # permute_instance()
+    generate_example()
+    draw_example()

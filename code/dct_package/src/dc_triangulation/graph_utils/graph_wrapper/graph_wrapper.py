@@ -124,6 +124,7 @@ class Graph_Wrapper:
         save: str = "",
         block: bool = True,
         show_set_false: bool = False,
+        draw_name: bool = True,
     ) -> None:
         if not show_set_false:
             visualisation.draw(
@@ -133,6 +134,7 @@ class Graph_Wrapper:
                 show=show,
                 save=save,
                 block=block,
+                draw_name=draw_name,
             )
         else:
             visualisation.draw_with_set_false(
@@ -142,6 +144,7 @@ class Graph_Wrapper:
                 show=show,
                 save=save,
                 block=block,
+                draw_name=draw_name,
             )
 
     def add_edge(self, node1: int, node2: int, active: bool = True) -> None:
