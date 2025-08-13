@@ -12,11 +12,11 @@ In dieser Arbeit werden drei verschiedene Solver verwendet
 PySat, OrTools und Gurobi.
 
 PySat ist eine Python-Bibliothek, die eine Sammlung von SAT-Solvern bereitstellt.
-Diese SAT-Solver entscheiden, ob eine CNF-Formel erfüllbar ist.
+Diese SAT-Solver entscheiden, ob eine KNF-Formel erfüllbar ist.
 Dementsprechend kann PySat nur Entscheidungsprobleme, aber keine Optimierungsprobleme lösen.
 Alle Solver sind in C oder C++ implementiert und es wird eine einheitliche Schnittstelle für alle Solver in Python bereitgestellt.
 Zusätzlich werden verschiedene Codierungen für Kardinalitäten angeboten.
-Das bedeutet, man gibt eine Bedingung ein und erhält eine CNF-Formel, die diese Bedingung abbildet.
+Das bedeutet, man gibt eine Bedingung ein und erhält eine KNF-Formel, die diese Bedingung abbildet.
 PySat stellt hierfür verschiedene Codierungen mit Implementierung bereit.
 PySat ist open source und kostenlos.
 
@@ -36,9 +36,9 @@ Gurobi ist kostenpflichtig, bietet jedoch eine kostenlose Lizenz für Forschung 
 
 \section{Kanten Formulierung}
 % \michael{Beschränkungen ist ein eher unübliches Wort. Üblicher wäre Bedingung oder Neben/Randbedingung.}
-Es gibt zwei notwendige Bedingung für eine gradbeschränkte Triangulation.
+Es gibt zwei notwendige Bedingung für eine gradbeschränkte Triangulierung.
 \subsubsection{notwendig Bedingung}
-Da eine Triangulation keine Überschneidungen enthalten darf, werden alle Kantenpaare berechnet.
+Da eine Triangulierung keine Überschneidungen enthalten darf, werden alle Kantenpaare berechnet.
 Von jedem dieser Paare darf dann nur eine Kante aktiv sein.
 
 Die zweite Bedingung ist die Gradbeschränkung.
@@ -47,7 +47,7 @@ Um dies zu erreichen, wird für jeden Knoten festgelegt, dass die Summe der ausg
 
 Eine weitere notwendige Bedingung ist, dass die Kantenanzahl maximal ist.
 Dies muss nicht explizit als Bedingung angegeben werden da es von der Gradbeschränkung impliziert wird.
-Es muss nur geprüft werden, ob die Gradbeschränkung in einer Triangulation erfüllbar ist.
+Es muss nur geprüft werden, ob die Gradbeschränkung in einer Triangulierung erfüllbar ist.
 Dafür kann die Formel
 \[
 \text{Anzahl Kanten} = 3 n - 3 - k
@@ -63,8 +63,8 @@ Diese Anzahl der Kanten kann in folgender Formel genutzt werden, um die Gradbesc
 Die erste und naheliegendste Bedingung ist die \emph{fixierte Hülle}.
 Hierbei werden die Kanten der konvexen Hülle immer hinzugefügt.
 Diese dürfen hinzugefügt werden, da sie keine Schnittkanten besitzen.
-Andernfalls wäre der Graph nicht maximal und somit keine Triangulation.
-Da die Kanten der Hüllen in jeder möglichen Triangulation vorhanden sind, verletzen sie auch nicht die Gradbeschränkung.
+Andernfalls wäre der Graph nicht maximal und somit keine Triangulierung.
+Da die Kanten der Hüllen in jeder möglichen Triangulierung vorhanden sind, verletzen sie auch nicht die Gradbeschränkung.
 
 Eine weitere optionale Bedingung ist zuvor berechnete Kanten zu fixieren oder auszuschließen.
 \begin{figure}[htb]
@@ -75,7 +75,7 @@ Eine weitere optionale Bedingung ist zuvor berechnete Kanten zu fixieren oder au
 \end{figure}
 Eine Möglichkeit um Kanten zu fixieren ist es immer drei aufeinander folgende Knoten der Hülle zu betrachten.
 Ein mögliches Beispiel ist in~\cref{fig:excludeGrad2} zu sehen.
-Sollte \(\degrees(v_2) = 2\) sein, muss die Kante \(e_1\) in der Triangulation genutzt werden.
+Sollte \(\degrees(v_2) = 2\) sein, muss die Kante \(e_1\) in der Triangulierung genutzt werden.
 Der Grund dafür ist das alle Schnittkanten von \(e_1\) nicht aktiv sein dürfen, da sie den Grad von \(v_2\) erhöhen würden.
 Analog dazu kann die Kante \(e_1\) ausgeschlossen werden sollte \(\degrees(v_2) > 2\).
 Sonst kann der Sollgrad nicht erreicht werden.
@@ -128,20 +128,20 @@ Diese wurde von Sándor P. Fekete et.al.~\cite{Exact_Algorithms_for_Minimum_Dila
 \begin{figure}[htb]
 \centering
 \includegraphics[scale=0.5]{all_edges.pdf}
-\caption[Ein Vollständiger Graph mit allen möglichen Triangulation.]{Ein Vollständiger Graph mit allen möglichen Triangulation. Die Kanten \(e_2\) und \(e_3\) sind Schnittkanten von \(e_1\). Es ist zu sehen das \(e_1\) oder eine der Schnittkanten aktiv sein muss damit eine Triangulation möglich ist.} 
+\caption[Ein Vollständiger Graph mit allen möglichen Triangulierung.]{Ein Vollständiger Graph mit allen möglichen Triangulierung. Die Kanten \(e_2\) und \(e_3\) sind Schnittkanten von \(e_1\). Es ist zu sehen das \(e_1\) oder eine der Schnittkanten aktiv sein muss damit eine Triangulierung möglich ist.} 
 \label{fig:allEdges}
 \end{figure}
 Diese Bedingung nutzt aus, dass der Graph maximal sein muss.
 Damit dies der Fall sein kann, muss für jede Kante gelten, dass entweder die Kante aktiv ist oder eine der Schnittkanten aktiv ist.
 Wie man in~\cref{fig:allEdges} sieht, ist \(e_1\) die ausgewählte Kante und \(e_2\) und \(e_3\) die Schnittkanten.
-Weiter unten im Bild ist zu sehen das alle möglichen Triangulation mindestens eine der drei Kanten verwendet.
+Weiter unten im Bild ist zu sehen das alle möglichen Triangulierung mindestens eine der drei Kanten verwendet.
 Zu beachten ist allerdings das die Anzahl der Schnittkanten nicht gleich eins gesetzt werden darf sondern nur auf mindestens eine.
 Wie man in~\cref{fig:allEdges} sieht können die Kanten \(e_2\) und \(e_3\) gleichzeitig aktiv sein.
 
 \subsection{Implementierung der Kanten Formulierung}
 Für alle Solver wird angenommen das \(V\) die Menge aller Knoten und \(E\) die Menge aller möglicher Kanten also Kanten die keine Punkte schneiden sei.
 Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
-Diese Variable ist wahr wenn die Kante \(e\) in der Triangulation enthalten ist.
+Diese Variable ist wahr wenn die Kante \(e\) in der Triangulierung enthalten ist.
 
 \subsubsection{Graph operationen}
 Alle Kanten werden mit der Bibliothek \emph{Networkx} verwaltet.
@@ -223,7 +223,7 @@ Für die \emph{alternative Kanteneschränkung} werden folgende Bedingungen hinzu
 Für die fixierung bzw. ausschließung der Kanten werden die zugehöhrigen Variablen auf \emph{Wahr} oder \emph{Falsch} gesetzt.
 
 \subsubsection{PySat}
-Da PySat eine SAT Formulierung also Klauseln in der CNF verwendet, müssen die Bedingungen etwas angepasst werden.
+Da PySat eine SAT Formulierung also Klauseln in der KNF verwendet, müssen die Bedingungen etwas angepasst werden.
 Die Überschneidungen können sehr ähnlich mit folgender Formel umgesetzt werden:
 \[
 \neg x_{e_1} \lor \neg x_{e_2} \myhspace \forall e_1, e_2 \in E: e_2 \in \intersection(e_1)
@@ -294,7 +294,7 @@ Anschließend werden alle Knoten nacheinander durchlaufen.
 Hierbei kann gleichzeitig zum Beispiel ein \emph{Map} genutzt werden um für jeden Knoten die zugehörigen Dreiecke zu speichern.
 Für jeden Knoten werden alle Nachbarn bestimmt und mit den anderen Knoten diesen Nachbarn alle möglichen Zweierkombinationen gebildet.
 Wenn eine dieser Zweierkombinationen eine Kante besitzt, wird ein Dreieck erstellt.
-Für eine Triangulation sind jedoch nur die Dreiecke relevant, die keine weiteren Knoten enthalten.
+Für eine Triangulierung sind jedoch nur die Dreiecke relevant, die keine weiteren Knoten enthalten.
 Es werden daher nur die Dreiecke gespeichert, die keine zusätzlichen Knoten enthalten.
 Dies kann wieder mit \emph{shapley} überprüft werden.
 Zusätzlich wird darauf geachtet das jedes Dreieck nur einmal gespeichert wird, da mit dieser Methode jedes Dreieck theoretisch bis zu drei Mal betrachtet werden kann.
@@ -339,7 +339,7 @@ e_i &= \left\{
 Q_T &= \sum_{i=0}^{n} \frac{e_i}{n} \label{eq:total_evaluation}
 \end{align}
 
-Die Formel liefert eine Bewertung (\(Q_T\)) für einen Triangulation mit \(n\) Knoten.
+Die Formel liefert eine Bewertung (\(Q_T\)) für einen Triangulierung mit \(n\) Knoten.
 Hierbei gibt \(\degrees(i)\) den gewünschten Grad an der stelle i an.
 Dazu passend gibt \(\degree(i)\) den aktuellen Grad an.
 In der Brechnung~\eqref{eq:difference} wird die Difference zwischen dem gewünschten und aktuellen Grad berechnet.
@@ -351,7 +351,7 @@ In dieser Heuristik werden die in~\cref{def:flip} definierten Kantenflips verwen
 Ziel ist es, die Gradbeschränkung zu erreichen. 
 Dabei wird ausgenutzt, dass Flips den Grad eines Knotens verändern können die Triangulationseigenschaft dabei aber erhalten bleibt. 
 
-Das Verfahren beginnt mit einer initialen Triangulation.
+Das Verfahren beginnt mit einer initialen Triangulierung.
 Diese wird durch ein klassisches Triangulationsverfahren erzeugt. 
 Anschließend werden maximal \(k\) Flips durchgeführt. 
 Ziel ist es, die Gradbeschränkung zu erfüllen. 
@@ -370,7 +370,7 @@ Für diese Kante werden zunächst alle Dreiecke gesucht, die diese Kante enthalt
 Dies geschieht, indem für die beiden Knoten \(x_{0,0}\) und \(x_{0,1}\) der Kante \(e_0\) alle ausgehenden Kanten verglichen werden.
 Sollten zwei dieser Kanten den gleichen Knoten \(v\) haben, muss das Tripel (\(x_{0,0}, x_{0,1}, v\)) ein Dreieck bilden, welches die Kante \(e_0\) enthält.
 Sollten mehr als zwei Dreiecke gefunden werden, so müssen die beiden Dreiecke ausgewählt werden, welche leer sind (keine weiteren Knoten enthalten).
-Da es in einer Triangulation nicht zu Überschneidungen kommen darf, kann es nur zwei leere Dreiecke geben.
+Da es in einer Triangulierung nicht zu Überschneidungen kommen darf, kann es nur zwei leere Dreiecke geben.
 Aus diesen beiden Dreiecken (\(x_{0,0}, x_{0,1}, v_0\)) und (\(x_{0,0}, x_{0,1}, v_1\)) wird dann die Kante \(e_0\) entfernt und durch die neue Kante, bestehend aus \(v_0\) und \(v_1\), ersetzt.
 
 Nach jedem Flip wird überprüft, ob die Gradbeschränkung für alle Knoten erfüllt ist. Sollte dies der Fall sein, wird das Verfahren beendet.
@@ -520,26 +520,26 @@ Die Knotenmengen werden hierbei durch die von Python bereit gestellt Funktion \e
 Mit dieser werden so lange verschiedene Koordinaten berechnet bis eine Gewünschte Anzahl erreicht wurde.
 
 \subsection{Ja - Instanzen}
-Bei den Ja-Instanzen handelt es sich um Knotenmengen, bei denen die \(\degrees\)-Funktion Grade liefert, welche eine gradbeschränkte Triangulation ermöglichen.
+Bei den Ja-Instanzen handelt es sich um Knotenmengen, bei denen die \(\degrees\)-Funktion Grade liefert, welche eine gradbeschränkte Triangulierung ermöglichen.
 Hierbei ist nicht bekannt, wie viele mögliche Lösungen existieren, sondern nur, dass es mindestens eine gibt.
 
 Der generelle Ablauf zur Erzeugung von Ja-Instanzen beginnt mit einer zufälligen Knotenmenge.
 Dabei wird lediglich die Anzahl der Knoten vorgegeben.
-Anschließend wird mit einem klassischen Triangulationsverfahren eine initiale Triangulation erstellt.
+Anschließend wird mit einem klassischen Triangulationsverfahren eine initiale Triangulierung erstellt.
 Von dieser werden dann die Grade gespeichert, um sie als Eingabe für die zu testenden Algorithmen zu verwenden.
 
 \subsubsection{Delaunay}
-Das erste klassische Verfahren zur Gradbestimmung verwendet die Delaunay-Triangulation.
-Die Delaunay-Triangulation wurde bereits im Kapitel~\cref{sec:delaunay_triangulation} vorgestellt.
-Für die Erstellung der Delaunay-Triangulation wird die Bibliothek \emph{scipy} genutzt.
+Das erste klassische Verfahren zur Gradbestimmung verwendet die Delaunay-Triangulierung.
+Die Delaunay-Triangulierung wurde bereits im Kapitel~\cref{sec:delaunay_triangulation} vorgestellt.
+Für die Erstellung der Delaunay-Triangulierung wird die Bibliothek \emph{scipy} genutzt.
 
 \subsubsection{Delaunay mit zufälligen Flips}
 \label{sec:Delaunay_mit_zufällig_Flips}
-Das zweite Verfahren zur Erzeugung von Ja-Instanzen basiert auf der Delaunay-Triangulation, zusätzlich werden jedoch zufällige Flips durchgeführt.
-Zunächst wird eine Delaunay-Triangulation der Knotenmenge erstellt.
-Auf dieser Triangulation werden anschließend \(k\) zufällige Flips gemäß~\cref{def:flip} durchgeführt.
+Das zweite Verfahren zur Erzeugung von Ja-Instanzen basiert auf der Delaunay-Triangulierung, zusätzlich werden jedoch zufällige Flips durchgeführt.
+Zunächst wird eine Delaunay-Triangulierung der Knotenmenge erstellt.
+Auf dieser Triangulierung werden anschließend \(k\) zufällige Flips gemäß~\cref{def:flip} durchgeführt.
 Das genau verfahren wurde in~\cref{sec:flips} schon beschrieben.
-Dieser Prozess verändert die lokale Struktur der Triangulation und erzeugt so Knotenmengen mit unterschiedlichen Gradverteilungen, behält aber die Triangulationseigenschaft bei.
+Dieser Prozess verändert die lokale Struktur der Triangulierung und erzeugt so Knotenmengen mit unterschiedlichen Gradverteilungen, behält aber die Triangulationseigenschaft bei.
 
 \subsubsection{Zufällige Kantenerzeugung}
 Das nächste Verfahren basiert auf der zufälligen Auswahl von Kanten.
@@ -548,7 +548,7 @@ In diesem Schritt werden Kanten ausgeschlossen, welche andere Knoten schneiden w
 
 Die verbleibenden gültigen Kanten werden dann in einer zufälligen Reihenfolge betrachtet.
 Für die betrachteten Kanten wird geprüft ob sie eine der bereits ausgewählten Kanten schneidet.
-Nur wenn keine Schnittkanten entstehen, wird die Kante der Triangulation hinzugefügt.
+Nur wenn keine Schnittkanten entstehen, wird die Kante der Triangulierung hinzugefügt.
 
 Dieses Verfahren ist maximal da alle möglichen Kanten betrachtet wurden.
 
@@ -568,7 +568,7 @@ Allerdings werden sie im gegensatz zum Iterativen Verfahren zunächst nach der L
 Anschließend wird wie beim Iterativen Verfahren jede Mögliche Kante nacheinander hinzugefügt.
 
 \subsection{Nein-Instanzen}
-Nein-Instanzen sind Knotenmengen, bei denen die \(\degrees\) Funktion Gradwerte liefert, die keine gradbeschränkte Triangulation zulassen.
+Nein-Instanzen sind Knotenmengen, bei denen die \(\degrees\) Funktion Gradwerte liefert, die keine gradbeschränkte Triangulierung zulassen.
 Diese Instanzen entstehen nicht direkt, sondern werden aus Ja Instanzen abgeleitet.
 Nach der Generierung muss zusätzlich geprüft werden, ob die Instanz nicht möglich ist.
 Da die beschriebenen Verfahren nur mit hoher Wahrscheinlichkeit Nein Instanzen erzeugen.

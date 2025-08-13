@@ -12,13 +12,13 @@ Das Problem untersucht, ob für eine gegebene Punktmenge eine Triangulierung exi
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\linewidth]{Problem.pdf}
-    \caption[Eine Ja-Instanz und eine Nein-Instanz]{Eine Ja-Instanz (oben) und eine Nein-Instanz (unten). Die Zahlen an den Knoten sind die Sollgrade. Bei der Nein-Instanz können die Sollgrade mit einer Triangulation nicht eingehalten werden.}
+    \caption[Eine Ja-Instanz und eine Nein-Instanz]{Eine Ja-Instanz (oben) und eine Nein-Instanz (unten). Die Zahlen an den Knoten sind die Sollgrade. Bei der Nein-Instanz können die Sollgrade mit einer Triangulierung nicht eingehalten werden.}
     \label{fig:problem}
 \end{figure}
 In~\cref{fig:problem} sind zwei Instanzen mit Lösungen dargestellt.
 Die Zahlen an den Knoten bezeichnen dabei die Sollgrade.
-Die obere Instanz ist eine Ja-Instanz, da die Sollgrade mit der Triangulation eingehalten werden können.
-Bei der unteren Instanz ist hingegen mit den gegebenen Sollgraden keine Triangulation möglich.
+Die obere Instanz ist eine Ja-Instanz, da die Sollgrade mit der Triangulierung eingehalten werden können.
+Bei der unteren Instanz ist hingegen mit den gegebenen Sollgraden keine Triangulierung möglich.
 
 \section{Results}
 % We proof that the \textsc{Traveling Salesmen Problem}(TSP) is NP-complete.
@@ -39,23 +39,23 @@ Bei der unteren Instanz ist hingegen mit den gegebenen Sollgraden keine Triangul
 In diesem Abschnitt werden verschiedene wissenschaftliche Arbeiten aus diesem Themenbereich betrachtet.
 Dies dient dazu, einen Überblick über den aktuellen Entwicklungsstand zu erhalten.
 Dazu werden drei Bereiche begutachtet.
-Der erste Bereich behandelt die \emph{Delaunay Triangulation}.
-Diese zählt zu den bekanntesten Triangulations und bietet einen grundlegenden Einblick in das Thema Triangulation.
+Der erste Bereich behandelt die \emph{Delaunay Triangulierung}.
+Diese zählt zu den bekanntesten Triangulations und bietet einen grundlegenden Einblick in das Thema Triangulierung.
 Der zweite Bereich umfasst \emph{Flips in Triangulations}.
-Hier wird untersucht, wie sich Triangulation durch lokale Änderungen gezielt modifizieren lassen.
+Hier wird untersucht, wie sich Triangulierung durch lokale Änderungen gezielt modifizieren lassen.
 Der dritte und letzte Bereich befasst sich mit dem Problem des \emph{degree constrained minimum spanning tree}.
 Dabei werden insbesondere Ansätze zur Einhaltung von Grad Beschränkungen betrachtet.
 
-Es ist noch zu erwähnen, dass Sharir et. al.~\cite{On_degrees_in_random_triangulations_of_point_setss} den minimalen und maximalen Grad in einer Triangulation untersucht haben.
-Darüber hinaus haben Datta et. al.~\cite{Degree_regular_triangulations_of_surfaces} und Gewali et. al.~\cite{Degree_aware_triangulation_of_annular_regions} sich mit Triangulation beschäftigt, bei denen jeder Knoten einen geraden Grad hat.
+Es ist noch zu erwähnen, dass Sharir et. al.~\cite{On_degrees_in_random_triangulations_of_point_setss} den minimalen und maximalen Grad in einer Triangulierung untersucht haben.
+Darüber hinaus haben Datta et. al.~\cite{Degree_regular_triangulations_of_surfaces} und Gewali et. al.~\cite{Degree_aware_triangulation_of_annular_regions} sich mit Triangulierung beschäftigt, bei denen jeder Knoten einen geraden Grad hat.
 Da diese beiden Themenbereiche keinen direkten Mehrwert für die vorliegende Arbeit bieten, werden sie hier lediglich der Vollständigkeitshalber namentlich erwähnt.
 
 \subsection{Delaunay Triangulations}
 \label{sec:delaunay_triangulation}
-Als Grundlage für den Algorithmus kann die \emph{Delaunay-Triangulation} betrachtet werden.
-Diese liefert eine Triangulation, die möglichst gleichschenklige und gleichwinklige Dreiecke verwendet~\cite{Properties_of_the_Delaunay_triangulation}.
+Als Grundlage für den Algorithmus kann die \emph{Delaunay-Triangulierung} betrachtet werden.
+Diese liefert eine Triangulierung, die möglichst gleichschenklige und gleichwinklige Dreiecke verwendet~\cite{Properties_of_the_Delaunay_triangulation}.
 Dies wird erreicht, indem der minimale Winkel maximiert wird.
-Im Buch von de Berg et al.~\cite{Delaunay_Triangulation} wird diese Variante der Triangulation ausführlich behandelt.
+Im Buch von de Berg et al.~\cite{Delaunay_Triangulation} wird diese Variante der Triangulierung ausführlich behandelt.
 
 Triangulations eignen sich durch ihre Struktur besonders gut zur Darstellung von Höhendaten im zweidimensionalen Raum (siehe~\cref{fig:terrain}).
 Dabei kann ausgenutzt werden, dass Dreiecke unterschiedliche Innenwinkel und Kantenlängen besitzen.
@@ -64,13 +64,13 @@ Dabei kann ausgenutzt werden, dass Dreiecke unterschiedliche Innenwinkel und Kan
 \begin{figure}[tb]
 	\centering
 	\includegraphics[scale=0.2]{Delauney_Tarrain.png}
-	\caption[Delauney Beispiel]{Ein Beispiel für Höhendaten durch eine Triangulation aus~\cite[p.~183]{Delaunay_Triangulation}}
+	\caption[Delauney Beispiel]{Ein Beispiel für Höhendaten durch eine Triangulierung aus~\cite[p.~183]{Delaunay_Triangulation}}
 	\label{fig:terrain}
 \end{figure}
 Das Grundproblem besteht darin, dass die Höhendaten nur an bestimmten Punkten bekannt sind und die restlichen Werte daher geschätzt werden müssen.
-Dies kann durch die Delaunay-Triangulation gut gelöst werden, da die Dreiecke aufgrund ihrer gleichschenkligen Eigenschaft visuell geeignet sind, die fehlenden Daten zu ergänzen.
+Dies kann durch die Delaunay-Triangulierung gut gelöst werden, da die Dreiecke aufgrund ihrer gleichschenkligen Eigenschaft visuell geeignet sind, die fehlenden Daten zu ergänzen.
 
-Es werden auch Formeln für die Anzahl der Kanten \(\left|E\right|\) und Dreiecke \(\left|F\right|\) in einer Triangulation angegeben.
+Es werden auch Formeln für die Anzahl der Kanten \(\left|E\right|\) und Dreiecke \(\left|F\right|\) in einer Triangulierung angegeben.
 Für eine Punktemenge mit \(n\) Punkten und \(k\) Punkten auf der konvexen Hülle gilt:
 \begin{align*}
     \left|E\right| &= 3 n - 3 - k\\
@@ -83,22 +83,22 @@ PK: Flips in Triangulationen?\\
 so verständlicher? könnte sie auch Delauney flips nennen.
 In der Zitierten arbeit werden sie auch Flips genannt}
 \subsection{Kantenflips in Triangulations}
-Kantenflips oder kurz Flips sind Möglichkeiten, um Kanten in einer Triangulation auszutauschen.
-Wie oben erwähnt, müssen Triangulation eine feste Anzahl an Kanten besitzen~\cite{Delaunay_Triangulation}.
-Dementsprechend können keine Kanten hinzugefügt oder entfernt werden, um den Grad einer Triangulation zu verändern.
+Kantenflips oder kurz Flips sind Möglichkeiten, um Kanten in einer Triangulierung auszutauschen.
+Wie oben erwähnt, müssen Triangulierung eine feste Anzahl an Kanten besitzen~\cite{Delaunay_Triangulation}.
+Dementsprechend können keine Kanten hinzugefügt oder entfernt werden, um den Grad einer Triangulierung zu verändern.
 Daraus folgt, dass für jede entfernte Kante eine andere Kante eingefügt werden muss.
 Eine besondere Art dieser Umstrukturierung von Kanten sind sogenannte Flips.
-Hurtado et al.~\cite{Flipping_edges_in_triangulations} zeigten, dass jede Triangulation mindestens
+Hurtado et al.~\cite{Flipping_edges_in_triangulations} zeigten, dass jede Triangulierung mindestens
 \[\frac{n-4}{2}\]
 flipbare Kanten besitzt, wobei \( n \) die Anzahl der Knoten bezeichnet.
-Laut der wissenschaftliche Arbeit \emph{Flips in planar graphs}~\cite{Flips_in_planar_graphs} lässt sich jede mögliche Triangulation in jede beliebige andere Triangulation überführen, indem die notwendigen Flips durchgeführt werden.
-Daraus folgt, dass, wenn eine Gradbeschränkte Triangulation möglich ist, diese mit den nötigen Flips konstruiert werden kann.
+Laut der wissenschaftliche Arbeit \emph{Flips in planar graphs}~\cite{Flips_in_planar_graphs} lässt sich jede mögliche Triangulierung in jede beliebige andere Triangulierung überführen, indem die notwendigen Flips durchgeführt werden.
+Daraus folgt, dass, wenn eine Gradbeschränkte Triangulierung möglich ist, diese mit den nötigen Flips konstruiert werden kann.
 
 % TODO überarbeiten
 \textbf{Sollte ich das später machen, hier die Sektion nennen}
 
 Eine weitere Art von Flips sind sogenannte \( k \)-Flips.
-Diese stellen eine zusätzliche Möglichkeit dar, Kanten innerhalb einer Triangulation zu verschieben.
+Diese stellen eine zusätzliche Möglichkeit dar, Kanten innerhalb einer Triangulierung zu verschieben.
 Dabei werden \( k \) Kanten entfernt und durch \( k \) neue Kanten ersetzt.
 Normale Flips entsprechen somit \( 1 \)-Flips.
 Der Vorteil von \( k \)-Flips liegt darin, dass mit einem Schritt größere strukturelle Veränderungen möglich sind.
@@ -144,7 +144,7 @@ Das Problem bei diesem Ansatz ist, dass Lösungen fälschlicherweise als \emph{n
 Ein weiterer Ansatz wird als \emph{Hillclimbing} bezeichnet.
 Dieser löst das Problem des \emph{degree constrained minimum spanning tree} nicht, wird jedoch zur Suche nach neuen Knoten in einem anderen Algorithmus verwendet.
 In diesem Ansatz werden lokal neue Knoten gesucht, die bessere Ergebnisse liefern.
-Dies könnte auf die \emph{Degree constrained Triangulation} angewendet werden, um neue Kanten zu finden.
+Dies könnte auf die \emph{Degree constrained Triangulierung} angewendet werden, um neue Kanten zu finden.
 Der Ansatz erzeugt keine eigene Lösung, sondern verbessert eine bestehende.
 Zunächst wird ein zufälliger Knoten aus einer Lösung ausgewählt.
 Danach werden weitere mögliche Knoten in der Nähe des ursprünglichen Knotens gesucht.

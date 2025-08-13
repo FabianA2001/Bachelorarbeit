@@ -1,19 +1,20 @@
 \chapter{Definitionen}
+In diesem Kapitel werden die Definitionen gegeben, die für diese Arbeit benötigt werden.
+Dabei werden vorallem Grundbegriffe erklärt die in späteren Kapiteln vorausgesetzt werden.
 \michael{Schreib am Kapitelanfang immer ein zwei Einführungssätze, was hier passiert. Du kannst auch zwischen den Definitionen ein paar Überleitungen schreiben, damit sich das nicht liest wie ein Skript.}
+Als erstes werden Überschneidungen zwischen Kanten definiert. 
 \begin{definition}[Überschneidung]
     Zwei Kanten gelten als überschneidend, wenn sie sich in der Ebene kreuzen.
     Im Folgenden bezeichnet die Funktion \(\intersection: (\mathbb{Q}^2 \times \mathbb{Q}^2) \to \mathcal{P}(\mathbb{Q}^2 \times \mathbb{Q}^2)\) die Menge aller Kanten, die eine gegebene Kante schneiden.
 \end{definition}
-
 \begin{definition}[Überschneidung Dreiecke]
     Zwei Dreiecke gelten als überschneidend, wenn sie mindestens einen inneren Punkt gemeinsam haben.
     Das bedeutet, dass sich zwei Außenkanten kreuzen und sich nicht nur berühren dürfen.
     Im Folgenden bezeichnet die Funktion \(\intersection: (\mathbb{Q}^2 \times \mathbb{Q}^2 \times \mathbb{Q}^2) \to \mathcal{P}(\mathbb{Q}^2 \times \mathbb{Q}^2 \times \mathbb{Q}^2)\) die Menge aller Dreiecke, die ein gegebenes Dreieck schneiden.
 \end{definition}
 
-\michael{Triangulierung ist überlicher als Triangulation..}
-\begin{definition}[Triangulation]
-    Eine Triangulation einer Punktemenge \(P \subset \mathbb{Q}^2\) ist ein maximaler kreuzungsfreier Graph auf \(P\).
+\begin{definition}[Triangulierung]
+    Eine Triangulierung einer Punktemenge \(P \subset \mathbb{Q}^2\) ist ein maximaler kreuzungsfreier Graph auf \(P\).
     Das bedeutet, es können keine weiteren Kanten hinzugefügt werden, ohne dass sich Kanten schneiden.
 \end{definition}
 
@@ -22,18 +23,23 @@
     Im Folgenden wird er durch die Funktion \(\degree: \mathbb{Q}^2 \to \mathbb{N}\) angegeben.
 \end{definition}
 
-\begin{definition}[Gradbeschränkte Triangulation]
-    Die Gradbeschränkte Triangulation hat die gleichen Vorraussetzungen wie eine Triangulation.
+\begin{definition}[Gradbeschränkte Triangulierung]
+    Die Gradbeschränkte Triangulierung hat die gleichen Vorraussetzungen wie eine Triangulierung.
     Zusätzlich gibt es noch eine Funktion \(\degrees: \mathbb{Q}^2 \longrightarrow \mathbb{Q}\).
     Diese gibt den Grad an welcher ein Knoten haben muss.
 \end{definition}
-
-\michael{Du kannst bei sowas auch ruhig eine Figure machen mit Triangulierung + Flip Highlight.}
-\begin{definition}[Flip]
+\begin{definition}[Kantenflip]
     \label{def:flip}
-    Ein Flip ist eine Operation, bei der eine Kante entfernt und eine andere hinzugefügt wird, sodass die Eigenschaften einer Triangulation erhalten bleiben.
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.48\linewidth]{Flip.pdf}
+        \caption{Ein Kantenflip in einer Triangulation}
+        \label{fig:flip}
+    \end{figure}
+    Ein Kantenflip oder kurz Flip ist eine Operation, bei der eine Kante entfernt und eine andere hinzugefügt wird, sodass die Eigenschaften einer Triangulierung erhalten bleiben.
     In dieser Arbeit wird nur der Diagonale Flip betrachtet, bei dem die Diagonale eines konvexen Vierecks durch die andere Diagonale ersetzt wird.
-    Ein Flip wird durch die Funktion \(\flip: (\mathbb{Q}^2 \times \mathbb{Q}^2) \to (\mathbb{Q}^2 \times \mathbb{Q}^2)\) definiert.
+    Ein Beispielhafter Flip ist in \cref{fig:flip} zu sehen.
+    % Ein Flip wird durch die Funktion \(\flip: (\mathbb{Q}^2 \times \mathbb{Q}^2) \to (\mathbb{Q}^2 \times \mathbb{Q}^2)\) definiert.
 \end{definition}
 
 \begin{definition}[Konvexe Hülle mit Randpunkten]
