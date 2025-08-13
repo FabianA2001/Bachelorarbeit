@@ -20,6 +20,11 @@ NUMBER_RUNS_FOR_AVG = (
     5  # Anzahl der Durchläufe der gleichen Instanze für den Durchschnitt
 )
 
+TITEL_FONT_SIZE = 20
+LABEL_FONT_SIZE = 15
+ACHSEN_FONT_SIZE = 12
+LEGENDE_FONT_SIZE = 20
+
 
 # TODO sollte aus dem Packet ausgelagert werden, verschieben bis es stört
 class Run_Algbench:
@@ -499,34 +504,53 @@ class Run_Algbench:
                 )
 
             # Subplot Styling
-            ax.set_xlabel(f"{y.replace('_', ' ').title()} (Sekunden)", fontsize=10)
-            ax.set_ylabel("Gelöste Instanzen (%)", fontsize=10)
-            ax.set_title(f"{instance}", fontsize=12, fontweight="bold")
+            ax.set_xlabel(f"{y.replace('_', ' ')} (Sekunden)", fontsize=LABEL_FONT_SIZE)
+            ax.set_ylabel("Gelöste Instanzen (%)", fontsize=LABEL_FONT_SIZE)
+
+            instance_titel = instance
+            if instance == "greedy":
+                instance_titel = "Greedy"
+            if instance == "delaunay":
+                instance_titel = "Delaunay"
+            if instance == "iterative":
+                instance_titel = "Iterative"
+            if instance == "random":
+                instance_titel = "Random"
+            if instance == "d_flips":
+                instance_titel = "Delaunay-Flips"
+            if instance == "gesamt":
+                instance_titel = "Gesamt"
+            ax.set_title(instance_titel, fontsize=TITEL_FONT_SIZE, fontweight="bold")
+
             ax.grid(True, alpha=0.3, linestyle="-", linewidth=0.5)
 
             # Y-Achse auf 0-105% setzen, damit 100%-Linie und Beschriftung sichtbar sind
             ax.set_ylim(0, 105)
+            ax.set_xlim(0, timelimit + 25)
+
+            # Schriftgröße der Achsen-Zahlen anpassen
+            ax.tick_params(axis="both", which="major", labelsize=ACHSEN_FONT_SIZE)
 
             # Horizontale Linie bei 100% hinzufügen
             ax.axhline(
                 y=100,
-                color="green",
-                linestyle="-",
+                color="red",
+                linestyle="--",
                 alpha=0.6,
                 linewidth=1.5,
             )
 
-            # Beschriftung für die 100% Linie
-            ax.text(
-                ax.get_xlim()[1] * 0.5,
-                101,
-                "100% gelöst",
-                verticalalignment="bottom",
-                horizontalalignment="center",
-                fontsize=8,
-                color="green",
-                alpha=0.8,
-            )
+            # # Beschriftung für die 100% Linie
+            # ax.text(
+            #     ax.get_xlim()[1] * 0.5,
+            #     101,
+            #     "100% gelöst",
+            #     verticalalignment="bottom",
+            #     horizontalalignment="center",
+            #     fontsize=ACHSEN_FONT_SIZE,
+            #     color="red",
+            #     alpha=0.8,
+            # )
 
             # Vertikale Linie bei timelimit hinzufügen
             ax.axvline(
@@ -539,13 +563,13 @@ class Run_Algbench:
 
             # Beschriftung direkt an die Linie
             ax.text(
-                timelimit + 12,
+                timelimit + 20,
                 50,
                 f"Timelimit ({timelimit}s)",
                 rotation=90,
                 verticalalignment="center",
                 horizontalalignment="right",
-                fontsize=8,
+                fontsize=ACHSEN_FONT_SIZE,
                 color="red",
                 alpha=0.8,
             )
@@ -554,27 +578,28 @@ class Run_Algbench:
         for idx in range(n_instances, len(axes)):
             axes[idx].set_visible(False)
 
-        # Gesamttitel
-        fig.suptitle(
-            f"Cactus Plot - {y.replace('_', ' ').title()} Performance Vergleich",
-            fontsize=16,
-            fontweight="bold",
-        )
+        # # Gesamttitel
+        # fig.suptitle(
+        #     f"Cactus Plot - {y.replace('_', ' ').title()} Performance Vergleich",
+        #     fontsize=TITEL_FONT_SIZE,
+        #     fontweight="bold",
+        # )
 
         # Entferne Legenden von allen Subplots
         for ax in axes[:n_instances]:
             if ax.get_legend():
                 ax.get_legend().remove()
 
-        # Eine gemeinsame Legende für die gesamte Figur - unten links mit Offset platziert
+        # Eine gemeinsame Legende für die gesamte Figur - unter allen Plots über die komplette Breite
         handles, labels = axes[0].get_legend_handles_labels()
         if handles:
             fig.legend(
                 handles,
                 labels,
-                loc="lower left",
-                bbox_to_anchor=(0.1, 0.2),
-                fontsize=9,
+                loc="upper center",
+                bbox_to_anchor=(0.5, 0.0),
+                ncol=min(3, len(handles)),  # Maximal 3 Einträge pro Zeile
+                fontsize=LEGENDE_FONT_SIZE,
                 frameon=True,
                 fancybox=True,
                 shadow=True,
