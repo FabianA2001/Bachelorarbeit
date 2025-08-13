@@ -131,14 +131,16 @@ def ortools_algorithm(graph):
 def sat_algorithm(graph):
     solver = SAT(graph)
     para = SAT_Parameter(
+        solver_name="Gluecard4",
+        degree_encoding=9,
         intersection=True,
-        degree_exact=True,
+        degree_atleast=True,
         fix_hull=True,
         # all_edges=True,
         # exclude_edges=True,
     )
     logging.info(
-        f"solution found: {solver.solve({'timeout': -1, 'args': asdict(para)})}"
+        f"solution found: {solver.solve({'timeout': 30, 'args': asdict(para)})}"
     )
 
 
@@ -168,7 +170,7 @@ def ortools_tri_algorithm(graph):
 
 def count_algorithm(graph):
     solver = Count(graph)
-    logging.info(f"solution found: {solver.solve({'timeout': -1})}")
+    logging.info(f"solution found: {solver.solve({'timeout': 900})}")
 
 
 def gurobi_algorithm(graph):
@@ -319,15 +321,15 @@ def run_algo():
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
     # nodes = custom_points()
-    # nodes = multiple_solutions()
+    nodes = multiple_solutions()
     graph = Graph_Wrapper(nodes)
     # solver = Greedy(graph)
     # solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     # sat_algorithm(graph)
-    cadical_algorithm(graph, nodes)
-    # count_algorithm(graph)
+    # cadical_algorithm(graph, nodes)
+    count_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # ortools_tri_algorithm(graph)

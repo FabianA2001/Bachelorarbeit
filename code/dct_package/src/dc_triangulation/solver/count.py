@@ -25,36 +25,53 @@ class Count(Solver):
         )
         para = asdict(
             SAT_Parameter(
-                intersection=True, degree_atleast=True, all_edges=True, fix_hull=True
+                solver_name="Gluecard4",
+                degree_encoding=9,
+                intersection=True,
+                degree_atleast=True,
+                fix_hull=True,
             )
         )
         solver = SAT(self.graph)
         result = solver.solve(
             {
-                "timeout": -1,
+                "timeout": self.get_remaining_time(),
                 "args": para,
             }
         )
         counter = 1
         seen_combinations = [self.graph.get_all_active_edges()]
-        for _ in range(self.max_try):
-            self.graph.deactivate_all_edges()
-            result = solver.second_run(
-                {
-                    "timeout": -1,
-                    "args": para,
-                    "seen_combinations": seen_combinations,
-                },
-            )
-            seen_combinations.append(self.graph.get_all_active_edges())
-            if result["success"]:
-                counter += 1
-            else:
-                self.logger.info("No more solutions found.")
-                break
+        try:
+            for _ in range(self.max_try):
+                self.graph.deactivate_all_edges()
+                result = solver.second_run(
+                    {
+                        "timeout": self.get_remaining_time(),
+                        "args": para,
+                        "seen_combinations": seen_combinations,
+                    },
+                )
+                seen_combinations.append(self.graph.get_all_active_edges())
+                if result["success"]:
+                    counter += 1
+                elif not result.get("timeout", True):
+                    self.logger.info("No more solutions found.")
+                    break
+                else:
+                    raise TimeoutError(
+                        "Timeout reached during counting. Consider increasing the max_try limit."
+                    )
 
-        return {
-            "success": True,
-            "count": counter,
-            "seen_combinations": seen_combinations,
-        }
+            return {
+                "success": True,
+                "count": counter,
+                "seen_combinations": seen_combinations,
+            }
+        except TimeoutError as e:
+            self.logger.warning(f"{self.name} timed out: {e}")
+            return {
+                "success": False,
+                "timeout": True,
+                "count": counter,
+                "seen_combinations": seen_combinations,
+            }

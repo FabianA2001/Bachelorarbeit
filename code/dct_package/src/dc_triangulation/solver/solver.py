@@ -5,6 +5,8 @@ from abc import ABC, abstractmethod
 from ..graph_utils.graph_wrapper.graph_wrapper import Graph_Wrapper
 from ..utils import format_dictionary
 
+MAX_TIMEOUT = 18000
+
 
 class TimeoutError(Exception):
     """Custom exception for timeout errors."""
@@ -48,7 +50,7 @@ class Solver(ABC):
         return (
             self.timeout - (time.time() - self.start_time)
             if self.timeout > 0
-            else float("inf")
+            else MAX_TIMEOUT
         )
 
     def reach_timeout(self) -> bool:

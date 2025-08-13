@@ -265,6 +265,9 @@ class SAT(Solver):
                 result[0] = self.time_solver(self.solver.solve)()
             else:
                 self.logger.info("start solving")
+                assert hasattr(self.solver, "solve_limited") and callable(
+                    self.solver.solve_limited
+                ), "'solver.solve_limited is not callable or does not exist."
 
                 def run_solver():
                     result[0] = self.time_solver(self.solver.solve_limited)(  # type: ignore
@@ -276,7 +279,6 @@ class SAT(Solver):
                 thread.join(self.get_remaining_time())
                 if thread.is_alive():
                     self.solver.interrupt()
-                    thread.join()
                     raise TimeoutError()
 
             model = self.solver.get_model()
@@ -311,4 +313,5 @@ class SAT(Solver):
             self.logger.warning(f"{self.name} timed out.")
             return {
                 "success": False,
+                "timeout": True,
             }
