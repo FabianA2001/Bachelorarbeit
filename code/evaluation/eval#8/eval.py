@@ -5,10 +5,11 @@ import slurminade
 from algbench import read_as_pandas
 from dc_triangulation import Count, Graph_Wrapper, Run_Algbench, load_nodes_from_json
 
-TIMEOUT = 300
-path = os.path.join(os.path.dirname(__file__), "instances")
+TIMEOUT = 1200
 
-# 1,2,3,6,7,8
+path = os.path.join(os.path.dirname(__file__), "instances")
+benchmark_path = "./local_benchmark"
+
 outer_parameter = {
     Count: [
         {
@@ -23,6 +24,7 @@ RI = Run_Algbench(
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
     # host=["algry01", "algry02", "algry03", "algry04"],
+    path_benchmark=benchmark_path,
 )
 
 
@@ -132,7 +134,7 @@ def show_lokal():
 
 @slurminade.slurmify()
 def run_solver_on_inst(key: str):
-    RI.add_entrys(key)
+    RI.add_entrys(key, 1)
 
 
 @slurminade.slurmify(mail_type="ALL")
