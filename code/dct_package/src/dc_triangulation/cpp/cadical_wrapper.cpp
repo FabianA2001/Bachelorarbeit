@@ -187,10 +187,10 @@ public:
         }
         for (int i = 0; i < this->edges.size(); ++i)
         {
-            std::string key = std::to_string(this->edges[i].source().x()) + "," +
-                              std::to_string(this->edges[i].source().y()) + "," +
-                              std::to_string(this->edges[i].target().x()) + "," +
-                              std::to_string(this->edges[i].target().y());
+            std::string key = std::to_string(CGAL::to_double(this->edges[i].source().x())) + "," +
+                              std::to_string(CGAL::to_double(this->edges[i].source().y())) + "," +
+                              std::to_string(CGAL::to_double(this->edges[i].target().x())) + "," +
+                              std::to_string(CGAL::to_double(this->edges[i].target().y()));
             edge_to_index[key] = i + 1; // +1 to make it 1-based index
         }
 
@@ -211,10 +211,10 @@ public:
 
     Lit get_lit_from_edge(const Segment_2 &edge) const
     {
-        std::string key = std::to_string(edge.source().x()) + "," +
-                          std::to_string(edge.source().y()) + "," +
-                          std::to_string(edge.target().x()) + "," +
-                          std::to_string(edge.target().y());
+        std::string key = std::to_string(CGAL::to_double(edge.source().x())) + "," +
+                          std::to_string(CGAL::to_double(edge.source().y())) + "," +
+                          std::to_string(CGAL::to_double(edge.target().x())) + "," +
+                          std::to_string(CGAL::to_double(edge.target().y()));
         auto it = edge_to_index.find(key);
         if (it != edge_to_index.end())
         {
@@ -225,8 +225,8 @@ public:
 
     int get_sdegree_from_node(const Point_2 &node) const
     {
-        std::string key = std::to_string(node.x()) + "," +
-                          std::to_string(node.y());
+        std::string key = std::to_string(CGAL::to_double(node.x())) + "," +
+                          std::to_string(CGAL::to_double(node.y()));
         return node_to_sdegree.at(key);
     }
     void notify_backtrack(std::size_t new_level)

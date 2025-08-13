@@ -14,7 +14,7 @@
 #include <CGAL/enum.h> // für CGAL::Orientation
 
 typedef int Number_type;
-typedef CGAL::Simple_cartesian<Number_type> Kernel;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel> Traits_2;
 typedef Traits_2::Point_2 Point_2;
 typedef Traits_2::X_monotone_curve_2 Segment_2;
