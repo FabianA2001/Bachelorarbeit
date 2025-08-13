@@ -154,14 +154,15 @@ Damit auch Punkte auf einer Graden zwischen zwei Eckpunkten betrachtet werden, m
 In diesem Schnitt sind dann alle Punkte enthalten, welche auf der Hülle liegen.
 
 \subsubsection{Schnittkanten}
-Für die Schnittkanten wird ein Algorithmus basierend auf \emph{Rechts} bzw.\emph{Linkskurven} verwendet.
-Für diesen ist notwendig das ein Vollständiger Graphe genutzt wird, da angenommen wird das zwischen allen Knoten eine Kante ist.
-Es wird iterativ jede Kante \(e_i \in E\) (bestehend aus \(v_{i,1}\) und \(v_{i,2}\)) betrachtet.
-Dann werden zwei Knoten \(v_3\),\(v_4\) gesucht welche auf verschiedenen Seiten der Kante liegen.
-Also Dementsprechend zwischen \((v_{i,1}, v_{i,2},v_3)\) ist eine Rechtskurve und zwischen \((v_{i,1}, v_{i,2},v_4)\) eine Linkskurve.
-Anschließend muss bestätigt werden das \(v_{i,1}\) und \(v_{i,2}\) auf verschiedenen Seite der Kante liegen welche durch \(v_3\) und \(v_4\) gebildet wird.
-Sollten alle diese Bedingungen erfüllt werden ist die Kante (\(v_3\),\(v_4\)) eine Schnittkante von \(e_i\).
-\michael{ So eine Beschreibung würde mir reichen ich würde aber klarer machen dass es sich bei dem Check links/rechts-Knick um eine notwendige Bedingung für eine Überschneidung handelt und man damit in der Praxis viele Fälle ausschließen kann.}
+Für die Bestimmung der Schnittkanten wird ein Algorithmus verwendet, der auf dem Konzept des \emph{Rechtsknicks} beziehungsweise \emph{Linksknicks} basiert.
+Dafür ist es notwendig, dass ein vollständiger Graph betrachtet wird, da angenommen wird, dass zwischen allen Knoten eine Kante existiert.
+Es wird jede Kante \(e_i \in E\), bestehend aus den Knoten \(v_{i,1}\) und \(v_{i,2}\), nacheinander betrachtet.
+Anschließend werden zwei Knoten \(v_3\) und \(v_4\) gesucht, die auf unterschiedlichen Seiten der Kante liegen.
+Dabei gilt: Das Tripel \((v_{i,1}, v_{i,2}, v_3)\) bildet einen Rechtsknick und das Tripel \((v_{i,1}, v_{i,2}, v_4)\) einen Linksknick.
+Danach muss überprüft werden, ob \(v_{i,1}\) und \(v_{i,2}\) auf verschiedenen Seiten der Kante liegen, die durch \(v_3\) und \(v_4\) gebildet wird.
+Sind alle diese Bedingungen erfüllt, so ist die Kante \((v_3, v_4)\) eine Schnittkante von \(e_i\).
+Der Vorteil dieses Algorithmus liegt darin, dass alle vier Knicküberprüfungen notwendige Eigenschaften darstellen.
+In der Praxis werden dadurch viele Knoten bereits ausgeschlossen, da sie die erste Knickbedingung nicht erfüllen.
 
 \subsubsection{Schnittkanten ausschließen}
 Um die Kanten zu finden bei denen die Schnittkanten zu viele Kanten ausschließen, wird jede Kante einzeln betrachtet.
@@ -313,8 +314,11 @@ Die Formulierungen für OrTools, Gurobi und PySat können analog zur Kantenformu
 
 
 \section{Optimierungsproblem}
-\michael{Man kann sowas auch dadurch motivieren dass es nicht immer möglich ist die Knotengrade einzuhalten und man in manchen Anwendungen daher auf nicht so gute Lösungen zurückgreifen möchte.}
-Im Gegensatz zu den vorherigen Ansätzen wird das Problem in diesem Abschnitt nicht als Entscheidungsproblem betrachtet sondern als Optimierungsproblem.
+Im Gegensatz zu den vorherigen Ansätzen wird das Problem in diesem Abschnitt nicht als Entscheidungsproblem, sondern als Optimierungsproblem betrachtet.
+Dies hat zum einen den Vorteil, dass bei einem \emph{Timeout} des Solvers nicht der gesamte Fortschritt verloren geht.
+Ein weiterer Vorteil ist, dass bei Nein-Instanzen versucht wird, dennoch eine Lösung zu finden.
+Das bedeutet, sollte es in bestimmten Bereichen nicht möglich sein, eine gradbeschränkte Triangulierung zu finden, aber diese benötigt werden, kann zumindest eine möglichst nahe Triangulierung bestimmt werden.
+
 Dafür wurde die~\cref{eq:total_evaluation} eingeführt.
 Diese Formel bewertet wie weit die durchschnittliche Grad Abweichung von der Gradbeschränkung entfernt ist.
 Es werden drei Ansätze vorgestellt.
