@@ -16,9 +16,9 @@ from dc_triangulation import (
     load_nodes_from_json,
 )
 
-TITEL_FONT_SIZE = 25
-LABEL_FONT_SIZE = 17
-ACHSEN_FONT_SIZE = 14
+TITEL_FONT_SIZE = 35
+LABEL_FONT_SIZE = 26
+ACHSEN_FONT_SIZE = 20
 
 
 def sat_algorithm(nodes):
