@@ -31,7 +31,6 @@ def draw(
         save_graph_as_json(data, "error/", f"{data.name}_error.json")
 
     pos = nx.get_node_attributes(local_graph, "pos")
-    print(pos[0])
     degrees = nx.get_node_attributes(local_graph, "degree")
 
     # Labels mit Degree-Werten erstellen

@@ -292,7 +292,7 @@ def run_algo():
         os.path.dirname(__file__),
         "instance",
         "iterative",
-        "000_iterative_30.json",
+        "004_iterative_40.json",
     )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
@@ -339,7 +339,7 @@ def run_algo():
 
     # graph.add_all_possible_edges(True)
     # logging.info(f"evluation: {graph.evaluate()}")
-    graph.show_and_save(draw_name=False, save="figures")
+    graph.show_and_save()
 
 
 def permute_instance():

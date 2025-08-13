@@ -387,12 +387,16 @@ public:
                 // Insert the edge into the arrangement
                 auto edge = get_edge_from_lit(l);
                 CGAL::insert(arr, edge);
+#if PRINT
                 std::cerr << "Inserting edge: " << edge << "for lit: " << l << "for counter: " << counter << "\n";
+#endif
                 std::stringstream filename;
                 filename << "arrangement_" << std::setfill('0') << std::setw(4) << counter++ << ".svg";
                 save_arrangement_as_svg(arr, edges, filename.str());
 
+#if PRINT
                 std::cerr << "left\n";
+#endif
             }
 
             // Only print if observed variables were found
