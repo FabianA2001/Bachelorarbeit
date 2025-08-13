@@ -1,3 +1,6 @@
+
+
+
 \chapter{Theoretischer Hintergrund}
 In diesem Kapitel werden die verschiedenen Ansätze erklärt mit denen das Problem gelöst werden kann.
 Im ersten Abschnitt werden die Externen Solver kurz erklärt die in dieser Arbeit genutzt werden.
@@ -516,7 +519,7 @@ Anschließend wird \(\overline{x}\) dem aktuellen Pfad hinzugefügt und \(c'\) a
 % TODO Pfa4d zurücksetzen ohne Konflikt vermutlich nicht relevant
 
 \section{Instanzgenerierung}
-\michael{Zeige zu all diesen Klassen ein paar Beispiele.}
+% TODO Bilder richtig anordnen.
 In diesem Kapitel werden die verschiedenen Instanzen Typen und ihre Generierung dargestellt.
 Auf diesem Instanzen werden die späteren Experimente ausgeführt.
 
@@ -532,10 +535,14 @@ Dabei wird lediglich die Anzahl der Knoten vorgegeben.
 Anschließend wird mit einem klassischen Triangulationsverfahren eine initiale Triangulierung erstellt.
 Von dieser werden dann die Grade gespeichert, um sie als Eingabe für die zu testenden Algorithmen zu verwenden.
 
+Alle fünf Verfahren zur Erzeugung von Ja-Instanzen werden in~\cref{fig:all_instance_types} visualisiert.
+
 \subsubsection{Delaunay}
 Das erste klassische Verfahren zur Gradbestimmung verwendet die Delaunay-Triangulierung.
 Die Delaunay-Triangulierung wurde bereits im Kapitel~\cref{sec:delaunay_triangulation} vorgestellt.
 Für die Erstellung der Delaunay-Triangulierung wird die Bibliothek \emph{scipy} genutzt.
+
+
 
 \subsubsection{Delaunay mit zufälligen Flips}
 \label{sec:Delaunay_mit_zufällig_Flips}
@@ -544,6 +551,7 @@ Zunächst wird eine Delaunay-Triangulierung der Knotenmenge erstellt.
 Auf dieser Triangulierung werden anschließend \(k\) zufällige Flips gemäß~\cref{def:flip} durchgeführt.
 Das genau verfahren wurde in~\cref{sec:flips} schon beschrieben.
 Dieser Prozess verändert die lokale Struktur der Triangulierung und erzeugt so Knotenmengen mit unterschiedlichen Gradverteilungen, behält aber die Triangulationseigenschaft bei.
+
 
 \subsubsection{Zufällige Kantenerzeugung}
 Das nächste Verfahren basiert auf der zufälligen Auswahl von Kanten.
@@ -556,6 +564,7 @@ Nur wenn keine Schnittkanten entstehen, wird die Kante der Triangulierung hinzug
 
 Dieses Verfahren ist maximal da alle möglichen Kanten betrachtet wurden.
 
+
 \subsubsection{Iteration}
 Ein weiteres Verfahren zur Erzeugung von Ja-Instanzen basiert auf der Iteration.
 Hierbei werden zunächst alle möglichen Kanten zwischen den Punkten identifiziert.
@@ -565,11 +574,45 @@ Beim Iterativen Verfahren ist zu beachten das Triangulationen erzeugt werden wel
 Dies basiert darauf das die Kanten in der Reinfolge betrachtet werden wie sie erstellt werden. 
 Das hat den Effekt das alle Kanten des ersten Knoten hinzugefügt werden können da es noch keine anderen Kanten gibt welche diese schneiden könnten.
 
+
+
 \subsubsection{Greedy}
 Das letze Verfahren ist das Greedy Verfahren.
 Hierbei werden auch alle möglichen Kanten zwischen den Punkten identifiziert.
 Allerdings werden sie im gegensatz zum Iterativen Verfahren zunächst nach der Länge aufsteigend sortiert.
 Anschließend wird wie beim Iterativen Verfahren jede Mögliche Kante nacheinander hinzugefügt.
+
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=0.95\linewidth]{example/001_Delaunay_20.json.pdf}
+		\caption{Delaunay}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=0.95\linewidth]{example/000_Delaunay_Flips_20.json.pdf}
+		\caption{Delaunay Flips}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=0.95\linewidth]{example/004_Random_20.json.pdf}
+		\caption{Random}
+	\end{subfigure}
+	\\
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=0.95\linewidth]{example/003_Iterative_20.json.pdf}
+		\caption{Iterativ}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=0.95\linewidth]{example/002_Greedy_20.json.pdf}
+		\caption{Greedy}
+	\end{subfigure}
+	\caption{Visualisierung der fünf verschiedenen Instanztypen.}
+	\label{fig:all_instance_types}
+\end{figure}
 
 \subsection{Nein-Instanzen}
 Nein-Instanzen sind Knotenmengen, bei denen die \(\degrees\) Funktion Gradwerte liefert, die keine gradbeschränkte Triangulierung zulassen.
