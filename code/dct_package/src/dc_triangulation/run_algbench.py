@@ -115,6 +115,7 @@ class Run_Algbench:
             key
         ]
         parameters = [para["args"] for para in self.outer_parameter[solver]]
+        print_spacer = False
         for entry in self.benchmark:
             if not check_correct:
                 if entry["result"]["correct"]:
@@ -124,8 +125,9 @@ class Run_Algbench:
                 and entry["parameters"]["args"]["instance_name"] == inst
                 and entry["parameters"]["args"]["file_name"] == file_name
                 and entry["env"]["hostname"] in self.host
-                and entry["parameters"]["args"]["parameter"]["args"] in parameters
+                # and entry["parameters"]["args"]["parameter"]["args"] in parameters
             ):
+                print_spacer = True
                 logger = entry.get("logging", None)
                 entry["logging"] = ""
                 print(format_dictionary(entry))
@@ -133,12 +135,13 @@ class Run_Algbench:
                 if logger:
                     for dict in logger:
                         print(f"{dict['name']} : {dict['msg']}")
-        print(
-            "-----------------------------------------------------------------------------------"
-        )
-        print(
-            "-----------------------------------------------------------------------------------"
-        )
+        if print_spacer:
+            print(
+                "-----------------------------------------------------------------------------------"
+            )
+            print(
+                "-----------------------------------------------------------------------------------"
+            )
 
     def setup_keys(self):
         for inst in self.instances.keys():
@@ -360,7 +363,7 @@ class Run_Algbench:
     def show(
         self,
         timelimit: int = 300,
-        block: bool = True,
+        block: bool = False,
     ):
         table = self.get_table()
         table = self.apply_instance(table)

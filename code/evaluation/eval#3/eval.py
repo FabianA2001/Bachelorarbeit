@@ -20,16 +20,16 @@ outer_parameter = {
                 )
             ),
         },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    solver_name="Cadical195",
-                    intersection=True,
-                    degree_atleast=True,
-                )
-            ),
-        },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             solver_name="Cadical195",
+        #             intersection=True,
+        #             degree_atleast=True,
+        #         )
+        #     ),
+        # },
         {
             "timeout": TIMEOUT,
             "args": asdict(
@@ -41,77 +41,77 @@ outer_parameter = {
                 )
             ),
         },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    solver_name="Lingeling",
-                    intersection=True,
-                    degree_atleast=True,
-                )
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    solver_name="MapleChrono",
-                    intersection=True,
-                    degree_atleast=True,
-                )
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    solver_name="MapleCM",
-                    intersection=True,
-                    degree_atleast=True,
-                )
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    solver_name="Maplesat",
-                    intersection=True,
-                    degree_atleast=True,
-                )
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    solver_name="Mergesat3",
-                    intersection=True,
-                    degree_atleast=True,
-                )
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    solver_name="Minicard",
-                    intersection=True,
-                    degree_atleast=True,
-                    degree_encoding=9,
-                )
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    solver_name="Minisat22",
-                    intersection=True,
-                    degree_atleast=True,
-                )
-            ),
-        },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             solver_name="Lingeling",
+        #             intersection=True,
+        #             degree_atleast=True,
+        #         )
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             solver_name="MapleChrono",
+        #             intersection=True,
+        #             degree_atleast=True,
+        #         )
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             solver_name="MapleCM",
+        #             intersection=True,
+        #             degree_atleast=True,
+        #         )
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             solver_name="Maplesat",
+        #             intersection=True,
+        #             degree_atleast=True,
+        #         )
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             solver_name="Mergesat3",
+        #             intersection=True,
+        #             degree_atleast=True,
+        #         )
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             solver_name="Minicard",
+        #             intersection=True,
+        #             degree_atleast=True,
+        #             degree_encoding=9,
+        #         )
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             solver_name="Minisat22",
+        #             intersection=True,
+        #             degree_atleast=True,
+        #         )
+        #     ),
+        # },
     ]
 }
 
@@ -119,6 +119,8 @@ RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
+    ignore_correct=True,
+    host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
 )
 
 
@@ -143,11 +145,13 @@ if __name__ == "__main__":
             mail_type="FAIL",  # Send mail on failure
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
         )
-        # run_list = RI.get_run_list()
-        # for key in run_list:
-        #     run_solver_on_inst.distribute(key)
+        run_list = RI.get_run_list()
+        for key in run_list:
+            run_solver_on_inst.distribute(key)
 
         slurminade.join()
         compress_results.distribute()
     else:
         RI.show()
+        # for key in RI.get_run_list():
+        #     RI.show_key_from_runlist(key)

@@ -37,7 +37,16 @@ else:
 
     df["run_seed"] = df["run_seed"].apply(lambda x: str(x))
     df["logging"] = df["logging"].apply(lambda x: str(x))
-    # df = df[df["host"].isin([socket.gethostname()])]
+
+    # # Filtere nur Zeilen wo "Glucose42" in args enthalten ist
+    # df = df[df["args"].astype(str).str.contains("Glucose42", na=False)]
+
+    # df = df[
+    #     df["host"].isin(
+    #         ["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"]
+    #     )
+    # ]
+
     df.sort_values(
         by=["solver", "instance", "file"],
         inplace=True,
