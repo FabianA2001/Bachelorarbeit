@@ -237,8 +237,8 @@ Die Überschneidungen können sehr ähnlich mit folgender Formel umgesetzt werde
 Für die Gradbeschränkung ist das Problem das bei PySat für eine Menge von Variablen nicht festgelegt werden kann wie viele von ihnen wahr sein müssen.
 Hierfür gibt es zwei Ansätze.
 Der erste Ansatz nutzt die Kardinalitätscodierungen die PySat anbietet.
-
-\fabian{PK: hier aufpassen mit den Spaces.\\ @Phillip meintest du das ich hier das tilde zeichen einfügen soll?}
+\phillip{hier aufpassen mit den Spaces}
+\fabian{ @Phillip meintest du das ich hier das tilde zeichen einfügen soll?}
 Hierfür kommen nur \emph{sequential counters}~\cite{sequential_counters}, \emph{sorting networks}~\cite{sorting_networks}, \emph{cardinality networks}~\cite{cardinality_networks}, \emph{totalizer}~\cite{totalizer}, \emph{modulo totalizer}~\cite{modulo_totalizer}, \emph{modulo totalizer for k-cardinality}~\cite{modulo_totalizer_for_k_cardinality} und eine Native Codierung für manche Solver in Frage.
 Die Restlichen Codierungen bieten keine Möglichkeit um k-Kardinalitäten zu erzeugen. 
 Also das k viele Variablen wahr sind.
@@ -264,8 +264,9 @@ Diese Methode hat den Vorteil, dass keine Hilfsvariablen benötigt werden, aller
 
 
 \fabian{sollte ich hier noch nennen wie der \emph{sequential counter} oder der Native Ansatz funktioniert weil diese am Ende am besten sind. Ich müsste dann aus den Experimenten vorgreifen. Auch brauche ich Information nicht wirklich da ich PySat hier als Blackbox nutzen kann.} 
+\phillip{den Sequential Counter kannst Du hier gern erklären.\\}
 \fabian{
-PK: den Sequential Counter kannst Du hier gern erklären.\\
+
 Ich glaube inzwischen das die native Codierung durch Glucard4 besser ist, soll ich hier nur erklären was ich am ende nutze obwohl ich dann aus den Experimenten vorgreife?
 }
 
