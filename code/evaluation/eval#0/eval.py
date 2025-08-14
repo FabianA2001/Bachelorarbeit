@@ -19,10 +19,10 @@ outer_parameter = {
                 SAT_Parameter(intersection=True, degree_exact=True, fix_hull=True)
             ),
         },
-        {
-            "timeout": -1,
-            "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
-        },
+        # {
+        #     "timeout": -1,
+        #     "args": asdict(SAT_Parameter(intersection=True, degree_exact=True)),
+        # },
     ],
 }
 
@@ -36,7 +36,7 @@ RI = Run_Algbench(
 
 @slurminade.slurmify()
 def run_solver_on_inst(key: str):
-    RI.add_entrys(key)
+    RI.add_entrys(key, 1)
 
 
 @slurminade.slurmify(mail_type="ALL")
@@ -46,7 +46,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if False:
+    if True:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.

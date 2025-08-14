@@ -13,6 +13,7 @@ else:
         BENCHMARK_PATH,
         lambda result: {
             "host": result["env"]["hostname"],
+            "new_host": result["parameters"]["args"]["host"],
             "solver": result["parameters"]["args"]["solver_name"],
             "instance": result["parameters"]["args"]["instance_name"],
             "file": result["parameters"]["args"]["file_name"],
