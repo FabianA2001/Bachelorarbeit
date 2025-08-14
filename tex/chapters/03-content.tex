@@ -35,8 +35,7 @@ Der letzte Solver ist Gurobi.
 Es werden ebenfalls Modellierungen wie LP, MIP und quadratische Programmierung (QP) unterstützt.
 Auch hier wird eine Schnittstelle für Python bereitgestellt.
 Gurobi ist kostenpflichtig, bietet jedoch eine kostenlose Lizenz für Forschung an.
-
-% TODO fühlt sich nicht sehr technisch an aber ich weiß nicht, was ich noch schreiben soll oder wo ich nachschauen kann.
+\fabian{Ist diese Übersicht in Ordnung, es fühlt sich irgenwie zu wenig technisch an.}
 
 \section{Kanten Formulierung}
 % \michael{Beschränkungen ist ein eher unübliches Wort. Üblicher wäre Bedingung oder Neben/Randbedingung.}
@@ -357,6 +356,7 @@ In~\eqref{eq:evaluation} wird diese Abweichung Prozentual bewertet.
 Am Ende wird in~\eqref{eq:total_evaluation} ein Durchschnitt über alle Prozentualen Werte gebildet.
 
 \subsection{Flips}
+\label{sec:flips}
 In dieser Heuristik werden die in~\cref{def:flip} definierten Kantenflips verwendet. 
 Ziel ist es, die Gradbeschränkung zu erreichen. 
 Dabei wird ausgenutzt, dass Flips den Grad eines Knotens verändern können die Triangulationseigenschaft dabei aber erhalten bleibt. 
@@ -519,11 +519,8 @@ Von den restlichen Literalen in \(c'\) wird dann die höchste Entscheidungsebene
 Anschließend wird \(\overline{x}\) dem aktuellen Pfad hinzugefügt und \(c'\) als Begründung für die Belegung verwendet.
 % TODO als Bild veranschaulichen? keine Idee wie
 
-% TODO Gelernte Klauseln reduzieren vermutlich nicht relevant
-% TODO Pfa4d zurücksetzen ohne Konflikt vermutlich nicht relevant
 
 \section{Instanzgenerierung}
-% TODO Bilder richtig anordnen.
 In diesem Kapitel werden die verschiedenen Instanzen Typen und ihre Generierung dargestellt.
 Auf diesem Instanzen werden die späteren Experimente ausgeführt.
 
