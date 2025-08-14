@@ -16,7 +16,7 @@ outer_parameter = {
             "args": asdict(
                 SAT_Parameter(
                     intersection=True,
-                    degree_exact=True,
+                    degree_atleast=True,
                 )
             ),
         },
@@ -26,7 +26,7 @@ outer_parameter = {
                 SAT_Parameter(
                     solver_name="Cadical195",
                     intersection=True,
-                    degree_exact=True,
+                    degree_atleast=True,
                 )
             ),
         },
@@ -36,7 +36,7 @@ outer_parameter = {
                 SAT_Parameter(
                     solver_name="Gluecard4",
                     intersection=True,
-                    degree_exact=True,
+                    degree_atleast=True,
                     degree_encoding=9,
                 )
             ),
@@ -47,7 +47,7 @@ outer_parameter = {
                 SAT_Parameter(
                     solver_name="Lingeling",
                     intersection=True,
-                    degree_exact=True,
+                    degree_atleast=True,
                 )
             ),
         },
@@ -57,7 +57,7 @@ outer_parameter = {
                 SAT_Parameter(
                     solver_name="MapleChrono",
                     intersection=True,
-                    degree_exact=True,
+                    degree_atleast=True,
                 )
             ),
         },
@@ -67,7 +67,7 @@ outer_parameter = {
                 SAT_Parameter(
                     solver_name="MapleCM",
                     intersection=True,
-                    degree_exact=True,
+                    degree_atleast=True,
                 )
             ),
         },
@@ -77,7 +77,7 @@ outer_parameter = {
                 SAT_Parameter(
                     solver_name="Maplesat",
                     intersection=True,
-                    degree_exact=True,
+                    degree_atleast=True,
                 )
             ),
         },
@@ -87,7 +87,7 @@ outer_parameter = {
                 SAT_Parameter(
                     solver_name="Mergesat3",
                     intersection=True,
-                    degree_exact=True,
+                    degree_atleast=True,
                 )
             ),
         },
@@ -97,7 +97,7 @@ outer_parameter = {
                 SAT_Parameter(
                     solver_name="Minicard",
                     intersection=True,
-                    degree_exact=True,
+                    degree_atleast=True,
                     degree_encoding=9,
                 )
             ),
@@ -108,7 +108,7 @@ outer_parameter = {
                 SAT_Parameter(
                     solver_name="Minisat22",
                     intersection=True,
-                    degree_exact=True,
+                    degree_atleast=True,
                 )
             ),
         },
@@ -143,9 +143,9 @@ if __name__ == "__main__":
             mail_type="FAIL",  # Send mail on failure
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
         )
-        run_list = RI.get_run_list()
-        for key in run_list:
-            run_solver_on_inst.distribute(key)
+        # run_list = RI.get_run_list()
+        # for key in run_list:
+        #     run_solver_on_inst.distribute(key)
 
         slurminade.join()
         compress_results.distribute()
