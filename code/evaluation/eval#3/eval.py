@@ -20,88 +20,88 @@ outer_parameter = {
                 )
             ),
         },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             solver_name="Cadical195",
-        #             intersection=True,
-        #             degree_atleast=True,
-        #         )
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             solver_name="Gluecard4",
-        #             intersection=True,
-        #             degree_atleast=True,
-        #             degree_encoding=9,
-        #         )
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             solver_name="MapleChrono",
-        #             intersection=True,
-        #             degree_atleast=True,
-        #         )
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             solver_name="MapleCM",
-        #             intersection=True,
-        #             degree_atleast=True,
-        #         )
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             solver_name="Maplesat",
-        #             intersection=True,
-        #             degree_atleast=True,
-        #         )
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             solver_name="Mergesat3",
-        #             intersection=True,
-        #             degree_atleast=True,
-        #         )
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             solver_name="Minicard",
-        #             intersection=True,
-        #             degree_atleast=True,
-        #             degree_encoding=9,
-        #         )
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             solver_name="Minisat22",
-        #             intersection=True,
-        #             degree_atleast=True,
-        #         )
-        #     ),
-        # },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    solver_name="Cadical195",
+                    intersection=True,
+                    degree_atleast=True,
+                )
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    solver_name="Gluecard4",
+                    intersection=True,
+                    degree_atleast=True,
+                    degree_encoding=9,
+                )
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    solver_name="MapleChrono",
+                    intersection=True,
+                    degree_atleast=True,
+                )
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    solver_name="MapleCM",
+                    intersection=True,
+                    degree_atleast=True,
+                )
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    solver_name="Maplesat",
+                    intersection=True,
+                    degree_atleast=True,
+                )
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    solver_name="Mergesat3",
+                    intersection=True,
+                    degree_atleast=True,
+                )
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    solver_name="Minicard",
+                    intersection=True,
+                    degree_atleast=True,
+                    degree_encoding=9,
+                )
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    solver_name="Minisat22",
+                    intersection=True,
+                    degree_atleast=True,
+                )
+            ),
+        },
     ]
 }
 
@@ -126,7 +126,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
