@@ -390,13 +390,6 @@ public:
 #if PRINT
                 std::cerr << "Inserting edge: " << edge << "for lit: " << l << "for counter: " << counter << "\n";
 #endif
-                std::stringstream filename;
-                filename << "arrangement_" << std::setfill('0') << std::setw(4) << counter++ << ".svg";
-                save_arrangement_as_svg(arr, edges, filename.str());
-
-#if PRINT
-                std::cerr << "left\n";
-#endif
             }
 
             // Only print if observed variables were found
@@ -588,7 +581,6 @@ public:
 
     int propagate() override
     {
-        return 0;
 #if PRINT
         std::cerr << "Propergate" << std::endl;
 #endif
@@ -633,6 +625,7 @@ public:
 #if PRINT
             std::cerr << "Anzahl der Kanten: " << outer_halfedges_count << "\n";
 #endif
+
             std::vector<Query_result> inside_points;
             locate(state_tracker.arr, state_tracker.nodes.begin(), state_tracker.nodes.end(), std::back_inserter(inside_points));
             std::vector<Point_2> vertices;
@@ -640,12 +633,6 @@ public:
             {
                 vertices.push_back(result.first);
             }
-
-            Point_2 p1(0, 0);
-            Point_2 p2(5, 0);
-            Segment_2 segment(p1, p2);
-
-            Point_2 test_point(2, 3); // Punkt oberhalb des Segments
 
             int max_face_vertices = vertices.size();
             // Generate all possible edges between vertices

@@ -290,9 +290,9 @@ def run_algo():
     # )
     PATH = os.path.join(
         os.path.dirname(__file__),
-        "instance",
-        "iterative",
-        "004_iterative_40.json",
+        "eval_instance",
+        "random",
+        "008_random_50.json",
     )
     # PATH = os.path.join(
     #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
