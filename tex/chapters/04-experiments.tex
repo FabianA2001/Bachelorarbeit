@@ -85,6 +85,8 @@ PySat stellt \emph{Cadical195}, \emph{Gluecard4}, \emph{Glucose42}, \emph{Lingel
 Von diesen wurden jeweils die neuesten verfügbaren Versionen verwendet.
 Bei \emph{Gluecard4} und \emph{Minicard} kam anstelle von \emph{sequential counters} eine native Codierung der Gradbeschränkung zum Einsatz.
 Alle anderen Solver nutzen die \emph{sequential counters} Codierung sowie die Überschneidungsbeschränkung. 
+Der \emph{Lingeling} Solver wurde in großen Experimenten nicht berücksichtigt da er kein Timeout unterstützt.
+Er wurde aber zusätzlich mit dem besten Solver vergleichen und hat schlechtere Ergebnisse erzielt.
 Weitere Bedingungen wurden nicht berücksichtigt.
 \emph{CryptoMinisat} wurde nicht verwendet, da dieser Solver speziell für XOR-Probleme optimiert ist.
 Für die Instanzengröße wurden 60 bis 90 Knoten gewählt.
