@@ -1,6 +1,14 @@
 \chapter{Auswertung}
-\michael{Einführungstext.}
-\michael{Verweise auch auf frühere Kapitel wo die Sachen dargelegt wurden.}
+In diesem Kapitel werden die Ansätze aus~\cref{chap:theoretischer_hintergrund} ausgewertet.
+Die ersten beiden Experimente testen, ob die Solver bei gleichen Bedingungen die gleichen Ergebnisse liefern.
+Die beiden Experimente danach werden genutzt, um den besten SAT-Solver für das gradbeschränkte Triangulierungsproblem aus~\cref{sec:pysat} zu finden.
+Danach folgt in~\cref{sec:eval1:grund_solver} ein Experiment, welches die verschiedenen Solver mit den verschiedenen Beschränkungen vergleicht, um den besten Solver zu bestimmen.
+Dieser wird genutzt, um in den folgenden Experimenten zum einen die theoretische Ausschließung von Kanten zu testen, Ja-Instanzen und Nein-Instanzen getrennt voneinander zu betrachten und möglichst große Instanzen zu lösen.
+Anschließend werden in~\cref{sec:eval11} die Zielfunktionen betrachtet.
+In dem darauf folgenden Experiment wird der CDCL-Ansatz aus~\cref{sec:cdcl} genauer betrachtet, um während des Lösens Einfluss auf den Solver zu nehmen.
+Zum Abschluss wird in drei verschiedenen Experimenten versucht, die Schwierigkeit der Instanzen zu bestimmen.
+
+
 \section{Versuchsumgebung}
 \fabian{PK: Ist sowas wie Pandas relevant? Das wird doch nur in der Auswertung gebraucht..., Dann ist Slurminade und Algbench doch genauso unrelevant oder?, oder das die Plots mit plt und Seaborn erstellt wurden?}
 % \begin{itemize}
@@ -48,7 +56,6 @@ In~\cref{fig:eval7:gurobi} und~\cref{fig:eval7:sat} ist zu erkennen, dass alle D
 Nur bei OrTools ist in~\cref{fig:eval7:ortools} zu sehen, dass die Laufzeiten unterschiedlich sind.
 Da aufgrund von~\cref{sec:eval2:permuation} bereits mehrere Durchläufe mit unterschiedlichen Permutationen durchgeführt werden, werden die OrTools-Durchläufe nicht zusätzlich mehrfach ausgeführt.
 
-
 \section{SAT Gradbeschränkung}
 % (Eval5)
 In diesem Experiment werden Verschiedene Methoden der Gradbeschränkung in einem SAT Solver vergleichen.
@@ -61,15 +68,6 @@ Da bei größeren Knotenmengen der Arbeitsspeicher zu klein war.
 Als zusätzliche Bedingung wurde die Überschneidungsbeschränkung verwendet.
 Für die Exakte Methode sieht man in~\cref{fig:eval5_exact} das \emph{sequential counters} die besten Ergebnisse erzielen.
 Auch für den Mindest Sollgrad ist \emph{sequential counters} die beste Variante wie man in~\cref{fig:eval5_atleast} sieht.
-\michael{ PK: 100 Prozent gelöst und die grüne Plotfarbe sind für meinen Geschmack zu ähnlich}
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=1\linewidth]{eval5/gesamt.pdf}
-    \caption{die besten Ergebnisse der verschiedenen Gradbeschränkungen in einem SAT Solver.}
-    \label{fig:eval5_gesamt}
-\end{figure}
-\michael{Die Plots sind etwas klein/schwer lesbar. Das liegt daran dass du sie in Größe x geplotted hast sie aber hier skaliert werden. Du kannst in Matplotlib die Größe des Plots so einstellen wie er hier rein kommt dann passt die Schrift zusammen.}
-\fabian{ wie und wo platziere ich am besten die Legende in den Plots?}
 
 Der Vergleich der drei Methoden ist in~\cref{fig:eval5_gesamt} zu sehen.
 Hier ist klar erkennbar das \emph{subset} die schlechteste Methode ist.
@@ -134,6 +132,7 @@ Es wird erneut der beste Solver aus~\cref{sec:eval1:grund_solver} verwendet.
 
 
 \section{Zielfunktion}
+\label{sec:eval11}
 % (Eval11)
 In diesem Experiment werden die drei verschiedenen Optimierungsansätze vergleichen.
 Erste Ansatz ist der Flips Ansatz, die anderen beiden Ansätze sind die Zielfunktionen von OrTools

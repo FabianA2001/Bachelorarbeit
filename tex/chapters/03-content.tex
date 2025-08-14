@@ -2,6 +2,7 @@
 
 
 \chapter{Theoretischer Hintergrund}
+\label{chap:theoretischer_hintergrund}
 In diesem Kapitel werden die verschiedenen Ansätze erklärt mit denen das Problem gelöst werden kann.
 Im ersten Abschnitt werden die Externen Solver kurz erklärt die in dieser Arbeit genutzt werden.
 In den beiden darauf folgenden Abschnitten werden zwei Mögliche Ansätze beschrieben die das Problem als Entscheidungsproblem betrachten.
@@ -227,6 +228,7 @@ Für die \emph{alternative Kanteneschränkung} werden folgende Bedingungen hinzu
 Für die fixierung bzw. ausschließung der Kanten werden die zugehöhrigen Variablen auf \emph{Wahr} oder \emph{Falsch} gesetzt.
 
 \subsubsection{PySat}
+\label{sec:pysat}
 Da PySat eine SAT Formulierung also Klauseln in der KNF verwendet, müssen die Bedingungen etwas angepasst werden.
 Die Überschneidungen können sehr ähnlich mit folgender Formel umgesetzt werden:
 \[
@@ -455,6 +457,7 @@ Anschließend werden folgende Bedingungen eingeführt.
 Die Variable \(max\_min\) wird anschließend minimiert.
 
 \section{\emph{Conflict-driven clause learning}}
+\label{sec:cdcl}
 In diesem Kapitel werden Sat-Solver nochmal genauer betrachtet.
 Dabei werden nicht weitere Beschränkungen hinzugefügt sondern der Solver wird während des Lösens beeinflusst.
 Dafür wird \emph{Conflict-driven clause learning} (CDCL) betrachtet.
