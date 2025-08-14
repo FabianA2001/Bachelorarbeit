@@ -48,6 +48,8 @@ else:
     #     )
     # ]
 
+    # df = df[df["whole_runtime"] > df["timeout"]]
+
     df.sort_values(
         by=["solver", "instance", "file"],
         inplace=True,

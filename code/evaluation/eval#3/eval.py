@@ -109,7 +109,6 @@ RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
-    ignore_correct=True,
     host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
 )
 

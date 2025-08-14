@@ -190,9 +190,9 @@ class Run_Algbench:
                 "args": result["parameters"]["args"]["parameter"].get("args", None),
                 "evaluation": result["result"]["evaluation"],
                 "timeout": result["parameters"]["args"]["parameter"]["timeout"],
-                # "runtime": result["runtime"],
                 "runtime": result["result"]["time_solver"],
                 "pre_time": result["result"]["time_pre_solver"],
+                "env_runtime": result["runtime"],
                 "solution": result["result"].get("solution", None),
                 "run_seed": result["parameters"]["args"].get("run_seed", None),
             },
@@ -370,6 +370,10 @@ class Run_Algbench:
         table = self.apply_args(table)
         table = self.get_mean(table)
         table["total_runtime"] = table["pre_time"] + table["runtime"]
+
+        # HACK Hardodet time
+        table = table[table["total_runtime"] < 295]
+        # print(table["total_runtime"])
         self.create_cactus(
             table=table,
             y="total_runtime",
