@@ -604,6 +604,9 @@ public:
         filename << "arrangement_" << std::setfill('0') << std::setw(4) << arrangement_counter++ << ".svg";
         save_arrangement_as_svg(state_tracker.arr, state_tracker.edges, filename.str());
 
+        std::vector<Query_result> point_lokations;
+        locate(state_tracker.arr, state_tracker.nodes.begin(), state_tracker.nodes.end(), std::back_inserter(point_lokations));
+
         for (auto face = state_tracker.arr.faces_begin(); face != state_tracker.arr.faces_end(); ++face)
         {
             if (face->is_unbounded())
@@ -617,6 +620,7 @@ public:
             do
             {
                 outer_halfedges_count++;
+                // hull_vertices.push_back(circ->source()->point()); // Add hull vertex
                 ++circ;
             } while (circ != start);
 
@@ -625,16 +629,13 @@ public:
 #if PRINT
             std::cerr << "Anzahl der Kanten: " << outer_halfedges_count << "\n";
 #endif
+            std::cerr << "Anzahl der Kanten: " << outer_halfedges_count << "\n";
 
-            std::vector<Query_result> inside_points;
-            locate(state_tracker.arr, state_tracker.nodes.begin(), state_tracker.nodes.end(), std::back_inserter(inside_points));
             std::vector<Point_2> vertices;
-            for (const auto &result : inside_points)
-            {
-                vertices.push_back(result.first);
-            }
+            // Populate vertices with points that lie in the current face using point_lokations
 
-            int max_face_vertices = vertices.size();
+            std::cerr << "Anzahl der innere Points: " << vertices.size() << "\n";
+
             // Generate all possible edges between vertices
             auto handel_half = [&](const std::vector<Point_2> &points, int k)
             {
