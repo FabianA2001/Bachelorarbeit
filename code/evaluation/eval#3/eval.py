@@ -30,24 +30,14 @@ outer_parameter = {
         #         )
         #     ),
         # },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    solver_name="Gluecard4",
-                    intersection=True,
-                    degree_atleast=True,
-                    degree_encoding=9,
-                )
-            ),
-        },
         # {
         #     "timeout": TIMEOUT,
         #     "args": asdict(
         #         SAT_Parameter(
-        #             solver_name="Lingeling",
+        #             solver_name="Gluecard4",
         #             intersection=True,
         #             degree_atleast=True,
+        #             degree_encoding=9,
         #         )
         #     ),
         # },
@@ -136,7 +126,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
