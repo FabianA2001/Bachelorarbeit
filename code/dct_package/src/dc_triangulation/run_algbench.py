@@ -792,16 +792,18 @@ class Run_Algbench:
         result = solution["success"] and is_triangulation
         correct = _possible == result
         big_error = False
+        if solution.get("timeout", False):
+            big_error = True
         if is_triangulation and not _possible:
             info += f"{solver.name} on {instance_name}_{file_name} should not be possible, but triangulation was found.\n"
             big_error = True
 
-        solver.logger.info(f"Finished with: {correct}")
         if big_error:
             solver.logger.error(
-                f"{solver.name} on {instance_name}_{file_name} should not be possible, but triangulation was found.\n"
+                f"{solver.name} on {instance_name}_{file_name} big error.\n"
             )
             correct = False
+        solver.logger.info(f"Finished with: {correct}")
         return {
             "correct": correct,
             "time_pre_solver": solver.pre_solve_time,
