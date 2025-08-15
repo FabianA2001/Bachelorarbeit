@@ -54,7 +54,7 @@ class Count(Solver):
                 seen_combinations.append(self.graph.get_all_active_edges())
                 if result["success"]:
                     counter += 1
-                elif not result.get("timeout", True):
+                elif not result.get("timeout", False):
                     self.logger.info("No more solutions found.")
                     break
                 else:

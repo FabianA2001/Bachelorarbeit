@@ -5,10 +5,10 @@ import slurminade
 from algbench import read_as_pandas
 from dc_triangulation import Count, Graph_Wrapper, Run_Algbench, load_nodes_from_json
 
-TIMEOUT = 1200
+TIMEOUT = 2000
 
 path = os.path.join(os.path.dirname(__file__), "instances")
-benchmark_path = "./local_benchmark"
+lokal_benchmark_path = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
 
 outer_parameter = {
     Count: [
@@ -24,7 +24,7 @@ RI = Run_Algbench(
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
     # host=["algry01", "algry02", "algry03", "algry04"],
-    path_benchmark=benchmark_path,
+    path_benchmark=lokal_benchmark_path,
 )
 
 
@@ -56,7 +56,7 @@ def show_lokal():
             # "runtime": result["runtime"],
             "runtime": result["result"]["time_solver"],
             "pre_time": result["result"]["time_pre_solver"],
-            "count": result["result"].get("solution", {}).get("count", {}),
+            "count": result["result"].get("solution", {}).get("count", -1),
             "seen_combinations": result["result"]
             .get("solution", {})
             .get("seen_combinations", {}),
