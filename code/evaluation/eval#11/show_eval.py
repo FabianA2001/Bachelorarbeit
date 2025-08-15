@@ -17,13 +17,13 @@ from dc_triangulation import (
 )
 from scipy.interpolate import interp1d
 
-TIMEOUT = 40
+TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
 figure_path = os.path.join(os.path.dirname(__file__), "figures")
 function_data_cache_file = os.path.join(
     os.path.dirname(__file__), "function_data_cache.pkl"
 )
-HOST = ["algry01", "algry02", "algry03", "algry04"]
+HOST = ["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"]
 
 # Konfiguriere Logging
 logging.basicConfig(
@@ -34,7 +34,7 @@ logging.basicConfig(
 def get_row_hash(row):
     """Erstellt einen eindeutigen Hash für eine Tabellenzeile basierend auf relevanten Spalten."""
     # Verwende relevante Spalten für den Hash (ohne 'function_data')
-    key_columns = ["instance", "file", "solver", "args", "run_seed"]
+    key_columns = ["instance", "file", "solver", "args", "run_number"]
     row_data = {col: row[col] for col in key_columns if col in row.index}
     return hashlib.md5(str(sorted(row_data.items())).encode()).hexdigest()
 
@@ -98,8 +98,8 @@ def eval_inst_file(
 
     result["timestamp"].append(solve_time + pre_time)
     result["eval"].append(last_evaluation)
-    result["objective_value"].append(None)
-    result["best_objective_bound"].append(None)
+    result["objective_value"].append(result["objective_value"][-1])
+    result["best_objective_bound"].append(result["best_objective_bound"][-1])
 
     return result
 
@@ -129,7 +129,6 @@ def draw_instance(
         for permutation_data in value_list:
             timestamps = np.array(permutation_data["timestamp"])
             evals = np.array(permutation_data["eval"])
-            print(timestamps)
 
             # Erstelle Interpolationsfunktion (linear interpolation)
             if len(timestamps) > 1:  # Mindestens 2 Punkte für Interpolation
@@ -300,7 +299,7 @@ def gesamt():
         inst_path=path,
         outer_parameter=outer_parameter,
         figure_path=figure_path,
-        # host=HOST,
+        host=HOST,
         ignore_correct=True,
         name="gesamt",
     )

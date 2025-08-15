@@ -5,10 +5,11 @@ import slurminade
 from algbench import read_as_pandas
 from dc_triangulation import Count, Graph_Wrapper, Run_Algbench, load_nodes_from_json
 
-TIMEOUT = 300
-path = os.path.join(os.path.dirname(__file__), "instances")
+TIMEOUT = 4000
 
-# 1,2,3,6,7,8
+path = os.path.join(os.path.dirname(__file__), "instances")
+lokal_benchmark_path = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
+
 outer_parameter = {
     Count: [
         {
@@ -23,6 +24,7 @@ RI = Run_Algbench(
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
     # host=["algry01", "algry02", "algry03", "algry04"],
+    path_benchmark=lokal_benchmark_path,
 )
 
 
@@ -54,7 +56,7 @@ def show_lokal():
             # "runtime": result["runtime"],
             "runtime": result["result"]["time_solver"],
             "pre_time": result["result"]["time_pre_solver"],
-            "count": result["result"].get("solution", {}).get("count", {}),
+            "count": result["result"].get("solution", {}).get("count", -1),
             "seen_combinations": result["result"]
             .get("solution", {})
             .get("seen_combinations", {}),
@@ -132,7 +134,7 @@ def show_lokal():
 
 @slurminade.slurmify()
 def run_solver_on_inst(key: str):
-    RI.add_entrys(key)
+    RI.add_entrys(key, 1)
 
 
 @slurminade.slurmify(mail_type="ALL")
@@ -142,11 +144,11 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
-            constraint="alggen03",  # Which workstations within the partition to use
+            constraint="alggen04",  # Which workstations within the partition to use
             exclusive=True,  # To use all cores on a node exclusively
             mail_type="FAIL",  # Send mail on failure
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address

@@ -289,11 +289,13 @@ class SAT(Solver):
 
             return {
                 "success": result[0],
+                "timeout": False,
             }
         except TimeoutError:
             self.logger.warning(f"{self.name} timed out.")
             return {
                 "success": False,
+                "timeout": True,
             }
 
     def second_run(self, parameter: dict) -> dict:
@@ -308,7 +310,7 @@ class SAT(Solver):
                 for var in self.all_vars:
                     if var in model:
                         self.graph.activate_edge(self.get_edge(var))
-            return {"success": result}
+            return {"success": result, "timeout": False}
         except TimeoutError:
             self.logger.warning(f"{self.name} timed out.")
             return {
