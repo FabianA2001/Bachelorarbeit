@@ -5,7 +5,7 @@ import slurminade
 from algbench import read_as_pandas
 from dc_triangulation import Count, Graph_Wrapper, Run_Algbench, load_nodes_from_json
 
-TIMEOUT = 2000
+TIMEOUT = 4000
 
 path = os.path.join(os.path.dirname(__file__), "instances")
 lokal_benchmark_path = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
@@ -144,7 +144,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
