@@ -5,11 +5,11 @@
 #include <limits>
 #include <filesystem>
 
-#define PRINT 0 // Enable debug printing
+#define PRINT 1 // Enable debug printing
 
 // Constants for SVG visualization
-// const double SCALE_FACTOR = 100.0;
-const double SCALE_FACTOR = 1;
+const double SCALE_FACTOR = 100.0;
+// const double SCALE_FACTOR = 1;
 const double NODE_RADIUS = 5.0;
 static int counter = 0;
 
@@ -159,7 +159,7 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
     svg_file.close();
 
 #if PRINT
-    std::cerr << "Arrangement saved as SVG to: " << full_path << std::endl;
+    // std::cerr << "Arrangement saved as SVG to: " << full_path << std::endl;
     // std::cerr << "Vertices: " << arr.number_of_vertices()
     //           << ", Edges: " << arr.number_of_edges()
     //           << ", Faces: " << arr.number_of_faces() << std::endl;
@@ -388,7 +388,7 @@ public:
                 auto edge = get_edge_from_lit(l);
                 CGAL::insert(arr, edge);
 #if PRINT
-                std::cerr << "Inserting edge: " << edge << "for lit: " << l << "for counter: " << counter << "\n";
+                // std::cerr << "Inserting edge: " << edge << "for lit: " << l << "for counter: " << counter << "\n";
 #endif
             }
 
@@ -396,12 +396,12 @@ public:
             if (found_observed)
             {
 #if PRINT
-                std::cerr << "Observed literals assigned: ";
-                for (Lit l : observed_lits)
-                {
-                    std::cerr << l << " ";
-                }
-                std::cerr << "\n";
+                // std::cerr << "Observed literals assigned: ";
+                // for (Lit l : observed_lits)
+                // {
+                //     std::cerr << l << " ";
+                // }
+                // std::cerr << "\n";
 #endif
             }
         }
@@ -629,12 +629,26 @@ public:
 #if PRINT
             std::cerr << "Anzahl der Kanten: " << outer_halfedges_count << "\n";
 #endif
-            std::cerr << "Anzahl der Kanten: " << outer_halfedges_count << "\n";
 
-            std::vector<Point_2> vertices;
+            std::vector<Point_2> inner_vertices;
             // Populate vertices with points that lie in the current face using point_lokations
+            for (auto &result : point_lokations)
+            {
 
-            std::cerr << "Anzahl der innere Points: " << vertices.size() << "\n";
+                try
+                {
+                    if (std::get<Face_const_handle>(result.second) == face)
+                    {
+                        inner_vertices.push_back(result.first);
+                    }
+                }
+                catch (const std::bad_variant_access &ex)
+                {
+                }
+            }
+#if PRINT
+            std::cerr << "Anzahl der innere Points: " << inner_vertices.size() << "\n";
+#endif
 
             // Generate all possible edges between vertices
             auto handel_half = [&](const std::vector<Point_2> &points, int k)
@@ -667,7 +681,7 @@ public:
                     int k_one, k_two = 0;
                     std::vector<Point_2> half_one;
                     std::vector<Point_2> half_two;
-                    for (const auto &v : vertices)
+                    for (const auto &v : inner_vertices)
                     {
                         CGAL::Orientation orient = CGAL::orientation(hull_vertices[x], hull_vertices[y], v);
                         if (orient == CGAL::LEFT_TURN)
