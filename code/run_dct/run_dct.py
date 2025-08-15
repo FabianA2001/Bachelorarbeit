@@ -131,11 +131,10 @@ def ortools_algorithm(graph):
 def sat_algorithm(graph):
     solver = SAT(graph)
     para = SAT_Parameter(
-        solver_name="Gluecard4",
-        degree_encoding=9,
         intersection=True,
         degree_atleast=True,
         fix_hull=True,
+        exclude_edges=True,
         # all_edges=True,
         # exclude_edges=True,
     )
@@ -206,6 +205,7 @@ def cadical_algorithm(graph, nodes=None):
         fix_hull=True,
         # save_state=True,
         optimize_propagation=True,
+        exclude_edges=True,
     )
     SVG_SAVE = "svg_figures"
     if os.path.exists(SVG_SAVE):
@@ -285,41 +285,21 @@ def show_all_instanzes():
 
 
 def run_algo():
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__), "instance", "simple_40", "000_delaunay_flips.json"
-    # )
     PATH = os.path.join(
-        os.path.dirname(__file__),
-        "eval_instance",
-        "random",
-        "008_random_50.json",
+        os.path.dirname(__file__), "instance", "simple_30", "000_delaunay.json"
     )
     # PATH = os.path.join(
-    #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
-    # )
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__), "instance", "simple_60", "000_delaunay_flips.json"
-    # )
-    # PATH = os.path.join(
     #     os.path.dirname(__file__),
-    #     "instance",
-    #     "random_impossible",
-    #     "000_random_impossible_30.json",
+    #     "eval_instance",
+    #     "random",
+    #     "012_random_60.json",
     # )
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__),
-    #     "instance",
-    #     "iterative_80_10",
-    #     "003_random_60.json",
-    # )
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__),
-    #     "instance",
-    #     "N_Gon_60",
-    #     "006_random.json",
-    # )
+
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
+
+    # for i, node in enumerate(nodes):
+    #     print(i, node.pos)
     # nodes = custom_points()
     # nodes = multiple_solutions()
     graph = Graph_Wrapper(nodes)

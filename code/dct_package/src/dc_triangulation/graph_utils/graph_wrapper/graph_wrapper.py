@@ -393,10 +393,16 @@ class Graph_Wrapper:
 
     @cached_property
     def exclude_edges(self) -> list[tuple[int, int]]:
-        edges = Exclude_Edge_Partition(self._data, self.impossible_edges)()
+        edges = Exclude_Edge_Partition(
+            self._data, self.impossible_edges, self.get_multipoint
+        )()
         edges.extend(
             Exclude_Edge_Intersection(self._data, self.get_all_intersections_cpp())()
         )
+
+        # edges = Exclude_Edge_Intersection(
+        #     self._data, self.get_all_intersections_cpp()
+        # )()
         return [edge for edge in edges if edge not in self.impossible_edges]
 
     @cached_property
@@ -436,3 +442,10 @@ class Graph_Wrapper:
             if self.get_desired_degree_node(node2) != 2:
                 edges.add((min(node1, node3), max(node1, node3)))
         return edges
+
+    @cached_property
+    def get_multipoint(self) -> shapely.geometry.MultiPoint:
+        """Gibt ein MultiPoint-Objekt aller Punkte im Graphen zurück."""
+        return shapely.geometry.MultiPoint(
+            [self.get_point_from_node(node) for node in self.get_all_nodes()]
+        )

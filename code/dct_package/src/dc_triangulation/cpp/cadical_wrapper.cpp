@@ -44,8 +44,8 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         // Find bounds from arrangement vertices
         for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
         {
-            double x = CGAL::to_double(vit->point().x()) * SCALE_FACTOR;
-            double y = CGAL::to_double(vit->point().y()) * SCALE_FACTOR;
+            double x = static_cast<int>(CGAL::to_double(vit->point().x())) * SCALE_FACTOR;
+            double y = static_cast<int>(CGAL::to_double(vit->point().y())) * SCALE_FACTOR;
             min_x = std::min(min_x, x);
             max_x = std::max(max_x, x);
             min_y = std::min(min_y, y);
@@ -57,10 +57,10 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         // Find bounds from original edges
         for (const auto &edge : original_edges)
         {
-            double x1 = CGAL::to_double(edge.source().x()) * SCALE_FACTOR;
-            double y1 = CGAL::to_double(edge.source().y()) * SCALE_FACTOR;
-            double x2 = CGAL::to_double(edge.target().x()) * SCALE_FACTOR;
-            double y2 = CGAL::to_double(edge.target().y()) * SCALE_FACTOR;
+            double x1 = static_cast<int>(CGAL::to_double(edge.source().x())) * SCALE_FACTOR;
+            double y1 = static_cast<int>(CGAL::to_double(edge.source().y())) * SCALE_FACTOR;
+            double x2 = static_cast<int>(CGAL::to_double(edge.target().x())) * SCALE_FACTOR;
+            double y2 = static_cast<int>(CGAL::to_double(edge.target().y())) * SCALE_FACTOR;
 
             min_x = std::min({min_x, x1, x2});
             max_x = std::max({max_x, x1, x2});
@@ -92,10 +92,10 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
         {
             auto curve = eit->curve();
-            double x1 = CGAL::to_double(curve.source().x()) * SCALE_FACTOR - min_x + padding;
-            double y1 = CGAL::to_double(curve.source().y()) * SCALE_FACTOR - min_y + padding;
-            double x2 = CGAL::to_double(curve.target().x()) * SCALE_FACTOR - min_x + padding;
-            double y2 = CGAL::to_double(curve.target().y()) * SCALE_FACTOR - min_y + padding;
+            double x1 = static_cast<int>(CGAL::to_double(curve.source().x())) * SCALE_FACTOR - min_x + padding;
+            double y1 = static_cast<int>(CGAL::to_double(curve.source().y())) * SCALE_FACTOR - min_y + padding;
+            double x2 = static_cast<int>(CGAL::to_double(curve.target().x())) * SCALE_FACTOR - min_x + padding;
+            double y2 = static_cast<int>(CGAL::to_double(curve.target().y())) * SCALE_FACTOR - min_y + padding;
 
             // Flip y-coordinate for SVG (SVG has origin at top-left)
             y1 = height - y1;
@@ -110,10 +110,17 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         svg_file << "<g fill=\"red\">\n";
         for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
         {
-            double x = CGAL::to_double(vit->point().x()) * SCALE_FACTOR - min_x + padding;
-            double y = CGAL::to_double(vit->point().y()) * SCALE_FACTOR - min_y + padding;
+            double x = static_cast<int>(CGAL::to_double(vit->point().x())) * SCALE_FACTOR - min_x + padding;
+            double y = static_cast<int>(CGAL::to_double(vit->point().y())) * SCALE_FACTOR - min_y + padding;
             y = height - y; // Flip y-coordinate
             svg_file << "<circle cx=\"" << x << "\" cy=\"" << y << "\" r=\"" << NODE_RADIUS << "\"/>\n";
+
+            // Add coordinate labels
+            double coord_x = static_cast<int>(CGAL::to_double(vit->point().x()));
+            double coord_y = static_cast<int>(CGAL::to_double(vit->point().y()));
+            svg_file << "<text x=\"" << (x + NODE_RADIUS + 2) << "\" y=\"" << (y - NODE_RADIUS - 2)
+                     << "\" font-family=\"Arial\" font-size=\"10\" fill=\"black\">("
+                     << coord_x << "," << coord_y << ")</text>\n";
         }
         svg_file << "</g>\n";
     }
@@ -123,10 +130,10 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         svg_file << "<g stroke=\"blue\" stroke-width=\"1\" fill=\"none\">\n";
         for (const auto &edge : original_edges)
         {
-            double x1 = CGAL::to_double(edge.source().x()) * SCALE_FACTOR - min_x + padding;
-            double y1 = CGAL::to_double(edge.source().y()) * SCALE_FACTOR - min_y + padding;
-            double x2 = CGAL::to_double(edge.target().x()) * SCALE_FACTOR - min_x + padding;
-            double y2 = CGAL::to_double(edge.target().y()) * SCALE_FACTOR - min_y + padding;
+            double x1 = static_cast<int>(CGAL::to_double(edge.source().x())) * SCALE_FACTOR - min_x + padding;
+            double y1 = static_cast<int>(CGAL::to_double(edge.source().y())) * SCALE_FACTOR - min_y + padding;
+            double x2 = static_cast<int>(CGAL::to_double(edge.target().x())) * SCALE_FACTOR - min_x + padding;
+            double y2 = static_cast<int>(CGAL::to_double(edge.target().y())) * SCALE_FACTOR - min_y + padding;
 
             // Flip y-coordinate for SVG
             y1 = height - y1;
@@ -141,16 +148,29 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         svg_file << "<g fill=\"blue\">\n";
         for (const auto &edge : original_edges)
         {
-            double x1 = CGAL::to_double(edge.source().x()) * SCALE_FACTOR - min_x + padding;
-            double y1 = CGAL::to_double(edge.source().y()) * SCALE_FACTOR - min_y + padding;
-            double x2 = CGAL::to_double(edge.target().x()) * SCALE_FACTOR - min_x + padding;
-            double y2 = CGAL::to_double(edge.target().y()) * SCALE_FACTOR - min_y + padding;
+            double x1 = static_cast<int>(CGAL::to_double(edge.source().x())) * SCALE_FACTOR - min_x + padding;
+            double y1 = static_cast<int>(CGAL::to_double(edge.source().y())) * SCALE_FACTOR - min_y + padding;
+            double x2 = static_cast<int>(CGAL::to_double(edge.target().x())) * SCALE_FACTOR - min_x + padding;
+            double y2 = static_cast<int>(CGAL::to_double(edge.target().y())) * SCALE_FACTOR - min_y + padding;
 
             y1 = height - y1;
             y2 = height - y2;
 
             svg_file << "<circle cx=\"" << x1 << "\" cy=\"" << y1 << "\" r=\"" << NODE_RADIUS << "\"/>\n";
             svg_file << "<circle cx=\"" << x2 << "\" cy=\"" << y2 << "\" r=\"" << NODE_RADIUS << "\"/>\n";
+
+            // Add coordinate labels for endpoints
+            double coord_x1 = static_cast<int>(CGAL::to_double(edge.source().x()));
+            double coord_y1 = static_cast<int>(CGAL::to_double(edge.source().y()));
+            double coord_x2 = static_cast<int>(CGAL::to_double(edge.target().x()));
+            double coord_y2 = static_cast<int>(CGAL::to_double(edge.target().y()));
+
+            svg_file << "<text x=\"" << (x1 + NODE_RADIUS + 2) << "\" y=\"" << (y1 - NODE_RADIUS - 2)
+                     << "\" font-family=\"Arial\" font-size=\"10\" fill=\"black\">("
+                     << coord_x1 << "," << coord_y1 << ")</text>\n";
+            svg_file << "<text x=\"" << (x2 + NODE_RADIUS + 2) << "\" y=\"" << (y2 - NODE_RADIUS - 2)
+                     << "\" font-family=\"Arial\" font-size=\"10\" fill=\"black\">("
+                     << coord_x2 << "," << coord_y2 << ")</text>\n";
         }
         svg_file << "</g>\n";
     }
@@ -187,10 +207,10 @@ public:
         }
         for (int i = 0; i < this->edges.size(); ++i)
         {
-            std::string key = std::to_string(CGAL::to_double(this->edges[i].source().x())) + "," +
-                              std::to_string(CGAL::to_double(this->edges[i].source().y())) + "," +
-                              std::to_string(CGAL::to_double(this->edges[i].target().x())) + "," +
-                              std::to_string(CGAL::to_double(this->edges[i].target().y()));
+            std::string key = std::to_string(static_cast<int>(CGAL::to_double(this->edges[i].source().x()))) + "," +
+                              std::to_string(static_cast<int>(CGAL::to_double(this->edges[i].source().y()))) + "," +
+                              std::to_string(static_cast<int>(CGAL::to_double(this->edges[i].target().x()))) + "," +
+                              std::to_string(static_cast<int>(CGAL::to_double(this->edges[i].target().y())));
             edge_to_index[key] = i + 1; // +1 to make it 1-based index
         }
 
@@ -211,22 +231,33 @@ public:
 
     Lit get_lit_from_edge(const Segment_2 &edge) const
     {
-        std::string key = std::to_string(CGAL::to_double(edge.source().x())) + "," +
-                          std::to_string(CGAL::to_double(edge.source().y())) + "," +
-                          std::to_string(CGAL::to_double(edge.target().x())) + "," +
-                          std::to_string(CGAL::to_double(edge.target().y()));
+        std::string key = std::to_string(static_cast<int>(CGAL::to_double(edge.source().x()))) + "," +
+                          std::to_string(static_cast<int>(CGAL::to_double(edge.source().y()))) + "," +
+                          std::to_string(static_cast<int>(CGAL::to_double(edge.target().x()))) + "," +
+                          std::to_string(static_cast<int>(CGAL::to_double(edge.target().y())));
+
         auto it = edge_to_index.find(key);
         if (it != edge_to_index.end())
         {
-            return Lit(0);
+            return it->second;
         }
-        return it->second;
+        key = std::to_string(static_cast<int>(CGAL::to_double(edge.target().x()))) + "," +
+              std::to_string(static_cast<int>(CGAL::to_double(edge.target().y()))) + "," +
+              std::to_string(static_cast<int>(CGAL::to_double(edge.source().x()))) + "," +
+              std::to_string(static_cast<int>(CGAL::to_double(edge.source().y())));
+
+        it = edge_to_index.find(key);
+        if (it != edge_to_index.end())
+        {
+            return it->second;
+        }
+        return Lit(0);
     }
 
     int get_sdegree_from_node(const Point_2 &node) const
     {
-        std::string key = std::to_string(CGAL::to_double(node.x())) + "," +
-                          std::to_string(CGAL::to_double(node.y()));
+        std::string key = std::to_string(static_cast<int>(CGAL::to_double(node.x()))) + "," +
+                          std::to_string(static_cast<int>(CGAL::to_double(node.y())));
         return node_to_sdegree.at(key);
     }
     void notify_backtrack(std::size_t new_level)
@@ -557,7 +588,7 @@ public:
     void notify_new_decision_level() override
     {
 #if PRINT
-        std::cerr << "New decision level started.\n";
+        // std::cerr << "New decision level started." << std::endl;
 #endif
         state_tracker.notify_new_decision_level();
     }
@@ -565,7 +596,7 @@ public:
     void notify_backtrack(std::size_t new_level) override
     {
 #if PRINT
-        std::cerr << "Backtracking to level " << new_level << "\n";
+        // std::cerr << "Backtracking to level " << new_level << std::endl;
 #endif
         state_tracker.notify_backtrack(new_level);
     }
@@ -582,7 +613,7 @@ public:
     int propagate() override
     {
 #if PRINT
-        std::cerr << "Propergate" << std::endl;
+        // std::cerr << "Propergate" << std::endl;
 #endif
         if (!state_tracker.has_changes)
         {
@@ -600,9 +631,6 @@ public:
         // std::cerr << "\n";
 
         // Arrangement-Informationen ausgeben
-        std::stringstream filename;
-        filename << "arrangement_" << std::setfill('0') << std::setw(4) << arrangement_counter++ << ".svg";
-        save_arrangement_as_svg(state_tracker.arr, state_tracker.edges, filename.str());
 
         std::vector<Query_result> point_lokations;
         locate(state_tracker.arr, state_tracker.nodes.begin(), state_tracker.nodes.end(), std::back_inserter(point_lokations));
@@ -620,15 +648,12 @@ public:
             do
             {
                 outer_halfedges_count++;
-                // hull_vertices.push_back(circ->source()->point()); // Add hull vertex
+                hull_vertices.push_back(circ->source()->point()); // Add hull vertex
                 ++circ;
             } while (circ != start);
 
             if (outer_halfedges_count <= 3)
                 continue; // Skip faces with 3 or fewer edges
-#if PRINT
-            std::cerr << "Anzahl der Kanten: " << outer_halfedges_count << "\n";
-#endif
 
             std::vector<Point_2> inner_vertices;
             // Populate vertices with points that lie in the current face using point_lokations
@@ -646,30 +671,35 @@ public:
                 {
                 }
             }
-#if PRINT
-            std::cerr << "Anzahl der innere Points: " << inner_vertices.size() << "\n";
-#endif
 
             // Generate all possible edges between vertices
-            auto handel_half = [&](const std::vector<Point_2> &points, int k)
+            auto handel_half = [&](const std::vector<Point_2> &i_points, const std::vector<Point_2> &h_points, std::stringstream &info) -> bool
             {
-                int n = points.size();
+                int k = h_points.size();
+                int n = i_points.size() + k; // Total number of vertices
                 int degree_count = 0;
-                for (const auto &v : points)
+                for (const auto &v : i_points)
                 {
                     int degree = state_tracker.get_sdegree_from_node(v);
                     degree_count += degree;
-                    if (std::find(hull_vertices.begin(), hull_vertices.end(), v) != hull_vertices.end())
-                    {
-                        continue; // Skip hull vertices
-                    }
                     if (degree > n - 1)
                     {
+#if PRINT
+                        info << "Vertex " << v << " has degree " << degree << ", which is greater than n-1 (" << n - 1 << ")." << "\n";
+#endif
                         return true; // If any vertex has a degree greater than n-1, return true
                     }
                 }
+                for (const auto &v : h_points)
+                {
+                    int degree = state_tracker.get_sdegree_from_node(v);
+                    degree_count += degree;
+                }
                 if ((3 * n - 3 - k) * 2 > degree_count)
                 {
+#if PRINT
+                    info << "Degree count " << degree_count << " is less than 2 * edge count " << (2 * (n - 1)) << "." << "\n";
+#endif
                     return true; // If the degree count is less than 2 * edge_count, return true
                 }
                 return false;
@@ -678,57 +708,115 @@ public:
             {
                 for (size_t y = x + 1; y < hull_vertices.size(); ++y)
                 {
-                    int k_one, k_two = 0;
-                    std::vector<Point_2> half_one;
-                    std::vector<Point_2> half_two;
+                    // i: inside, h: hull
+                    auto edge = Segment_2(hull_vertices[x], hull_vertices[y]);
+                    auto lit = state_tracker.get_lit_from_edge(edge);
+                    if (lit == Lit(0))
+                    {
+                        continue; // Edge not found, skip
+                    }
+                    if (!state_tracker.is_open(lit))
+                    {
+                        continue; // Skip if the edge is already assigned
+                    }
+                    std::stringstream info;
+                    std::vector<Point_2> i_half_one, h_half_one, i_half_two, h_half_two;
+
+#if PRINT
+                    info << "------------------------------------------------------" << "\n";
+                    info << "Checking edge: " << hull_vertices[x] << " - " << hull_vertices[y] << "\n";
+                    info << "------------------------------------------------------" << "\n";
+#endif
+
                     for (const auto &v : inner_vertices)
                     {
                         CGAL::Orientation orient = CGAL::orientation(hull_vertices[x], hull_vertices[y], v);
                         if (orient == CGAL::LEFT_TURN)
                         {
-                            half_one.push_back(v);
-                            if (std::find(hull_vertices.begin(), hull_vertices.end(), v) != hull_vertices.end())
-                            {
-                                k_one++;
-                            }
+                            i_half_one.push_back(v);
+#if PRINT
+                            info << "Added to i_half_one (LEFT_TURN): " << v << "\n";
+#endif
                         }
                         else if (orient == CGAL::RIGHT_TURN)
                         {
-                            half_two.push_back(v);
-                            if (std::find(hull_vertices.begin(), hull_vertices.end(), v) != hull_vertices.end())
-                            {
-                                k_two++;
-                            }
+                            i_half_two.push_back(v);
+#if PRINT
+                            info << "Added to i_half_two (RIGHT_TURN): " << v << "\n";
+#endif
                         }
                         else
                         {
-                            half_one.push_back(v);
-                            half_two.push_back(v);
+                            i_half_one.push_back(v);
+                            i_half_two.push_back(v);
+#if PRINT
+                            info << "Added to both i_half_one and i_half_two (COLLINEAR): " << v << "\n";
+#endif
                         }
-                        if (handel_half(half_one, k_one) || handel_half(half_two, k_two))
+                    }
+                    for (const auto &v : hull_vertices)
+                    {
+                        CGAL::Orientation orient = CGAL::orientation(hull_vertices[x], hull_vertices[y], v);
+                        if (orient == CGAL::LEFT_TURN)
                         {
-                            auto edge = Segment_2(hull_vertices[x], hull_vertices[y]);
-                            // #if PRINT
-
-                            std::cerr << "can exclude edge: " << hull_vertices[x] << " - " << hull_vertices[y] << "\n";
-                            // #endif
-                            auto lit = state_tracker.get_lit_from_edge(edge);
-                            if (lit == Lit(0))
-                            {
-                                continue; // Edge not found, skip
-                            }
-                            std::vector<Lit> reason;
-                            for (Lit l : state_tracker.get_observed_trail())
-                            {
-                                if (l > 0)
-                                {
-                                    reason.push_back(-l);
-                                }
-                            }
-                            reason.push_back(-lit);
-                            state_tracker.store_reason(-lit, reason);
-                            return -lit; // Return the literal for the edge that can be excluded
+                            h_half_one.push_back(v);
+#if PRINT
+                            info << "Added to h_half_one (LEFT_TURN): " << v << "\n";
+#endif
                         }
+                        else if (orient == CGAL::RIGHT_TURN)
+                        {
+                            h_half_two.push_back(v);
+#if PRINT
+                            info << "Added to h_half_two (RIGHT_TURN): " << v << "\n";
+#endif
+                        }
+                        else
+                        {
+                            h_half_one.push_back(v);
+                            h_half_two.push_back(v);
+#if PRINT
+                            info << "Added to both h_half_one and h_half_two (COLLINEAR): " << v << "\n";
+#endif
+                        }
+                    }
+                    if (i_half_one.empty() || i_half_two.empty())
+                    {
+                        continue; // Skip if one of the halves is empty
+                    }
+                    if (handel_half(i_half_one, h_half_one, info) || handel_half(i_half_two, h_half_two, info))
+                    {
+
+#if PRINT
+                        info << "can exclude(" << arrangement_counter << ") edge: " << hull_vertices[x] << " - " << hull_vertices[y] << "\n";
+#endif
+
+                        std::stringstream filename;
+                        filename << "arrangement_" << std::setfill('0') << std::setw(4) << arrangement_counter++ << ".svg";
+                        save_arrangement_as_svg(state_tracker.arr, state_tracker.edges, filename.str());
+                        std::vector<Lit> reason;
+                        for (Lit l : state_tracker.get_observed_trail())
+                        {
+                            if (l > 0)
+                            {
+                                reason.push_back(-l);
+                            }
+                        }
+                        reason.push_back(-lit);
+                        state_tracker.store_reason(-lit, reason);
+
+#if PRINT
+                        info << "größe der inneren Punkte: " << inner_vertices.size() << "\n";
+                        info << "lit can be excluded: " << lit << "\n";
+                        info << "Reason for exclusion: ";
+                        for (Lit l : reason)
+                        {
+                            info << l << " ";
+                        }
+                        info << "\n";
+                        std::cerr << info.str() << std::endl;
+#endif
+                        return -lit; // Return the literal for the edge that can be excluded
                     }
                 }
             }
@@ -740,7 +828,7 @@ public:
     void get_reason_clause(Lit propagated_lit, std::vector<Lit> &reason_buffer) override
     {
 #if PRINT
-        std::cerr << "Getting reason clause for propagated literal: " << propagated_lit << "\n";
+        std::cerr << "Getting reason clause for propagated literal: " << propagated_lit << std::endl;
 #endif
         state_tracker.get_reason(propagated_lit, reason_buffer);
     }
@@ -812,16 +900,12 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
     auto result = solver.solve();
     if (!result || !*result)
     {
-        // #if PRINT
-        std::cerr << "No solution found\n";
-        // #endif
+        std::cerr << "No solution found" << std::endl;
         return std::make_pair(Vars_List{}, std::vector<Vars_List>{});
     }
     else
     {
-        // #if PRINT
-        std::cout << "Solution found\n";
-        // #endif
+        std::cout << "Solution found" << std::endl;
         auto model = solver.get_model();
         std::vector<int> result = {};
         for (auto l : v)

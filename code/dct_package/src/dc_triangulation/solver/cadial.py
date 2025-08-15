@@ -13,6 +13,7 @@ class Parameter:
     degree: bool = False
     fix_hull: bool = False
     all_edges: bool = False
+    exclude_edges: bool = True
     save_state: bool = False
     optimize_propagation: bool = False
 
@@ -101,6 +102,12 @@ class Cadical(Solver):
                 + [self.get_index(other_edge) for other_edge in intersections]
             )
 
+    def exclude_edges_constraint(self):
+        for edge in self.graph.exclude_edges:
+            index = self.get_index(edge)
+            # Setze die Kante als inaktiv
+            self.clauses.append([-index])
+
     def pre_solve(self, parameter: Parameter) -> None:
         self.setup(parameter)
         if parameter.intersection:
@@ -111,6 +118,8 @@ class Cadical(Solver):
             self.set_hull_fix_constraint()
         if parameter.all_edges:
             self.alle_edges_constraint()
+        if parameter.exclude_edges:
+            self.exclude_edges_constraint()
 
     def _actual_solver(self, parameter_raw: dict) -> dict:
         if self.graph is None:
@@ -156,6 +165,7 @@ class Cadical(Solver):
             parameter.optimize_propagation,
         )
 
+        assert len(vars) > 1, "keine Lösung gefunden"
         for i in range(len(self.edges)):
             if vars[i] == 1:
                 # self.logger.info(f"var{i}: {vars[i]}")
