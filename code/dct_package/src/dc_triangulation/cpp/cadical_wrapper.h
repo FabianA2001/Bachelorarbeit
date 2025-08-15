@@ -23,6 +23,8 @@ typedef Arrangement_2::Vertex_handle Vertex_handle;
 typedef Arrangement_2::Halfedge_handle Halfedge_handle;
 typedef Arrangement_2::Face_handle Face_handle;
 typedef Arrangement_2::Face_const_handle Face_const_handle;
+typedef Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+typedef Arrangement_2::Vertex_const_handle Vertex_const_handle;
 
 typedef CGAL::Arr_point_location_result<Arrangement_2> Point_location_result;
 typedef std::pair<Point_2, Point_location_result::Type> Query_result;

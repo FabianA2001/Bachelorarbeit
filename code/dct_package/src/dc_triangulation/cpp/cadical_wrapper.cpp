@@ -659,16 +659,45 @@ public:
             // Populate vertices with points that lie in the current face using point_lokations
             for (auto &result : point_lokations)
             {
-
-                try
+                if (std::holds_alternative<Face_const_handle>(result.second))
                 {
                     if (std::get<Face_const_handle>(result.second) == face)
                     {
                         inner_vertices.push_back(result.first);
                     }
                 }
-                catch (const std::bad_variant_access &ex)
+                if (std::holds_alternative<Halfedge_const_handle>(result.second))
                 {
+                    std::cerr << "Point " << result.first << " is on a halfedge, not a face." << std::endl;
+                    assert(false && "Point is on a halfedge, not a face.");
+                }
+                if (std::holds_alternative<Vertex_const_handle>(result.second))
+                {
+                    auto vertex = std::get<Vertex_const_handle>(result.second);
+                    // Check if any incident face matches the target face
+                    bool vertex_in_face = false;
+                    if (!vertex->is_isolated())
+                    {
+                        auto circ = vertex->incident_halfedges();
+                        auto start = circ;
+                        do
+                        {
+                            if (circ->face() == face || circ->twin()->face() == face)
+                            {
+                                vertex_in_face = true;
+                                break;
+                            }
+                            ++circ;
+                        } while (circ != start);
+                    }
+                    if (find(hull_vertices.begin(), hull_vertices.end(), result.first) != hull_vertices.end())
+                    {
+                        continue; // Skip if the vertex is already in the hull vertices
+                    }
+                    if (vertex_in_face)
+                    {
+                        inner_vertices.push_back(result.first);
+                    }
                 }
             }
 
@@ -838,7 +867,6 @@ public:
         return state_tracker.get_vars_saved();
     }
 
-private:
     ObservedLiteralStateTracker state_tracker;
     std::vector<std::vector<Lit>> hidden_clauses;
     static int arrangement_counter;
@@ -906,6 +934,10 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
     else
     {
         std::cout << "Solution found" << std::endl;
+        std::stringstream filename;
+        filename << "arrangement_" << std::setfill('0') << std::setw(4) << propagator.arrangement_counter++ << ".svg";
+        save_arrangement_as_svg(propagator.state_tracker.arr, propagator.state_tracker.edges, filename.str());
+
         auto model = solver.get_model();
         std::vector<int> result = {};
         for (auto l : v)
