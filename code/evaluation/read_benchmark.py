@@ -6,6 +6,7 @@ streamlit run read_benchmark.py
 """
 
 BENCHMARK_PATH = "./benchmark"
+# BENCHMARK_PATH = "./eval#8/lokal_benchmark"
 if False:
     describe(BENCHMARK_PATH)
 else:
@@ -13,6 +14,7 @@ else:
         BENCHMARK_PATH,
         lambda result: {
             "host": result["env"]["hostname"],
+            "para_host": result["parameters"]["args"].get("host", None),
             "solver": result["parameters"]["args"]["solver_name"],
             "instance": result["parameters"]["args"]["instance_name"],
             "file": result["parameters"]["args"]["file_name"],
@@ -28,14 +30,12 @@ else:
             "solution": result["result"].get("solution", None),
             "data": result["timestamp"],
             "run_number": result["parameters"]["args"]["run_number"],
-            "run_seed": result["result"]["run_seed"],
         },
     )
     if df.empty:
         st.error("Die Tabelle ist leer. Bitte überprüfen Sie die Eingabedaten.")
         st.stop()
 
-    df["run_seed"] = df["run_seed"].apply(lambda x: str(x))
     df["logging"] = df["logging"].apply(lambda x: str(x))
     # df = df[df["host"].isin([socket.gethostname()])]
     df.sort_values(
