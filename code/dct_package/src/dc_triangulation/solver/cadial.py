@@ -1,3 +1,4 @@
+from collections import defaultdict
 from dataclasses import dataclass
 
 from pysat.card import CardEnc, EncType
@@ -154,6 +155,17 @@ class Cadical(Solver):
         ]
         # print(self.edges[108 - 1])
         # return {}
+        intersections = defaultdict(list)
+        for edge, intersection in self.graph.get_all_intersections_cpp().items():
+            edge_index = self.get_index(edge)
+            if edge_index == -1:
+                continue
+            for other_edge in intersection:
+                other_edge_index = self.get_index(other_edge)
+                if other_edge_index == -1:
+                    continue
+                intersections[edge_index].append(other_edge_index)
+
         vars, debug_vars = self.time_solver(cadical_wrapper)(
             self.max_used,
             len(self.edges),
@@ -161,6 +173,7 @@ class Cadical(Solver):
             nodes_as_pos,
             edges_as_pos,
             node_to_sdegree,
+            intersections,
             parameter.save_state,
             parameter.optimize_propagation,
         )

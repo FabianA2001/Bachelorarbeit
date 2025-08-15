@@ -39,5 +39,6 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
                                                              std::vector<Point_raw> nodes = {},
                                                              std::vector<Edge_raw> edges = {},
                                                              std::unordered_map<std::string, int> node_to_sdegree = {},
+                                                             std::unordered_map<int, std::vector<int>> intersections = {},
                                                              bool save_state = false,
                                                              bool optimize_propagation = false);

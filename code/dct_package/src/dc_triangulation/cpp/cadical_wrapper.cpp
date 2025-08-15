@@ -5,7 +5,7 @@
 #include <limits>
 #include <filesystem>
 
-#define PRINT 1 // Enable debug printing
+#define PRINT 0 // Enable debug printing
 
 // Constants for SVG visualization
 const double SCALE_FACTOR = 100.0;
@@ -198,7 +198,7 @@ struct ObservedLiteralStateTracker
 public:
     using Lit = cdc::CadicalSolver::Lit;
 
-    ObservedLiteralStateTracker(bool save_states_lokal = false, std::vector<Point_raw> nodes = {}, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}) : save_states(save_states_lokal), node_to_sdegree(nodes_to_sdegree)
+    ObservedLiteralStateTracker(bool save_states_lokal = false, std::vector<Point_raw> nodes = {}, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}, std::unordered_map<int, std::vector<int>> intersections = {}) : save_states(save_states_lokal), node_to_sdegree(nodes_to_sdegree), intersections(intersections)
     {
         for (const auto &edge : edges)
         {
@@ -546,6 +546,7 @@ public:
     std::unordered_map<std::string, Lit> edge_to_index;
     std::unordered_map<std::string, int> node_to_sdegree;
     std::vector<Point_2> nodes; // Store nodes for arrangement
+    std::unordered_map<int, std::vector<int>> intersections;
 };
 /**
  * Trivial example propagator that enforces a simple list of additional clauses
@@ -557,7 +558,7 @@ class ExamplePropagator : public cdc::CadicalSolver::ExternalPropagator
 public:
     using Lit = cdc::CadicalSolver::Lit;
 
-    ExamplePropagator(cdc::CadicalSolver *solver, bool save_states = false, std::vector<Point_raw> nodes = {}, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}) : cdc::CadicalSolver::ExternalPropagator(solver, true, false), state_tracker(save_states, nodes, edges, nodes_to_sdegree)
+    ExamplePropagator(cdc::CadicalSolver *solver, bool save_states = false, std::vector<Point_raw> nodes = {}, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}, std::unordered_map<int, std::vector<int>> intersections = {}) : cdc::CadicalSolver::ExternalPropagator(solver, true, false), state_tracker(save_states, nodes, edges, nodes_to_sdegree, intersections)
     {
     }
 
@@ -748,6 +749,26 @@ public:
                     {
                         continue; // Skip if the edge is already assigned
                     }
+
+                    auto intersections = state_tracker.intersections[lit];
+                    bool find_intersection = false;
+                    for (auto const &aktive_lit : state_tracker.get_observed_trail())
+                    {
+                        if (aktive_lit < 1)
+                        {
+                            continue; // Skip if the active literal is less than 1
+                        }
+                        if (std::find(intersections.begin(), intersections.end(), aktive_lit) != intersections.end())
+                        {
+                            find_intersection = true;
+                            break; // Found an intersection, break
+                        }
+                    }
+                    if (find_intersection)
+                    {
+                        continue; // Skip if an intersection is found
+                    }
+
                     std::stringstream info;
                     std::vector<Point_2> i_half_one, h_half_one, i_half_two, h_half_two;
 
@@ -845,6 +866,7 @@ public:
                         info << "\n";
                         std::cerr << info.str() << std::endl;
 #endif
+                        counter++;
                         return -lit; // Return the literal for the edge that can be excluded
                     }
                 }
@@ -881,6 +903,7 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
                                                              std::vector<Point_raw> nodes,
                                                              std::vector<Edge_raw> edges,
                                                              std::unordered_map<std::string, int> node_to_sdegree,
+                                                             std::unordered_map<int, std::vector<int>> intersections,
                                                              bool save_state,
                                                              bool optimize_propagation)
 {
@@ -917,7 +940,7 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
     }
 
     // add the propagator
-    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver, save_state, nodes, edges, node_to_sdegree);
+    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver, save_state, nodes, edges, node_to_sdegree, intersections);
     // observe the variables (must be AFTER the constructor)
     propagator.observe_variables(std::vector<cdc::CadicalSolver::Lit>(v.begin(), v.begin() + number_edges_vars));
     // for (const auto &clause : clauses)
@@ -951,7 +974,7 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
                 result.push_back(0);
             }
         }
-
+        std::cerr << "gefundene Propergationen: " << counter << std::endl;
         return std::make_pair(result, propagator.get_vars_saved());
         // std::vector<Vars_List> leer;
         // return std::make_pair(result, leer);
