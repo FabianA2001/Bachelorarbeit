@@ -194,7 +194,7 @@ class Run_Algbench:
                 "runtime": result["result"]["time_solver"],
                 "pre_time": result["result"]["time_pre_solver"],
                 "solution": result["result"].get("solution", None),
-                "run_seed": result["parameters"]["args"].get("run_seed", None),
+                "run_number": result["parameters"]["args"]["run_number"],
             },
         )
         # Filter nach Host, falls host angegeben ist
