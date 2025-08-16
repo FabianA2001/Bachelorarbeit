@@ -170,10 +170,20 @@ def draw_instance(
         # Sortiere alle Datenpunkte nach timestamp
         all_data_points.sort(key=lambda x: x[0])
 
+        assert all_data_points, (
+            f"Keine Datenpunkte für solver_args: {solver_args}. "
+            "Überprüfen Sie die Eingabedaten."
+        )
+        max_eval = 0
+        monton_all_data_points = []
+        for timestamp, eval_value in all_data_points:
+            max_eval = max(max_eval, eval_value)
+            monton_all_data_points.append((timestamp, max_eval))
+
         # Extrahiere sortierte timestamps und evals
-        if all_data_points:
-            sorted_timestamps = np.array([point[0] for point in all_data_points])
-            sorted_evals = np.array([point[1] for point in all_data_points])
+        if monton_all_data_points:
+            sorted_timestamps = np.array([point[0] for point in monton_all_data_points])
+            sorted_evals = np.array([point[1] for point in monton_all_data_points])
 
             # Plotte die sortierten Daten
             plt.plot(
@@ -212,11 +222,6 @@ def eval_table(ri: Run_Algbench):
     table = table.sort_values(
         ["instance", "file", "solver_args", "run_number"]
     ).reset_index(drop=True)
-    # import streamlit as st
-
-    # st.dataframe(table)
-    # return table
-
     # Lade bereits berechnete Ergebnisse
     cache = load_cache()
 
@@ -265,6 +270,8 @@ def draw_all_instances(table: pd.DataFrame) -> None:
             continue
         # Erstelle ein Diagramm für die Instanz
         draw_instance(group_df)
+    # for idx, row in table.iterrows():
+    #     draw_instance(pd.DataFrame([row]))
 
 
 def gesamt():
@@ -306,6 +313,9 @@ def gesamt():
         name="gesamt",
     )
     table = eval_table(ri)
+    # import streamlit as st
+    # st.dataframe(table)
+
     draw_all_instances(table)
 
 

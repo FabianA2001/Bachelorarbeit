@@ -2,7 +2,7 @@ import streamlit as st
 from algbench import describe, read_as_pandas
 
 """
-streamlit run read_benchmark.py
+streamlit run read_benchmark.py --server.maxMessageSize=500
 """
 
 BENCHMARK_PATH = "./benchmark"
@@ -36,7 +36,7 @@ else:
         st.error("Die Tabelle ist leer. Bitte überprüfen Sie die Eingabedaten.")
         st.stop()
 
-    df["logging"] = df["logging"].apply(lambda x: str(x))
+    df["logging"] = df["logging"].apply(lambda x: "\n".join(k["msg"] for k in x))
 
     # # Filtere nur Zeilen wo "Glucose42" in args enthalten ist
     # df = df[df["args"].astype(str).str.contains("Glucose42", na=False)]
