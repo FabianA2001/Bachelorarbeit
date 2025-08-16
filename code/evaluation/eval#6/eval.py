@@ -65,41 +65,41 @@ data = load_data()
 
 outer_parameter = {
     SAT: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    intersection=True,
-                    degree_exact=True,
-                )
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    intersection=True,
-                    degree_exact=True,
-                    hack_eval6=0.1,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
-                )
-            ),
-            "hack_eval_6": True,
-            "hack_eval_6_data": data,
-            "hack_eval_6_PERCENT": 0.1,
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    intersection=True,
-                    degree_exact=True,
-                    hack_eval6=0.5,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
-                )
-            ),
-            "hack_eval_6": True,
-            "hack_eval_6_data": data,
-            "hack_eval_6_PERCENT": 0.5,
-        },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             intersection=True,
+        #             degree_exact=True,
+        #         )
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             intersection=True,
+        #             degree_exact=True,
+        #             hack_eval6=0.1,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
+        #         )
+        #     ),
+        #     "hack_eval_6": True,
+        #     "hack_eval_6_data": data,
+        #     "hack_eval_6_PERCENT": 0.1,
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             intersection=True,
+        #             degree_exact=True,
+        #             hack_eval6=0.5,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
+        #         )
+        #     ),
+        #     "hack_eval_6": True,
+        #     "hack_eval_6_data": data,
+        #     "hack_eval_6_PERCENT": 0.5,
+        # },
         {
             "timeout": TIMEOUT,
             "args": asdict(
@@ -113,32 +113,32 @@ outer_parameter = {
             "hack_eval_6_data": data,
             "hack_eval_6_PERCENT": 0.8,
         },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    intersection=True,
-                    degree_exact=True,
-                    hack_eval6=-0.1,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
-                )
-            ),
-            "hack_eval_6": True,
-            "hack_eval_6_data": data,
-            "hack_eval_6_PERCENT": -0.1,
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    intersection=True,
-                    degree_exact=True,
-                    hack_eval6=-0.5,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
-                )
-            ),
-            "hack_eval_6": True,
-            "hack_eval_6_data": data,
-            "hack_eval_6_PERCENT": -0.5,
-        },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             intersection=True,
+        #             degree_exact=True,
+        #             hack_eval6=-0.1,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
+        #         )
+        #     ),
+        #     "hack_eval_6": True,
+        #     "hack_eval_6_data": data,
+        #     "hack_eval_6_PERCENT": -0.1,
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             intersection=True,
+        #             degree_exact=True,
+        #             hack_eval6=-0.5,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
+        #         )
+        #     ),
+        #     "hack_eval_6": True,
+        #     "hack_eval_6_data": data,
+        #     "hack_eval_6_PERCENT": -0.5,
+        # },
         {
             "timeout": TIMEOUT,
             "args": asdict(
@@ -199,6 +199,11 @@ def run_solver_on_inst(key: str):
                 not_aktive_edges = [
                     edge for edge in all_edges if edge not in aktive_edges
                 ]
+                # print("Aktive Edges:", len(aktive_edges))
+                # print(*aktive_edges, sep="\n")
+                # print("Nicht Aktive Edges:", len(not_aktive_edges))
+                # print(*not_aktive_edges, sep="\n")
+                # sys.exit(0)
                 if percent > 0:
                     anzahl = max(1, int(len(aktive_edges) * percent))
                     auswahl = random.sample(aktive_edges, anzahl)
@@ -258,7 +263,6 @@ def compress_results():
     RI.compress()
 
 
-# TODO auf glucard umstellen
 if __name__ == "__main__":
     if True:
         slurminade.update_default_configuration(
@@ -271,9 +275,10 @@ if __name__ == "__main__":
         )
         run_list = RI.get_run_list()
         for key in run_list:
-            run_solver_on_inst.distribute(key)
+            run_solver_on_inst(key)
+        #     run_solver_on_inst.distribute(key)
 
-        slurminade.join()
-        compress_results.distribute()
+        # slurminade.join()
+        # compress_results.distribute()
     else:
         RI.show()
