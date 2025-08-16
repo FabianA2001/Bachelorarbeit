@@ -125,8 +125,10 @@ class Graph_Wrapper:
         block: bool = True,
         show_set_false: bool = False,
         draw_name: bool = True,
+        all_green: bool = False,
     ) -> None:
         if not show_set_false:
+            assert not all_green, "nicht implementiert"
             visualisation.draw(
                 self._data,
                 self._check,
@@ -145,6 +147,7 @@ class Graph_Wrapper:
                 save=save,
                 block=block,
                 draw_name=draw_name,
+                all_green=all_green,
             )
 
     def add_edge(self, node1: int, node2: int, active: bool = True) -> None:

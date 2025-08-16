@@ -89,6 +89,7 @@ def draw_with_set_false(
     save: str,
     block: bool,
     draw_name: bool = True,
+    all_green: bool = False,
 ) -> None:
     """Zeichnet den Graphen mit den festgelegten Positionen und Farben."""
     logging.info("starte show_and_save")
@@ -111,19 +112,22 @@ def draw_with_set_false(
         labels = {node: f"{degree}" for node, degree in degrees.items()}
 
     # Knotenfarben basierend auf dem Grad erstellen
-    colors = [
-        graph_const.NODE_COLOR_TRUE
-        if degree
-        == len(
-            [
-                edge
-                for edge in local_graph.edges(node)
-                if local_graph.edges[edge].get("active")
-            ]
-        )
-        else graph_const.NODE_COLOR_FALSE
-        for node, degree in degrees.items()
-    ]
+    if not all_green:
+        colors = [
+            graph_const.NODE_COLOR_TRUE
+            if degree
+            == len(
+                [
+                    edge
+                    for edge in local_graph.edges(node)
+                    if local_graph.edges[edge].get("active")
+                ]
+            )
+            else graph_const.NODE_COLOR_FALSE
+            for node, degree in degrees.items()
+        ]
+    else:
+        colors = [graph_const.NODE_COLOR_TRUE for node, degree in degrees.items()]
 
     # edge_colors = [
     #     graph_const.EDGE_COLOR_TRUE
@@ -138,10 +142,13 @@ def draw_with_set_false(
 
     for edge in local_graph.edges:
         if local_graph.edges[edge].get("active"):
-            if not check.check_for_intersection_with_all_edges_and_nodes(edge):
-                edge_colors.append(graph_const.EDGE_COLOR_TRUE)
+            if not all_green:
+                if not check.check_for_intersection_with_all_edges_and_nodes(edge):
+                    edge_colors.append(graph_const.EDGE_COLOR_TRUE)
+                else:
+                    edge_colors.append(graph_const.EDGE_COLOR_FALSE)
             else:
-                edge_colors.append(graph_const.EDGE_COLOR_FALSE)
+                edge_colors.append(graph_const.EDGE_COLOR_TRUE)
             edge_widths.append(1.7)  # Normal width for active edges
             edge_alphas.append(1.0)  # Full opacity for active edges
         elif local_graph.edges[edge].get("show_false"):
