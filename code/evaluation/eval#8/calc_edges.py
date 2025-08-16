@@ -1,9 +1,10 @@
 import logging
 import os
+import random
 
 import pandas as pd
 from algbench import read_as_pandas
-from dc_triangulation import Count, Run_Algbench
+from dc_triangulation import Count, Run_Algbench, load_nodes_from_json
 
 TIMEOUT = 4000
 
@@ -47,6 +48,7 @@ def get_table():
             "seen_combinations": result["result"]
             .get("solution", {})
             .get("seen_combinations", {}),
+            "run_seed": result["result"].get("run_seed", 0),
         },
     )
     # # Filter nach Host, falls host angegeben ist
@@ -87,16 +89,29 @@ def generate_dict(table):
         data = row["seen_combinations"]
         data = list(data)
         data_length = len(data)
+        nodes = load_nodes_from_json(
+            os.path.join(
+                os.path.dirname(__file__),
+                "instances",
+                row["instance"],
+                f"{row['file']}.json",
+            )
+        )
+        seed = row["run_seed"]
+        assert seed != 0, "Seed should not be 0"
+        random.seed(seed)
+        random.shuffle(nodes)
         edges = []
         if data_length == 2:
-            edges = data[0]
+            for edge in data[0]:
+                edges.append((nodes[edge[0]].pos, nodes[edge[1]].pos))
         elif data_length == 3:
-            edges = data[0]
+            for edge in data[0]:
+                edges.append((nodes[edge[0]].pos, nodes[edge[1]].pos))
             for edge in data[1]:
-                if edge not in edges:
-                    edges.append(edge)
+                if edge not in data[0]:
+                    edges.append((nodes[edge[0]].pos, nodes[edge[1]].pos))
         instance_dict[key] = edges
-
     return instance_dict
 
 
