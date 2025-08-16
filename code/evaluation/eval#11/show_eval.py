@@ -1,7 +1,6 @@
-import hashlib
+import json
 import logging
 import os
-import pickle
 from collections import defaultdict
 from dataclasses import asdict
 
@@ -15,13 +14,12 @@ from dc_triangulation import (
     Run_Algbench,
     load_nodes_from_json,
 )
-from scipy.interpolate import interp1d
 
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
 figure_path = os.path.join(os.path.dirname(__file__), "figures")
 function_data_cache_file = os.path.join(
-    os.path.dirname(__file__), "function_data_cache.pkl"
+    os.path.dirname(__file__), "function_data_cache.json"
 )
 HOST = ["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"]
 
@@ -31,34 +29,71 @@ logging.basicConfig(
 )
 
 
-def get_row_hash(row):
-    """Erstellt einen eindeutigen Hash für eine Tabellenzeile basierend auf relevanten Spalten."""
-    # Verwende relevante Spalten für den Hash (ohne 'function_data')
-    key_columns = ["instance", "file", "solver", "args", "run_number"]
-    row_data = {col: row[col] for col in key_columns if col in row.index}
-    return hashlib.md5(str(sorted(row_data.items())).encode()).hexdigest()
-
-
-def load_cached_results():
-    """Lädt bereits berechnete Ergebnisse aus der Cache-Datei."""
+def load_cache():
+    """Lädt den Cache aus der JSON-Datei"""
     if os.path.exists(function_data_cache_file):
         try:
-            with open(function_data_cache_file, "rb") as f:
-                return pickle.load(f)
-        except Exception as e:
-            logging.info(f"Fehler beim Laden des Caches: {e}")
-            return {}
+            with open(function_data_cache_file, "r") as f:
+                return json.load(f)
+        except (json.JSONDecodeError, IOError):
+            logging.warning(f"Konnte Cache nicht laden: {function_data_cache_file}")
     return {}
 
 
-def save_cached_results(cache_data):
-    """Speichert berechnete Ergebnisse in der Cache-Datei."""
+def save_cache(cache):
+    """Speichert den Cache in die JSON-Datei"""
     try:
-        with open(function_data_cache_file, "wb") as f:
-            pickle.dump(cache_data, f)
-        logging.info(f"Cache gespeichert: {len(cache_data)} Einträge")
-    except Exception as e:
-        logging.info(f"Fehler beim Speichern des Caches: {e}")
+        os.makedirs(os.path.dirname(function_data_cache_file), exist_ok=True)
+        with open(function_data_cache_file, "w") as f:
+            json.dump(cache, f, indent=2)
+        logging.info(f"Cache gespeichert: {function_data_cache_file}")
+    except IOError as e:
+        logging.error(f"Fehler beim Speichern des Caches: {e}")
+
+
+def get_cache_key(row):
+    """Erstellt einen eindeutigen Cache-Schlüssel für eine Zeile"""
+    instance = row.get("instance", "unknown")
+    file = row.get("file", "unknown")
+    args = str(row.get("solver_args", ""))
+    run_number = row.get("run_number", 0)
+
+    return {
+        "instance": instance,
+        "file": file,
+        "args": args,
+        "run_number": run_number,
+    }
+
+
+def get_cached_result(cache, cache_key):
+    """Holt ein Ergebnis aus dem Cache"""
+    try:
+        return (
+            cache.get(cache_key["instance"], {})
+            .get(cache_key["file"], {})
+            .get(cache_key["args"], {})
+            .get(str(cache_key["run_number"]))
+        )
+    except (KeyError, TypeError):
+        return None
+
+
+def save_cached_result(cache, cache_key, result):
+    """Speichert ein Ergebnis im Cache"""
+    instance = cache_key["instance"]
+    file = cache_key["file"]
+    args = cache_key["args"]
+    run_number = str(cache_key["run_number"])
+
+    if instance not in cache:
+        cache[instance] = {}
+    if file not in cache[instance]:
+        cache[instance][file] = {}
+    if args not in cache[instance][file]:
+        cache[instance][file][args] = {}
+
+    cache[instance][file][args][run_number] = result
 
 
 def eval_inst_file(
@@ -123,68 +158,33 @@ def draw_instance(
         if not value_list:
             continue
 
-        # Erstelle Interpolationsfunktionen für jede Permutation
-        interpolation_functions = []
-
+        # Sammle alle timestamp/eval Paare in einer Liste
+        all_data_points = []
         for permutation_data in value_list:
-            timestamps = np.array(permutation_data["timestamp"])
-            evals = np.array(permutation_data["eval"])
+            # Füge alle timestamp/eval Paare zur Liste hinzu
+            for timestamp, eval_value in zip(
+                permutation_data["timestamp"], permutation_data["eval"]
+            ):
+                all_data_points.append((timestamp, eval_value))
 
-            # Erstelle Interpolationsfunktion (linear interpolation)
-            if len(timestamps) > 1:  # Mindestens 2 Punkte für Interpolation
-                interp_func = interp1d(
-                    timestamps,
-                    evals,
-                    kind="linear",
-                    bounds_error=False,
-                    fill_value=np.nan,
-                )
-                interpolation_functions.append(
-                    (interp_func, timestamps[0], timestamps[-1])
-                )
-            else:
-                raise ValueError(
-                    f"Nicht genügend Datenpunkte für Interpolation: {len(timestamps)}"
-                )
+        # Sortiere alle Datenpunkte nach timestamp
+        all_data_points.sort(key=lambda x: x[0])
 
-        # Erstelle ein gemeinsames Zeitgrid
-        if interpolation_functions:
-            # Verwende den Überlappungsbereich aller Permutationen
-            common_min_time = min(func[1] for func in interpolation_functions)
-            common_max_time = max(func[2] for func in interpolation_functions)
+        # Extrahiere sortierte timestamps und evals
+        if all_data_points:
+            sorted_timestamps = np.array([point[0] for point in all_data_points])
+            sorted_evals = np.array([point[1] for point in all_data_points])
 
-            if common_min_time < common_max_time:
-                # Erstelle 100 Zeitpunkte im gemeinsamen Bereich
-                time_grid = np.linspace(common_min_time, common_max_time, 100)
+            # Plotte die sortierten Daten
+            plt.plot(
+                sorted_timestamps,
+                sorted_evals,
+                label=str(solver_args),
+                marker="o",
+                markersize=2,
+                linewidth=2,
+            )
 
-                # Berechne für jeden Zeitpunkt den Durchschnitt aller Permutationen
-                averaged_evals = []
-                for time_point in time_grid:
-                    eval_values = []
-                    for interp_func, min_t, max_t in interpolation_functions:
-                        if (
-                            min_t <= time_point <= max_t
-                        ):  # Nur innerhalb des gültigen Bereichs
-                            eval_values.append(interp_func(time_point))
-
-                    if (
-                        eval_values
-                    ):  # Mindestens eine Permutation hat Daten an diesem Zeitpunkt
-                        averaged_evals.append(np.mean(eval_values))
-                    else:
-                        averaged_evals.append(np.nan)
-
-                # Entferne NaN-Werte
-                valid_indices = ~np.isnan(averaged_evals)
-                if np.any(valid_indices):
-                    plt.plot(
-                        time_grid[valid_indices],
-                        np.array(averaged_evals)[valid_indices],
-                        label=str(solver_args),
-                        marker="o",
-                        markersize=2,
-                        linewidth=2,
-                    )
     instanz_file = table["instance_file"].iloc[0]
     plt.xlabel("Zeit")
     plt.ylabel("Wert (0-1)")
@@ -208,9 +208,17 @@ def eval_table(ri: Run_Algbench):
     table = ri.get_table()
     table = ri.apply_instance(table)
     table = ri.apply_args(table)
+    # sort
+    table = table.sort_values(
+        ["instance", "file", "solver_args", "run_number"]
+    ).reset_index(drop=True)
+    # import streamlit as st
+
+    # st.dataframe(table)
+    # return table
 
     # Lade bereits berechnete Ergebnisse
-    cached_results = load_cached_results()
+    cache = load_cache()
 
     # Erstelle function_data Spalte
     table["function_data"] = None
@@ -219,38 +227,32 @@ def eval_table(ri: Run_Algbench):
     cache_hits = 0
 
     for idx, row in table.iterrows():
-        row_hash = get_row_hash(row)
+        cache_key = get_cache_key(row)
+        cached_result = get_cached_result(cache, cache_key)
 
-        if row_hash in cached_results:
+        if cached_result is not None:
             # Verwende gecachtes Ergebnis
-            table.at[idx, "function_data"] = cached_results[row_hash]
+            table.at[idx, "function_data"] = cached_result
             cache_hits += 1
             logging.info(
-                f"Cache-Hit für Zeile {idx}: {row.get('instance', 'unknown')}/{row.get('file', 'unknown')}"
+                f"Cache-Hit für Zeile {idx}: {cache_key['instance']}/{cache_key['file']} (run: {cache_key['run_number']})"
             )
         else:
             # Berechne neues Ergebnis
             logging.info(
-                f"Berechne neue Zeile {idx}: {row.get('instance', 'unknown')}/{row.get('file', 'unknown')}"
+                f"Berechne neue Zeile {idx}: {cache_key['instance']}/{cache_key['file']} (run: {cache_key['run_number']})"
             )
             result = eval_inst_file(pd.DataFrame([row]))
             table.at[idx, "function_data"] = result
 
             # Speichere im Cache
-            cached_results[row_hash] = result
+            save_cached_result(cache, cache_key, result)
+            save_cache(cache)  # Speichere nach jeder Berechnung
             new_calculations += 1
 
-    # Speichere aktualisierten Cache
-    if new_calculations > 0:
-        save_cached_results(cached_results)
-        logging.info(
-            f"Cache aktualisiert: {new_calculations} neue Berechnungen, {cache_hits} Cache-Hits"
-        )
-    else:
-        logging.info(
-            f"Alle {cache_hits} Zeilen aus Cache geladen - keine neuen Berechnungen nötig"
-        )
-
+    logging.info(
+        f"Berechnungen abgeschlossen: {new_calculations} neue, {cache_hits} aus Cache"
+    )
     return table
 
 

@@ -225,6 +225,8 @@ class Run_Algbench:
         return table
 
     def apply_args(self, table: pd.DataFrame) -> pd.DataFrame:
+        assert len(table) > 0, "Tabelle ist leer, kann keine args anwenden."
+
         all_args = []
         for arg_list in self.outer_parameter.values():
             for arg in arg_list:
