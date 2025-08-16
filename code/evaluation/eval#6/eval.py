@@ -1,20 +1,43 @@
+import json
 import logging
 import os
 import random
+import socket
 import uuid
 from dataclasses import asdict
 
 import slurminade
-from calculate_exclude_edges import load_data
 from dc_triangulation import SAT, Graph_Wrapper, Run_Algbench, SAT_Parameter
 
 asdict
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
-data = load_data()
 NUMBER_RUNS = 5  # Number of runs for each instance
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
+
+
+def load_data():
+    """Load data from calculated_data.json file"""
+    calculated_data_file = os.path.join(
+        os.path.dirname(__file__), "calculated_data.json"
+    )
+    try:
+        with open(calculated_data_file, "r") as f:
+            data = json.load(f)
+        logging.info(f"Loaded data from {calculated_data_file}")
+        return data
+    except FileNotFoundError:
+        logging.error(f"Could not find calculated_data.json at {calculated_data_file}")
+        return {}
+    except json.JSONDecodeError:
+        logging.error(f"Could not parse JSON from {calculated_data_file}")
+        return {}
+
+
+data = load_data()
+
+
 outer_parameter = {
     SAT: [
         {
@@ -42,6 +65,19 @@ outer_parameter = {
             "hack_eval_6": True,
             "hack_eval_6_data": data,
             "hack_eval_6_PERCENT": 0.5,
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    intersection=True,
+                    degree_exact=True,
+                    hack_eval6=0.8,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
+                )
+            ),
+            "hack_eval_6": True,
+            "hack_eval_6_data": data,
+            "hack_eval_6_PERCENT": 0.8,
         },
         {
             "timeout": TIMEOUT,
@@ -78,6 +114,28 @@ outer_parameter = {
                 )
             ),
         },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    intersection=True,
+                    degree_exact=True,
+                    hack_eval6=-0.8,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
+                )
+            ),
+            "hack_eval_6": True,
+            "hack_eval_6_data": data,
+            "hack_eval_6_PERCENT": -0.8,
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Parameter(
+                    intersection=True,
+                    degree_exact=True,
+                )
+            ),
+        },
     ]
 }
 
@@ -99,33 +157,37 @@ def run_solver_on_inst(key: str):
     for parameter in parameters:
         ####################################################
         # hack für eval 6
-        if parameter.get("hack_eval_6", False):
-            try:
-                if "hack_eval_6_data" not in parameter:
-                    raise ValueError(
-                        "hack_eval_6_data must be provided in the parameter."
-                    )
-                if "hack_eval_6_PERCENT" not in parameter:
-                    raise ValueError(
-                        "hack_eval_6_PERCENT must be provided in the parameter."
-                    )
-                data = parameter["hack_eval_6_data"]
-                percent = parameter["hack_eval_6_PERCENT"]
-                key = f"{inst}_{file_name}"
-                if key not in data:
-                    raise ValueError(f"No data found for instance {key}.")
-                aktive_edges, not_aktive_edges = data[key]
-                if percent > 0:
-                    anzahl = max(1, int(len(aktive_edges) * percent))
-                    auswahl = random.sample(aktive_edges, anzahl)
-                    parameter["debug_set_edges"] = auswahl
-                if percent < 0:
-                    anzahl = max(1, int(len(not_aktive_edges) * percent))
-                    auswahl = random.sample(not_aktive_edges, anzahl)
-                    parameter["debug_exclude_edges"] = auswahl
-            except ValueError as e:
-                logging.error(f"Error in hack_eval_6: {e}")
-                continue
+        assert parameter.get("hack_eval_6", False)
+        try:
+            if "hack_eval_6_data" not in parameter:
+                raise ValueError("hack_eval_6_data must be provided in the parameter.")
+            if "hack_eval_6_PERCENT" not in parameter:
+                raise ValueError(
+                    "hack_eval_6_PERCENT must be provided in the parameter."
+                )
+            data = parameter["hack_eval_6_data"]
+            percent = parameter["hack_eval_6_PERCENT"]
+            key = f"{inst}_{file_name}"
+            if key not in data:
+                raise ValueError(f"No data found for instance {key}.")
+            aktive_edges = data[key]
+            all_edges = []
+            for i in range(len(nodes)):
+                for j in range(i + 1, len(nodes)):
+                    all_edges.append((nodes[i], nodes[j]))
+            not_aktive_edges = [edge for edge in all_edges if edge not in aktive_edges]
+
+            if percent > 0:
+                anzahl = max(1, int(len(aktive_edges) * percent))
+                auswahl = random.sample(aktive_edges, anzahl)
+                parameter["debug_set_edges"] = auswahl
+            if percent < 0:
+                anzahl = max(1, int(len(not_aktive_edges) * percent))
+                auswahl = random.sample(not_aktive_edges, anzahl)
+                parameter["debug_exclude_edges"] = auswahl
+        except ValueError as e:
+            logging.error(f"Error in hack_eval_6: {e}")
+            continue
         ############################################
 
         for i in range(NUMBER_RUNS):
@@ -141,6 +203,7 @@ def run_solver_on_inst(key: str):
                 instance_name=inst,
                 file_name=file_name,
                 run_number=i,
+                host=socket.gethostname(),
                 _run_seed=run_seed,
                 _possible=possible,
                 _solver_type=solver,

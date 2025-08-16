@@ -1,5 +1,6 @@
 import logging
 import os
+import random
 
 import slurminade
 from algbench import read_as_pandas
@@ -60,6 +61,7 @@ def show_lokal():
             "seen_combinations": result["result"]
             .get("solution", {})
             .get("seen_combinations", {}),
+            "run_seed": result["result"].get("run_seed", 0),
         },
     )
     # # Filter nach Host, falls host angegeben ist
@@ -116,6 +118,10 @@ def show_lokal():
                         f"{row['file']}.json",
                     )
                 )
+                seed = row["run_seed"]
+                assert seed != 0, "Seed should not be 0"
+                random.seed(seed)
+                random.shuffle(nodes)
                 graph = Graph_Wrapper(nodes)
                 # Kanten die in sets[i] sind aber nicht im anderen Set
                 auuser_schnitt = sets[i] - sets[1 - i]
@@ -136,6 +142,7 @@ def show_lokal():
                     draw_name=False,
                     all_green=True,
                 )
+
     logging.info(info)
 
     # Generiere LaTeX-Tabelle
@@ -274,3 +281,5 @@ if __name__ == "__main__":
     else:
         table = show_lokal()
         draw_table_as_latex(table)
+        # for key in RI.get_run_list():
+        #     RI.show_key_from_runlist(key)

@@ -114,7 +114,7 @@ class Run_Algbench:
         solver, nodes, possible, inst, file_name = self.get_solver_inst_from_runlist[
             key
         ]
-        parameters = [para["args"] for para in self.outer_parameter[solver]]
+        parameters = [para.get("args", None) for para in self.outer_parameter[solver]]
         print_spacer = False
         for entry in self.benchmark:
             if not check_correct:
