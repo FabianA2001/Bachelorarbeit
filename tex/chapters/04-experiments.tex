@@ -212,14 +212,13 @@ Für alle drei Teile werden Instanzen der größe 30 bis 120 Knoten betrachtet.
     \centering
     \includegraphics[width=0.48\linewidth]{eval8/delaunay_008_delaunay_50_0.pdf}\hfill
     \includegraphics[width=0.48\linewidth]{eval8/delaunay_008_delaunay_50_1.pdf}
-    \caption{Eval8 Anzahl Lösungen Delaunay}
+    \caption[zwei verschiedene Lösungen für eine Instanz]{In dem Bild sind zwei verschiedene Lösungen für eine Instanz zu sehen. In Grün sind die Kanten zu sehen welche in der Instanz unterschiedlich sind. In Blau die gleichen Kanten. Die Zahlen in den Knoten geben den Sollgrad an. }
 \end{figure}
 In~\cref{tab:triangulation_results} ist zu sehen das fast alle Instanzen nur eine Lösungen haben.
 Vorallem ist aber zu sehen das es keinen Zusammenhang zwischen der Anzahl der Lösungen und der Instanze gibt.
 Es kann also davon ausgegangen werden das die Anzahl der Lösungen keinen Einfluss auf die Schwierigkeit der Instanzen hat.
-Interesannter weiße ist zu sehen das die Kanten welche in einer Instanze unterschiedliche sind Lokal sind.
+Interesannter weiße ist zu sehen das die Kanten welche in einer Instanze unterschiedliche sind klar einem Bereich zugeordnet werden könne.
 Wie man in~\cref{fig:eval8:left} sieht, sind die Kanten in der linken Hälfte der Instanz unterschiedlich, während die rechte Hälfte keine Unterschiede aufweist.
-% TODO besseren Schluss ziehen
 
 \subsection{Grad Verteilung}
 In diesem Experiment wird Probiert anhand der Gradverteilung der Knoten zu erkennen ob es einen Zusammenhang zwischen der Schwierigkeit und dem Grad gibt.
@@ -237,7 +236,8 @@ Es ist zu erkennen das Vorallem Random und Iterativ eine Rechtsschiefe Verteilun
 Dazu passend hat Delaunay eher eine zentrierte Verteilung. 
 Auch das Delaunay-Flips Rechtsschiefer als Delaunay ist würde passen, da Delaunay-Flips einfacher als Delaunay sind.
 Leider lässt sich an Greedy erkennen das er keinen direkten Zusammenhang zwischen der Gradverteilung und der Schwierigkeit gibt.
-Greedy ist von der Zentrierung zwischen Delaunay und Delaunay-Flips einzuordnen aber die Greedy Instanzen sind eindeutig einfacher als Delaunay-Flips
+Greedy ist von der Zentrierung zwischen Delaunay und Delaunay-Flips einzuordnen aber die Greedy Instanzen sind eindeutig einfacher als Delaunay-Flips.
+TODO anpassen greedy ist warscheinlich schwierig
 
 
 \subsection{Kantenlängen Verteilung}
