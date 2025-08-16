@@ -62,8 +62,8 @@ def show_lokal():
             .get("seen_combinations", {}),
         },
     )
-    # Filter nach Host, falls host angegeben ist
-    table = table[table["host"].isin(RI.host)]
+    # # Filter nach Host, falls host angegeben ist
+    # table = table[table["host"].isin(RI.host)]
 
     if RI.instances:
         table = table[table["instance"].isin(RI.instances)]
@@ -73,6 +73,11 @@ def show_lokal():
         ]
         table = table[table["file"].isin(all_instance)]
 
+    table["args_str"] = table["args"].apply(lambda x: str(x))
+    # Gruppiere nach solver, instance, file, args und behalte nur die Zeile mit dem höchsten Timeout
+    table = table.loc[
+        table.groupby(["solver", "instance", "file", "args_str"])["timeout"].idxmax()
+    ]
     solvers_name = [solver.NAME for solver in RI.solvers]
     table = table[table["solver"].isin(solvers_name)]
 
@@ -144,7 +149,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
