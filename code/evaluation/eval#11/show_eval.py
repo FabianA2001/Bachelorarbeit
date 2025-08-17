@@ -23,6 +23,12 @@ function_data_cache_file = os.path.join(
 )
 HOST = ["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"]
 
+# Font-Größen aus Cactus Plot übernommen
+TITEL_FONT_SIZE = 20
+LABEL_FONT_SIZE = 15
+ACHSEN_FONT_SIZE = 12
+LEGENDE_FONT_SIZE = 20
+
 # Konfiguriere Logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -139,81 +145,6 @@ def eval_inst_file(
     return result
 
 
-def draw_instance(
-    table: pd.DataFrame,
-) -> None:
-    """
-    Erstellt ein Liniendiagramm für eine Instanz mit mehreren instance_files.
-    """
-    plt.figure(figsize=(10, 6))
-
-    # Gruppiere nach solver_args und iteriere
-    for solver_args, group_df in table.groupby("solver_args"):
-        # Sammle alle function_data für diese solver_args
-        value_list = []
-        for idx, row in group_df.iterrows():
-            if row["function_data"] is not None:
-                value_list.append(row["function_data"])
-
-        if not value_list:
-            continue
-
-        # Sammle alle timestamp/eval Paare in einer Liste
-        all_data_points = []
-        for permutation_data in value_list:
-            # Füge alle timestamp/eval Paare zur Liste hinzu
-            for timestamp, eval_value in zip(
-                permutation_data["timestamp"], permutation_data["eval"]
-            ):
-                all_data_points.append((timestamp, eval_value))
-
-        # Sortiere alle Datenpunkte nach timestamp
-        all_data_points.sort(key=lambda x: x[0])
-
-        assert all_data_points, (
-            f"Keine Datenpunkte für solver_args: {solver_args}. "
-            "Überprüfen Sie die Eingabedaten."
-        )
-        max_eval = 0
-        monton_all_data_points = []
-        for timestamp, eval_value in all_data_points:
-            max_eval = max(max_eval, eval_value)
-            monton_all_data_points.append((timestamp, max_eval))
-
-        # Extrahiere sortierte timestamps und evals
-        if monton_all_data_points:
-            sorted_timestamps = np.array([point[0] for point in monton_all_data_points])
-            sorted_evals = np.array([point[1] for point in monton_all_data_points])
-
-            # Plotte die sortierten Daten
-            plt.plot(
-                sorted_timestamps,
-                sorted_evals,
-                label=str(solver_args),
-                marker="o",
-                markersize=2,
-                linewidth=2,
-            )
-
-    instanz_file = table["instance_file"].iloc[0]
-    plt.xlabel("Zeit")
-    plt.ylabel("Wert (0-1)")
-    plt.title(f"Instanz: {instanz_file}")
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.ylim(0, 1)  # Werte sind zwischen 0 und 1
-
-    # Speichere das Diagramm
-    instanz_file = instanz_file.replace("/", "_").replace(" ", "_")
-    output_path = os.path.join(figure_path, f"{instanz_file}.pdf")
-    plt.savefig(output_path, bbox_inches="tight")
-    plt.close()  # Schließe die Figur um Speicher zu sparen
-
-    logging.info(
-        f"Diagramm für Instanz '{instanz_file}' wurde gespeichert unter: {output_path}"
-    )
-
-
 def eval_table(ri: Run_Algbench):
     table = ri.get_table()
     table = ri.apply_instance(table)
@@ -263,15 +194,212 @@ def eval_table(ri: Run_Algbench):
 
 def draw_all_instances(table: pd.DataFrame) -> None:
     """
-    Erstellt Diagramme für jede Instanzen in der Tabelle.
+    Erstellt Diagramme für jede Instanzen in der Tabelle, gruppiert nach Dateinummer.
+    Erstellt für jede Zahl im Dateinamen (z.B. 36, 37, 38, 39) eine separate PDF-Datei
+    mit Subplots für jede Instanz.
     """
-    for instance_file, group_df in table.groupby("instance_file"):
-        if group_df.empty:
+    import seaborn as sns
+
+    # Extrahiere Zahlen aus Dateinamen
+    table = table.copy()
+    table["file_number"] = table["file"].str.extract(r"(\d+)").astype(int)
+
+    # Seaborn Style setzen
+    sns.set_style("whitegrid")
+
+    # Gruppiere nach Dateinummer
+    for file_number, file_group in table.groupby("file_number"):
+        if file_group.empty:
             continue
-        # Erstelle ein Diagramm für die Instanz
-        draw_instance(group_df)
-    # for idx, row in table.iterrows():
-    #     draw_instance(pd.DataFrame([row]))
+
+        # Bestimme eindeutige Instanzen für diese Dateinummer
+        unique_instances = file_group["instance"].unique()
+        n_instances = len(unique_instances)
+
+        if n_instances == 0:
+            continue
+
+        # Bestimme Layout für Subplots
+        cols = min(3, n_instances)  # Maximal 3 Spalten
+        rows = (n_instances + cols - 1) // cols  # Aufrunden
+
+        fig, axes = plt.subplots(rows, cols, figsize=(5 * cols, 4 * rows))
+
+        # Für den Fall dass nur eine Instanz vorhanden ist
+        if n_instances == 1:
+            axes = [axes]
+        elif rows == 1:
+            axes = axes if isinstance(axes, (list, np.ndarray)) else [axes]
+        else:
+            axes = axes.flatten()
+
+        # Für jede Instanz einen eigenen Subplot
+        for idx, instance in enumerate(unique_instances):
+            ax = axes[idx]
+
+            # Filtere Daten für diese Instanz und Dateinummer
+            instance_data = file_group[file_group["instance"] == instance]
+
+            # Gruppiere nach solver_args und plotte
+            for solver_args, group_df in instance_data.groupby("solver_args"):
+                # Sammle alle function_data für diese solver_args
+                value_list = []
+                for _, row in group_df.iterrows():
+                    if row["function_data"] is not None:
+                        value_list.append(row["function_data"])
+
+                if not value_list:
+                    continue
+
+                # Sammle alle timestamp/eval Paare in einer Liste
+                all_data_points = []
+                for permutation_data in value_list:
+                    # Füge alle timestamp/eval Paare zur Liste hinzu
+                    for timestamp, eval_value in zip(
+                        permutation_data["timestamp"], permutation_data["eval"]
+                    ):
+                        all_data_points.append((timestamp, eval_value))
+
+                # Sortiere alle Datenpunkte nach timestamp
+                all_data_points.sort(key=lambda x: x[0])
+
+                if not all_data_points:
+                    continue
+
+                max_eval = 0
+                monton_all_data_points = []
+                for timestamp, eval_value in all_data_points:
+                    max_eval = max(max_eval, eval_value)
+                    monton_all_data_points.append((timestamp, max_eval))
+
+                # Extrahiere sortierte timestamps und evals
+                if monton_all_data_points:
+                    sorted_timestamps = np.array(
+                        [point[0] for point in monton_all_data_points]
+                    )
+                    sorted_evals = np.array(
+                        [point[1] for point in monton_all_data_points]
+                    )
+
+                    # Füge einen Punkt beim Timeout hinzu, falls der letzte Punkt vor dem Timeout liegt
+                    if len(sorted_timestamps) > 0 and sorted_timestamps[-1] < TIMEOUT:
+                        # Aktueller letzter Wert bleibt beim Timeout bestehen
+                        sorted_timestamps = np.concatenate(
+                            [sorted_timestamps, [TIMEOUT]]
+                        )
+                        sorted_evals = np.concatenate(
+                            [sorted_evals, [sorted_evals[-1]]]
+                        )
+
+                    # Plotte die sortierten Daten (Y-Werte mit 100 multiplizieren für Prozent)
+                    ax.plot(
+                        sorted_timestamps,
+                        sorted_evals * 100,
+                        label=str(solver_args),
+                        marker="o",
+                        markersize=2,
+                        linewidth=2,
+                    )
+
+            # Subplot Styling
+            ax.set_xlabel("Zeit (Sekunden)", fontsize=LABEL_FONT_SIZE)
+            ax.set_ylabel("Wert (%)", fontsize=LABEL_FONT_SIZE)
+
+            # Titel für die Instanz
+            instance_titel = instance
+            if instance == "greedy":
+                instance_titel = "Greedy"
+            elif instance == "delaunay":
+                instance_titel = "Delaunay"
+            elif instance == "iterative":
+                instance_titel = "Iterative"
+            elif instance == "random":
+                instance_titel = "Random"
+            elif instance == "d_flips":
+                instance_titel = "Delaunay-Flips"
+
+            ax.set_title(instance_titel, fontsize=TITEL_FONT_SIZE, fontweight="bold")
+            ax.grid(True, alpha=0.3, linestyle="-", linewidth=0.5)
+            ax.set_ylim(0, 105)  # Werte sind zwischen 0 und 100%, mit etwas Platz oben
+            ax.set_xlim(0, TIMEOUT + 25)  # Platz für Timeout-Linie und Beschriftung
+
+            # Schriftgröße der Achsen-Zahlen anpassen
+            ax.tick_params(axis="both", which="major", labelsize=ACHSEN_FONT_SIZE)
+
+            # Horizontale Linie bei 100% hinzufügen
+            ax.axhline(
+                y=100,
+                color="red",
+                linestyle="--",
+                alpha=0.6,
+                linewidth=1.5,
+            )
+
+            # Vertikale Linie bei Timeout hinzufügen
+            ax.axvline(
+                x=TIMEOUT,
+                color="red",
+                linestyle="--",
+                alpha=0.7,
+                linewidth=1.5,
+            )
+
+            # Beschriftung für die Timeout-Linie
+            ax.text(
+                TIMEOUT + 10,
+                0.5,
+                f"Timeout ({TIMEOUT}s)",
+                rotation=90,
+                verticalalignment="center",
+                horizontalalignment="left",
+                fontsize=ACHSEN_FONT_SIZE,
+                color="red",
+                alpha=0.8,
+            )
+
+        # Verstecke überschüssige Subplots
+        for idx in range(n_instances, len(axes)):
+            axes[idx].set_visible(False)
+
+        # Entferne Legenden von allen Subplots
+        for ax in axes[:n_instances]:
+            if ax.get_legend():
+                ax.get_legend().remove()
+
+        handel_names = {"Ortools-1": "Durchschnitt", "Ortools-2": "Min-Max"}
+
+        # Eine gemeinsame Legende für die gesamte Figur
+        if n_instances > 0:
+            handles, labels = axes[0].get_legend_handles_labels()
+            if handles:
+                # Update labels mit benutzerdefinierten Namen
+                updated_labels = []
+                for label in labels:
+                    updated_labels.append(handel_names.get(label, label))
+
+                fig.legend(
+                    handles,
+                    updated_labels,
+                    loc="upper center",
+                    bbox_to_anchor=(0.5, 0.0),
+                    ncol=min(3, len(handles)),  # Maximal 3 Einträge pro Zeile
+                    fontsize=LEGENDE_FONT_SIZE,
+                    frameon=True,
+                    fancybox=True,
+                    shadow=True,
+                )
+
+        # Layout optimieren
+        fig.tight_layout()
+
+        # Speichere das Diagramm mit Dateinummer
+        output_path = os.path.join(figure_path, f"eval_progression_{file_number}.pdf")
+        fig.savefig(output_path, dpi=300, bbox_inches="tight")
+        plt.close()  # Schließe die Figur um Speicher zu sparen
+
+        logging.info(
+            f"Diagramm für Dateinummer '{file_number}' wurde gespeichert unter: {output_path}"
+        )
 
 
 def gesamt():
@@ -303,7 +431,6 @@ def gesamt():
             },
         ]
     }
-
     ri = Run_Algbench(
         inst_path=path,
         outer_parameter=outer_parameter,
