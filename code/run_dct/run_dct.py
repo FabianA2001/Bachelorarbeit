@@ -244,6 +244,7 @@ def cadical_algorithm(graph, nodes=None):
 
     solution = solver.solve({"timeout": -1, "args": asdict(para)})
     logging.info(f"solution found: {solution.get('success', False)}")
+    logging.info(f"solution: {solution}")
     if nodes is None:
         return
     SAVE = "cadical_figures"
@@ -323,7 +324,7 @@ def run_algo():
         os.path.dirname(__file__),
         "eval_instance",
         "d_flips",
-        "000_d_flips_30.json",
+        "002_d_flips_impossible_move_30.json",
     )
 
     logging.info(f"Loading nodes from {PATH}")

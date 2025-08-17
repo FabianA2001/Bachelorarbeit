@@ -986,7 +986,7 @@ std::tuple<Vars_List, std::vector<Vars_List>, int> cadical_wrapper(int number_va
     if (!result || !*result)
     {
         std::cerr << "No solution found" << std::endl;
-        return std::make_tuple(Vars_List{}, std::vector<Vars_List>{}, 0);
+        return std::make_tuple(Vars_List{}, propagator.get_vars_saved(), counter);
     }
     else
     {

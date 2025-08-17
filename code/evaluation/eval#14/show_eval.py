@@ -5,6 +5,7 @@ from dc_triangulation import Cadical, Cadical_Parameter, Run_Algbench
 
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
+lokal_benchmark = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
 outer_parameter = {
@@ -29,6 +30,7 @@ RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
+    path_benchmark=lokal_benchmark,
     # host=["algry01", "algry02", "algry03", "algry04"],
 )
 if __name__ == "__main__":
