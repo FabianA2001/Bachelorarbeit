@@ -155,7 +155,7 @@ def draw_with_set_false(
             edge_colors.append(graph_const.EDGE_COLOR_SET_FALSE)
             edge_widths.append(0.5)  # Thinner width for show_false edges
             edge_alphas.append(
-                0.2
+                0.1
             )  # Lower alpha (more transparent) for show_false edges
 
     # Zeichne den Graphen

@@ -36,10 +36,12 @@ else:
         st.error("Die Tabelle ist leer. Bitte überprüfen Sie die Eingabedaten.")
         st.stop()
 
-    df["logging"] = df["logging"].apply(lambda x: "\n".join(k["msg"] for k in x))
+    df = df[df["solver"] == "Cadical"]
 
     # # Filtere nur Zeilen wo "Glucose42" in args enthalten ist
     # df = df[df["args"].astype(str).str.contains("Glucose42", na=False)]
+
+    # Filter for Cadical solver only
 
     # df = df[
     #     df["host"].isin(
@@ -48,6 +50,8 @@ else:
     # ]
 
     # df = df[df["whole_runtime"] > df["timeout"]]
+
+    df["logging"] = df["logging"].apply(lambda x: "\n".join(k["msg"] for k in x))
 
     df.sort_values(
         by=["solver", "instance", "file"],

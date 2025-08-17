@@ -161,7 +161,7 @@ def sat_algorithm(graph):
         intersection=True,
         degree_atleast=True,
         fix_hull=True,
-        # exclude_edges=True,
+        exclude_edges=True,
         all_edges=True,
         # exclude_edges=True,
     )
@@ -322,8 +322,8 @@ def run_algo():
     PATH = os.path.join(
         os.path.dirname(__file__),
         "eval_instance",
-        "greedy",
-        "022_greedy_impossible_move_80.json",
+        "d_flips",
+        "000_d_flips_30.json",
     )
 
     logging.info(f"Loading nodes from {PATH}")
@@ -339,10 +339,10 @@ def run_algo():
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     # sat_algorithm(graph)
-    # cadical_algorithm(graph, nodes)
+    cadical_algorithm(graph, nodes)
     # count_algorithm(graph)
     # sat_Tri_algorithm(graph)
-    ortools_algorithm(graph)
+    # ortools_algorithm(graph)
     # ortools_tri_algorithm(graph)
     # gurobi_tri_algorithm(graph)
     # gurobi_algorithm(graph)
@@ -350,7 +350,7 @@ def run_algo():
 
     # graph.add_all_possible_edges(True)
     # logging.info(f"evluation: {graph.evaluate()}")
-    # graph.show_and_save()
+    graph.show_and_save()
 
 
 def permute_instance():

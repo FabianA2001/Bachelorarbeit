@@ -8,8 +8,9 @@
 #define PRINT 0 // Enable debug printing
 
 // Constants for SVG visualization
-const double SCALE_FACTOR = 100.0;
+// const double SCALE_FACTOR = 100.0;
 // const double SCALE_FACTOR = 1;
+const double SCALE_FACTOR = 0.1;
 const double NODE_RADIUS = 5.0;
 static int counter = 0;
 
@@ -770,66 +771,100 @@ public:
                     }
 
                     std::stringstream info;
-                    std::vector<Point_2> i_half_one, h_half_one, i_half_two, h_half_two;
 
 #if PRINT
                     info << "------------------------------------------------------" << "\n";
                     info << "Checking edge: " << hull_vertices[x] << " - " << hull_vertices[y] << "\n";
                     info << "------------------------------------------------------" << "\n";
 #endif
+                    std::vector<Point_2> i_half_one, h_half_one, i_half_two, h_half_two;
 
-                    for (const auto &v : inner_vertices)
+                    // Split hull vertices from x to y (clockwise)
+                    for (size_t i = x; i != y; i = (i + 1) % hull_vertices.size())
                     {
-                        CGAL::Orientation orient = CGAL::orientation(hull_vertices[x], hull_vertices[y], v);
-                        if (orient == CGAL::LEFT_TURN)
-                        {
-                            i_half_one.push_back(v);
-#if PRINT
-                            info << "Added to i_half_one (LEFT_TURN): " << v << "\n";
-#endif
-                        }
-                        else if (orient == CGAL::RIGHT_TURN)
-                        {
-                            i_half_two.push_back(v);
-#if PRINT
-                            info << "Added to i_half_two (RIGHT_TURN): " << v << "\n";
-#endif
-                        }
-                        else
-                        {
-                            i_half_one.push_back(v);
-                            i_half_two.push_back(v);
-#if PRINT
-                            info << "Added to both i_half_one and i_half_two (COLLINEAR): " << v << "\n";
-#endif
-                        }
+                        h_half_one.push_back(hull_vertices[i]);
                     }
-                    for (const auto &v : hull_vertices)
+                    h_half_one.push_back(hull_vertices[y]); // Include y
+
+                    // Split hull vertices from y to x (clockwise)
+                    for (size_t i = y; i != x; i = (i + 1) % hull_vertices.size())
                     {
-                        CGAL::Orientation orient = CGAL::orientation(hull_vertices[x], hull_vertices[y], v);
-                        if (orient == CGAL::LEFT_TURN)
-                        {
-                            h_half_one.push_back(v);
-#if PRINT
-                            info << "Added to h_half_one (LEFT_TURN): " << v << "\n";
-#endif
-                        }
-                        else if (orient == CGAL::RIGHT_TURN)
-                        {
-                            h_half_two.push_back(v);
-#if PRINT
-                            info << "Added to h_half_two (RIGHT_TURN): " << v << "\n";
-#endif
-                        }
-                        else
-                        {
-                            h_half_one.push_back(v);
-                            h_half_two.push_back(v);
-#if PRINT
-                            info << "Added to both h_half_one and h_half_two (COLLINEAR): " << v << "\n";
-#endif
-                        }
+                        h_half_two.push_back(hull_vertices[i]);
                     }
+                    h_half_two.push_back(hull_vertices[x]); // Include x
+
+                    // Populate inside vertices for both halves using convex hull containment test
+                    // Helper function for cross product calculation
+                    auto cross = [](const Point_2 &p1, const Point_2 &p2, const Point_2 &p) -> double
+                    {
+                        return CGAL::to_double((p2.x() - p1.x()) * (p.y() - p1.y()) - (p2.y() - p1.y()) * (p.x() - p1.x()));
+                    };
+
+                    // Helper function to test if point is in convex hull
+                    auto pointInConvexHull = [&cross](const std::vector<Point_2> &hull, const Point_2 &p) -> bool
+                    {
+                        int n = hull.size();
+                        if (n < 3)
+                            return false; // no valid hull
+
+                        // Check if all cross products have the same sign
+                        int sign = 0;
+                        for (int i = 0; i < n; i++)
+                        {
+                            Point_2 a = hull[i];
+                            Point_2 b = hull[(i + 1) % n];
+                            double cp = cross(a, b, p);
+
+                            if (std::abs(cp) < 1e-9)
+                                continue; // on the edge
+
+                            if (sign == 0)
+                            {
+                                sign = (cp > 0 ? 1 : -1);
+                            }
+                            else
+                            {
+                                if ((cp > 0 ? 1 : -1) != sign)
+                                    return false;
+                            }
+                        }
+                        return true;
+                    };
+
+                    for (const auto &inner_vertex : inner_vertices)
+                    {
+                        // Test which half of the convex hull contains the inner vertex
+                        bool in_half_one = pointInConvexHull(h_half_one, inner_vertex);
+                        bool in_half_two = pointInConvexHull(h_half_two, inner_vertex);
+
+                        if (in_half_one && !in_half_two)
+                        {
+                            i_half_one.push_back(inner_vertex);
+                        }
+                        else if (!in_half_one && in_half_two)
+                        {
+                            i_half_two.push_back(inner_vertex);
+                        }
+                        else if (in_half_one && in_half_two)
+                        {
+                            // // Point is in both halves - this should not happen for a proper division
+                            // std::cerr << "Error: Inner vertex " << inner_vertex
+                            //           << " is contained in both halves of the convex hull!" << std::endl;
+                            // assert(false && "Inner vertex found in both halves of convex hull");
+                            i_half_one.push_back(inner_vertex);
+                            i_half_two.push_back(inner_vertex);
+                        }
+                        // else
+                        // {
+                        //     // Point is in neither half - this is an error for inner vertices
+                        //     std::cerr << "Error: Inner vertex " << inner_vertex
+                        //               << " is not contained in either half of the convex hull!" << std::endl;
+                        //     std::cerr << "Hull half one size: " << h_half_one.size()
+                        //               << ", Hull half two size: " << h_half_two.size() << std::endl;
+                        //     assert(false && "Inner vertex not found in any half of convex hull");
+                        // }
+                    }
+
                     if (i_half_one.empty() || i_half_two.empty())
                     {
                         continue; // Skip if one of the halves is empty
@@ -839,11 +874,10 @@ public:
 
 #if PRINT
                         info << "can exclude(" << arrangement_counter << ") edge: " << hull_vertices[x] << " - " << hull_vertices[y] << "\n";
-#endif
-
                         std::stringstream filename;
                         filename << "arrangement_" << std::setfill('0') << std::setw(4) << arrangement_counter++ << ".svg";
                         save_arrangement_as_svg(state_tracker.arr, state_tracker.edges, filename.str());
+#endif
                         std::vector<Lit> reason;
                         for (Lit l : state_tracker.get_observed_trail())
                         {
@@ -897,15 +931,15 @@ public:
 
 int ExamplePropagator::arrangement_counter = 0;
 
-std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
-                                                             int number_edges_vars,
-                                                             std::vector<Vars_List> clauses,
-                                                             std::vector<Point_raw> nodes,
-                                                             std::vector<Edge_raw> edges,
-                                                             std::unordered_map<std::string, int> node_to_sdegree,
-                                                             std::unordered_map<int, std::vector<int>> intersections,
-                                                             bool save_state,
-                                                             bool optimize_propagation)
+std::tuple<Vars_List, std::vector<Vars_List>, int> cadical_wrapper(int number_vars,
+                                                                   int number_edges_vars,
+                                                                   std::vector<Vars_List> clauses,
+                                                                   std::vector<Point_raw> nodes,
+                                                                   std::vector<Edge_raw> edges,
+                                                                   std::unordered_map<std::string, int> node_to_sdegree,
+                                                                   std::unordered_map<int, std::vector<int>> intersections,
+                                                                   bool save_state,
+                                                                   bool optimize_propagation)
 {
 
     // if (optimize_propagation)
@@ -952,14 +986,16 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
     if (!result || !*result)
     {
         std::cerr << "No solution found" << std::endl;
-        return std::make_pair(Vars_List{}, std::vector<Vars_List>{});
+        return std::make_tuple(Vars_List{}, std::vector<Vars_List>{}, 0);
     }
     else
     {
         std::cout << "Solution found" << std::endl;
+#if PRINT
         std::stringstream filename;
         filename << "arrangement_" << std::setfill('0') << std::setw(4) << propagator.arrangement_counter++ << ".svg";
         save_arrangement_as_svg(propagator.state_tracker.arr, propagator.state_tracker.edges, filename.str());
+#endif
 
         auto model = solver.get_model();
         std::vector<int> result = {};
@@ -975,7 +1011,7 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
             }
         }
         std::cerr << "gefundene Propergationen: " << counter << std::endl;
-        return std::make_pair(result, propagator.get_vars_saved());
+        return std::make_tuple(result, propagator.get_vars_saved(), counter);
         // std::vector<Vars_List> leer;
         // return std::make_pair(result, leer);
     }

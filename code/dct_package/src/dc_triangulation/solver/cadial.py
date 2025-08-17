@@ -166,7 +166,7 @@ class Cadical(Solver):
                     continue
                 intersections[edge_index].append(other_edge_index)
 
-        vars, debug_vars = self.time_solver(cadical_wrapper)(
+        vars, debug_vars, counter = self.time_solver(cadical_wrapper)(
             self.max_used,
             len(self.edges),
             self.clauses,
@@ -178,15 +178,15 @@ class Cadical(Solver):
             parameter.optimize_propagation,
         )
 
-        assert len(vars) > 1, "keine Lösung gefunden"
-        for i in range(len(self.edges)):
-            if vars[i] == 1:
-                # self.logger.info(f"var{i}: {vars[i]}")
-                self.graph.activate_edge(self.edges[i])
-            # else:
-            # self.logger.info(f"var{i}: {vars[i]}")
+        sucess = False
+        if len(vars) > 1:
+            sucess = True
+            for i in range(len(self.edges)):
+                if vars[i] == 1:
+                    self.graph.activate_edge(self.edges[i])
 
         return {
-            "success": True,
+            "success": sucess,
             "debug_vars": debug_vars,
+            "counter": counter,
         }
