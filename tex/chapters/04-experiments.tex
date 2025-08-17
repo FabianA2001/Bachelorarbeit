@@ -50,7 +50,7 @@ In den folgenden Experimenten wird für jeden Lauf die Knotenmenge fünfmal in u
 
 \section{Mehrmalige Durchläufe}
 % (Eval7) 
-In diesem Experiment wird untersucht, ob sich bei mehrfachen Durchläufen derselben Instanz mit demselben Solver sich die Laufzeit verändert.
+In diesem Experiment wird untersucht, ob sich bei mehrfachen Durchläufen derselben Instanz mit demselben Solver und gleichen Parametern sich die Laufzeit verändert.
 Auch hier wurden Instanzen mit 60 bis 90 Knoten betrachtet.
 Als Beschränkungen kamen die Überschneidungsbeschränkung und die Gradbeschränkung zum Einsatz.
 In~\cref{fig:eval7:gurobi} und~\cref{fig:eval7:sat} ist zu erkennen, dass alle Durchläufe die gleichen Laufzeiten aufweisen.
@@ -69,6 +69,14 @@ Da bei größeren Knotenmengen der Arbeitsspeicher zu klein war.
 Als zusätzliche Bedingung wurde die Überschneidungsbeschränkung verwendet.
 Für die Exakte Methode sieht man in~\cref{fig:eval5_exact} das \emph{sequential counters} die besten Ergebnisse erzielen.
 Auch für den Mindest Sollgrad ist \emph{sequential counters} die beste Variante wie man in~\cref{fig:eval5_atleast} sieht.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{eval5/gesamt.pdf}
+    \caption[Vergleich von Kardinalitätscodierungen für SAT-Solver]{In der Abbildung werden für alle Instanzen Arten die drei Kardinalitätsbeschränungen vergliechen. Die \emph{subset} Methode ist die schlechteste, da sie nur für kleine Instanzen funktioniert. Die anderen beiden Methoden unterscheiden sich nicht signifikant.}
+    \label{fig:eval5_gesamt}
+\end{figure}
+
 
 Der Vergleich der drei Methoden ist in~\cref{fig:eval5_gesamt} zu sehen.
 Hier ist klar erkennbar das \emph{subset} die schlechteste Methode ist.
@@ -95,11 +103,11 @@ Das Ziel besteht darin, den Solver zu identifizieren, der die besten Ergebnisse 
 \section{Grund Solver}
 % (Eval1)
 \label{sec:eval1:grund_solver}
-In diesem Experiment werden alle möglichen Beschränkungen an die Solver übergeben und einzeln getestet.
+In diesem Experiment werden alle möglichen Bedingungen an die Solver übergeben und einzeln getestet.
 Untersucht werden die Solver SAT, OrTools und Gurobi jeweils mit der Kantenformulierung sowie der Dreiecksformulierung.
-Für alle Durchläufe wurden die Überschneidungsbeschränkung, die Gradbeschränkung und das Ausschließen von Kanten angewendet.
-Bei der Kantenformulierung wurde zusätzlich das Fixieren der Hülle und einzelner Kanten berücksichtigt.
-Zusätzlich kam die \emph{alternative Kanten} Formulierung zum Einsatz.
+Für alle Durchläufe wurden die Überschneidungsbeschränkung und die Gradbeschränkung genutzt.
+Bei der Kantenformulierung wurden das Fixieren und Ausschließen von Kanten sowie die \emph{alternative Kantenformulierung} getestet.
+Bei der Dreiecksformulierung wurde nur das Ausschließen von Kanten getestet.
 Die Instanzengröße liegt bei 30 bis 120 Knoten.
 
 \begin{figure}[htb]
@@ -109,6 +117,7 @@ Die Instanzengröße liegt bei 30 bis 120 Knoten.
     \label{fig:eval1:gesamt}
 \end{figure}
 
+\fabian{Finale Bilder analysieren}
 
 \section{Kanten vorab berechnen}
 % (Eval6)
@@ -120,11 +129,14 @@ In diesem Experiment wurde ausschließlich der SAT Solver verwendet, da SAT und 
 Als weitere Beschränkungen kamen nur die Überschneidungsbeschränkung und die Gradbeschränkung zum Einsatz.
 Für die Knotengröße wurden Instanzen mit 80 bis 120 Knoten gewählt.
 
+\fabian{Finale Bilder analysieren}
+
 \section{Ja/Nein getrennt}
 % Eval12
 In diesem Experiment wird untersucht, ob der SAT Solver bei Ja-Instanzen oder bei Nein-Instanzen schneller ist.
 Es wird nur der SAT Solver mit den besten Parametern aus~\cref{sec:eval1:grund_solver} verwendet.
 Die Knotenzahl liegt zwischen 80 und 120.
+\fabian{Finale Bilder analysieren}
 
 \section{Best Solver}
 % (Eval13)
@@ -132,6 +144,7 @@ In diesem Experiment wird geprüft, welche Instanzen der Solver lösen kann, wen
 Dafür wurden Instanzen mit zunehmender Größe generiert, bis der Solver diese nicht mehr lösen konnte.
 Die Knotenzahl lag am Ende zwischen 130 und 200.
 Es wird erneut der beste Solver aus~\cref{sec:eval1:grund_solver} verwendet.
+\fabian{Finale Bilder analysieren}
 
 
 \section{Zielfunktion}
@@ -152,30 +165,46 @@ Der erste Schritt war es, die Teilinstanzen, mit denen die \emph{Propagation} au
     \centering
     \includegraphics[width=1\linewidth]{cdcl/propergation.pdf}
     \caption{Eine Teilinstanz bei einem \emph{Propagation} Aufruf. Blau auf false gesetzt, grün auf true. Grüner Knoten Sollgrad erfüllt. Zahl in Knoten ist Sollgrad.
-	TODO schön aufschreiben mit finalem Bild und erklären das von rand ausgehend fertig}
+    TODO schön aufschreiben mit finalem Bild und erklären das von rand ausgehend fertig}
     \label{fig:cdcl:propagation}
 \end{figure}
+
 In~\cref{fig:cdcl:propagation} ist eine beispielhafte Teilinstanz dargestellt.
-Bei der Visualisierung ist aufgefallen, dass oft vom Rand ausgehend die Instanz gelöst wurde, also es meistens einen \emph{Arm} gab, welcher in die Mitte der Instanz reichte.
-Selten gab es einzelne Konstrukte in der Mitte der Instanz mit keinen Verbindungen zum Rand.
+Bei der Visualisierung wurde festgestellt, dass es häufig zwei Arten von Teilinstanzen gibt.
+Die erste Variante bildet ein Konstrukt, das eine Verbindung zum Rand besitzt.
+In diesem Konstrukt ist meist eine gültige gradbeschränkte Triangulierung vorhanden.
+Die zweite Variante besteht aus einzelnen Kanten, die isoliert in einer Fläche liegen.
 
 \subsection{Implementierung}
-Die Idee der \emph{Propagation} ist es, die Bedingungen aus~\cref{sec:exclude_edges} zum Halbieren der Instanz zu verwenden.
-Der Vorteil an den Teilinstanzen ist, dass der \emph{Arm} die Instanz meist schon irgendwo zum Teil halbiert.
-Es können also Kanten getestet werden, welche die Halbierung abschließen.
-Dafür wird mit einem Arrangement verfolgt, welche Kanten aktiv sind.
-Es muss nur darauf geachtet werden, dass bei jeder neuen Entscheidungsebene das Arrangement gespeichert und einer Ebene zugeordnet wird.
-Sollte es zu einem Konflikt kommen, wird das Arrangement zu der richtigen Entscheidungsebene zurückgesetzt.
-Wenn die \emph{Propagation} aufgerufen wird, können alle Faces des Arrangements betrachtet werden.
-Hierbei sind nur Faces relevant, welche mehr als drei Kanten haben.
-Bei diesen können alle Teilenden Kanten erzeugt werden, indem alle Zweierkombinationen der Randknoten des Faces betrachtet werden.
-Dadurch wird das Face in zwei Hälften geteilt und die Kante zwischen den Knoten der Zweierkombination kann getestet werden.
-Sollte die Kante zu einem Konflikt führen, kann das zugehörige Literal \(l\) auf \emph{falsch} gesetzt werden.
-Als Begründung kann folgende Klausel verwendet werden:
+
+Die Idee der \emph{Propagation} besteht darin, die in~\cref{sec:exclude_edges} beschriebenen Bedingungen zum Halbieren der Instanz anzuwenden.
+Die \emph{Propagation} ist dabei insbesondere für die erste Variante der Teilinstanzen optimiert.
+Der Vorteil dieser Teilinstanzen ist, dass die gesamte Instanz bereits teilweise halbiert ist.
+Daher können gezielt Kanten getestet werden, die diese Halbierung vervollständigen.
+
+Es wird angenommen, dass die Hülle fixiert wurde und alle Kanten, die die gesamte Instanz halbieren, bereits getestet wurden.
+Der Grund hierfür ist, dass die Hülle eine geeignete Fläche bietet, mit der alle Punkte betrachtet werden können.
+% Alle möglichen Kanten werden vor der \emph{Propagation} ausgeschlossen, damit sie durch Konflikte und Backtracking nicht mehrfach ausgeschlossen werden können.
+
+Zur Umsetzung wird mithilfe eines Arrangements verfolgt, welche Kanten aktuell aktiv sind.
+Es ist darauf zu achten, dass bei jeder neuen Entscheidungsebene das Arrangement gespeichert und eindeutig einer Ebene zugeordnet wird.
+Tritt ein Konflikt auf, wird das Arrangement auf die entsprechende Entscheidungsebene zurückgesetzt.
+
+Wird die \emph{Propagation} aufgerufen, können alle Flächen des Arrangements betrachtet werden.
+Relevant sind dabei nur Flächen, die mehr als drei Kanten besitzen.
+Zusätzlich kann die unbegrenzte Fläche ausgeschlossen werden, da alle Punkte durch die Hülle eingeschlossen sind.
+Für diese Flächen können dann alle teilenden Kanten erzeugt werden, indem sämtliche Zweierkombinationen der Randknoten betrachtet werden.
+Dadurch wird die Fläche in zwei Hälften geteilt und die Kante kann getestet werden.
+
+Vor dem Testen können alle Kanten übersprungen werden, die bereits festgelegt wurden oder keine gültigen Kanten sind.
+Für die Punktzuordnung kann zu Beginn jeder \emph{Propagation} jeder Punkt einer Fläche zugeordnet werden.
+Sollte dann eine Kante getestet werden, können alle Punkte der zugehörigen Fläche betrachtet und ähnlich wie in~\cref{sec:intersection_edges} mithilfe von \emph{Rechtsknicks} und \emph{Linksknicks} einer Teilhälfte zugeordnet werden.
+
+Führt das Testen einer Kante zu einem Konflikt, kann das zugehörige Literal \(l\) auf \emph{falsch} gesetzt werden. Als Begründung kann folgende Klausel verwendet werden
 \[
 (\overline{l} \lor \bigvee_{e \in E_A}\overline{x_e})
 \]
-Wobei \(E_A\) die Menge der aktiven Kanten ist.
+wobei \(E_A\) die Menge der aktiven Kanten bezeichnet.
 
 \subsection{Experiment}
 TODO Ich habe den Propergate naiv implemenitert allerdings läuft er noch nicht ganz.
@@ -194,24 +223,15 @@ Für alle drei Teile werden Instanzen der größe 30 bis 120 Knoten betrachtet.
 % (Eval8)
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.48\linewidth]{figures/eval8/delaunay_009_delaunay_80_0.pdf}\hfill
-    \includegraphics[width=0.48\linewidth]{figures/eval8/delaunay_009_delaunay_80_1.pdf}
-    \caption{Eval8 Anzahl Lösungen Delaunay}
+    \includegraphics[width=0.48\linewidth]{eval8/delaunay_008_delaunay_50_0.pdf}\hfill
+    \includegraphics[width=0.48\linewidth]{eval8/delaunay_008_delaunay_50_1.pdf}
+    \caption[zwei verschiedene Lösungen für eine Instanz]{In dem Bild sind zwei verschiedene Lösungen für eine Instanz zu sehen. In Grün sind die Kanten zu sehen welche in der Instanz unterschiedlich sind. In Blau die gleichen Kanten. Die Zahlen in den Knoten geben den Sollgrad an. }
 \end{figure}
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.48\linewidth]{figures/eval8/greedy_009_greedy_80_0.pdf}\hfill
-    \includegraphics[width=0.48\linewidth]{figures/eval8/greedy_009_greedy_80_1.pdf}
-    \caption{Eval8 Anzahl Lösungen Greedy}
-    \label{fig:eval8:left}
-\end{figure}
-Es ist zu sehen das fast alle Instanzen nur eine Lösungen haben.
+In~\cref{tab:triangulation_results} ist zu sehen das fast alle Instanzen nur eine Lösungen haben.
 Vorallem ist aber zu sehen das es keinen Zusammenhang zwischen der Anzahl der Lösungen und der Instanze gibt.
-% TODO Tabelle in Anhang einfügen und verweisen
 Es kann also davon ausgegangen werden das die Anzahl der Lösungen keinen Einfluss auf die Schwierigkeit der Instanzen hat.
-Interesannter weiße ist zu sehen das die Kanten welche in einer Instanze unterschiedliche sind Lokal sind.
+Interesannter weiße ist zu sehen das die Kanten welche in einer Instanze unterschiedliche sind klar einem Bereich zugeordnet werden könne.
 Wie man in~\cref{fig:eval8:left} sieht, sind die Kanten in der linken Hälfte der Instanz unterschiedlich, während die rechte Hälfte keine Unterschiede aufweist.
-% TODO besseren Schluss ziehen
 
 \subsection{Grad Verteilung}
 In diesem Experiment wird Probiert anhand der Gradverteilung der Knoten zu erkennen ob es einen Zusammenhang zwischen der Schwierigkeit und dem Grad gibt.
@@ -229,7 +249,8 @@ Es ist zu erkennen das Vorallem Random und Iterativ eine Rechtsschiefe Verteilun
 Dazu passend hat Delaunay eher eine zentrierte Verteilung. 
 Auch das Delaunay-Flips Rechtsschiefer als Delaunay ist würde passen, da Delaunay-Flips einfacher als Delaunay sind.
 Leider lässt sich an Greedy erkennen das er keinen direkten Zusammenhang zwischen der Gradverteilung und der Schwierigkeit gibt.
-Greedy ist von der Zentrierung zwischen Delaunay und Delaunay-Flips einzuordnen aber die Greedy Instanzen sind eindeutig einfacher als Delaunay-Flips
+Greedy ist von der Zentrierung zwischen Delaunay und Delaunay-Flips einzuordnen aber die Greedy Instanzen sind eindeutig einfacher als Delaunay-Flips.
+TODO anpassen greedy ist warscheinlich schwierig
 
 
 \subsection{Kantenlängen Verteilung}

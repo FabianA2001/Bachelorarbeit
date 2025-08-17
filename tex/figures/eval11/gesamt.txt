@@ -1,0 +1,33 @@
+
+Args Legend Mapping (by Solver):
+==================================================
+
+Ortools:
+|#1 in 300s: 
+||intersection:                       True
+||all_edges:                          True
+||degree:                             False
+||fix_hull:                           True
+||number_edges:                       False
+||evaluation_direction:               True
+||save_state_after_solution:          True
+||min_max_direction:                  False
+||maximize_edges:                     False
+||exclude_edges:                      False
+||fix_edges:                          False
+||run_num:                            0
+
+|#2 in 300s: 
+||intersection:                       True
+||all_edges:                          True
+||degree:                             False
+||fix_hull:                           True
+||number_edges:                       False
+||evaluation_direction:               False
+||save_state_after_solution:          True
+||min_max_direction:                  True
+||maximize_edges:                     False
+||exclude_edges:                      False
+||fix_edges:                          False
+||run_num:                            0
+==================================================

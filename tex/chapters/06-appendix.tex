@@ -82,3 +82,37 @@
     \caption{Eval1 Gurobi}
     \label{fig:eval1:gurobi}
 \end{figure}
+
+\chapter{Anzahl Lösungen}
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|l|c|c|c|c|c|}
+\hline
+Knoten Anzahl & Delaunay Flips & Delaunay & Greedy & Iterative & Random \\
+\hline
+30\_1 & 1 & 1 & 1 & 1 & 1 \\
+30\_2 & 1 & 1 & 1 & 1 & 1 \\
+40\_1 & 1 & 1 & 1 & 1 & 1 \\
+40\_2 & 1 & 1 & 1 & 1 & 1 \\
+50\_1 & 1 & 2 & 1 & 1 & 1 \\
+50\_2 & 1 & 1 & 1 & 1 & 1 \\
+60\_1 & 1 & 1 & 1 & 1 & 1 \\
+60\_2 & 1 & 1 & 1 & 1 & 1 \\
+70\_1 & 1 & 1 & 1 & 1 & 1 \\
+70\_2 & 1 & 1 & 1 & 1 & 1 \\
+80\_1 & 1 & 1 & 1 & 1 & 1 \\
+80\_2 & 1 & 1 & 1 & 1 & 1 \\
+90\_1 & 1 & -1 & 1 & 1 & 1 \\
+90\_2 & 1 & -1 & 1 & 1 & 1 \\
+100\_1 & 1 & -1 & -1 & 1 & 1 \\
+100\_2 & 1 & -1 & -1 & 1 & 1 \\
+110\_1 & -1 & -1 & -1 & 1 & 1 \\
+110\_2 & -1 & -1 & -1 & 1 & 1 \\
+120\_1 & -1 & -1 & -1 & 1 & 1 \\
+120\_2 & -1 & -1 & -1 & 1 & 1 \\
+\hline
+\end{tabular}
+\caption{In dieser Tabelle werden die Anzahl der Lösungen für die verschiedenen Ansätze dargestellt.In der erste Spalte werden die Anzahl der Knoten der Instanz angegeben. Hierbei wurde jede Knotengröße zwei mal getestet. In den Anderen Spalten sind jeweils die Werte für eine Instanz gegeben. Die Werte -1 bedeuten, dass nach einer Stunde ein Timeout erreicht wurde und somit keine Lösung gefunden wurde konnte. Auffällig ist das es nur eine einzige Instanz gibt welche zwei Lösungen besitzt.}
+\label{tab:triangulation_results}
+\end{table}
+
