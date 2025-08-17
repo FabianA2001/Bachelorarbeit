@@ -150,8 +150,36 @@ Es wird erneut der beste Solver aus~\cref{sec:eval1:grund_solver} verwendet.
 \section{Zielfunktion}
 \label{sec:eval11}
 % (Eval11)
+\fabian{@Michael du meintest ich soll hier die Bound mit im Diagramm anzeigen. Ich weiß grade nicht wie ich das machen soll da er auf einer Achse mit Prozent nicht sinnvoll angezeigt werden kann}
+\fabian{Wie soll ich die Diagramme aufbauen? Ich habe akutell Nur Greedy 120 Knoten instanzen und dann jetzt alle vier als eigene Diagramme.}
 In diesem Experiment werden die drei verschiedenen Optimierungsansätze vergleichen.
 Erste Ansatz ist der Flips Ansatz, die anderen beiden Ansätze sind die Zielfunktionen von OrTools
+
+Der Flips Ansatz schafft Instanzen mit Maximal 8 Knoten. 
+Dementsprechend wird er im weitern nicht betrachtet.
+Alle anderen Druchläufe in diesem Experiment wurden mit 120 Knoten durchgeführt.
+
+Im folgenden werden Ja-Instanzen und Nein-Instanzen getrennt betrachtet.
+Bei Ja-Instenzen ist interesannt wie schnell die Instanze gelöst werden kann und ab wann gute Ergebnisse erzielt werden.
+Bei den Nein-Intanzen ist hingegen interesannter wie nah der Solver an eine Lösung kommt.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{eval11/eval_progression_38.pdf}
+    \caption{eval11 move}
+    \label{fig:eval11:move}
+\end{figure}
+
+\begin{itemize}
+    \item nur greedy betrachtet
+    \item Min Max bei Ja besser
+    \item Durchschnitt bei Nein besser
+\end{itemize}
+
+\cref{fig:eval11:36}
+\cref{fig:eval11:37}
+\cref{fig:eval11:move}
+\cref{fig:eval11:change}
 
 \section{\emph{Propagation} CDCL}
 Der CDCL Solver namens \emph{CaDiCaL}~\cite{cadical} von Armin Biere ermöglicht es, eine neue Entscheidungsebene mit einer eigenen Funktion zu erzeugen.
