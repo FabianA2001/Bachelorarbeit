@@ -235,8 +235,16 @@ Führt das Testen einer Kante zu einem Konflikt, kann das zugehörige Literal \(
 wobei \(E_A\) die Menge der aktiven Kanten bezeichnet.
 
 \subsection{Experiment}
-TODO Ich habe den Propergate naiv implemenitert allerdings läuft er noch nicht ganz.
-Ich würde hier beschreiben wie viele und welche Kanten er finden konnte da ich für einen Ansatz der Zeitlich relevant ist keine Zeit mehr habe.
+In diesem Experiment wird betrachtet wie viele Erfolgreiche \emph{Propagation} also jene, welche eine Kante ausschließen können, in einer Instanze möglich sind.
+
+Für jede Instanze wird hierfür die Anzahl in~\cref{fig:cdcl:anzahl} dargestellt.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{cdcl/counter_vs_first_node_operation_by_instance.pdf}
+    \caption{Anzahl propergation cdcl}
+    \label{fig:cdcl:anzahl}
+\end{figure}
+\fabian{Bild mit Finalen Daten analysieren}
 
 \section{Instanzen Schwierigkeit}
 In diesem Abschnitt wird Probiert die Schwierigkeit der Instanzen zu bestimmen.
