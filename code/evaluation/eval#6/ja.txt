@@ -1,0 +1,61 @@
+
+Args Legend Mapping (by Solver):
+==================================================
+
+Ortools:
+|#1 in 300s: 
+||intersection:                       True
+||all_edges:                          False
+||degree:                             True
+||fix_hull:                           False
+||number_edges:                       False
+||evaluation_direction:               False
+||save_state_after_solution:          False
+||min_max_direction:                  False
+||maximize_edges:                     False
+||exclude_edges:                      False
+||fix_edges:                          False
+||run_num:                            0
+
+|#2 in 300s: 
+||intersection:                       True
+||all_edges:                          False
+||degree:                             True
+||fix_hull:                           False
+||number_edges:                       False
+||evaluation_direction:               False
+||save_state_after_solution:          False
+||min_max_direction:                  False
+||maximize_edges:                     0.1
+||exclude_edges:                      False
+||fix_edges:                          False
+||run_num:                            0
+
+|#3 in 300s: 
+||intersection:                       True
+||all_edges:                          False
+||degree:                             True
+||fix_hull:                           False
+||number_edges:                       False
+||evaluation_direction:               False
+||save_state_after_solution:          False
+||min_max_direction:                  False
+||maximize_edges:                     0.5
+||exclude_edges:                      False
+||fix_edges:                          False
+||run_num:                            0
+
+|#4 in 300s: 
+||intersection:                       True
+||all_edges:                          False
+||degree:                             True
+||fix_hull:                           False
+||number_edges:                       False
+||evaluation_direction:               False
+||save_state_after_solution:          False
+||min_max_direction:                  False
+||maximize_edges:                     0.8
+||exclude_edges:                      False
+||fix_edges:                          False
+||run_num:                            0
+==================================================
