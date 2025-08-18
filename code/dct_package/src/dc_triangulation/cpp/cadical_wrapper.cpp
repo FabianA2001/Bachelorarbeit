@@ -9,9 +9,11 @@
 
 // Constants for SVG visualization
 // const double SCALE_FACTOR = 100.0;
-const double SCALE_FACTOR = 1;
+// const double SCALE_FACTOR = 1;
+const double SCALE_FACTOR = 0.1;
 const double NODE_RADIUS = 5.0;
 static int counter = 0;
+static int gesamt_counter = 0;
 
 // Helper function to save arrangement as SVG file
 void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment_2> &original_edges, const std::string &filename)
@@ -44,8 +46,8 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         // Find bounds from arrangement vertices
         for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
         {
-            double x = CGAL::to_double(vit->point().x()) * SCALE_FACTOR;
-            double y = CGAL::to_double(vit->point().y()) * SCALE_FACTOR;
+            double x = static_cast<int>(CGAL::to_double(vit->point().x())) * SCALE_FACTOR;
+            double y = static_cast<int>(CGAL::to_double(vit->point().y())) * SCALE_FACTOR;
             min_x = std::min(min_x, x);
             max_x = std::max(max_x, x);
             min_y = std::min(min_y, y);
@@ -57,10 +59,10 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         // Find bounds from original edges
         for (const auto &edge : original_edges)
         {
-            double x1 = CGAL::to_double(edge.source().x()) * SCALE_FACTOR;
-            double y1 = CGAL::to_double(edge.source().y()) * SCALE_FACTOR;
-            double x2 = CGAL::to_double(edge.target().x()) * SCALE_FACTOR;
-            double y2 = CGAL::to_double(edge.target().y()) * SCALE_FACTOR;
+            double x1 = static_cast<int>(CGAL::to_double(edge.source().x())) * SCALE_FACTOR;
+            double y1 = static_cast<int>(CGAL::to_double(edge.source().y())) * SCALE_FACTOR;
+            double x2 = static_cast<int>(CGAL::to_double(edge.target().x())) * SCALE_FACTOR;
+            double y2 = static_cast<int>(CGAL::to_double(edge.target().y())) * SCALE_FACTOR;
 
             min_x = std::min({min_x, x1, x2});
             max_x = std::max({max_x, x1, x2});
@@ -92,10 +94,10 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
         {
             auto curve = eit->curve();
-            double x1 = CGAL::to_double(curve.source().x()) * SCALE_FACTOR - min_x + padding;
-            double y1 = CGAL::to_double(curve.source().y()) * SCALE_FACTOR - min_y + padding;
-            double x2 = CGAL::to_double(curve.target().x()) * SCALE_FACTOR - min_x + padding;
-            double y2 = CGAL::to_double(curve.target().y()) * SCALE_FACTOR - min_y + padding;
+            double x1 = static_cast<int>(CGAL::to_double(curve.source().x())) * SCALE_FACTOR - min_x + padding;
+            double y1 = static_cast<int>(CGAL::to_double(curve.source().y())) * SCALE_FACTOR - min_y + padding;
+            double x2 = static_cast<int>(CGAL::to_double(curve.target().x())) * SCALE_FACTOR - min_x + padding;
+            double y2 = static_cast<int>(CGAL::to_double(curve.target().y())) * SCALE_FACTOR - min_y + padding;
 
             // Flip y-coordinate for SVG (SVG has origin at top-left)
             y1 = height - y1;
@@ -110,10 +112,17 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         svg_file << "<g fill=\"red\">\n";
         for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
         {
-            double x = CGAL::to_double(vit->point().x()) * SCALE_FACTOR - min_x + padding;
-            double y = CGAL::to_double(vit->point().y()) * SCALE_FACTOR - min_y + padding;
+            double x = static_cast<int>(CGAL::to_double(vit->point().x())) * SCALE_FACTOR - min_x + padding;
+            double y = static_cast<int>(CGAL::to_double(vit->point().y())) * SCALE_FACTOR - min_y + padding;
             y = height - y; // Flip y-coordinate
             svg_file << "<circle cx=\"" << x << "\" cy=\"" << y << "\" r=\"" << NODE_RADIUS << "\"/>\n";
+
+            // Add coordinate labels
+            double coord_x = static_cast<int>(CGAL::to_double(vit->point().x()));
+            double coord_y = static_cast<int>(CGAL::to_double(vit->point().y()));
+            svg_file << "<text x=\"" << (x + NODE_RADIUS + 2) << "\" y=\"" << (y - NODE_RADIUS - 2)
+                     << "\" font-family=\"Arial\" font-size=\"10\" fill=\"black\">("
+                     << coord_x << "," << coord_y << ")</text>\n";
         }
         svg_file << "</g>\n";
     }
@@ -123,10 +132,10 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         svg_file << "<g stroke=\"blue\" stroke-width=\"1\" fill=\"none\">\n";
         for (const auto &edge : original_edges)
         {
-            double x1 = CGAL::to_double(edge.source().x()) * SCALE_FACTOR - min_x + padding;
-            double y1 = CGAL::to_double(edge.source().y()) * SCALE_FACTOR - min_y + padding;
-            double x2 = CGAL::to_double(edge.target().x()) * SCALE_FACTOR - min_x + padding;
-            double y2 = CGAL::to_double(edge.target().y()) * SCALE_FACTOR - min_y + padding;
+            double x1 = static_cast<int>(CGAL::to_double(edge.source().x())) * SCALE_FACTOR - min_x + padding;
+            double y1 = static_cast<int>(CGAL::to_double(edge.source().y())) * SCALE_FACTOR - min_y + padding;
+            double x2 = static_cast<int>(CGAL::to_double(edge.target().x())) * SCALE_FACTOR - min_x + padding;
+            double y2 = static_cast<int>(CGAL::to_double(edge.target().y())) * SCALE_FACTOR - min_y + padding;
 
             // Flip y-coordinate for SVG
             y1 = height - y1;
@@ -141,16 +150,29 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
         svg_file << "<g fill=\"blue\">\n";
         for (const auto &edge : original_edges)
         {
-            double x1 = CGAL::to_double(edge.source().x()) * SCALE_FACTOR - min_x + padding;
-            double y1 = CGAL::to_double(edge.source().y()) * SCALE_FACTOR - min_y + padding;
-            double x2 = CGAL::to_double(edge.target().x()) * SCALE_FACTOR - min_x + padding;
-            double y2 = CGAL::to_double(edge.target().y()) * SCALE_FACTOR - min_y + padding;
+            double x1 = static_cast<int>(CGAL::to_double(edge.source().x())) * SCALE_FACTOR - min_x + padding;
+            double y1 = static_cast<int>(CGAL::to_double(edge.source().y())) * SCALE_FACTOR - min_y + padding;
+            double x2 = static_cast<int>(CGAL::to_double(edge.target().x())) * SCALE_FACTOR - min_x + padding;
+            double y2 = static_cast<int>(CGAL::to_double(edge.target().y())) * SCALE_FACTOR - min_y + padding;
 
             y1 = height - y1;
             y2 = height - y2;
 
             svg_file << "<circle cx=\"" << x1 << "\" cy=\"" << y1 << "\" r=\"" << NODE_RADIUS << "\"/>\n";
             svg_file << "<circle cx=\"" << x2 << "\" cy=\"" << y2 << "\" r=\"" << NODE_RADIUS << "\"/>\n";
+
+            // Add coordinate labels for endpoints
+            double coord_x1 = static_cast<int>(CGAL::to_double(edge.source().x()));
+            double coord_y1 = static_cast<int>(CGAL::to_double(edge.source().y()));
+            double coord_x2 = static_cast<int>(CGAL::to_double(edge.target().x()));
+            double coord_y2 = static_cast<int>(CGAL::to_double(edge.target().y()));
+
+            svg_file << "<text x=\"" << (x1 + NODE_RADIUS + 2) << "\" y=\"" << (y1 - NODE_RADIUS - 2)
+                     << "\" font-family=\"Arial\" font-size=\"10\" fill=\"black\">("
+                     << coord_x1 << "," << coord_y1 << ")</text>\n";
+            svg_file << "<text x=\"" << (x2 + NODE_RADIUS + 2) << "\" y=\"" << (y2 - NODE_RADIUS - 2)
+                     << "\" font-family=\"Arial\" font-size=\"10\" fill=\"black\">("
+                     << coord_x2 << "," << coord_y2 << ")</text>\n";
         }
         svg_file << "</g>\n";
     }
@@ -159,7 +181,7 @@ void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment
     svg_file.close();
 
 #if PRINT
-    std::cerr << "Arrangement saved as SVG to: " << full_path << std::endl;
+    // std::cerr << "Arrangement saved as SVG to: " << full_path << std::endl;
     // std::cerr << "Vertices: " << arr.number_of_vertices()
     //           << ", Edges: " << arr.number_of_edges()
     //           << ", Faces: " << arr.number_of_faces() << std::endl;
@@ -178,7 +200,7 @@ struct ObservedLiteralStateTracker
 public:
     using Lit = cdc::CadicalSolver::Lit;
 
-    ObservedLiteralStateTracker(bool save_states_lokal = false, std::vector<Point_raw> nodes = {}, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}) : save_states(save_states_lokal), node_to_sdegree(nodes_to_sdegree)
+    ObservedLiteralStateTracker(bool save_states_lokal = false, std::vector<Point_raw> nodes = {}, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}, std::unordered_map<int, std::vector<int>> intersections = {}) : save_states(save_states_lokal), node_to_sdegree(nodes_to_sdegree), intersections(intersections)
     {
         for (const auto &edge : edges)
         {
@@ -187,10 +209,10 @@ public:
         }
         for (int i = 0; i < this->edges.size(); ++i)
         {
-            std::string key = std::to_string(CGAL::to_double(this->edges[i].source().x())) + "," +
-                              std::to_string(CGAL::to_double(this->edges[i].source().y())) + "," +
-                              std::to_string(CGAL::to_double(this->edges[i].target().x())) + "," +
-                              std::to_string(CGAL::to_double(this->edges[i].target().y()));
+            std::string key = std::to_string(static_cast<int>(CGAL::to_double(this->edges[i].source().x()))) + "," +
+                              std::to_string(static_cast<int>(CGAL::to_double(this->edges[i].source().y()))) + "," +
+                              std::to_string(static_cast<int>(CGAL::to_double(this->edges[i].target().x()))) + "," +
+                              std::to_string(static_cast<int>(CGAL::to_double(this->edges[i].target().y())));
             edge_to_index[key] = i + 1; // +1 to make it 1-based index
         }
 
@@ -211,22 +233,33 @@ public:
 
     Lit get_lit_from_edge(const Segment_2 &edge) const
     {
-        std::string key = std::to_string(CGAL::to_double(edge.source().x())) + "," +
-                          std::to_string(CGAL::to_double(edge.source().y())) + "," +
-                          std::to_string(CGAL::to_double(edge.target().x())) + "," +
-                          std::to_string(CGAL::to_double(edge.target().y()));
+        std::string key = std::to_string(static_cast<int>(CGAL::to_double(edge.source().x()))) + "," +
+                          std::to_string(static_cast<int>(CGAL::to_double(edge.source().y()))) + "," +
+                          std::to_string(static_cast<int>(CGAL::to_double(edge.target().x()))) + "," +
+                          std::to_string(static_cast<int>(CGAL::to_double(edge.target().y())));
+
         auto it = edge_to_index.find(key);
         if (it != edge_to_index.end())
         {
-            return Lit(0);
+            return it->second;
         }
-        return it->second;
+        key = std::to_string(static_cast<int>(CGAL::to_double(edge.target().x()))) + "," +
+              std::to_string(static_cast<int>(CGAL::to_double(edge.target().y()))) + "," +
+              std::to_string(static_cast<int>(CGAL::to_double(edge.source().x()))) + "," +
+              std::to_string(static_cast<int>(CGAL::to_double(edge.source().y())));
+
+        it = edge_to_index.find(key);
+        if (it != edge_to_index.end())
+        {
+            return it->second;
+        }
+        return Lit(0);
     }
 
     int get_sdegree_from_node(const Point_2 &node) const
     {
-        std::string key = std::to_string(CGAL::to_double(node.x())) + "," +
-                          std::to_string(CGAL::to_double(node.y()));
+        std::string key = std::to_string(static_cast<int>(CGAL::to_double(node.x()))) + "," +
+                          std::to_string(static_cast<int>(CGAL::to_double(node.y())));
         return node_to_sdegree.at(key);
     }
     void notify_backtrack(std::size_t new_level)
@@ -388,7 +421,7 @@ public:
                 auto edge = get_edge_from_lit(l);
                 CGAL::insert(arr, edge);
 #if PRINT
-                std::cerr << "Inserting edge: " << edge << "for lit: " << l << "for counter: " << counter << "\n";
+                // std::cerr << "Inserting edge: " << edge << "for lit: " << l << "for counter: " << counter << "\n";
 #endif
             }
 
@@ -396,12 +429,12 @@ public:
             if (found_observed)
             {
 #if PRINT
-                std::cerr << "Observed literals assigned: ";
-                for (Lit l : observed_lits)
-                {
-                    std::cerr << l << " ";
-                }
-                std::cerr << "\n";
+                // std::cerr << "Observed literals assigned: ";
+                // for (Lit l : observed_lits)
+                // {
+                //     std::cerr << l << " ";
+                // }
+                // std::cerr << "\n";
 #endif
             }
         }
@@ -515,6 +548,7 @@ public:
     std::unordered_map<std::string, Lit> edge_to_index;
     std::unordered_map<std::string, int> node_to_sdegree;
     std::vector<Point_2> nodes; // Store nodes for arrangement
+    std::unordered_map<int, std::vector<int>> intersections;
 };
 /**
  * Trivial example propagator that enforces a simple list of additional clauses
@@ -526,7 +560,7 @@ class ExamplePropagator : public cdc::CadicalSolver::ExternalPropagator
 public:
     using Lit = cdc::CadicalSolver::Lit;
 
-    ExamplePropagator(cdc::CadicalSolver *solver, bool save_states = false, std::vector<Point_raw> nodes = {}, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}) : cdc::CadicalSolver::ExternalPropagator(solver, true, false), state_tracker(save_states, nodes, edges, nodes_to_sdegree)
+    ExamplePropagator(cdc::CadicalSolver *solver, bool save_states = false, std::vector<Point_raw> nodes = {}, std::vector<Edge_raw> edges = {}, std::unordered_map<std::string, int> nodes_to_sdegree = {}, std::unordered_map<int, std::vector<int>> intersections = {}) : cdc::CadicalSolver::ExternalPropagator(solver, true, false), state_tracker(save_states, nodes, edges, nodes_to_sdegree, intersections)
     {
     }
 
@@ -557,7 +591,7 @@ public:
     void notify_new_decision_level() override
     {
 #if PRINT
-        std::cerr << "New decision level started.\n";
+        // std::cerr << "New decision level started." << std::endl;
 #endif
         state_tracker.notify_new_decision_level();
     }
@@ -565,7 +599,7 @@ public:
     void notify_backtrack(std::size_t new_level) override
     {
 #if PRINT
-        std::cerr << "Backtracking to level " << new_level << "\n";
+        // std::cerr << "Backtracking to level " << new_level << std::endl;
 #endif
         state_tracker.notify_backtrack(new_level);
     }
@@ -581,8 +615,9 @@ public:
 
     int propagate() override
     {
+        gesamt_counter++;
 #if PRINT
-        std::cerr << "Propergate" << std::endl;
+        // std::cerr << "Propergate" << std::endl;
 #endif
         if (!state_tracker.has_changes)
         {
@@ -600,9 +635,9 @@ public:
         // std::cerr << "\n";
 
         // Arrangement-Informationen ausgeben
-        std::stringstream filename;
-        filename << "arrangement_" << std::setfill('0') << std::setw(4) << arrangement_counter++ << ".svg";
-        save_arrangement_as_svg(state_tracker.arr, state_tracker.edges, filename.str());
+
+        std::vector<Query_result> point_lokations;
+        locate(state_tracker.arr, state_tracker.nodes.begin(), state_tracker.nodes.end(), std::back_inserter(point_lokations));
 
         for (auto face = state_tracker.arr.faces_begin(); face != state_tracker.arr.faces_end(); ++face)
         {
@@ -617,44 +652,87 @@ public:
             do
             {
                 outer_halfedges_count++;
+                hull_vertices.push_back(circ->source()->point()); // Add hull vertex
                 ++circ;
             } while (circ != start);
 
             if (outer_halfedges_count <= 3)
                 continue; // Skip faces with 3 or fewer edges
-#if PRINT
-            std::cerr << "Anzahl der Kanten: " << outer_halfedges_count << "\n";
-#endif
 
-            std::vector<Query_result> inside_points;
-            locate(state_tracker.arr, state_tracker.nodes.begin(), state_tracker.nodes.end(), std::back_inserter(inside_points));
-            std::vector<Point_2> vertices;
-            for (const auto &result : inside_points)
+            std::vector<Point_2> inner_vertices;
+            // Populate vertices with points that lie in the current face using point_lokations
+            for (auto &result : point_lokations)
             {
-                vertices.push_back(result.first);
+                if (std::holds_alternative<Face_const_handle>(result.second))
+                {
+                    if (std::get<Face_const_handle>(result.second) == face)
+                    {
+                        inner_vertices.push_back(result.first);
+                    }
+                }
+                if (std::holds_alternative<Halfedge_const_handle>(result.second))
+                {
+                    std::cerr << "Point " << result.first << " is on a halfedge, not a face." << std::endl;
+                    assert(false && "Point is on a halfedge, not a face.");
+                }
+                if (std::holds_alternative<Vertex_const_handle>(result.second))
+                {
+                    auto vertex = std::get<Vertex_const_handle>(result.second);
+                    // Check if any incident face matches the target face
+                    bool vertex_in_face = false;
+                    if (!vertex->is_isolated())
+                    {
+                        auto circ = vertex->incident_halfedges();
+                        auto start = circ;
+                        do
+                        {
+                            if (circ->face() == face || circ->twin()->face() == face)
+                            {
+                                vertex_in_face = true;
+                                break;
+                            }
+                            ++circ;
+                        } while (circ != start);
+                    }
+                    if (find(hull_vertices.begin(), hull_vertices.end(), result.first) != hull_vertices.end())
+                    {
+                        continue; // Skip if the vertex is already in the hull vertices
+                    }
+                    if (vertex_in_face)
+                    {
+                        inner_vertices.push_back(result.first);
+                    }
+                }
             }
 
-            int max_face_vertices = vertices.size();
             // Generate all possible edges between vertices
-            auto handel_half = [&](const std::vector<Point_2> &points, int k)
+            auto handel_half = [&](const std::vector<Point_2> &i_points, const std::vector<Point_2> &h_points, std::stringstream &info) -> bool
             {
-                int n = points.size();
+                int k = h_points.size();
+                int n = i_points.size() + k; // Total number of vertices
                 int degree_count = 0;
-                for (const auto &v : points)
+                for (const auto &v : i_points)
                 {
                     int degree = state_tracker.get_sdegree_from_node(v);
                     degree_count += degree;
-                    if (std::find(hull_vertices.begin(), hull_vertices.end(), v) != hull_vertices.end())
-                    {
-                        continue; // Skip hull vertices
-                    }
                     if (degree > n - 1)
                     {
+#if PRINT
+                        info << "Vertex " << v << " has degree " << degree << ", which is greater than n-1 (" << n - 1 << ")." << "\n";
+#endif
                         return true; // If any vertex has a degree greater than n-1, return true
                     }
                 }
+                for (const auto &v : h_points)
+                {
+                    int degree = state_tracker.get_sdegree_from_node(v);
+                    degree_count += degree;
+                }
                 if ((3 * n - 3 - k) * 2 > degree_count)
                 {
+#if PRINT
+                    info << "Degree count " << degree_count << " is less than 2 * edge count " << (2 * (n - 1)) << "." << "\n";
+#endif
                     return true; // If the degree count is less than 2 * edge_count, return true
                 }
                 return false;
@@ -663,57 +741,169 @@ public:
             {
                 for (size_t y = x + 1; y < hull_vertices.size(); ++y)
                 {
-                    int k_one, k_two = 0;
-                    std::vector<Point_2> half_one;
-                    std::vector<Point_2> half_two;
-                    for (const auto &v : vertices)
+                    // i: inside, h: hull
+                    auto edge = Segment_2(hull_vertices[x], hull_vertices[y]);
+                    auto lit = state_tracker.get_lit_from_edge(edge);
+                    if (lit == Lit(0))
                     {
-                        CGAL::Orientation orient = CGAL::orientation(hull_vertices[x], hull_vertices[y], v);
-                        if (orient == CGAL::LEFT_TURN)
-                        {
-                            half_one.push_back(v);
-                            if (std::find(hull_vertices.begin(), hull_vertices.end(), v) != hull_vertices.end())
-                            {
-                                k_one++;
-                            }
-                        }
-                        else if (orient == CGAL::RIGHT_TURN)
-                        {
-                            half_two.push_back(v);
-                            if (std::find(hull_vertices.begin(), hull_vertices.end(), v) != hull_vertices.end())
-                            {
-                                k_two++;
-                            }
-                        }
-                        else
-                        {
-                            half_one.push_back(v);
-                            half_two.push_back(v);
-                        }
-                        if (handel_half(half_one, k_one) || handel_half(half_two, k_two))
-                        {
-                            auto edge = Segment_2(hull_vertices[x], hull_vertices[y]);
-                            // #if PRINT
+                        continue; // Edge not found, skip
+                    }
+                    if (!state_tracker.is_open(lit))
+                    {
+                        continue; // Skip if the edge is already assigned
+                    }
 
-                            std::cerr << "can exclude edge: " << hull_vertices[x] << " - " << hull_vertices[y] << "\n";
-                            // #endif
-                            auto lit = state_tracker.get_lit_from_edge(edge);
-                            if (lit == Lit(0))
-                            {
-                                continue; // Edge not found, skip
-                            }
-                            std::vector<Lit> reason;
-                            for (Lit l : state_tracker.get_observed_trail())
-                            {
-                                if (l > 0)
-                                {
-                                    reason.push_back(-l);
-                                }
-                            }
-                            reason.push_back(-lit);
-                            state_tracker.store_reason(-lit, reason);
-                            return -lit; // Return the literal for the edge that can be excluded
+                    auto intersections = state_tracker.intersections[lit];
+                    bool find_intersection = false;
+                    for (auto const &aktive_lit : state_tracker.get_observed_trail())
+                    {
+                        if (aktive_lit < 1)
+                        {
+                            continue; // Skip if the active literal is less than 1
                         }
+                        if (std::find(intersections.begin(), intersections.end(), aktive_lit) != intersections.end())
+                        {
+                            find_intersection = true;
+                            break; // Found an intersection, break
+                        }
+                    }
+                    if (find_intersection)
+                    {
+                        continue; // Skip if an intersection is found
+                    }
+
+                    std::stringstream info;
+
+#if PRINT
+                    info << "------------------------------------------------------" << "\n";
+                    info << "Checking edge: " << hull_vertices[x] << " - " << hull_vertices[y] << "\n";
+                    info << "------------------------------------------------------" << "\n";
+#endif
+                    std::vector<Point_2> i_half_one, h_half_one, i_half_two, h_half_two;
+
+                    // Split hull vertices from x to y (clockwise)
+                    for (size_t i = x; i != y; i = (i + 1) % hull_vertices.size())
+                    {
+                        h_half_one.push_back(hull_vertices[i]);
+                    }
+                    h_half_one.push_back(hull_vertices[y]); // Include y
+
+                    // Split hull vertices from y to x (clockwise)
+                    for (size_t i = y; i != x; i = (i + 1) % hull_vertices.size())
+                    {
+                        h_half_two.push_back(hull_vertices[i]);
+                    }
+                    h_half_two.push_back(hull_vertices[x]); // Include x
+
+                    // Populate inside vertices for both halves using convex hull containment test
+                    // Helper function for cross product calculation
+                    auto cross = [](const Point_2 &p1, const Point_2 &p2, const Point_2 &p) -> double
+                    {
+                        return CGAL::to_double((p2.x() - p1.x()) * (p.y() - p1.y()) - (p2.y() - p1.y()) * (p.x() - p1.x()));
+                    };
+
+                    // Helper function to test if point is in convex hull
+                    auto pointInConvexHull = [&cross](const std::vector<Point_2> &hull, const Point_2 &p) -> bool
+                    {
+                        int n = hull.size();
+                        if (n < 3)
+                            return false; // no valid hull
+
+                        // Check if all cross products have the same sign
+                        int sign = 0;
+                        for (int i = 0; i < n; i++)
+                        {
+                            Point_2 a = hull[i];
+                            Point_2 b = hull[(i + 1) % n];
+                            double cp = cross(a, b, p);
+
+                            if (std::abs(cp) < 1e-9)
+                                continue; // on the edge
+
+                            if (sign == 0)
+                            {
+                                sign = (cp > 0 ? 1 : -1);
+                            }
+                            else
+                            {
+                                if ((cp > 0 ? 1 : -1) != sign)
+                                    return false;
+                            }
+                        }
+                        return true;
+                    };
+
+                    for (const auto &inner_vertex : inner_vertices)
+                    {
+                        // Test which half of the convex hull contains the inner vertex
+                        bool in_half_one = pointInConvexHull(h_half_one, inner_vertex);
+                        bool in_half_two = pointInConvexHull(h_half_two, inner_vertex);
+
+                        if (in_half_one && !in_half_two)
+                        {
+                            i_half_one.push_back(inner_vertex);
+                        }
+                        else if (!in_half_one && in_half_two)
+                        {
+                            i_half_two.push_back(inner_vertex);
+                        }
+                        else if (in_half_one && in_half_two)
+                        {
+                            // // Point is in both halves - this should not happen for a proper division
+                            // std::cerr << "Error: Inner vertex " << inner_vertex
+                            //           << " is contained in both halves of the convex hull!" << std::endl;
+                            // assert(false && "Inner vertex found in both halves of convex hull");
+                            i_half_one.push_back(inner_vertex);
+                            i_half_two.push_back(inner_vertex);
+                        }
+                        // else
+                        // {
+                        //     // Point is in neither half - this is an error for inner vertices
+                        //     std::cerr << "Error: Inner vertex " << inner_vertex
+                        //               << " is not contained in either half of the convex hull!" << std::endl;
+                        //     std::cerr << "Hull half one size: " << h_half_one.size()
+                        //               << ", Hull half two size: " << h_half_two.size() << std::endl;
+                        //     assert(false && "Inner vertex not found in any half of convex hull");
+                        // }
+                    }
+
+                    if (i_half_one.empty() || i_half_two.empty())
+                    {
+                        continue; // Skip if one of the halves is empty
+                    }
+                    if (handel_half(i_half_one, h_half_one, info) || handel_half(i_half_two, h_half_two, info))
+                    {
+
+#if PRINT
+                        info << "can exclude(" << arrangement_counter << ") edge: " << hull_vertices[x] << " - " << hull_vertices[y] << "\n";
+                        std::stringstream filename;
+                        filename << "arrangement_" << std::setfill('0') << std::setw(4) << arrangement_counter++ << ".svg";
+                        save_arrangement_as_svg(state_tracker.arr, state_tracker.edges, filename.str());
+#endif
+                        std::vector<Lit> reason;
+                        for (Lit l : state_tracker.get_observed_trail())
+                        {
+                            if (l > 0)
+                            {
+                                reason.push_back(-l);
+                            }
+                        }
+                        reason.push_back(-lit);
+                        state_tracker.store_reason(-lit, reason);
+
+#if PRINT
+                        info << "größe der inneren Punkte: " << inner_vertices.size() << "\n";
+                        info << "lit can be excluded: " << lit << "\n";
+                        info << "Reason for exclusion: ";
+                        for (Lit l : reason)
+                        {
+                            info << l << " ";
+                        }
+                        info << "\n";
+                        std::cerr << info.str() << std::endl;
+#endif
+                        counter++;
+                        return -lit; // Return the literal for the edge that can be excluded
                     }
                 }
             }
@@ -725,7 +915,7 @@ public:
     void get_reason_clause(Lit propagated_lit, std::vector<Lit> &reason_buffer) override
     {
 #if PRINT
-        std::cerr << "Getting reason clause for propagated literal: " << propagated_lit << "\n";
+        std::cerr << "Getting reason clause for propagated literal: " << propagated_lit << std::endl;
 #endif
         state_tracker.get_reason(propagated_lit, reason_buffer);
     }
@@ -735,7 +925,6 @@ public:
         return state_tracker.get_vars_saved();
     }
 
-private:
     ObservedLiteralStateTracker state_tracker;
     std::vector<std::vector<Lit>> hidden_clauses;
     static int arrangement_counter;
@@ -744,14 +933,15 @@ private:
 
 int ExamplePropagator::arrangement_counter = 0;
 
-std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
-                                                             int number_edges_vars,
-                                                             std::vector<Vars_List> clauses,
-                                                             std::vector<Point_raw> nodes,
-                                                             std::vector<Edge_raw> edges,
-                                                             std::unordered_map<std::string, int> node_to_sdegree,
-                                                             bool save_state,
-                                                             bool optimize_propagation)
+std::tuple<Vars_List, std::vector<Vars_List>, int, int> cadical_wrapper(int number_vars,
+                                                                        int number_edges_vars,
+                                                                        std::vector<Vars_List> clauses,
+                                                                        std::vector<Point_raw> nodes,
+                                                                        std::vector<Edge_raw> edges,
+                                                                        std::unordered_map<std::string, int> node_to_sdegree,
+                                                                        std::unordered_map<int, std::vector<int>> intersections,
+                                                                        bool save_state,
+                                                                        bool optimize_propagation)
 {
 
     // if (optimize_propagation)
@@ -786,7 +976,7 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
     }
 
     // add the propagator
-    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver, save_state, nodes, edges, node_to_sdegree);
+    auto &propagator = solver.emplace_external_propagator<ExamplePropagator>(&solver, save_state, nodes, edges, node_to_sdegree, intersections);
     // observe the variables (must be AFTER the constructor)
     propagator.observe_variables(std::vector<cdc::CadicalSolver::Lit>(v.begin(), v.begin() + number_edges_vars));
     // for (const auto &clause : clauses)
@@ -797,16 +987,18 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
     auto result = solver.solve();
     if (!result || !*result)
     {
-        // #if PRINT
-        std::cerr << "No solution found\n";
-        // #endif
-        return std::make_pair(Vars_List{}, std::vector<Vars_List>{});
+        std::cerr << "No solution found" << std::endl;
+        return std::make_tuple(Vars_List{}, propagator.get_vars_saved(), counter, gesamt_counter);
     }
     else
     {
-        // #if PRINT
-        std::cout << "Solution found\n";
-        // #endif
+        std::cout << "Solution found" << std::endl;
+#if PRINT
+        std::stringstream filename;
+        filename << "arrangement_" << std::setfill('0') << std::setw(4) << propagator.arrangement_counter++ << ".svg";
+        save_arrangement_as_svg(propagator.state_tracker.arr, propagator.state_tracker.edges, filename.str());
+#endif
+
         auto model = solver.get_model();
         std::vector<int> result = {};
         for (auto l : v)
@@ -820,8 +1012,8 @@ std::pair<Vars_List, std::vector<Vars_List>> cadical_wrapper(int number_vars,
                 result.push_back(0);
             }
         }
-
-        return std::make_pair(result, propagator.get_vars_saved());
+        std::cerr << "gefundene Propergationen: " << counter << std::endl;
+        return std::make_tuple(result, propagator.get_vars_saved(), counter, gesamt_counter);
         // std::vector<Vars_List> leer;
         // return std::make_pair(result, leer);
     }

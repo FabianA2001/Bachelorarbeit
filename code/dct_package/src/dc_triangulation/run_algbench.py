@@ -190,9 +190,9 @@ class Run_Algbench:
                 "args": result["parameters"]["args"]["parameter"].get("args", None),
                 "evaluation": result["result"]["evaluation"],
                 "timeout": result["parameters"]["args"]["parameter"]["timeout"],
-                # "runtime": result["runtime"],
                 "runtime": result["result"]["time_solver"],
                 "pre_time": result["result"]["time_pre_solver"],
+                "env_runtime": result["runtime"],
                 "solution": result["result"].get("solution", None),
                 "run_number": result["parameters"]["args"]["run_number"],
             },
@@ -225,6 +225,8 @@ class Run_Algbench:
         return table
 
     def apply_args(self, table: pd.DataFrame) -> pd.DataFrame:
+        assert len(table) > 0, "Tabelle ist leer, kann keine args anwenden."
+
         all_args = []
         for arg_list in self.outer_parameter.values():
             for arg in arg_list:
@@ -370,6 +372,10 @@ class Run_Algbench:
         table = self.apply_args(table)
         table = self.get_mean(table)
         table["total_runtime"] = table["pre_time"] + table["runtime"]
+
+        # HACK Hardodet time
+        table = table[table["total_runtime"] < 295]
+        # print(table["total_runtime"])
         self.create_cactus(
             table=table,
             y="total_runtime",

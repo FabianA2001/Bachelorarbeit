@@ -34,6 +34,31 @@ from dc_triangulation import (
 )
 
 
+def save_solution_as_json(solution, filename):
+    """
+    Saves a solution dictionary as JSON file.
+
+    Args:
+        solution: The solution dictionary to save
+        filename: Name of the JSON file (without extension)
+        output_dir: Directory to save the file in (default: "solutions")
+    """
+    if solution is None:
+        logging.warning(f"Solution is None, skipping save for {filename}")
+        return
+
+    # Ensure filename has .json extension
+    if not filename.endswith(".json"):
+        filename += ".json"
+
+    try:
+        with open(filename, "w") as f:
+            json.dump(solution, f, indent=4, default=str)
+        logging.info(f"Solution saved to: {filename}")
+    except Exception as e:
+        logging.error(f"Error saving solution to {filename}: {e}")
+
+
 def get_solvers():
     return [
         Greedy,
@@ -115,28 +140,29 @@ def ortools_algorithm(graph):
     para = Ortools_Parameter(
         intersection=True,
         # degree=True,
-        # fix_hull=True,
-        # all_edges=True,
-        # degree_direction=True,
-        evaluation_direction=True,
+        fix_hull=True,
+        all_edges=True,
+        min_max_direction=True,
+        # evaluation_direction=True,
         # exclude_edges=True,
         save_state_after_solution=True,
     )
-    logging.info(
-        f"solution found: {solver.solve({'timeout': 50, 'args': asdict(para)})}"
-    )
+    solution = solver.solve({"timeout": 300, "args": asdict(para)})
+    logging.info(f"solution found: {solution}")
+
+    # Save solution as JSON
+    save_solution_as_json(solution, "ortools_solution")
 
 
 # 1,2,3,6,7,8
 def sat_algorithm(graph):
     solver = SAT(graph)
     para = SAT_Parameter(
-        solver_name="Gluecard4",
-        degree_encoding=9,
         intersection=True,
         degree_atleast=True,
         fix_hull=True,
-        # all_edges=True,
+        exclude_edges=True,
+        all_edges=True,
         # exclude_edges=True,
     )
     logging.info(
@@ -210,6 +236,7 @@ def cadical_algorithm(graph, nodes=None):
         fix_hull=True,
         # save_state=True,
         optimize_propagation=True,
+        exclude_edges=True,
     )
     SVG_SAVE = "svg_figures"
     if os.path.exists(SVG_SAVE):
@@ -217,6 +244,7 @@ def cadical_algorithm(graph, nodes=None):
 
     solution = solver.solve({"timeout": -1, "args": asdict(para)})
     logging.info(f"solution found: {solution.get('success', False)}")
+    logging.info(f"solution: {solution}")
     if nodes is None:
         return
     SAVE = "cadical_figures"
@@ -290,51 +318,30 @@ def show_all_instanzes():
 
 def run_algo():
     # PATH = os.path.join(
-    #     os.path.dirname(__file__), "instance", "simple_40", "000_delaunay_flips.json"
+    #     os.path.dirname(__file__), "instance", "simple_30", "000_delaunay.json"
     # )
     PATH = os.path.join(
         os.path.dirname(__file__),
         "eval_instance",
-        "random",
-        "008_random_50.json",
+        "d_flips",
+        "002_d_flips_impossible_move_30.json",
     )
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__), "instance", "simple_80", "000_random.json"
-    # )
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__), "instance", "simple_60", "000_delaunay_flips.json"
-    # )
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__),
-    #     "instance",
-    #     "random_impossible",
-    #     "000_random_impossible_30.json",
-    # )
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__),
-    #     "instance",
-    #     "iterative_80_10",
-    #     "003_random_60.json",
-    # )
-    # PATH = os.path.join(
-    #     os.path.dirname(__file__),
-    #     "instance",
-    #     "N_Gon_60",
-    #     "006_random.json",
-    # )
+
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
-    nodes = custom_points()
-    nodes = multiple_solutions()
-    save_nodes_as_json(nodes, "test.json")
+
+    # for i, node in enumerate(nodes):
+    #     print(i, node.pos)
+    # nodes = custom_points()
+    # nodes = multiple_solutions()
     graph = Graph_Wrapper(nodes)
     # solver = Greedy(graph)
     # solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     # sat_algorithm(graph)
-    # cadical_algorithm(graph, nodes)
-    count_algorithm(graph)
+    cadical_algorithm(graph, nodes)
+    # count_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # ortools_tri_algorithm(graph)
@@ -344,7 +351,7 @@ def run_algo():
 
     # graph.add_all_possible_edges(True)
     # logging.info(f"evluation: {graph.evaluate()}")
-    # graph.show_and_save()
+    graph.show_and_save()
 
 
 def permute_instance():

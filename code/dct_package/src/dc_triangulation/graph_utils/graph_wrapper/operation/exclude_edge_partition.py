@@ -1,6 +1,7 @@
 import itertools
 
 import shapely
+import shapely.geometry
 
 from ..data import Data
 
@@ -10,6 +11,7 @@ class Exclude_Edge_Partition:
         self,
         data: Data,
         impossible_edges: list[tuple[int, int]],
+        mulitpoint: shapely.geometry.MultiPoint,
     ) -> None:
         self.data = data
         self.hull_edges = self.data.get_hull_edges
@@ -20,6 +22,7 @@ class Exclude_Edge_Partition:
             for node in self.data.get_all_nodes_name
             if node not in self.hull_nodes
         ]
+        self.mulitpoint = mulitpoint
 
     def __call__(self) -> list[tuple[int, int]]:
         return self.exclude_edge()
@@ -125,7 +128,37 @@ class Exclude_Edge_Partition:
             self.hull_nodes[1:] + self.hull_nodes[:-1],
             self.hull_nodes[2:] + self.hull_nodes[:-2],
         ):
-            if self.data.nodes[node2]["degree"] != 2:
-                edges.add((min(node1, node3), max(node1, node3)))
+            if self.data.nodes[node2]["degree"] == 2:
+                continue
+            tri = shapely.geometry.Polygon(
+                [
+                    self.data.get_point_from_node(node1),
+                    self.data.get_point_from_node(node2),
+                    self.data.get_point_from_node(node3),
+                ]
+            )
+
+            # Test intersections with multipoint
+            intersection = tri.intersection(self.mulitpoint)
+
+            # Count intersection points
+            num_intersections = 0
+            if not intersection.is_empty:
+                if intersection.geom_type == "Point":
+                    num_intersections = 1
+                elif intersection.geom_type == "MultiPoint":
+                    num_intersections = intersection.geoms.__len__()  # type: ignore
+                else:
+                    raise ValueError(
+                        f"Unexpected intersection type: {intersection.geom_type}"
+                    )
+
+            if num_intersections > 3:
+                continue
+            # hier
+            edges.add((min(node1, node3), max(node1, node3)))
+            # print(
+            #     f"Excluding edge {node1, node3} due to degree constraint, intersections: {num_intersections}"
+            # )
 
         return list(edges)

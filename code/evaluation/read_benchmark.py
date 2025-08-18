@@ -2,7 +2,7 @@ import streamlit as st
 from algbench import describe, read_as_pandas
 
 """
-streamlit run read_benchmark.py
+streamlit run read_benchmark.py --server.maxMessageSize=500
 """
 
 BENCHMARK_PATH = "./benchmark"
@@ -36,16 +36,22 @@ else:
         st.error("Die Tabelle ist leer. Bitte überprüfen Sie die Eingabedaten.")
         st.stop()
 
-    df["logging"] = df["logging"].apply(lambda x: str(x))
+    df = df[df["solver"] == "Cadical"]
 
     # # Filtere nur Zeilen wo "Glucose42" in args enthalten ist
     # df = df[df["args"].astype(str).str.contains("Glucose42", na=False)]
+
+    # Filter for Cadical solver only
 
     # df = df[
     #     df["host"].isin(
     #         ["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"]
     #     )
     # ]
+
+    # df = df[df["whole_runtime"] > df["timeout"]]
+
+    df["logging"] = df["logging"].apply(lambda x: "\n".join(k["msg"] for k in x))
 
     df.sort_values(
         by=["solver", "instance", "file"],

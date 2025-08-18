@@ -248,7 +248,7 @@ class Ortools(Solver):
             else:
                 status = self.time_solver(solver.Solve)(self.model)
         # status = solver.Solve(self.model)
-        print(status)
+        self.logger.info(status)
         if not (status == cp_model.OPTIMAL or status == cp_model.FEASIBLE):
             self.logger.warning("No solution found.")
             return {"success": False, "stats": stats, "start_solve": start_solve}

@@ -1,3 +1,4 @@
+from collections import defaultdict
 from dataclasses import dataclass
 
 from pysat.card import CardEnc, EncType
@@ -13,6 +14,7 @@ class Parameter:
     degree: bool = False
     fix_hull: bool = False
     all_edges: bool = False
+    exclude_edges: bool = True
     save_state: bool = False
     optimize_propagation: bool = False
 
@@ -101,6 +103,12 @@ class Cadical(Solver):
                 + [self.get_index(other_edge) for other_edge in intersections]
             )
 
+    def exclude_edges_constraint(self):
+        for edge in self.graph.exclude_edges:
+            index = self.get_index(edge)
+            # Setze die Kante als inaktiv
+            self.clauses.append([-index])
+
     def pre_solve(self, parameter: Parameter) -> None:
         self.setup(parameter)
         if parameter.intersection:
@@ -111,6 +119,8 @@ class Cadical(Solver):
             self.set_hull_fix_constraint()
         if parameter.all_edges:
             self.alle_edges_constraint()
+        if parameter.exclude_edges:
+            self.exclude_edges_constraint()
 
     def _actual_solver(self, parameter_raw: dict) -> dict:
         if self.graph is None:
@@ -145,25 +155,39 @@ class Cadical(Solver):
         ]
         # print(self.edges[108 - 1])
         # return {}
-        vars, debug_vars = self.time_solver(cadical_wrapper)(
+        intersections = defaultdict(list)
+        for edge, intersection in self.graph.get_all_intersections_cpp().items():
+            edge_index = self.get_index(edge)
+            if edge_index == -1:
+                continue
+            for other_edge in intersection:
+                other_edge_index = self.get_index(other_edge)
+                if other_edge_index == -1:
+                    continue
+                intersections[edge_index].append(other_edge_index)
+
+        vars, debug_vars, counter, all_counter = self.time_solver(cadical_wrapper)(
             self.max_used,
             len(self.edges),
             self.clauses,
             nodes_as_pos,
             edges_as_pos,
             node_to_sdegree,
+            intersections,
             parameter.save_state,
             parameter.optimize_propagation,
         )
 
-        for i in range(len(self.edges)):
-            if vars[i] == 1:
-                # self.logger.info(f"var{i}: {vars[i]}")
-                self.graph.activate_edge(self.edges[i])
-            # else:
-            # self.logger.info(f"var{i}: {vars[i]}")
+        sucess = False
+        if len(vars) > 1:
+            sucess = True
+            for i in range(len(self.edges)):
+                if vars[i] == 1:
+                    self.graph.activate_edge(self.edges[i])
 
         return {
-            "success": True,
+            "success": sucess,
             "debug_vars": debug_vars,
+            "counter": counter,
+            "all_counter": all_counter,
         }

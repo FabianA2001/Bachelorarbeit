@@ -13,7 +13,7 @@ if(BUILD_PYTHON_BINDINGS)
     target_link_libraries(_cpp_bindings PUBLIC cadical_binding)
     # enable compilation warnings
     target_compile_options(
-      _cpp_bindings PRIVATE "$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall>")
+      _cpp_bindings PRIVATE "$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:>")
     target_compile_definitions(_cpp_bindings
                                PRIVATE PYBIND11_DETAILED_ERROR_MESSAGES)
     
