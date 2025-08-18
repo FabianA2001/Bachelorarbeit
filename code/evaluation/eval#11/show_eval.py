@@ -442,9 +442,40 @@ def gesamt():
     table = eval_table(ri)
     # import streamlit as st
     # st.dataframe(table)
+    return table
 
-    draw_all_instances(table)
+
+def border():
+    outer_parameter = {
+        Ortools: [
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    Ortools_Parameter(
+                        intersection=True,
+                        degree=True,
+                        all_edges=True,
+                        fix_hull=True,
+                    )
+                ),
+            }
+        ]
+    }
+    ri = Run_Algbench(
+        inst_path=path,
+        outer_parameter=outer_parameter,
+        figure_path=figure_path,
+        host=HOST,
+        ignore_correct=True,
+        name="gesamt",
+    )
+    table = ri.get_table()
+    # import streamlit as st
+    # st.dataframe(table)
+    return table
 
 
 if __name__ == "__main__":
-    gesamt()
+    table = gesamt()
+    table_2 = border()
+    draw_all_instances(table)
