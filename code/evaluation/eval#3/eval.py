@@ -105,11 +105,26 @@ outer_parameter = {
     ]
 }
 
+arg_names = {
+    "SAT": [
+        "Cadical195",
+        "Gluecard4",
+        "MapleChrono",
+        "MapleCM",
+        "Maplesat",
+        "Mergesat3",
+        "Minicard",
+        "Minisat22",
+        "Glucose42",
+    ]
+}
+
 RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
     host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
+    arg_names=arg_names,
 )
 
 

@@ -282,6 +282,7 @@ class Run_Algbench:
             if solver_args_multiple[solver]:
                 name = (solver_args_mapping[solver][str(row["args"])])[0]
                 return f"{solver}-{name}"
+                # return f"{name}"
             else:
                 return solver
 
