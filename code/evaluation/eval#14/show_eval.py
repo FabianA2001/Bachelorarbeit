@@ -8,10 +8,10 @@ import seaborn as sns
 from dc_triangulation import Cadical, Cadical_Parameter, Run_Algbench
 
 # Font-Konstanten aus run_algbench
-TITEL_FONT_SIZE = 20
-LABEL_FONT_SIZE = 15
-ACHSEN_FONT_SIZE = 12
-LEGENDE_FONT_SIZE = 20
+TITEL_FONT_SIZE = 35
+LABEL_FONT_SIZE = 26
+ACHSEN_FONT_SIZE = 20
+LEGENDE_FONT_SIZE = 30
 
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
@@ -62,7 +62,8 @@ def draw(table):
             assert all_counter >= find_counter, (
                 "All counter must be greater than or equal to find counter"
             )
-            counter = all_counter / find_counter
+            # counter = all_counter / find_counter
+            counter = find_counter / all_counter
             file = row["file"]
 
             # Extrahiere die erste Zahl am Anfang des Dateinamens
@@ -131,7 +132,7 @@ def draw(table):
     #     fontweight="bold",
     # )
     plt.xlabel("Knoten Anzahl", fontsize=LABEL_FONT_SIZE)
-    plt.ylabel("Anzahl", fontsize=LABEL_FONT_SIZE)
+    plt.ylabel("Wert (%)", fontsize=LABEL_FONT_SIZE)
 
     # Natürliche Sortierung für Strings mit Zahlen
     def natural_sort_key(text):
@@ -151,16 +152,16 @@ def draw(table):
         range(len(unique_x_labels)), unique_display_labels, rotation=45, ha="right"
     )
     plt.legend(
-        title="Instanz",
-        bbox_to_anchor=(1.05, 1),
-        loc="upper left",
+        bbox_to_anchor=(0.5, -0.35),
+        loc="upper center",
         fontsize=LEGENDE_FONT_SIZE,
+        ncol=4,
     )
 
     # Achsen-Tick-Größen anpassen
     plt.gca().tick_params(axis="both", which="major", labelsize=ACHSEN_FONT_SIZE)
 
-    # Layout anpassen und speichern
+    # # Layout anpassen und speichern
     plt.tight_layout()
 
     # Diagramm speichern
