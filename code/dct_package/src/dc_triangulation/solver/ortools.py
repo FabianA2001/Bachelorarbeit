@@ -162,7 +162,9 @@ class Ortools(Solver):
 
         self.timeout_error()
 
-    def pre_solve(self, parameter_data: Parameter, timeout: int) -> bool:
+    def pre_solve(
+        self, parameter_data: Parameter, timeout: int, parameter: dict
+    ) -> bool:
         self.graph.add_all_possible_edges(default_for_active=False)
         self.vars = {
             (min(edge[0], edge[1]), max(edge[0], edge[1])): self.model.NewBoolVar(
@@ -172,8 +174,19 @@ class Ortools(Solver):
         }
 
         # Apply constraints based on parameter_data
-        if parameter_data.maximize_edges:
-            self.model.Maximize(sum(list(self.vars.values())))
+        if parameter_data.maximize_edges != False:
+            assert isinstance(parameter_data.maximize_edges, (float, int)), (
+                "maximize_edges must be a float or int."
+            )
+            for edge in parameter.get("debug_set_edges", []):
+                if edge not in self.vars:
+                    raise ValueError(f"Edge {edge} not found in vars.")
+                self.model.Add(self.vars[edge] == 1)
+
+            for edge in parameter.get("debug_exclude_edges", []):
+                if edge not in self.vars:
+                    raise ValueError(f"Edge {edge} not found in vars.")
+                self.model.Add(self.vars[edge] == 0)
 
         if parameter_data.intersection:
             self.add_time(self.constraint_intersection)()
@@ -220,10 +233,17 @@ class Ortools(Solver):
         assert args is not None, "Args must be provided in the parameter dictionary."
         parameter_data: Parameter = Parameter(**(args))
 
+        # HACK
+        if isinstance(parameter_data.maximize_edges, bool):
+            if parameter_data.maximize_edges:
+                raise ValueError(
+                    "Wird als hack mit float in eval6 genutzt, super dumm aber die var wird glaube nicht mehr genutzt und so ist es am einfachsten"
+                )
+
         if self.graph is None:
             raise ValueError("Graph is not set. Please set the graph before solving.")
         stop_after_first_solution = self.time_pre_solve(self.pre_solve)(
-            parameter_data, parameter["timeout"]
+            parameter_data, parameter["timeout"], parameter
         )
         solver = cp_model.CpSolver()
         # solver.parameters.log_search_progress = True  # Enable logging

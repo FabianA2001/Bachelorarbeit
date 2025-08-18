@@ -8,7 +8,12 @@ from collections import defaultdict
 from dataclasses import asdict
 
 import slurminade
-from dc_triangulation import SAT, Graph_Wrapper, Run_Algbench, SAT_Parameter
+from dc_triangulation import (
+    Graph_Wrapper,
+    Ortools,
+    Ortools_Parameter,
+    Run_Algbench,
+)
 
 asdict
 TIMEOUT = 300
@@ -64,89 +69,65 @@ data = load_data()
 
 
 outer_parameter = {
-    SAT: [
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             intersection=True,
-        #             degree_exact=True,
-        #         )
-        #     ),
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             intersection=True,
-        #             degree_exact=True,
-        #             hack_eval6=0.1,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
-        #         )
-        #     ),
-        #     "hack_eval_6": True,
-        #     "hack_eval_6_data": data,
-        #     "hack_eval_6_PERCENT": 0.1,
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             intersection=True,
-        #             degree_exact=True,
-        #             hack_eval6=0.5,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
-        #         )
-        #     ),
-        #     "hack_eval_6": True,
-        #     "hack_eval_6_data": data,
-        #     "hack_eval_6_PERCENT": 0.5,
-        # },
+    Ortools: [
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                SAT_Parameter(
+                Ortools_Parameter(
                     intersection=True,
-                    degree_exact=True,
-                    hack_eval6=0.8,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
+                    degree=True,
                 )
+            ),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(intersection=True, degree=True, maximize_edges=0.1)
+            ),
+            "hack_eval_6": True,
+            "hack_eval_6_data": data,
+            "hack_eval_6_PERCENT": 0.1,
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(intersection=True, degree=True, maximize_edges=0.5)
+            ),
+            "hack_eval_6": True,
+            "hack_eval_6_data": data,
+            "hack_eval_6_PERCENT": 0.5,
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(intersection=True, degree=True, maximize_edges=0.8)
             ),
             "hack_eval_6": True,
             "hack_eval_6_data": data,
             "hack_eval_6_PERCENT": 0.8,
         },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             intersection=True,
-        #             degree_exact=True,
-        #             hack_eval6=-0.1,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
-        #         )
-        #     ),
-        #     "hack_eval_6": True,
-        #     "hack_eval_6_data": data,
-        #     "hack_eval_6_PERCENT": -0.1,
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         SAT_Parameter(
-        #             intersection=True,
-        #             degree_exact=True,
-        #             hack_eval6=-0.5,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
-        #         )
-        #     ),
-        #     "hack_eval_6": True,
-        #     "hack_eval_6_data": data,
-        #     "hack_eval_6_PERCENT": -0.5,
-        # },
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                SAT_Parameter(
-                    intersection=True,
-                    degree_exact=True,
-                    hack_eval6=-0.8,  # das es bei show als eigener solver angezeigt wird, nicht schön aber funktioniert
-                )
+                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.1)
+            ),
+            "hack_eval_6": True,
+            "hack_eval_6_data": data,
+            "hack_eval_6_PERCENT": -0.1,
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.5)
+            ),
+            "hack_eval_6": True,
+            "hack_eval_6_data": data,
+            "hack_eval_6_PERCENT": -0.5,
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.8)
             ),
             "hack_eval_6": True,
             "hack_eval_6_data": data,
@@ -275,10 +256,10 @@ if __name__ == "__main__":
         )
         run_list = RI.get_run_list()
         for key in run_list:
-            run_solver_on_inst(key)
-        #     run_solver_on_inst.distribute(key)
+            # run_solver_on_inst(key)
+            run_solver_on_inst.distribute(key)
 
-        # slurminade.join()
-        # compress_results.distribute()
+        slurminade.join()
+        compress_results.distribute()
     else:
         RI.show()
