@@ -77,13 +77,13 @@ if __name__ == "__main__":
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
-            constraint="alggen04",  # Which workstations within the partition to use
+            constraint="alggen05",  # Which workstations within the partition to use
             exclusive=True,  # To use all cores on a node exclusively
             mail_type="FAIL",  # Send mail on failure
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
         )
         run_list = RI.get_run_list()
-        with slurminade.JobBundling(max_size=10):
+        with slurminade.JobBundling(max_size=2):
             for key in run_list:
                 run_solver_on_inst.distribute(key)
 
