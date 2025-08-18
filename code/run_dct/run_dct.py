@@ -170,7 +170,11 @@ def ortools_tri_algorithm(graph):
 
 def count_algorithm(graph):
     solver = Count(graph)
-    logging.info(f"solution found: {solver.solve({'timeout': 900})}")
+    solution = solver.solve({"timeout": 900})
+    logging.info(f"solution found: {solution}")
+    logging.info(
+        f"lenght of seen combinations: {len(list(solution['seen_combinations'])[0])}"
+    )
 
 
 def gurobi_algorithm(graph):
@@ -320,16 +324,17 @@ def run_algo():
     # )
     logging.info(f"Loading nodes from {PATH}")
     nodes = load_nodes_from_json(PATH)
-    # nodes = custom_points()
-    # nodes = multiple_solutions()
+    nodes = custom_points()
+    nodes = multiple_solutions()
+    save_nodes_as_json(nodes, "test.json")
     graph = Graph_Wrapper(nodes)
     # solver = Greedy(graph)
     # solver.solve({"timeout": -1})
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     # sat_algorithm(graph)
-    cadical_algorithm(graph, nodes)
-    # count_algorithm(graph)
+    # cadical_algorithm(graph, nodes)
+    count_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # ortools_tri_algorithm(graph)
@@ -339,7 +344,7 @@ def run_algo():
 
     # graph.add_all_possible_edges(True)
     # logging.info(f"evluation: {graph.evaluate()}")
-    graph.show_and_save()
+    # graph.show_and_save()
 
 
 def permute_instance():

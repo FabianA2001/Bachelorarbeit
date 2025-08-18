@@ -1,5 +1,6 @@
 import logging
 import os
+import random
 
 import slurminade
 from algbench import read_as_pandas
@@ -60,10 +61,11 @@ def show_lokal():
             "seen_combinations": result["result"]
             .get("solution", {})
             .get("seen_combinations", {}),
+            "run_seed": result["result"].get("run_seed", 0),
         },
     )
-    # Filter nach Host, falls host angegeben ist
-    table = table[table["host"].isin(RI.host)]
+    # # Filter nach Host, falls host angegeben ist
+    # table = table[table["host"].isin(RI.host)]
 
     if RI.instances:
         table = table[table["instance"].isin(RI.instances)]
@@ -73,6 +75,11 @@ def show_lokal():
         ]
         table = table[table["file"].isin(all_instance)]
 
+    table["args_str"] = table["args"].apply(lambda x: str(x))
+    # Gruppiere nach solver, instance, file, args und behalte nur die Zeile mit dem höchsten Timeout
+    table = table.loc[
+        table.groupby(["solver", "instance", "file", "args_str"])["timeout"].idxmax()
+    ]
     solvers_name = [solver.NAME for solver in RI.solvers]
     table = table[table["solver"].isin(solvers_name)]
 
@@ -111,6 +118,10 @@ def show_lokal():
                         f"{row['file']}.json",
                     )
                 )
+                seed = row["run_seed"]
+                assert seed != 0, "Seed should not be 0"
+                random.seed(seed)
+                random.shuffle(nodes)
                 graph = Graph_Wrapper(nodes)
                 # Kanten die in sets[i] sind aber nicht im anderen Set
                 auuser_schnitt = sets[i] - sets[1 - i]
@@ -128,8 +139,115 @@ def show_lokal():
                         "figures",
                     ),
                     show_set_false=True,
+                    draw_name=False,
+                    all_green=True,
                 )
+
     logging.info(info)
+
+    # Generiere LaTeX-Tabelle
+    draw_table_as_latex(table)
+
+    return table
+
+
+def draw_table_as_latex(table):
+    """
+    Erstellt eine LaTeX-Tabelle aus der Pandas-Tabelle.
+    Zeilen: Dateinamen (z.B. 30_1, 30_2, 40_1, etc.)
+    Spalten: Instanzarten (d_flips, delaunay, greedy, iterative, random)
+    """
+    import re
+
+    if table is None or table.empty:
+        print("Keine Daten für LaTeX-Tabelle verfügbar.")
+        return
+
+    # Extrahiere Größe und Index aus den Dateinamen
+    def extract_size_and_index(filename):
+        # Beispiel: "000_d_flips_30" -> (30, 1), "001_d_flips_30" -> (30, 2)
+        match = re.search(r"(\d+)_.*_(\d+)", filename)
+        if match:
+            file_index = int(match.group(1))
+            size = int(match.group(2))
+            # Konvertiere file_index zu 1-basiertem Index (000->1, 001->2, etc.)
+            instance_index = (file_index % 2) + 1
+            return f"{size}_{instance_index}"
+        return filename
+
+    # Erstelle eine neue Spalte für die Zeilen-Labels
+    table_copy = table.copy()
+    table_copy["row_label"] = table_copy["file"].apply(extract_size_and_index)
+
+    # Erstelle Pivot-Tabelle: Zeilen=row_label, Spalten=instance, Werte=count
+    pivot_table = table_copy.pivot_table(
+        index="row_label",
+        columns="instance",
+        values="count",
+        aggfunc="first",  # Falls mehrere Werte, nehme den ersten
+    )
+
+    # Sortiere die Zeilen nach Größe und Index
+    def sort_key(row_label):
+        if "_" in row_label:
+            size, idx = row_label.split("_")
+            return (int(size), int(idx))
+        return (float("inf"), 0)
+
+    pivot_table = pivot_table.reindex(sorted(pivot_table.index, key=sort_key))
+
+    # Sortiere die Spalten in gewünschter Reihenfolge
+    desired_columns = ["d_flips", "delaunay", "greedy", "iterative", "random"]
+    available_columns = [col for col in desired_columns if col in pivot_table.columns]
+    pivot_table = pivot_table[available_columns]
+
+    # Ersetze NaN-Werte durch '-'
+    pivot_table = pivot_table.fillna("-")
+
+    # Generiere LaTeX-Code
+    latex_code = "\\begin{table}[htbp]\n"
+    latex_code += "\\centering\n"
+    latex_code += "\\begin{tabular}{|l|" + "c|" * len(pivot_table.columns) + "}\n"
+    latex_code += "\\hline\n"
+
+    # Header
+    header = "Knoten Anzahl & " + " & ".join(pivot_table.columns) + " \\\\\n"
+    header = header.replace("_", " ")  # Escape underscores for LaTeX
+    header = header.replace("d flips", "Delaunay Flips")  # Escape underscores for LaTeX
+    header = header.replace("delaunay", "Delaunay")  # Escape underscores for LaTeX
+    header = header.replace("greedy", "Greedy")  # Escape underscores for LaTeX
+    header = header.replace("iterative", "Iterative")  # Escape underscores for LaTeX
+    header = header.replace("random", "Random")  # Escape underscores for LaTeX
+    latex_code += header
+    latex_code += "\\hline\n"
+
+    # Datenzeilen
+    for row_label, row_data in pivot_table.iterrows():
+        row_str = (
+            str(row_label.replace("_", "\\_"))  # Ersetze '_' durch Leerzeichen
+            + " & "
+            + " & ".join(str(val) for val in row_data)
+            + " \\\\\n"
+        )
+        latex_code += row_str
+
+    latex_code += "\\hline\n"
+    latex_code += "\\end{tabular}\n"
+    latex_code += "\\caption{Ergebnisse der Triangulation nach Instanztyp und Größe}\n"
+    latex_code += "\\label{tab:triangulation_results}\n"
+    latex_code += "\\end{table}\n"
+
+    # print("LaTeX-Tabelle:")
+    # print(latex_code)
+
+    # Speichere auch in Datei
+    output_file = os.path.join(os.path.dirname(__file__), "latex_table.tex")
+    with open(output_file, "w") as f:
+        f.write(latex_code)
+
+    print(f"\nLaTeX-Tabelle wurde auch gespeichert in: {output_file}")
+
+    return latex_code
 
 
 @slurminade.slurmify()
@@ -144,7 +262,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
@@ -161,4 +279,7 @@ if __name__ == "__main__":
         slurminade.join()
         compress_results.distribute()
     else:
-        show_lokal()
+        table = show_lokal()
+        draw_table_as_latex(table)
+        # for key in RI.get_run_list():
+        #     RI.show_key_from_runlist(key)
