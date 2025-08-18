@@ -19,24 +19,27 @@ Zum Abschluss wird in drei verschiedenen Experimenten versucht, die Schwierigkei
 %     \item What are the results? Show fancy figures!
 %     \item What does the results mean? (e.g., give a little discussion on your results)
 % \end{itemize}
-
 \begin{itemize}
     \item Algbench und Slurminade, Pandas
     \item plt und Seaborn
-    \item Alles in python Teileweise Algos in c++ ausgelagert mit pybind11
-    \item AMD Ryzen 7 5800X @ 8x 3.8GHz-4.7GHz, 128GB RAM
-    \item AMD Ryzen 9 7900 @ 12x 3.7GHz-5.4GHz, 96GB RAM
-    \item Timeout von 5 min (300 Sekunden)
-    \item Jede Instanze Generiungs möglichkeit (5 aufzählen)
-    \begin{itemize}
-        \item zwei normale
-        \item eine move
-        \item eine change
-        \item größe 30 bis 120 in 10er Schritten
-    \end{itemize}
-    \item klar sagen das in allen folgenden Diagrammen die Instanzen nach größe sortiert sind. Also erst kleine dann größere auch bei der Prozentualen Darstellung im Kaktus Diagramm
-    \item Gesamte Laufzeit dargestellt Model konstruktion plus solve zeit
 \end{itemize}
+
+In diesem Abschnitt werden die Bedingungen für die Experimente beschrieben.
+Alle Experimente welche eine Laufzeit beinhalten wurden entweder auf \emph{AMD Ryzen 7 5800X @ 8x 3.8GHz-4.7GHz} mit \emph{128GB} Arbeitsspeicher oder auf \emph{AMD Ryzen 9 7900 @ 12x 3.7GHz-5.4GHz} mit \emph{96GB} Arbeitsspeicher durchgeführt.
+Im folgenden werden in den Experiment die \emph{Ryzen} zwischen 7 und 9 unterschieden.
+Dabei wurden für alle Experimente mit Ausnahme von~\cref{sec:eval13} ein Timeout von 5 Minuten (300 Sekunden) gesetzt.
+Alle Laufzeiten sind dabei die Vorbereitungszeit plus die Laufzeit des Solvers. 
+Diese komplette Laufzeit musste in den 5 Minuten liegen.
+
+Für die Instanzgenerierung wurden die in~\cref{sec:instanz_generierung} beschriebenen Methoden verwendet.
+Es wurden Instanzen mit 30 bis 120 Knoten in 10er Schritten generiert.
+Wobei immer zwei Ja-Instanzen und zwei Nein-Instanzen pro Knotengröße generiert wurden.
+Bei den Nein-Instanzen wurde jeweils eine \emph{move} und eine \emph{change} Instanz generiert.
+Im folgenden werden alle Instanzen nach der Knotengröße aufsteigend sortiert.   
+
+Alle Experimente wurden in Python 3.13.5 durchgeführt.
+Der Algorithmus zum finden von Überschneidungen wurde in c++ implementiert und mit \emph{pybind11} in Python eingebunden.
+Ebenso wurde der CDCL-Ansatz in c++ implementiert.
 
 \section{Permutation}
 \label{sec:eval2:permuation}
@@ -180,6 +183,7 @@ Die Knotenzahl liegt zwischen 80 und 120.
 \fabian{Finale Bilder analysieren}
 
 \section{Best Solver}
+\label{sec:eval13}
 % (Eval13)
 In diesem Experiment wird geprüft, welche Instanzen der Solver lösen kann, wenn das Zeitlimit von 5 Minuten auf 30 Minuten erhöht wird.
 Dafür wurden Instanzen mit zunehmender Größe generiert, bis der Solver diese nicht mehr lösen konnte.

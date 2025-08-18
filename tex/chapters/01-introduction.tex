@@ -1,9 +1,27 @@
 %!TeX root=../thesis.tex
 \chapter{Introduction}
 \label{ch:introduction}%
+\fabian{Sollte ich hier gradbeschränkte Triangulierung irgendwie abkürzen?}
+Triangulierungen sind ein wichtiger Bestandteil der algorithmischen Geometrie
+Eine Triangulierung liefert eine Zerlegung der konvexen Hülle einer Punktemenge in Dreiecke
+In dieser Arbeit wird das Problem um eine weitere Bedingung erweitert
+Für jeden Knoten wird ein Sollgrad vorgegeben
 
-You can write an introduction here!
+Die gradbeschränkte Triangulierung untersucht, ob es für eine gegebene Punktemenge eine Triangulierung gibt, bei der jeder Knoten einen vorgegebenen Grad besitzt
+Diese Erweiterung der Triangulierung ist nicht nur theoretisch interessant, sondern hat auch praktische Anwendungen
+So kann zum Beispiel in Sensornetzwerken die Verbindungsdichte zwischen Knoten reguliert werden
+Auch in Logistikproblemen können vorgegebene Kapazitäten an Knoten berücksichtigt werden
 
+Das Ziel dieser Arbeit ist es, Verfahren zur Lösung von gradbeschränkten Triangulierungen zu untersuchen
+Neben der Betrachtung als Entscheidungsproblem, bei dem Methoden wie Integer Programming, Constraint Programming oder SAT Solver verwendet werden, wird das Problem auch als Optimierungsproblem betrachtet
+Ein Schwerpunkt liegt auf dem Fixieren und Ausschließen von Kanten, um die Suche nach Lösungen zu beschleunigen
+Im gleichen Zusammenhang werden verschiedene Methoden zur Instanzgenerierung vorgestellt
+
+Die Arbeit beginnt mit grundlegenden Definitionen und relevanten theoretischen Grundlagen
+Anschließend werden verschiedene Lösungsansätze vorgestellt und eine mögliche Implementierung beschrieben
+Mit dieser Implementierung werden dann die verschiedenen Lösungsansätze evaluiert
+Der Fokus liegt dabei auf der Laufzeit und dem Finden des besten Lösungsansatzes
+Abschließend werden die generierten Instanzen hinsichtlich ihrer Schwierigkeit untersucht
 
 \section{Das Problem}
 Das in dieser Arbeit betrachtete Problem sind die gradbeschränkten Triangulierungen.
@@ -65,12 +83,12 @@ Im Buch von de Berg et al.~\cite{Delaunay_Triangulation} wird diese Variante der
 Triangulations eignen sich durch ihre Struktur besonders gut zur Darstellung von Höhendaten im zweidimensionalen Raum (siehe~\cref{fig:terrain}).
 Dabei kann ausgenutzt werden, dass Dreiecke unterschiedliche Innenwinkel und Kantenlängen besitzen.
 
-	% \caption{\michael{Die caption selbst brauchst du nicht kopieren. Ist ja auf deutsch. Und erst Fig dann Caption.}\emph{A perspective view of a terrain} aus~\cite[p.~183]{Delaunay_Triangulation}}
+  % \caption{\michael{Die caption selbst brauchst du nicht kopieren. Ist ja auf deutsch. Und erst Fig dann Caption.}\emph{A perspective view of a terrain} aus~\cite[p.~183]{Delaunay_Triangulation}}
 \begin{figure}[tb]
-	\centering
-	\includegraphics[scale=0.2]{Delauney_Tarrain.png}
-	\caption[Delauney Beispiel]{Ein Beispiel für Höhendaten durch eine Triangulierung aus~\cite[p.~183]{Delaunay_Triangulation}}
-	\label{fig:terrain}
+  \centering
+  \includegraphics[scale=0.2]{Delauney_Tarrain.png}
+  \caption[Delauney Beispiel]{Ein Beispiel für Höhendaten durch eine Triangulierung aus~\cite[p.~183]{Delaunay_Triangulation}}
+  \label{fig:terrain}
 \end{figure}
 Das Grundproblem besteht darin, dass die Höhendaten nur an bestimmten Punkten bekannt sind und die restlichen Werte daher geschätzt werden müssen.
 Dies kann durch die Delaunay-Triangulierung gut gelöst werden, da die Dreiecke aufgrund ihrer gleichschenkligen Eigenschaft visuell geeignet sind, die fehlenden Daten zu ergänzen.
@@ -163,11 +181,11 @@ Auch hier wird ein zufälliger Knoten ausgewählt und es werden weitere möglich
 Bei diesem Ansatz werden jedoch neue Knoten gemäß der folgenden Formel übernommen:
 \[
 p\{\textrm{accept }j\} = \left\{
-	\begin{array}{ll}
-	1 & \textrm{if } f(j) \leq f(i) \\
-	\exp{(\frac{f(i) - f(j)}{c})} & \, \textrm{sonst} \\
-	\end{array}
-	\right.
+  \begin{array}{ll}
+  1 & \textrm{if } f(j) \leq f(i) \\
+  \exp{(\frac{f(i) - f(j)}{c})} & \, \textrm{sonst} \\
+  \end{array}
+  \right.
 \]
 Dabei ist \( p\{\textrm{accept }j\} \) die Wahrscheinlichkeit, dass ein Knoten übernommen wird.
 Die aktuelle Lösung ist \(i\) und die mögliche neue Lösung ist \(j\).
