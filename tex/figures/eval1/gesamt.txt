@@ -9,14 +9,15 @@ SAT:
 ||number_edges:                       False
 ||intersection:                       True
 ||all_edges:                          True
-||degree_exact:                       True
-||degree_atleast:                     False
+||degree_exact:                       False
+||degree_atleast:                     True
 ||degree_encoding:                    1
 ||degree_subset:                      False
 ||fix_hull:                           False
 ||exclude_edges:                      False
 ||hack_eval6:                         False
 ||fix_edges:                          False
+||run_num:                            0
 
 
 gurobi:
@@ -27,6 +28,7 @@ gurobi:
 ||fix_hull:                           False
 ||all_edges:                          False
 ||fix_edges:                          False
+||run_num:                            0
 
 
 Ortools:
@@ -37,32 +39,10 @@ Ortools:
 ||fix_hull:                           False
 ||number_edges:                       False
 ||evaluation_direction:               False
-||degree_direction:                   False
+||save_state_after_solution:          False
+||min_max_direction:                  False
 ||maximize_edges:                     False
 ||exclude_edges:                      False
 ||fix_edges:                          False
-
-
-gurobi_tri:
-|#1 in 300s: 
-||intersection:                       True
-||degree:                             True
-||exclude_edges:                      False
-
-
-OrTools_tri:
-|#1 in 300s: 
-||intersection:                       True
-||degree:                             True
-||exclude_edges:                      False
-
-
-SAT_TRI:
-|#1 in 300s: 
-||solver_name:                        glucose3
-||add_allEdges_or_exlucde_edges:      True
-||number_tri:                         False
-||intersection:                       True
-||degree:                             True
-||exclude_edges:                      False
+||run_num:                            0
 ==================================================

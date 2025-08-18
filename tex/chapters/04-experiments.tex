@@ -25,6 +25,7 @@ Zum Abschluss wird in drei verschiedenen Experimenten versucht, die Schwierigkei
     \item plt und Seaborn
     \item Alles in python Teileweise Algos in c++ ausgelagert mit pybind11
     \item AMD Ryzen 7 5800X @ 8x 3.8GHz-4.7GHz, 128GB RAM
+    \item AMD Ryzen 9 7900 @ 12x 3.7GHz-5.4GHz, 96GB RAM
     \item Timeout von 5 min (300 Sekunden)
     \item Jede Instanze Generiungs möglichkeit (5 aufzählen)
     \begin{itemize}
@@ -32,8 +33,6 @@ Zum Abschluss wird in drei verschiedenen Experimenten versucht, die Schwierigkei
         \item eine move
         \item eine change
         \item größe 30 bis 120 in 10er Schritten
-        \item Jeder Run wird 5 mal durchgeführt und der Durchschnitt genommen wenn nicht anders gesagt
-        \item Da Permuation anders und Laufzeit bei mehrmals vorallem bei OrTools auch anders
     \end{itemize}
     \item Gesamte Laufzeit dargestellt Model konstruktion plus solve zeit
 \end{itemize}
@@ -42,19 +41,22 @@ Zum Abschluss wird in drei verschiedenen Experimenten versucht, die Schwierigkei
 \label{sec:eval2:permuation}
 % (Eval2)
 In diesem Experiment wird untersucht, ob es einen Einfluss hat, in welcher Reihenfolge die Knoten den Solvern übergeben werden.
-Es wurden Instanzen mit 60 bis 90 Knoten betrachtet.
+Es wurden Instanzen mit 60 bis 90 Knoten betrachtet und auf dem Ryzen 7 getestet.
 Als Beschränkungen kamen die Überschneidungsbeschränkung und die Gradbeschränkung zum Einsatz.
-Wie in~\cref{fig:eval2:gurobi},~\cref{fig:eval2:ortools} und~\cref{fig:eval2:sat} zu erkennen ist, unterscheiden sich die Laufzeiten bei allen Solvern.
+% Wie in~\cref{fig:eval2:gurobi},~\cref{fig:eval2:ortools} und~\cref{fig:eval2:sat} zu erkennen ist, unterscheiden sich die Laufzeiten bei allen Solvern.
+Bei allen Solvern war das Ergebnis das die Laufzeiten bei den verschiedenen Permutationen unterschiedlich sind.
 Daraus folgt, dass die Permutation der Knotenmenge einen Einfluss auf die Laufzeit hat.
 In den folgenden Experimenten wird für jeden Lauf die Knotenmenge fünfmal in unterschiedlichen Permutationen übergeben und der Durchschnitt berechnet.
 
 \section{Mehrmalige Durchläufe}
 % (Eval7) 
 In diesem Experiment wird untersucht, ob sich bei mehrfachen Durchläufen derselben Instanz mit demselben Solver und gleichen Parametern sich die Laufzeit verändert.
-Auch hier wurden Instanzen mit 60 bis 90 Knoten betrachtet.
+Auch hier wurden Instanzen mit 60 bis 90 Knoten betrachtet und auf dem Ryzen 7 getestet.
 Als Beschränkungen kamen die Überschneidungsbeschränkung und die Gradbeschränkung zum Einsatz.
-In~\cref{fig:eval7:gurobi} und~\cref{fig:eval7:sat} ist zu erkennen, dass alle Durchläufe die gleichen Laufzeiten aufweisen.
-Nur bei OrTools ist in~\cref{fig:eval7:ortools} zu sehen, dass die Laufzeiten unterschiedlich sind.
+Gurobi und SAT hatten bei allen Instanzen die gleichen Laufzeiten.
+Bei OrTools hingegen variieren die Laufzeiten bei den meisten Durchläufen.
+% In~\cref{fig:eval7:gurobi} und~\cref{fig:eval7:sat} ist zu erkennen, dass alle Durchläufe die gleichen Laufzeiten aufweisen.
+% Nur bei OrTools ist in~\cref{fig:eval7:ortools} zu sehen, dass die Laufzeiten unterschiedlich sind.
 Da aufgrund von~\cref{sec:eval2:permuation} bereits mehrere Durchläufe mit unterschiedlichen Permutationen durchgeführt werden, werden die OrTools-Durchläufe nicht zusätzlich mehrfach ausgeführt.
 
 \section{SAT Gradbeschränkung}
@@ -68,7 +70,10 @@ Bei der \emph{subset} Methode wurde nur die Instanz mit 30 Knoten verwendet.
 Da bei größeren Knotenmengen der Arbeitsspeicher zu klein war.
 Als zusätzliche Bedingung wurde die Überschneidungsbeschränkung verwendet.
 Für die Exakte Methode sieht man in~\cref{fig:eval5_exact} das \emph{sequential counters} die besten Ergebnisse erzielen.
-Auch für den Mindest Sollgrad ist \emph{sequential counters} die beste Variante wie man in~\cref{fig:eval5_atleast} sieht.
+Die einzige andere relevante Codierung ist \emph{totalizer}, aber auch dieser ist vorallem bei Delaunay Flips unter \emph{sequential counters}.
+Auch für den Mindest Sollgrad ist \emph{sequential counters} die beste Variante gefolgt von \emph{totalizer} wie man in~\cref{fig:eval5_atleast} sieht.
+
+
 
 \begin{figure}[h]
     \centering
@@ -79,6 +84,7 @@ Auch für den Mindest Sollgrad ist \emph{sequential counters} die beste Variante
 
 
 Der Vergleich der drei Methoden ist in~\cref{fig:eval5_gesamt} zu sehen.
+Hier wurden aus jedem der drei Ansätze das beste Ergebnis genommen.
 Hier ist klar erkennbar das \emph{subset} die schlechteste Methode ist.
 Das lässt sich leicht daran erklären das nur die kleinsten Instanzgrößen gelöst werden konnten.
 Die anderen beiden Methoden unterscheiden sich nicht signifikant.
@@ -91,14 +97,25 @@ Dementsprechend werden in folgenden Experimenten die Kardinalitätsbeschränkung
 In diesem Experiment werden die verschiedenen SAT Solver verglichen, die von PySat bereitgestellt werden.
 PySat stellt \emph{Cadical195}, \emph{Gluecard4}, \emph{Glucose42}, \emph{Lingeling}, \emph{MapleChrono}, \emph{MapleCM}, \emph{Maplesat}, \emph{Mergesat3}, \emph{Minicard} und \emph{Minisat22} zur Verfügung. 
 Von diesen wurden jeweils die neuesten verfügbaren Versionen verwendet.
+Alle Solver nutzen die \emph{sequential counters} Codierung sowie die Überschneidungsbeschränkung. 
 Bei \emph{Gluecard4} und \emph{Minicard} kam anstelle von \emph{sequential counters} eine native Codierung der Gradbeschränkung zum Einsatz.
-Alle anderen Solver nutzen die \emph{sequential counters} Codierung sowie die Überschneidungsbeschränkung. 
+Diese wird nur für diese beiden Solver angeboten und bietet eine direkte Codierung ohne zusätzliche Variablen.
 Der \emph{Lingeling} Solver wurde in großen Experimenten nicht berücksichtigt da er kein Timeout unterstützt.
 Er wurde aber zusätzlich mit dem besten Solver vergleichen und hat schlechtere Ergebnisse erzielt.
-Weitere Bedingungen wurden nicht berücksichtigt.
 \emph{CryptoMinisat} wurde nicht verwendet, da dieser Solver speziell für XOR-Probleme optimiert ist.
-Für die Instanzengröße wurden 60 bis 90 Knoten gewählt.
+Für die Instanzengröße wurden 60 bis 90 Knoten gewählt und es wurde auf dem Ryzen 9 getestet.
 Das Ziel besteht darin, den Solver zu identifizieren, der die besten Ergebnisse liefert, um diesen in zukünftigen Experimenten einzusetzen.
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{eval3/cactus_total_runtime.pdf}
+    \caption{Eval3 Gesamt}
+    \label{fig:eval3:gesamt}
+\end{figure}
+In~\cref{fig:eval3:gesamt} ist zu erkennen, dass \emph{Gluecard4} und \emph{Glucose42} die besten Ergebnisse erzielen.
+Das diese beiden Solver ähnliche Ergebnisse liefern ist nicht verwunderlich, da sie beide auf dem Glucose-Algorithmus basieren.
+Es zeigt sich aber das bei diesem Problem weder der native noch der \emph{sequential counters} Ansatz einen signifikanten Unterschied machen.
+Für den weiteren Verlauf wird \emph{Glucose42} verwendet, da dieser bei Greedy eine Instanze in guter Zeit geschafft hat welche \emph{Gluecard4} nicht geschafft hat.
+
 
 \section{Grund Solver}
 % (Eval1)
@@ -108,7 +125,7 @@ Untersucht werden die Solver SAT, OrTools und Gurobi jeweils mit der Kantenformu
 Für alle Durchläufe wurden die Überschneidungsbeschränkung und die Gradbeschränkung genutzt.
 Bei der Kantenformulierung wurden das Fixieren und Ausschließen von Kanten sowie die \emph{alternative Kantenformulierung} getestet.
 Bei der Dreiecksformulierung wurde nur das Ausschließen von Kanten getestet.
-Die Instanzengröße liegt bei 30 bis 120 Knoten.
+Die Instanzengröße liegt bei 30 bis 120 Knoten und es wurde auf dem Ryzen 7 getestet.
 
 \begin{figure}[htb]
     \centering
@@ -117,7 +134,30 @@ Die Instanzengröße liegt bei 30 bis 120 Knoten.
     \label{fig:eval1:gesamt}
 \end{figure}
 
-\fabian{Finale Bilder analysieren}
+In~\cref{fig:eval1:gurobi} ist zu erkennen, dass Gurobi bis auf die Iterativen Instanzen keine guten Ergebnisse erzielt.
+Es wurden fast nie 50 Prozent der Instanzen gelöst.
+Es ist erkennbar das bei Gurobi bei kleinen Instanzen die alternative Kantenformulierung bessere Ergebnisse erzielt. 
+Bei größeren Instanzen sind die standart Bedingungen besser.
+
+SAT liefert die besten Ergebnisse, wie in~\cref{fig:eval1:sat} zu sehen ist beim fixieren der Hülle. 
+Alle anderen Bediungen sind schlechter als nur die Überschneidungs und Gradbeschränkung.
+Es ist wieder zu sehen das Iterative warscheinlich zu einfach ist da der SAT solver hier alle Knotengrößen in kürtzester Zeit schafft.
+Nur das auschließen der Kanten schafft die größeren Instanzen nicht.
+Warscheinlich dauert hier das Ausschließen der Kanten zu lange.
+
+In der letzen~\cref{fig:eval1:ortools} ist zu sehen das OrTools mit der alternativen Kantenformulierung die besten Ergebnisse erzielt.
+Dies auch mit klarem Abstand wie in der Gesamt übersicht zu sehen ist.
+Es zeigt sich auch hier das das fixieren der Hülle etwas besser als die Standart Bedingungen ist.
+
+In~\cref{fig:eval1:gesamt} sind von allen Solvern die besten Bedingungen zu sehen.
+Hier ist zu sehen das OrTools die besten Ergebnisse erzielt.
+Gefolgt von SAT welches sogar bei kleinen Instanzen bessere Ergebnisse als OrTools erzielt.
+Gurobi ist in allen Fällen mit Abstand schlechter als SAT und OrTools.
+Es ist auch klar zu erkennen das die Dreiecksformulierung bei allen Solvern schlechtere Ergebnisse erzielt als die Kantenformulierung.
+Im folgenden wird nur noch OrTools mit der alternativen Kantenformulierung und dem fixieren der Hülle betrachtet.
+
+\fabian{Dreiecke sind noch nicht final da gen3 blockiert ist}
+\fabian{Kanten fixieren hatte einene Feheler und muss neu gestetet werden. Sollte aber keine Relevanz haben und am Text nichts ändern.}
 
 \section{Kanten vorab berechnen}
 % (Eval6)
@@ -152,11 +192,12 @@ Es wird erneut der beste Solver aus~\cref{sec:eval1:grund_solver} verwendet.
 % (Eval11)
 \fabian{@Michael du meintest ich soll hier die Bound mit im Diagramm anzeigen. Ich weiß grade nicht wie ich das machen soll da er auf einer Achse mit Prozent nicht sinnvoll angezeigt werden kann}
 \fabian{Wie soll ich die Diagramme aufbauen? Ich habe akutell Nur Greedy 120 Knoten instanzen und dann jetzt alle vier als eigene Diagramme.}
+
 In diesem Experiment werden die drei verschiedenen Optimierungsansätze vergleichen.
 Erste Ansatz ist der Flips Ansatz, die anderen beiden Ansätze sind die Zielfunktionen von OrTools
 
 Der Flips Ansatz schafft Instanzen mit Maximal 8 Knoten. 
-Dementsprechend wird er im weitern nicht betrachtet.
+Dementsprechend wird er im weiteren nicht betrachtet.
 Alle anderen Druchläufe in diesem Experiment wurden mit 120 Knoten durchgeführt.
 
 Im folgenden werden Ja-Instanzen und Nein-Instanzen getrennt betrachtet.
@@ -165,13 +206,12 @@ Bei den Nein-Intanzen ist hingegen interesannter wie nah der Solver an eine Lös
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1\linewidth]{eval11/eval_progression_38.pdf}
+    \includegraphics[width=1\linewidth]{eval11/eval_progression_39.pdf}
     \caption{eval11 move}
     \label{fig:eval11:move}
 \end{figure}
 
 \begin{itemize}
-    \item nur greedy betrachtet
     \item Min Max bei Ja besser
     \item Durchschnitt bei Nein besser
 \end{itemize}
@@ -236,15 +276,21 @@ wobei \(E_A\) die Menge der aktiven Kanten bezeichnet.
 
 \subsection{Experiment}
 In diesem Experiment wird betrachtet wie viele Erfolgreiche \emph{Propagation} also jene, welche eine Kante ausschließen können, in einer Instanze möglich sind.
+Dafür werden alle Aufrufe der \emph{Propagation} gezählt und diese Zahl durch die Anzahl der Erfolgreichen Aufrufe geteilt.
+Dabei wird in diesem Experiment nicht die Laufzeit gemässen da durch die vielen Kanten kanten welche Getestet werden die Laufzeit stark beeinflusst wird.
+Eine \emph{Propagation} soll im normalfall sehr schnell entscheiden welche Kante als nächstes betrachtet wird.
+In diesem Experiment geht es nur darum zu bestimmen ob es sinnvoll ist eine \emph{Propagation} mit diesem Ansatz zu nutzen.
+Bei diesem Experiment wurden Instanzen der größe 30 bis 60 Knoten betrachtet.
+Das Experiment wurde auf dem Ryzen 9 durchgeführt.
 
-Für jede Instanze wird hierfür die Anzahl in~\cref{fig:cdcl:anzahl} dargestellt.
+
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{cdcl/counter_vs_first_node_operation_by_instance.pdf}
     \caption{Anzahl propergation cdcl}
     \label{fig:cdcl:anzahl}
 \end{figure}
-\fabian{Bild mit Finalen Daten analysieren}
+
 
 \section{Instanzen Schwierigkeit}
 In diesem Abschnitt wird Probiert die Schwierigkeit der Instanzen zu bestimmen.

@@ -3,43 +3,48 @@ Args Legend Mapping (by Solver):
 ==================================================
 
 gurobi:
-|#1 in 300s: 
+|#normal in 300s: 
 ||intersection:                       True
 ||degree:                             True
 ||exclude_edges:                      False
 ||fix_hull:                           False
 ||all_edges:                          False
 ||fix_edges:                          False
+||run_num:                            0
 
-|#2 in 300s: 
+|#Hülle fixieren in 300s: 
 ||intersection:                       True
 ||degree:                             True
 ||exclude_edges:                      False
 ||fix_hull:                           True
 ||all_edges:                          False
 ||fix_edges:                          False
+||run_num:                            0
 
-|#3 in 300s: 
+|#alternative Kanten in 300s: 
 ||intersection:                       True
 ||degree:                             True
 ||exclude_edges:                      False
 ||fix_hull:                           False
 ||all_edges:                          True
 ||fix_edges:                          False
+||run_num:                            0
 
-|#4 in 300s: 
+|#Kanten ausschließen in 300s: 
 ||intersection:                       True
 ||degree:                             True
 ||exclude_edges:                      True
 ||fix_hull:                           False
 ||all_edges:                          False
 ||fix_edges:                          False
+||run_num:                            0
 
-|#5 in 300s: 
+|#Kanten fixieren in 300s: 
 ||intersection:                       True
 ||degree:                             True
 ||exclude_edges:                      False
 ||fix_hull:                           False
 ||all_edges:                          False
 ||fix_edges:                          True
+||run_num:                            0
 ==================================================
