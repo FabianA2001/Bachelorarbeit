@@ -275,15 +275,13 @@ Führt das Testen einer Kante zu einem Konflikt, kann das zugehörige Literal \(
 wobei \(E_A\) die Menge der aktiven Kanten bezeichnet.
 
 \subsection{Experiment}
-In diesem Experiment wird betrachtet wie viele Erfolgreiche \emph{Propagation} also jene, welche eine Kante ausschließen können, in einer Instanze möglich sind.
-Dafür werden alle Aufrufe der \emph{Propagation} gezählt und diese Zahl durch die Anzahl der Erfolgreichen Aufrufe geteilt.
+In diesem Experiment wird betrachtet wie viele Erfolgreiche \emph{Propagation} also jene, welche eine Kante ausschließen können, in einer Instanz möglich sind.
+Dafür werden alle Erfolgreichen Aufrufe gezählt und diese Zahl durch die Anzahlder \emph{Propagation} Aufrufe geteilt.
 Dabei wird in diesem Experiment nicht die Laufzeit gemässen da durch die vielen Kanten kanten welche Getestet werden die Laufzeit stark beeinflusst wird.
 Eine \emph{Propagation} soll im normalfall sehr schnell entscheiden welche Kante als nächstes betrachtet wird.
 In diesem Experiment geht es nur darum zu bestimmen ob es sinnvoll ist eine \emph{Propagation} mit diesem Ansatz zu nutzen.
 Bei diesem Experiment wurden Instanzen der größe 30 bis 60 Knoten betrachtet.
 Das Experiment wurde auf dem Ryzen 9 durchgeführt.
-
-
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{cdcl/counter_vs_first_node_operation_by_instance.pdf}
@@ -291,14 +289,19 @@ Das Experiment wurde auf dem Ryzen 9 durchgeführt.
     \label{fig:cdcl:anzahl}
 \end{figure}
 
+In~\cref{fig:cdcl:anzahl} sind diese Relativen Anzahlen pro Instanz zu sehen.
+Dabei fällt auf das vorallem Random Instanzen sehr viele Erfolgreiche \emph{Propagation} haben.
+Greedy und Delaunay hingegen haben nur wenige Erfolgreiche \emph{Propagation}.
+Nicht ganz deutlich aber zu erkennen ist das Nein-Instanzen mehr Erfolgreiche \emph{Propagation} haben als Ja-Instanzen.
+Bei diesem Muster kann es sich aber auch um einen Zufall handeln da nur wenige verschiedene Instanzen betrachtet wurden.
 
 \section{Instanzen Schwierigkeit}
 In diesem Abschnitt wird Probiert die Schwierigkeit der Instanzen zu bestimmen.
-Aus den vorigen Experimenten ist bekannt das \emph{Delaunay} und \emph{Delaunay Flips} die schwereren Instanzen sind,\emph{Greedy} im Mittelfeld und \emph{Iterativ} und \emph{Random}die einfacheren Instanzen.
-Im ersten Teil wird geschaut ob die Anzahl der Lösungen pro Instanze einen Einfluss auf die Schwierigkeit haben. 
+Aus den vorigen Experimenten ist bekannt das \emph{Delaunay} und \emph{Greedy} die schwereren Instanzen sind,\emph{Delaunay Flips} vor \emph{Random} im Mittelfeld und \emph{Iterativ} die einfachste Instanz ist.
+Im ersten Teil wird geschaut ob die Anzahl der Lösungen pro Instanz einen Einfluss auf die Schwierigkeit hat. 
 Danach im zweiten Teil wird geschaut wie der Grad verteilt ist.
 Also wie oft jeder Grad vertreten wird.
-Im Letzen Teil wird geschaut ob es einen Zusammenhang mit den Kantenlängen und der Schwierigkeit gibt.
+Im Letzen Teil wird geschaut ob ein Zusammenhang zu den Kantenlängen besteht.
 Für alle drei Teile werden Instanzen der größe 30 bis 120 Knoten betrachtet.
 \subsection{Anzahl Lösungen}
 \label{sec:eval8:anzahl_lösungen}
@@ -310,10 +313,11 @@ Für alle drei Teile werden Instanzen der größe 30 bis 120 Knoten betrachtet.
     \caption[zwei verschiedene Lösungen für eine Instanz]{In dem Bild sind zwei verschiedene Lösungen für eine Instanz zu sehen. In Grün sind die Kanten zu sehen welche in der Instanz unterschiedlich sind. In Blau die gleichen Kanten. Die Zahlen in den Knoten geben den Sollgrad an. }
 \end{figure}
 In~\cref{tab:triangulation_results} ist zu sehen das fast alle Instanzen nur eine Lösungen haben.
-Vorallem ist aber zu sehen das es keinen Zusammenhang zwischen der Anzahl der Lösungen und der Instanze gibt.
+Vorallem ist aber zu sehen das es keinen Zusammenhang zwischen der Anzahl der Lösungen und der Instanze Art gibt.
 Es kann also davon ausgegangen werden das die Anzahl der Lösungen keinen Einfluss auf die Schwierigkeit der Instanzen hat.
 Interesannter weiße ist zu sehen das die Kanten welche in einer Instanze unterschiedliche sind klar einem Bereich zugeordnet werden könne.
 Wie man in~\cref{fig:eval8:left} sieht, sind die Kanten in der linken Hälfte der Instanz unterschiedlich, während die rechte Hälfte keine Unterschiede aufweist.
+Man könnte also die Grade welche mehrere Lösungen zulassen einem Lokalen Bereich zuordnen.
 
 \subsection{Grad Verteilung}
 In diesem Experiment wird Probiert anhand der Gradverteilung der Knoten zu erkennen ob es einen Zusammenhang zwischen der Schwierigkeit und dem Grad gibt.
@@ -328,11 +332,9 @@ Dafür werden die Ja-Instanzen der Größe 30 bis 120 Knoten betrachtet.
 In~\cref{fig:eval9:gradverteilung} ist die Gradverteilung der Knoten zu sehen.
 Auf den ersten Blick lässt sich vermuten das es einen Zusammenhang zwischen der Schwierigkeit und dem Grad gibt.
 Es ist zu erkennen das Vorallem Random und Iterativ eine Rechtsschiefe Verteilung haben.
-Dazu passend hat Delaunay eher eine zentrierte Verteilung. 
-Auch das Delaunay-Flips Rechtsschiefer als Delaunay ist würde passen, da Delaunay-Flips einfacher als Delaunay sind.
-Leider lässt sich an Greedy erkennen das er keinen direkten Zusammenhang zwischen der Gradverteilung und der Schwierigkeit gibt.
-Greedy ist von der Zentrierung zwischen Delaunay und Delaunay-Flips einzuordnen aber die Greedy Instanzen sind eindeutig einfacher als Delaunay-Flips.
-TODO anpassen greedy ist warscheinlich schwierig
+Dazu passend haben Delaunay und Greedy eher eine zentrierte Verteilung. 
+Auch das Delaunay-Flips Rechtsschiefer als Delaunay und Greedy ist würde passen, da Delaunay-Flips einfacher als Delaunay sind.
+Es lässt sich also Anhand dieser Beispiel vermuten das einfachere Instanzen eher kleinere Grade haben und schwierigere Instanzen mehr Verteile mittlere Grade.
 
 
 \subsection{Kantenlängen Verteilung}
@@ -346,9 +348,20 @@ Für dieses Experiment wurden nur Ja-Instanzen der größe 30 bis 80 Knoten betr
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{edge_length_distribution_plots.pdf}
-    \caption{Eval8 Anzahl Lösungen Greedy}
+    \caption{Eval8 Kanten verteilung}
     \label{fig:eval10:kantenverteilung}
 \end{figure}
 
-TODOVLt ist greedy doch schwerer als gedacht.
+Auch hier lässt sich eine Verbindung zwischen der Schwierigkeit und der Verteilung erkennen.
+Leichtere Instanzen haben eher lange Kanten als schwere Instanzen.
+So sind bei schweren Instanzen wie Greedy und Delaunay die Kantenlängen eher links also bei den kurzen Kanten angesiedelt.
+Leichte Instanzen wie Iterativ hingegen haben deutlich weniger kurze Kante und dafür mehr längere Kanten.
+
+\subsection{Schwierigkeit Zusammenfassung}
+In diesm Abschnitt wurde festgestellt das die Anzahl der Lösungen keinen Einfluss auf die Schwierigkeit hat.
+Die Gradverteilung und die Kantenlängenverteilung hingegen scheinen einen Einfluss auf die Schwierigkeit zu haben.
+Hierbei deuten viele kurze Kanten und verteile Grade auf eine schwere Instanz hin.
+Hingegen verteilte längere Kanten und wenige hohe Grade auf eine leichte Instanz.
+
+
 
