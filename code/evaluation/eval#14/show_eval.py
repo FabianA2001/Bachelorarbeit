@@ -41,7 +41,7 @@ RI = Run_Algbench(
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
     path_benchmark=lokal_benchmark,
-    host=["DESKTOP-L2QBIO4"],
+    host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
 )
 
 
@@ -52,7 +52,17 @@ def draw(table):
     grouped = table.groupby("instance")
     for instance_name, instance_group in grouped:
         for index, row in instance_group.iterrows():
-            counter = row["solution"]["counter"]
+            find_counter = row["solution"]["counter"]
+            all_counter = row["solution"]["all_counter"]
+            if not all_counter > 0:
+                continue  # Skip if all_counter is not greater than 0
+
+            if not find_counter > 0:
+                continue  # Skip if find_counter is not greater than 0
+            assert all_counter >= find_counter, (
+                "All counter must be greater than or equal to find counter"
+            )
+            counter = all_counter / find_counter
             file = row["file"]
 
             # Extrahiere die erste Zahl am Anfang des Dateinamens
@@ -123,8 +133,14 @@ def draw(table):
     plt.xlabel("Knoten Anzahl", fontsize=LABEL_FONT_SIZE)
     plt.ylabel("Anzahl", fontsize=LABEL_FONT_SIZE)
 
+    # Natürliche Sortierung für Strings mit Zahlen
+    def natural_sort_key(text):
+        return [
+            int(x) if x.isdigit() else x.lower() for x in re.split("([0-9]+)", text)
+        ]
+
     # Erstelle Custom X-Tick Labels ohne die erste Nummer
-    unique_x_labels = sorted(df_plot["x_label"].unique())
+    unique_x_labels = sorted(df_plot["x_label"].unique(), key=natural_sort_key)
     unique_display_labels = []
     for x_label in unique_x_labels:
         # Finde das entsprechende display_label für dieses x_label
@@ -161,4 +177,13 @@ if __name__ == "__main__":
     table = RI.get_table()
     table = RI.apply_instance(table)
     table = RI.apply_args(table)
+    # for idx, row in table.iterrows():
+    #     print(
+    #         "file_instanz:",
+    #         row["instance_file"],
+    #         "all_counter:",
+    #         row["solution"]["all_counter"],
+    #         " find_counter:",
+    #         row["solution"]["counter"],
+    #     )
     draw(table)
