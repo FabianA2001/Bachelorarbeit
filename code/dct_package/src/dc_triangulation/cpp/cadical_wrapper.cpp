@@ -13,6 +13,7 @@
 const double SCALE_FACTOR = 0.1;
 const double NODE_RADIUS = 5.0;
 static int counter = 0;
+static int gesamt_counter = 0;
 
 // Helper function to save arrangement as SVG file
 void save_arrangement_as_svg(const Arrangement_2 &arr, const std::vector<Segment_2> &original_edges, const std::string &filename)
@@ -614,6 +615,7 @@ public:
 
     int propagate() override
     {
+        gesamt_counter++;
 #if PRINT
         // std::cerr << "Propergate" << std::endl;
 #endif
@@ -931,15 +933,15 @@ public:
 
 int ExamplePropagator::arrangement_counter = 0;
 
-std::tuple<Vars_List, std::vector<Vars_List>, int> cadical_wrapper(int number_vars,
-                                                                   int number_edges_vars,
-                                                                   std::vector<Vars_List> clauses,
-                                                                   std::vector<Point_raw> nodes,
-                                                                   std::vector<Edge_raw> edges,
-                                                                   std::unordered_map<std::string, int> node_to_sdegree,
-                                                                   std::unordered_map<int, std::vector<int>> intersections,
-                                                                   bool save_state,
-                                                                   bool optimize_propagation)
+std::tuple<Vars_List, std::vector<Vars_List>, int, int> cadical_wrapper(int number_vars,
+                                                                        int number_edges_vars,
+                                                                        std::vector<Vars_List> clauses,
+                                                                        std::vector<Point_raw> nodes,
+                                                                        std::vector<Edge_raw> edges,
+                                                                        std::unordered_map<std::string, int> node_to_sdegree,
+                                                                        std::unordered_map<int, std::vector<int>> intersections,
+                                                                        bool save_state,
+                                                                        bool optimize_propagation)
 {
 
     // if (optimize_propagation)
@@ -986,7 +988,7 @@ std::tuple<Vars_List, std::vector<Vars_List>, int> cadical_wrapper(int number_va
     if (!result || !*result)
     {
         std::cerr << "No solution found" << std::endl;
-        return std::make_tuple(Vars_List{}, propagator.get_vars_saved(), counter);
+        return std::make_tuple(Vars_List{}, propagator.get_vars_saved(), counter, gesamt_counter);
     }
     else
     {
@@ -1011,7 +1013,7 @@ std::tuple<Vars_List, std::vector<Vars_List>, int> cadical_wrapper(int number_va
             }
         }
         std::cerr << "gefundene Propergationen: " << counter << std::endl;
-        return std::make_tuple(result, propagator.get_vars_saved(), counter);
+        return std::make_tuple(result, propagator.get_vars_saved(), counter, gesamt_counter);
         // std::vector<Vars_List> leer;
         // return std::make_pair(result, leer);
     }

@@ -33,12 +33,12 @@ typedef std::vector<int> Vars_List;
 typedef std::pair<int, int> Point_raw;
 typedef std::pair<Point_raw, Point_raw> Edge_raw;
 // die erste Vars_list ist für die Finale Zuordnung, in dem zweiten Vector können zwischenzustände gespeichert werden
-std::tuple<Vars_List, std::vector<Vars_List>, int> cadical_wrapper(int number_vars,
-                                                                   int number_edges_vars,
-                                                                   std::vector<Vars_List> clauses,
-                                                                   std::vector<Point_raw> nodes = {},
-                                                                   std::vector<Edge_raw> edges = {},
-                                                                   std::unordered_map<std::string, int> node_to_sdegree = {},
-                                                                   std::unordered_map<int, std::vector<int>> intersections = {},
-                                                                   bool save_state = false,
-                                                                   bool optimize_propagation = false);
+std::tuple<Vars_List, std::vector<Vars_List>, int, int> cadical_wrapper(int number_vars,
+                                                                        int number_edges_vars,
+                                                                        std::vector<Vars_List> clauses,
+                                                                        std::vector<Point_raw> nodes = {},
+                                                                        std::vector<Edge_raw> edges = {},
+                                                                        std::unordered_map<std::string, int> node_to_sdegree = {},
+                                                                        std::unordered_map<int, std::vector<int>> intersections = {},
+                                                                        bool save_state = false,
+                                                                        bool optimize_propagation = false);

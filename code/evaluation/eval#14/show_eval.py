@@ -100,19 +100,19 @@ def draw(table):
     # Line Plot mit verschiedenen Farben für verschiedene Instanzen
     # Verwende x_label für x-Achse
 
-    # sns.scatterplot(
-    #     data=df_plot, x="x_label", y="counter", hue="instance", s=100, alpha=0.7
-    # )
-
-    sns.lineplot(
-        data=df_plot,
-        x="x_label",
-        y="counter",
-        hue="instance",
-        marker="o",
-        markersize=8,
-        linewidth=2,
+    sns.scatterplot(
+        data=df_plot, x="x_label", y="counter", hue="instance", s=100, alpha=0.7
     )
+
+    # sns.lineplot(
+    #     data=df_plot,
+    #     x="x_label",
+    #     y="counter",
+    #     hue="instance",
+    #     marker="o",
+    #     markersize=8,
+    #     linewidth=2,
+    # )
 
     # Diagramm anpassen
     # plt.title(

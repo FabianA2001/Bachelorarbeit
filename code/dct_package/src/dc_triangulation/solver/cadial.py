@@ -166,7 +166,7 @@ class Cadical(Solver):
                     continue
                 intersections[edge_index].append(other_edge_index)
 
-        vars, debug_vars, counter = self.time_solver(cadical_wrapper)(
+        vars, debug_vars, counter, all_counter = self.time_solver(cadical_wrapper)(
             self.max_used,
             len(self.edges),
             self.clauses,
@@ -189,4 +189,5 @@ class Cadical(Solver):
             "success": sucess,
             "debug_vars": debug_vars,
             "counter": counter,
+            "all_counter": all_counter,
         }
