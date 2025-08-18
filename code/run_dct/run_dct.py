@@ -235,7 +235,7 @@ def cadical_algorithm(graph, nodes=None):
         degree=True,
         intersection=True,
         fix_hull=True,
-        # save_state=True,
+        save_state=True,
         optimize_propagation=True,
         exclude_edges=True,
     )
@@ -245,7 +245,7 @@ def cadical_algorithm(graph, nodes=None):
 
     solution = solver.solve({"timeout": -1, "args": asdict(para)})
     logging.info(f"solution found: {solution.get('success', False)}")
-    logging.info(f"solution: {solution}")
+    # logging.info(f"solution: {solution}")
     if nodes is None:
         return
     SAVE = "cadical_figures"
@@ -270,7 +270,9 @@ def cadical_algorithm(graph, nodes=None):
                 edge = solver.edges[j]
                 lokal_graph.add_edge(edge[0], edge[1], active=False)
                 lokal_graph.edge_show_false(edge[0], edge[1])
-        lokal_graph.show_and_save(show=False, save=SAVE, show_set_false=True)
+        lokal_graph.show_and_save(
+            show=False, save=SAVE, show_set_false=True, draw_name=False
+        )
 
 
 def show_all_instanzes():
@@ -324,8 +326,8 @@ def run_algo():
     PATH = os.path.join(
         os.path.dirname(__file__),
         "eval_instance",
-        "iterative",
-        "000_iterative_30.json",
+        "random",
+        "001_random_30.json",
     )
 
     logging.info(f"Loading nodes from {PATH}")
@@ -341,12 +343,12 @@ def run_algo():
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     # sat_algorithm(graph)
-    # cadical_algorithm(graph, nodes)
+    cadical_algorithm(graph, nodes)
     # count_algorithm(graph)
     # sat_Tri_algorithm(graph)
-    ortools_algorithm(graph)
-    for edge in graph.fix_edges:
-        print(edge)
+    # ortools_algorithm(graph)
+    # for edge in graph.fix_edges:
+    #     print(edge)
     # ortools_tri_algorithm(graph)
     # gurobi_tri_algorithm(graph)
     # gurobi_algorithm(graph)
