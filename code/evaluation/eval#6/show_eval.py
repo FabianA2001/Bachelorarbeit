@@ -68,15 +68,15 @@ def ja():
 def nein():
     outer_parameter = {
         Ortools: [
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(
-                    Ortools_Parameter(
-                        intersection=True,
-                        degree=True,
-                    )
-                ),
-            },
+            # {
+            #     "timeout": TIMEOUT,
+            #     "args": asdict(
+            #         Ortools_Parameter(
+            #             intersection=True,
+            #             degree=True,
+            #         )
+            #     ),
+            # },
             {
                 "timeout": TIMEOUT,
                 "args": asdict(
@@ -111,10 +111,11 @@ def nein():
         host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
         name="nein",
     )
+    RI.delete_runlist()
 
-    RI.show(timelimit=100)
+    # RI.show(timelimit=100)
 
 
 if __name__ == "__main__":
-    ja()
-    # nein()
+    # ja()
+    nein()
