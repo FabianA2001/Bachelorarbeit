@@ -106,33 +106,33 @@ outer_parameter = {
             "hack_eval_6_data": data,
             "hack_eval_6_PERCENT": 0.8,
         },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.1)
-            ),
-            "hack_eval_6": True,
-            "hack_eval_6_data": data,
-            "hack_eval_6_PERCENT": -0.1,
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.5)
-            ),
-            "hack_eval_6": True,
-            "hack_eval_6_data": data,
-            "hack_eval_6_PERCENT": -0.5,
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.8)
-            ),
-            "hack_eval_6": True,
-            "hack_eval_6_data": data,
-            "hack_eval_6_PERCENT": -0.8,
-        },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.1)
+        #     ),
+        #     "hack_eval_6": True,
+        #     "hack_eval_6_data": data,
+        #     "hack_eval_6_PERCENT": -0.1,
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.5)
+        #     ),
+        #     "hack_eval_6": True,
+        #     "hack_eval_6_data": data,
+        #     "hack_eval_6_PERCENT": -0.5,
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.8)
+        #     ),
+        #     "hack_eval_6": True,
+        #     "hack_eval_6_data": data,
+        #     "hack_eval_6_PERCENT": -0.8,
+        # },
     ]
 }
 
@@ -141,6 +141,7 @@ RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
+    host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
 )
 
 
@@ -190,7 +191,7 @@ def run_solver_on_inst(key: str):
                     auswahl = random.sample(aktive_edges, anzahl)
                     aktive_edges_percent = auswahl
                 if percent < 0:
-                    anzahl = max(1, int(len(not_aktive_edges) * percent))
+                    anzahl = max(1, int(len(not_aktive_edges) * -percent))
                     auswahl = random.sample(not_aktive_edges, anzahl)
                     not_aktive_edges_percent = auswahl
 
