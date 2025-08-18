@@ -155,7 +155,7 @@ class Ortools(Solver):
     def fix_edges_constraint(self):
         for edge in self.graph.fix_edges:
             if edge not in self.vars:
-                continue
+                raise ValueError(f"Edge {edge} not found in vars.")
             index = self.vars[edge]
             # Setze die Kante als aktiv
             self.model.Add(index == 1)

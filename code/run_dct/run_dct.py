@@ -139,13 +139,14 @@ def ortools_algorithm(graph):
     solver = Ortools(graph)
     para = Ortools_Parameter(
         intersection=True,
-        # degree=True,
-        fix_hull=True,
-        all_edges=True,
-        min_max_direction=True,
+        degree=True,
+        # fix_edges=True,
+        # fix_hull=True,
+        # all_edges=True,
+        # min_max_direction=True,
         # evaluation_direction=True,
         # exclude_edges=True,
-        save_state_after_solution=True,
+        # save_state_after_solution=True,
     )
     solution = solver.solve({"timeout": 300, "args": asdict(para)})
     logging.info(f"solution found: {solution}")
@@ -323,8 +324,8 @@ def run_algo():
     PATH = os.path.join(
         os.path.dirname(__file__),
         "eval_instance",
-        "d_flips",
-        "002_d_flips_impossible_move_30.json",
+        "iterative",
+        "000_iterative_30.json",
     )
 
     logging.info(f"Loading nodes from {PATH}")
@@ -340,10 +341,12 @@ def run_algo():
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     # sat_algorithm(graph)
-    cadical_algorithm(graph, nodes)
+    # cadical_algorithm(graph, nodes)
     # count_algorithm(graph)
     # sat_Tri_algorithm(graph)
-    # ortools_algorithm(graph)
+    ortools_algorithm(graph)
+    for edge in graph.fix_edges:
+        print(edge)
     # ortools_tri_algorithm(graph)
     # gurobi_tri_algorithm(graph)
     # gurobi_algorithm(graph)
