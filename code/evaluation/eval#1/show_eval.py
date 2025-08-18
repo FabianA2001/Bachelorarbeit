@@ -123,12 +123,24 @@ def show_sat():
         ],
     }
 
+    arg_names = {
+        "SAT": [
+            "normal",
+            "Hülle fixieren",
+            "alternative Kanten",
+            "Kanten ausschließen",
+            "Kanten fixieren",
+        ]
+    }
+
     ri = Run_Algbench(
         inst_path=path,
         outer_parameter=outer_parameter,
         figure_path=figure_path,
         host=HOST,
         name="sat",
+        arg_names=arg_names,
+        show_solver_in_legend=False,
     )
     ri.show(block=False)
 
@@ -166,13 +178,23 @@ def show_gurobi():
             },
         ],
     }
-
+    arg_names = {
+        "gurobi": [
+            "normal",
+            "Hülle fixieren",
+            "alternative Kanten",
+            "Kanten ausschließen",
+            "Kanten fixieren",
+        ]
+    }
     ri = Run_Algbench(
         inst_path=path,
         outer_parameter=outer_parameter,
         figure_path=figure_path,
         host=HOST,
         name="gurobi",
+        show_solver_in_legend=False,
+        arg_names=arg_names,
     )
     ri.show(block=False)
 
@@ -215,12 +237,24 @@ def show_ortools():
         ]
     }
 
+    arg_names = {
+        "Ortools": [
+            "normal",
+            "Hülle fixieren",
+            "alternative Kanten",
+            "Kanten ausschließen",
+            "Kanten fixieren",
+        ]
+    }
+
     ri = Run_Algbench(
         inst_path=path,
         outer_parameter=outer_parameter,
         figure_path=figure_path,
         host=HOST,
         name="ortools",
+        show_solver_in_legend=False,
+        arg_names=arg_names,
     )
     ri.show(block=False)
 
@@ -231,7 +265,9 @@ def gesamt():
             {
                 "timeout": TIMEOUT,
                 "args": asdict(
-                    SAT_Parameter(intersection=True, degree_exact=True, all_edges=True)
+                    SAT_Parameter(
+                        intersection=True, degree_atleast=True, all_edges=True
+                    )
                 ),
             }
         ],

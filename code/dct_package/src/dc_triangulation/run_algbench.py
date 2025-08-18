@@ -41,6 +41,7 @@ class Run_Algbench:
         figure_path: str = "",
         name: str = "",
         arg_names={},
+        show_solver_in_legend: bool = True,
     ) -> None:
         self.inst_path = inst_path
         self.instances = self.get_instances(self.inst_path)
@@ -57,6 +58,7 @@ class Run_Algbench:
         self.figure_path = figure_path
         self.name = name
         self.arg_names = arg_names
+        self.show_solver_in_legend = show_solver_in_legend
 
         self.get_solver_inst_from_runlist: dict[
             str, tuple[type[Solver], list[Node], bool, str, str]
@@ -281,8 +283,10 @@ class Run_Algbench:
             solver = row["solver"]
             if solver_args_multiple[solver]:
                 name = (solver_args_mapping[solver][str(row["args"])])[0]
-                return f"{solver}-{name}"
-                # return f"{name}"
+                if self.show_solver_in_legend:
+                    return f"{solver}-{name}"
+                else:
+                    return f"{name}"
             else:
                 return solver
 
@@ -603,6 +607,14 @@ class Run_Algbench:
         # Eine gemeinsame Legende für die gesamte Figur - unter allen Plots über die komplette Breite
         handles, labels = axes[0].get_legend_handles_labels()
         if handles:
+            labels = [
+                label.replace("gurobi", "Gurobi") if "gurobi" in label else label
+                for label in labels
+            ]
+            labels = [
+                label.replace("Ortools", "OrTools") if "Ortools" in label else label
+                for label in labels
+            ]
             fig.legend(
                 handles,
                 labels,

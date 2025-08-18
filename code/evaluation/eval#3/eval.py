@@ -125,6 +125,7 @@ RI = Run_Algbench(
     figure_path=os.path.dirname(__file__),
     host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
     arg_names=arg_names,
+    show_solver_in_legend=False,
 )
 
 
