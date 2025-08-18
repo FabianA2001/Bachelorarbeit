@@ -197,6 +197,9 @@ class Graph_Wrapper:
     def get_hull_nodes(self) -> list[int]:
         return self._data.get_hull_nodes
 
+    def get_hull_nodes_sorted(self) -> list[int]:
+        return self._data.get_hull_nodes_sorted
+
     def get_hull_edges(self) -> list[tuple[int, int]]:
         return self._data.get_hull_edges
 
@@ -436,13 +439,38 @@ class Graph_Wrapper:
     def fix_edges(self) -> set[tuple[int, int]]:
         """Gibt die Kanten zurück, die fixiert werden sollen."""
         edges = set()
-        hull_nodes = self.get_hull_nodes()
+        hull_nodes = self.get_hull_nodes_sorted()
         for node1, node2, node3 in zip(
             hull_nodes,
             hull_nodes[1:] + hull_nodes[:-1],
             hull_nodes[2:] + hull_nodes[:-2],
         ):
-            if self.get_desired_degree_node(node2) != 2:
+            if self.get_desired_degree_node(node2) == 2:
+                tri = shapely.geometry.Polygon(
+                    [
+                        self.get_point_from_node(node1),
+                        self.get_point_from_node(node2),
+                        self.get_point_from_node(node3),
+                    ]
+                )
+
+                # Test intersections with multipoint
+                intersection = tri.intersection(self.get_multipoint)
+
+                # Count intersection points
+                num_intersections = 0
+                if not intersection.is_empty:
+                    if intersection.geom_type == "Point":
+                        num_intersections = 1
+                    elif intersection.geom_type == "MultiPoint":
+                        num_intersections = intersection.geoms.__len__()  # type: ignore
+                    else:
+                        raise ValueError(
+                            f"Unexpected intersection type: {intersection.geom_type}"
+                        )
+
+                if num_intersections > 3:
+                    continue
                 edges.add((min(node1, node3), max(node1, node3)))
         return edges
 
