@@ -192,7 +192,7 @@ def eval_table(ri: Run_Algbench):
     return table
 
 
-def draw_all_instances(table: pd.DataFrame) -> None:
+def draw_all_instances(table: pd.DataFrame, table_border: pd.DataFrame) -> None:
     """
     Erstellt Diagramme für jede Instanzen in der Tabelle, gruppiert nach Dateinummer.
     Erstellt für jede Zahl im Dateinamen (z.B. 36, 37, 38, 39) eine separate PDF-Datei
@@ -239,6 +239,31 @@ def draw_all_instances(table: pd.DataFrame) -> None:
 
             # Filtere Daten für diese Instanz und Dateinummer
             instance_data = file_group[file_group["instance"] == instance]
+
+            # Filtere table_border nach Instanz und file_number
+            border_rows = table_border[table_border["instance"] == instance]
+            border_row = border_rows[
+                border_rows["file"].str.contains(str(file_number), na=False)
+            ]
+            assert len(border_row) == 1, (
+                f"Es sollte genau eine Zeile für Instanz '{instance}' und Dateinummer '{file_number}' geben."
+            )
+            border_row = border_row.iloc[0]
+            border_timestamp = border_row["runtime"] + border_row["pre_time"]
+
+            # Füge Referenz-Solver hinzu (von (0,0) zu (border_timestamp, 100) zu (timeout, 100))
+            reference_timestamps = [0, border_timestamp, border_timestamp, TIMEOUT]
+            reference_evals = [0, 0, 100, 100]  # Multipliziert mit 100 für Prozent
+
+            ax.plot(
+                reference_timestamps,
+                reference_evals,
+                label="Referenz",
+                color="green",
+                linestyle="-",
+                linewidth=2,
+                alpha=0.8,
+            )
 
             # Gruppiere nach solver_args und plotte
             for solver_args, group_df in instance_data.groupby("solver_args"):
@@ -347,7 +372,7 @@ def draw_all_instances(table: pd.DataFrame) -> None:
             # Beschriftung für die Timeout-Linie
             ax.text(
                 TIMEOUT + 10,
-                0.5,
+                52.5,  # Mitte der Y-Achse (0-105% / 2)
                 f"Timeout ({TIMEOUT}s)",
                 rotation=90,
                 verticalalignment="center",
@@ -366,7 +391,11 @@ def draw_all_instances(table: pd.DataFrame) -> None:
             if ax.get_legend():
                 ax.get_legend().remove()
 
-        handel_names = {"Ortools-1": "Durchschnitt", "Ortools-2": "Min-Max"}
+        handel_names = {
+            "Ortools-1": "Durchschnitt",
+            "Ortools-2": "Min-Max",
+            "Referenz": "Referenz",
+        }
 
         # Eine gemeinsame Legende für die gesamte Figur
         if n_instances > 0:
@@ -470,6 +499,9 @@ def border():
         name="gesamt",
     )
     table = ri.get_table()
+    table = ri.apply_instance(table)
+    table = ri.apply_args(table)
+    table = ri.get_mean(table)
     # import streamlit as st
     # st.dataframe(table)
     return table
@@ -478,4 +510,4 @@ def border():
 if __name__ == "__main__":
     table = gesamt()
     table_2 = border()
-    draw_all_instances(table)
+    draw_all_instances(table, table_2)
