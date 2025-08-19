@@ -10,6 +10,7 @@ from dc_triangulation import (
 asdict
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
+benchmark_path = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
 NUMBER_RUNS = 5  # Number of runs for each instance
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
@@ -57,8 +58,9 @@ def ja():
     RI = Run_Algbench(
         inst_path=path,
         outer_parameter=outer_parameter,
+        path_benchmark=benchmark_path,
         figure_path=os.path.dirname(__file__),
-        host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
+        # host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
         name="ja",
     )
 
@@ -81,34 +83,25 @@ def nein():
                 "timeout": TIMEOUT,
                 "args": asdict(
                     Ortools_Parameter(
-                        intersection=True, degree=True, maximize_edges=-0.11
+                        intersection=True, degree=True, maximize_edges=-0.1
                     )
                 ),
-                "hack_eval_6": True,
-                "hack_eval_6_data": data,
-                "hack_eval_6_PERCENT": -0.1,
             },
             {
                 "timeout": TIMEOUT,
                 "args": asdict(
                     Ortools_Parameter(
-                        intersection=True, degree=True, maximize_edges=-0.51
+                        intersection=True, degree=True, maximize_edges=-0.5
                     )
                 ),
-                "hack_eval_6": True,
-                "hack_eval_6_data": data,
-                "hack_eval_6_PERCENT": -0.5,
             },
             {
                 "timeout": TIMEOUT,
                 "args": asdict(
                     Ortools_Parameter(
-                        intersection=True, degree=True, maximize_edges=-0.81
+                        intersection=True, degree=True, maximize_edges=-0.8
                     )
                 ),
-                "hack_eval_6": True,
-                "hack_eval_6_data": data,
-                "hack_eval_6_PERCENT": -0.8,
             },
         ]
     }
@@ -116,8 +109,10 @@ def nein():
     RI = Run_Algbench(
         inst_path=path,
         outer_parameter=outer_parameter,
+        path_benchmark=benchmark_path,
         figure_path=os.path.dirname(__file__),
-        host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
+        ignore_correct=True,
+        # host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
         name="nein",
     )
     RI.show()

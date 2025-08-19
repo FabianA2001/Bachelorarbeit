@@ -6,6 +6,7 @@ import socket
 import uuid
 from collections import defaultdict
 from dataclasses import asdict
+from itertools import combinations
 
 import slurminade
 from dc_triangulation import (
@@ -154,8 +155,7 @@ def run_solver_on_inst(key: str):
     for parameter in parameters:
         ####################################################
         # hack für eval 6
-        aktive_edges_percent = []
-        not_aktive_edges_percent = []
+        percent = 0
         if parameter.get("hack_eval_6", False):
             try:
                 if "hack_eval_6_data" not in parameter:
@@ -172,27 +172,6 @@ def run_solver_on_inst(key: str):
                 if key not in data:
                     raise ValueError(f"No data found for instance {key}.")
                 aktive_edges = data[key]
-                all_edges = []
-                for i in range(len(nodes)):
-                    for j in range(i + 1, len(nodes)):
-                        all_edges.append((nodes[i].pos, nodes[j].pos))
-
-                not_aktive_edges = [
-                    edge for edge in all_edges if edge not in aktive_edges
-                ]
-                # print("Aktive Edges:", len(aktive_edges))
-                # print(*aktive_edges, sep="\n")
-                # print("Nicht Aktive Edges:", len(not_aktive_edges))
-                # print(*not_aktive_edges, sep="\n")
-                # sys.exit(0)
-                if percent > 0:
-                    anzahl = max(1, int(len(aktive_edges) * percent))
-                    auswahl = random.sample(aktive_edges, anzahl)
-                    aktive_edges_percent = auswahl
-                if percent < 0:
-                    anzahl = max(1, int(len(not_aktive_edges) * -percent))
-                    auswahl = random.sample(not_aktive_edges, anzahl)
-                    not_aktive_edges_percent = auswahl
 
             except ValueError as e:
                 logging.error(f"Error in hack_eval_6: {e}")
@@ -207,21 +186,33 @@ def run_solver_on_inst(key: str):
             pos_to_node_index = {
                 get_key_from_pos(node.pos): i for i, node in enumerate(nodes)
             }  # Mapping von Position zu Knoten
-            parameter["debug_set_edges"] = []
-            for edge_pos in aktive_edges_percent:
-                node1 = pos_to_node_index[get_key_from_pos(edge_pos[0])]
-                node2 = pos_to_node_index[get_key_from_pos(edge_pos[1])]
-                parameter["debug_set_edges"].append(
-                    (min(node1, node2), max(node1, node2))
-                )
+            if parameter.get("hack_eval_6", False):
+                aktive_edges_with_nodes = []
+                for edge_pos in aktive_edges:
+                    node1 = pos_to_node_index[get_key_from_pos(edge_pos[0])]
+                    node2 = pos_to_node_index[get_key_from_pos(edge_pos[1])]
+                    aktive_edges_with_nodes.append(
+                        (min(node1, node2), max(node1, node2))
+                    )
 
-            parameter["debug_exclude_edges"] = []
-            for edge_pos in not_aktive_edges_percent:
-                node1 = pos_to_node_index[get_key_from_pos(edge_pos[0])]
-                node2 = pos_to_node_index[get_key_from_pos(edge_pos[1])]
-                parameter["debug_exclude_edges"].append(
-                    (min(node1, node2), max(node1, node2))
-                )
+                if percent > 0:
+                    anzahl = max(1, int(len(aktive_edges_with_nodes) * percent))
+                    parameter["debug_set_edges"] = random.sample(
+                        aktive_edges_with_nodes, anzahl
+                    )
+
+                if percent < 0:
+                    all_edges = [edge for edge in combinations(range(len(nodes)), 2)]
+                    not_aktive_edges = []
+                    for edge in all_edges:
+                        if edge not in aktive_edges_with_nodes:
+                            not_aktive_edges.append(
+                                (min(edge[0], edge[1]), max(edge[0], edge[1]))
+                            )
+                    anzahl = max(1, int(len(not_aktive_edges) * -percent))
+                    parameter["debug_exclude_edges"] = random.sample(
+                        not_aktive_edges, anzahl
+                    )
 
             RI.benchmark.add(
                 RI.create_benchmark_entry,

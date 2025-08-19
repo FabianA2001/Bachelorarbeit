@@ -63,4 +63,4 @@ if __name__ == "__main__":
         slurminade.join()
         compress_results.distribute()
     else:
-        RI.show()
+        RI.show(timelimit=TIMEOUT)

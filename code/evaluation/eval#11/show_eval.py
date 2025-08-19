@@ -242,18 +242,35 @@ def draw_all_instances(table: pd.DataFrame, table_border: pd.DataFrame) -> None:
 
             # Filtere table_border nach Instanz und file_number
             border_rows = table_border[table_border["instance"] == instance]
-            border_row = border_rows[
-                border_rows["file"].str.contains(str(file_number), na=False)
-            ]
-            assert len(border_row) == 1, (
-                f"Es sollte genau eine Zeile für Instanz '{instance}' und Dateinummer '{file_number}' geben."
-            )
-            border_row = border_row.iloc[0]
-            border_timestamp = border_row["runtime"] + border_row["pre_time"]
+            found = False
+            if not border_rows.empty:
+                border_row = border_rows[
+                    border_rows["file"].str.contains(str(file_number), na=False)
+                ]
+                if not border_row.empty:
+                    assert len(border_row) == 1, (
+                        f"Es sollte genau eine Zeile für Instanz '{instance}' und Dateinummer '{file_number}' geben."
+                    )
+                    found = True
+                    border_row = border_row.iloc[0]
+                    border_timestamp = border_row["runtime"] + border_row["pre_time"]
 
-            # Füge Referenz-Solver hinzu (von (0,0) zu (border_timestamp, 100) zu (timeout, 100))
-            reference_timestamps = [0, border_timestamp, border_timestamp, TIMEOUT]
-            reference_evals = [0, 0, 100, 100]  # Multipliziert mit 100 für Prozent
+                    # Füge Referenz-Solver hinzu (von (0,0) zu (border_timestamp, 100) zu (timeout, 100))
+                    reference_timestamps = [
+                        0,
+                        border_timestamp,
+                        border_timestamp,
+                        TIMEOUT,
+                    ]
+                    reference_evals = [
+                        0,
+                        0,
+                        100,
+                        100,
+                    ]  # Multipliziert mit 100 für Prozent
+            if not found:
+                reference_timestamps = [0, TIMEOUT]
+                reference_evals = [0, 0]  # Multipliziert mit 100 für Prozent
 
             ax.plot(
                 reference_timestamps,
@@ -495,7 +512,6 @@ def border():
         outer_parameter=outer_parameter,
         figure_path=figure_path,
         host=HOST,
-        ignore_correct=True,
         name="gesamt",
     )
     table = ri.get_table()
