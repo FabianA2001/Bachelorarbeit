@@ -106,33 +106,33 @@ outer_parameter = {
             "hack_eval_6_data": data,
             "hack_eval_6_PERCENT": 0.8,
         },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.1)
-        #     ),
-        #     "hack_eval_6": True,
-        #     "hack_eval_6_data": data,
-        #     "hack_eval_6_PERCENT": -0.1,
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.5)
-        #     ),
-        #     "hack_eval_6": True,
-        #     "hack_eval_6_data": data,
-        #     "hack_eval_6_PERCENT": -0.5,
-        # },
-        # {
-        #     "timeout": TIMEOUT,
-        #     "args": asdict(
-        #         Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.8)
-        #     ),
-        #     "hack_eval_6": True,
-        #     "hack_eval_6_data": data,
-        #     "hack_eval_6_PERCENT": -0.8,
-        # },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.1)
+            ),
+            "hack_eval_6": True,
+            "hack_eval_6_data": data,
+            "hack_eval_6_PERCENT": -0.11,
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.5)
+            ),
+            "hack_eval_6": True,
+            "hack_eval_6_data": data,
+            "hack_eval_6_PERCENT": -0.51,
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.8)
+            ),
+            "hack_eval_6": True,
+            "hack_eval_6_data": data,
+            "hack_eval_6_PERCENT": -0.81,
+        },
     ]
 }
 
@@ -145,7 +145,6 @@ RI = Run_Algbench(
 )
 
 
-# TODO iterativ_30 wurde nicht mit 0.1 und 0.5 gemacht
 
 
 @slurminade.slurmify()
