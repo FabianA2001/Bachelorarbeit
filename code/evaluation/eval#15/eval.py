@@ -30,6 +30,7 @@ RI = Run_Algbench(
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
     host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
+    name="Eval15",
 )
 
 
