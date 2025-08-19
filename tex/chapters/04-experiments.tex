@@ -113,7 +113,7 @@ Das Ziel besteht darin, den Solver zu identifizieren, der die besten Ergebnisse 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval3/cactus_total_runtime.pdf}
-    \caption{Eval3 Gesamt}
+    \caption[Vergleich verschiedener SAT-Solver]{In dieser Abbildung sind die Laufzeiten der verschiedenen SAT-Solver für die verschiedenen Instanzen zu sehen. Hierbei ist klar erkennbar das \emph{Gluecard4} und \emph{Glucose42} die besten Ergebnisse erzielen.}
     \label{fig:eval3:gesamt}
 \end{figure}
 In~\cref{fig:eval3:gesamt} ist zu erkennen, dass \emph{Gluecard4} und \emph{Glucose42} die besten Ergebnisse erzielen.
@@ -135,7 +135,7 @@ Die Instanzengröße liegt bei 30 bis 120 Knoten und es wurde auf dem Ryzen 7 ge
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{figures/eval1/gesamt.pdf}
-    \caption{Eval1 Gesamt}
+    \caption[Vergleich aller Solver]{In dieser Abbildung werden für die sechs verschiedenen Ansätze die besten Solver vergleichen. Hierbei ist klar erkennbar das OrTools die besten Ergebnisse erzielt}
     \label{fig:eval1:gesamt}
 \end{figure}
 
@@ -174,22 +174,52 @@ In diesem Experiment wurde ausschließlich der SAT Solver verwendet, da SAT und 
 Als weitere Beschränkungen kamen nur die Überschneidungsbeschränkung und die Gradbeschränkung zum Einsatz.
 Für die Knotengröße wurden Instanzen mit 80 bis 120 Knoten gewählt.
 
-\fabian{Finale Bilder analysieren}
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{eval6/nein.pdf}
+    \caption{In diesem Experiment wird die theoretische Ausschließung von Kanten untersucht. Für das Experiment wurde der normale Solver als Referenz verwendet sowie Solver, bei denen 10, 50 und 80 Prozent der ausschließbaren Kanten ausgeschlossen wurden.}
+    \label{fig:eval6:nein}
+\end{figure}
+
+In~\cref{fig:eval6:ja} sind die Ergebnisse für das Fixieren der Kanten dargestellt.
+Es wurden nur Instanzen betrachtet, die genau eine Lösung besitzen. 
+Für diese Instanzen wurden alle Kanten bestimmt, die für die Lösung benötigt werden.
+Von diesen Kanten wurden 10, 50 und 80 Prozent fixiert.
+
+Es zeigt sich, dass der normale Solver mit Abstand am langsamsten ist. 
+Wie zu erwarten, ist der Solver, bei dem nur 10 Prozent der Kanten fixiert wurden, langsamer als die beiden anderen.
+Überraschend ist, dass es bei keiner Instanz einen Unterschied macht, ob 50 oder 80 Prozent der Kanten fixiert wurden.
+
+In~\cref{fig:eval6:nein} sind die Ergebnisse für das Ausschließen der Kanten dargestellt.
+Auch hier wurde für alle Instanzen eine Menge von Kanten berechnet, die ausgeschlossen werden können.
+Von diesen Kanten wurden 10, 50 und 80 Prozent ausgeschlossen.
+\fabian{keine Analyse des Bildes, da falsch}
+
+\fabian{Bild fehlerhaft, nicht final}
+
+
 
 \section{Ja/Nein getrennt}
-% Eval12
+% Eval13
 In diesem Experiment wird untersucht, ob der SAT Solver bei Ja-Instanzen oder bei Nein-Instanzen schneller ist.
 Es wird nur der SAT Solver mit den besten Parametern aus~\cref{sec:eval1:grund_solver} verwendet.
 Die Knotenzahl liegt zwischen 80 und 120.
 \fabian{Finale Bilder analysieren}
 
 \section{Best Solver}
-\label{sec:eval13}
-% (Eval13)
+\label{sec:eval15}
+% (Eval15)
 In diesem Experiment wird geprüft, welche Instanzen der Solver lösen kann, wenn das Zeitlimit von 5 Minuten auf 30 Minuten erhöht wird.
 Dafür wurden Instanzen mit zunehmender Größe generiert, bis der Solver diese nicht mehr lösen konnte.
 Die Knotenzahl lag am Ende zwischen 130 und 200.
 Es wird erneut der beste Solver aus~\cref{sec:eval1:grund_solver} verwendet.
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{Eval15.pdf}
+    \caption{eval11 move}
+    \label{fig:eval15}
+\end{figure}
 \fabian{Finale Bilder analysieren}
 
 
@@ -217,7 +247,7 @@ Ausgewählt wurde der OrTools Solver mit Überschneidungsbeschränkung, Gradbesc
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval11/eval_progression_39.pdf}
-    \caption{eval11 move}
+    \caption[Zielfunktion mit Nein-Instanz]{Eine Nein-Instanz mit 120 Knoten. Hier werden zwei verschiedene Ansätze mit Zielfunktionen mit einem Referenzsolver aus~\cref{sec:eval1:grund_solver} verglichen. Der Durchschnittsansatz ist in den meisten Fällen besser als der Min-Max Ansatz. Es lässt sich nicht klar erkennen welcher Ansatz besser ist.}
     \label{fig:eval11:move}
 \end{figure}
 
@@ -253,8 +283,7 @@ Der erste Schritt war es, die Teilinstanzen, mit denen die \emph{Propagation} au
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{cdcl/propergation.pdf}
-    \caption{Eine Teilinstanz bei einem \emph{Propagation} Aufruf. Blau auf false gesetzt, grün auf true. Grüner Knoten Sollgrad erfüllt. Zahl in Knoten ist Sollgrad.
-    TODO schön aufschreiben mit finalem Bild und erklären das von rand ausgehend fertig}
+    \caption[Eine Teilinstanze in einem CDCL Solver]{Eine Teilinstanz bei einem \emph{Propagation} Aufruf. Blaue Kanten wurden auf False gesetzt grüne Kanten auf True. Die Zahlen in den Knoten geben den Sollgrad an. Sollte ein Knoten grün sein hat er seinene Sollgrad erreicht, bei rot nicht. Es ist zu erkennen das sich ein Konstrukt von oben Links noch unten vorarbeitet. Hier ist schon ein Teil fertig Trianguliert und viele Kanten wurden ausgeschlossen.} 
     \label{fig:cdcl:propagation}
 \end{figure}
 
@@ -306,13 +335,14 @@ Das Experiment wurde auf dem Ryzen 9 durchgeführt.
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{cdcl/counter_vs_first_node_operation_by_instance.pdf}
-    \caption{Anzahl propergation cdcl}
+    \caption[Anzahl Erfolgreichen \emph{Propagation}]{In der Abbildung sind die Relativen Anzahlen der Erfolgreichen \emph{Propagation} zu sehen. Das bedeutet die Anzahl der Erfolgreichen \emph{Propagation} geteilt durch die Anzahl der \emph{Propagation} Aufrufe.}
     \label{fig:cdcl:anzahl}
 \end{figure}
 \fabian{Größere Insanzen laufen lassen, warscheinlich nicht viel größere da es keinen Timeout gibt und das dass Testen schwierig macht}
 In~\cref{fig:cdcl:anzahl} sind diese Relativen Anzahlen pro Instanz zu sehen.
 Dabei fällt auf das vorallem Random Instanzen sehr viele Erfolgreiche \emph{Propagation} haben.
 Greedy und Delaunay hingegen haben nur wenige Erfolgreiche \emph{Propagation}.
+Iterativ hatte anscheinend keine Erfolgreichen \emph{Propagation} da die Instanzen zu einfach sind.
 Nicht ganz deutlich aber zu erkennen ist das Nein-Instanzen mehr Erfolgreiche \emph{Propagation} haben als Ja-Instanzen.
 Bei diesem Muster kann es sich aber auch um einen Zufall handeln da nur wenige verschiedene Instanzen betrachtet wurden.
 
@@ -347,7 +377,7 @@ Dafür werden die Ja-Instanzen der Größe 30 bis 120 Knoten betrachtet.
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{gradverteilung.pdf}
-    \caption{Eval8 Anzahl Lösungen Greedy}
+    \caption{In dieser Abbildung ist die Gradverteilung der Knoten pro Instanz zu sehen.}
     \label{fig:eval9:gradverteilung}
 \end{figure}
 In~\cref{fig:eval9:gradverteilung} ist die Gradverteilung der Knoten zu sehen.
@@ -369,7 +399,7 @@ Für dieses Experiment wurden nur Ja-Instanzen der größe 30 bis 80 Knoten betr
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{edge_length_distribution_plots.pdf}
-    \caption{Eval8 Kanten verteilung}
+    \caption[In dieser Abbildung ist die Verteilung der Kantenlängen pro Instanz zu sehen.]{In dieser Abbildung ist die Verteilung der Kantenlängen pro Instanz zu sehen. Dabei sind die Kantenlängen normiert, sodass sie zwischen 0 und 1 liegen. Dafür wurde alle Kantenlängen durch die maximale Kantenlänge geteilt.}
     \label{fig:eval10:kantenverteilung}
 \end{figure}
 
