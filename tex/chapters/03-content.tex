@@ -170,27 +170,35 @@ In der Praxis werden dadurch viele Knoten bereits ausgeschlossen, da sie die ers
 
 \subsubsection{Schnittkanten ausschließen}
 Um die Kanten zu finden bei denen die Schnittkanten zu viele Kanten ausschließen, wird jede Kante einzeln betrachtet.
+Dafür werden alle Kanten iterativ betrachtet.
+Für jede betrachtete Kante werden zunächst Zähler für jeden Knoten erstellt.
+Danach werden nacheinander alle Schnittkanten der betrachteten Kante aufgerufen.
+Für alle Schnittkanten wird der Zähler die beiden Endknoten der Kante um eins erhöht.
+Am Ende werden alle Knoten durchgegangen, sollte ein Knoten \(v\) folgende Formel erfüllen wird die Kante ausgeschlossen.
+\[
+\degree(v) - \text{node\_count}[v] > \degrees(v)
+\]
 \michael{Kann man diesen Algorithmus nicht einfacher als Text erklären?}
 \fabian{Ist das Besser, also sollte ich probieren möglichst wenig als Algo zu machen?}
-Für jede Kante wird folgender Algorithmsus aufgerufen:
-\begin{algorithm}[H]
-	\caption{EXCLUDE EDGE INTERSECTION(\(e\))}
-	\begin{algorithmic}[1]
-		\STATE erstelle \emph{Map} node\_count mit \emph{Key} Knoten und \emph{Value} Integer 
-		\FOR{\(e_{i} \in \intersection(e)\)}
-			\STATE seien \(v_1\) und \(v_2\) die Knoten von \(e_i\)
-			\STATE node\_count[\(v_1\)] += 1
-			\STATE node\_count[\(v_2\)] += 1
-		\ENDFOR
-		\FOR{\(v \in node\_count\)}
-			% \IF{\(\degree(v_1)\) - node\_count[\(v\)] > \(\degrees(v_1)\)}
-			\IF{\(\degree(v_1) - \text{node\_count[}v\text{]} > \degrees(v_1)\)}
-				\RETURN \emph{True}
-			\ENDIF
-		\ENDFOR
-		\RETURN \emph{False}
-	\end{algorithmic}
-\end{algorithm}
+% Für jede Kante wird folgender Algorithmsus aufgerufen:
+% \begin{algorithm}[H]
+% 	\caption{EXCLUDE EDGE INTERSECTION(\(e\))}
+% 	\begin{algorithmic}[1]
+% 		\STATE erstelle \emph{Map} node\_count mit \emph{Key} Knoten und \emph{Value} Integer 
+% 		\FOR{\(e_{i} \in \intersection(e)\)}
+% 			\STATE seien \(v_1\) und \(v_2\) die Knoten von \(e_i\)
+% 			\STATE node\_count[\(v_1\)] += 1
+% 			\STATE node\_count[\(v_2\)] += 1
+% 		\ENDFOR
+% 		\FOR{\(v \in node\_count\)}
+% 			% \IF{\(\degree(v_1)\) - node\_count[\(v\)] > \(\degrees(v_1)\)}
+% 			\IF{\(\degree(v_1) - \text{node\_count[}v\text{]} > \degrees(v_1)\)}
+% 				\RETURN \emph{True}
+% 			\ENDIF
+% 		\ENDFOR
+% 		\RETURN \emph{False}
+% 	\end{algorithmic}
+% \end{algorithm}
 
 \subsubsection{Kanten Theoretisch ausschließen}
 Damit Kanten ausgeschlossen werden können muss zunächst die Instanz mit einem beliebigen Lösungsansatz gelöst werden.
