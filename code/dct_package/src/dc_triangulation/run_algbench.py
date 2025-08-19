@@ -380,6 +380,7 @@ class Run_Algbench:
 
         # HACK Hardodet time
         table = table[table["total_runtime"] < 295]
+
         # print(table["total_runtime"])
         self.create_cactus(
             table=table,
