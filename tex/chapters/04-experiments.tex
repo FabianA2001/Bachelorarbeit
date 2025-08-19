@@ -205,10 +205,14 @@ Erste Ansatz ist der Flips Ansatz, die anderen beiden Ansätze sind die Zielfunk
 Der Flips Ansatz schafft Instanzen mit Maximal 8 Knoten. 
 Dementsprechend wird er im weiteren nicht betrachtet.
 Alle anderen Druchläufe in diesem Experiment wurden mit 120 Knoten durchgeführt.
+Das Experiment wird auf dem Ryzen 9 durchgeführt.
 
 Im folgenden werden Ja-Instanzen und Nein-Instanzen getrennt betrachtet.
 Bei Ja-Instenzen ist interesannt wie schnell die Instanze gelöst werden kann und ab wann gute Ergebnisse erzielt werden.
 Bei den Nein-Intanzen ist hingegen interesannter wie nah der Solver an eine Lösung kommt.
+In beiden Instanzen wird ein Referenz Solver verwendet.
+Dieser Betrachtet das Problem weiterhin als Entscheidungsproblem.
+Ausgewählt wurde der OrTools Solver mit Überschneidungsbeschränkung, Gradbeschränkung, fixierung der Hülle und der alternativen Kantenformulierung.
 
 \begin{figure}[htb]
     \centering
@@ -217,15 +221,26 @@ Bei den Nein-Intanzen ist hingegen interesannter wie nah der Solver an eine Lös
     \label{fig:eval11:move}
 \end{figure}
 
-\begin{itemize}
-    \item Min Max bei Ja besser
-    \item Durchschnitt bei Nein besser
-\end{itemize}
 
-\cref{fig:eval11:36}
-\cref{fig:eval11:37}
-\cref{fig:eval11:move}
-\cref{fig:eval11:change}
+Bei der Ja-Instanz in~\cref{fig:eval11:36} zeigt sich, dass der Min-Max-Ansatz in den meisten Fällen bessere Ergebnisse erzielt als der Durchschnittsansatz.
+Nur bei Delaunay erreichen beide Ansätze nicht die vollen 100 Prozent.
+Der Durchschnittsansatz erzielt bei Delaunay jedoch höhere Werte als Min-Max.
+Der Referenzsolver liefert bei Delaunay kein Ergebnis.
+Ein klares Muster, welcher Ansatz insgesamt am besten abschneidet, ist nicht zu erkennen, da in jeder Instanz unterschiedliche Ansätze vorne liegen.
+Der Durchschnittsansatz erzielt, wie erwähnt, bei Delaunay die besten Resultate.
+Der Referenzsolver ist bei Iterative und Greedy am schnellsten.
+Min-Max ist fast immer schneller als der Durchschnittsansatz und in drei Fällen mindestens genauso schnell wie der Referenzsolver.
+
+Bei den Nein-Instanzen in~\cref{fig:eval11:move} zeigt sich, dass der Durchschnittsansatz in den meisten Fällen bessere Ergebnisse liefert als der Min-Max-Ansatz.
+Oft findet er erst beim Timeout eine Verbesserung, diese ist jedoch besser als die des Min-Max-Ansatzes.
+Der Min-Max-Ansatz bricht vermutlich früher ab, da er aus seiner Sicht ein Optimum gefunden hat.
+In den meisten Fällen stagniert der Min-Max-Ansatz bei etwas über 80 Prozent.
+Der Referenzsolver erkennt nur bei Greedy und Iterative früher, dass es sich um eine Nein-Instanz handelt.
+In allen anderen Fällen benötigt er mindestens genauso lange wie der Min-Max-Ansatz.
+
+Insgesamt lässt sich nicht eindeutig feststellen, ob der Referenzsolver besser oder schlechter als die Zielfunktionen ist.
+Bei den Zielfunktionen selbst zeigt sich, dass bei Ja-Instanzen der Min-Max-Ansatz besser abschneidet.
+Bei Nein-Instanzen erzielt der Durchschnittsansatz die besseren Ergebnisse.
 
 \section{\emph{Propagation} CDCL}
 Der CDCL Solver namens \emph{CaDiCaL}~\cite{cadical} von Armin Biere ermöglicht es, eine neue Entscheidungsebene mit einer eigenen Funktion zu erzeugen.
@@ -368,6 +383,7 @@ In diesm Abschnitt wurde festgestellt das die Anzahl der Lösungen keinen Einflu
 Die Gradverteilung und die Kantenlängenverteilung hingegen scheinen einen Einfluss auf die Schwierigkeit zu haben.
 Hierbei deuten viele kurze Kanten und verteile Grade auf eine schwere Instanz hin.
 Hingegen verteilte längere Kanten und wenige hohe Grade auf eine leichte Instanz.
+
 
 
 
