@@ -13,16 +13,16 @@ Im letzten Abschnitt wird kurz sich mit der Eindeutigkeit der Lösungen beschäf
 
 \section{Solver}
 In dieser Arbeit werden drei verschiedene Solver verwendet
-PySat, OrTools und Gurobi.
+PySAT, OrTools und Gurobi.
 
-PySat ist eine Python-Bibliothek, die eine Sammlung von SAT-Solvern bereitstellt.
+PySAT ist eine Python-Bibliothek, die eine Sammlung von SAT-Solvern bereitstellt.
 Diese SAT-Solver entscheiden, ob eine KNF-Formel erfüllbar ist.
-Dementsprechend kann PySat nur Entscheidungsprobleme, aber keine Optimierungsprobleme lösen.
+Dementsprechend kann PySAT nur Entscheidungsprobleme, aber keine Optimierungsprobleme lösen.
 Alle Solver sind in C oder C++ implementiert und es wird eine einheitliche Schnittstelle für alle Solver in Python bereitgestellt.
 Zusätzlich werden verschiedene Codierungen für Kardinalitäten angeboten.
 Das bedeutet, man gibt eine Bedingung ein und erhält eine KNF-Formel, die diese Bedingung abbildet.
-PySat stellt hierfür verschiedene Codierungen mit Implementierung bereit.
-PySat ist open source und kostenlos.
+PySAT stellt hierfür verschiedene Codierungen mit Implementierung bereit.
+PySAT ist open source und kostenlos.
 
 Der zweite Solver ist OrTools (Google Optimization Tools) von Google.
 Dieser unterstützt verschiedene Modellierungsarten wie lineare Programmierung (LP), gemischt-ganzzahlige Programmierung (MIP), Constraint Programming (CP) und Routing-Algorithmen.
@@ -53,12 +53,12 @@ Dies muss nicht explizit als Bedingung angegeben werden da es von der Gradbeschr
 Es muss nur geprüft werden, ob die Gradbeschränkung in einer Triangulierung erfüllbar ist.
 Dafür kann die Formel
 \[
-\text{Anzahl Kanten} = 3 n - 3 - k
+\left| E \right| = 3 n - 3 - k
 \]
 aus~\cref{sec:delaunay_triangulation} verwendet werden.
 Diese Anzahl der Kanten kann in folgender Formel genutzt werden, um die Gradbeschränkung zu überprüfen.
 \[
-\text{Anzahl Kanten} \cdot 2 \overset{!}{=} \sum \degrees(i)
+\left| E \right| \cdot 2 \overset{!}{=} \sum \degrees(i)
 \]
 
 \subsubsection{Kanten Fixieren/Ausschluss}
@@ -88,10 +88,9 @@ Es können also alle Kanten betrachtet werden, welche beide Knoten auf der Hüll
 Die folgenden beiden Bedingungen können genutzt werden, um diese Kanten auszuschließen, sollte eine der Bedingungen wahr werden, so kann die Kante ausgeschlossen werden.
 Die Bedingungen werden für beide Hälften getestet, welche durch die Teilung entstehen.
 \begin{align*}
-	\text{Anzahl Kanten} \cdot 2 &> \sum_{v \in V} \degrees(v) \\
+	\left| E \right| \cdot 2 &> \sum_{v \in V} \degrees(v) \\
 	\forall v \in (V \setminus V_H): \degrees(v) &> \left| V \right| - 1
 \end{align*}
-\fabian{Anzahl kanten anpassen}
 Dabei sei \(V\) die Menge aller Knoten in der betrachteten Hälfte.
 Analog sei \(V_H \subseteq V\) die Menge der Knoten auf der Hülle. 
 
@@ -228,22 +227,67 @@ Für die \emph{alternative Kanteneschränkung} werden folgende Bedingungen hinzu
 
 Für die fixierung bzw. ausschließung der Kanten werden die zugehöhrigen Variablen auf \emph{Wahr} oder \emph{Falsch} gesetzt.
 
-\subsubsection{PySat}
+\subsubsection{PySAT}
 \label{sec:pysat}
-Da PySat eine SAT Formulierung also Klauseln in der KNF verwendet, müssen die Bedingungen etwas angepasst werden.
+Da PySAT eine SAT Formulierung also Klauseln in der KNF verwendet, müssen die Bedingungen etwas angepasst werden.
 Die Überschneidungen können sehr ähnlich mit folgender Formel umgesetzt werden:
 \[
-\neg x_{e_1} \lor \neg x_{e_2} \myhspace \forall e_1, e_2 \in E: e_2 \in \intersection(e_1)
+\overline{x_{e_1}} \lor \overline{x_{e_2}} \myhspace \forall e_1, e_2 \in E: e_2 \in \intersection(e_1)
 \]
-Für die Gradbeschränkung ist das Problem das bei PySat für eine Menge von Variablen nicht festgelegt werden kann wie viele von ihnen wahr sein müssen.
+Für die Gradbeschränkung ist das Problem das bei PySAT für eine Menge von Variablen nicht festgelegt werden kann wie viele von ihnen wahr sein müssen.
 Hierfür gibt es zwei Ansätze.
-Der erste Ansatz nutzt die Kardinalitätscodierungen die PySat anbietet.
+Der erste Ansatz nutzt die Kardinalitätscodierungen die PySAT anbietet.
 \phillip{hier aufpassen mit den Spaces}
 \fabian{ @Phillip meintest du das ich hier das tilde zeichen einfügen soll?}
 Hierfür kommen nur \emph{sequential counters}~\cite{sequential_counters}, \emph{sorting networks}~\cite{sorting_networks}, \emph{cardinality networks}~\cite{cardinality_networks}, \emph{totalizer}~\cite{totalizer}, \emph{modulo totalizer}~\cite{modulo_totalizer}, \emph{modulo totalizer for k-cardinality}~\cite{modulo_totalizer_for_k_cardinality} und eine Native Codierung für manche Solver in Frage.
 Die Restlichen Codierungen bieten keine Möglichkeit um k-Kardinalitäten zu erzeugen. 
 Also das k viele Variablen wahr sind.
-Bei diesem Ansatz gibt es noch die Möglichkeit das man die Kardinalität auf den exakten Sollgrad setzt, oder festlegt das der Knoten mindestens den Sollgrad hat.
+
+
+Wie in~\cref{sec:eval5:sat_degree} gezeigt wird, ist der Ansatz der \emph{sequential counters} am relevantesten.
+Daher wird dieser im Folgenden genauer erläutert.
+Der Ansatz der \emph{sequential counters} wurde von Carsten Sinz~\cite{counter} entwickelt.
+Er basiert auf einer Idee aus der Computerhardware.
+Zur Berechnung der Kardinalität \(k\) für die Klausel \((x_1 \lor x_2 \lor \ldots \lor x_n)\) werden \(n-1\) Variablen \(s_i\) in der unären Darstellung benötigt.
+Zusätzlich werden \(n\) Hilfsvariablen \(v_i\) verwendet.
+Für \(i = 1\) werden \(s_1\) und \(v_1\) wie folgt definiert
+\begin{align*}
+s_{1,1} &\Leftrightarrow x_1 \\
+s_{1,j} &\Leftrightarrow 0 \myhspace &\text{für } 1 < j \leq k \\
+v_{1} &\Leftrightarrow 0
+\end{align*}
+Für den Abschluss mit \(i=n\) wird \(v_n\) wie folgt gesetzt
+\[v_n \iff x_n \land s_{n-1,k}\]
+Iterativ werden dann \(s_i\) und \(v_i\) für \(i \in \{2, \ldots, n-1\}\) wie folgt definiert
+\begin{align*}
+s_{i,1} &\Leftrightarrow x_i \lor s_{i-1,1} \\
+s_{i,j} &\Leftrightarrow x_i \land s_{i-1,j-1} \lor s_{i-1,j} \qquad &\text{für } 1 < j \leq k \\[6pt]
+v_i &\Leftrightarrow x_i \land s_{i-1,k}
+\end{align*}
+
+Mit diesen Variablen können die folgenden Klauseln erstellt werden
+\begin{align*}
+&\hspace{7pt}(\overline{x_1} \lor s_{1,1})  \\
+&\hspace{7pt}(\overline{s_{1,j}})  \quad \text{für } 1 < j \leq k \\
+\\
+&\left.\begin{array}{l}
+\hspace{4pt}(\overline{x_i} \lor s_{i,1}) \\
+\hspace{4pt}(\overline{s_{i-1,1}} \lor s_{i,1}) \\
+\left.\begin{array}{l}
+	(\overline{x_i} \lor \overline{s_{i-1,j-1}} \lor s_{i,j}) \\
+	(\overline{s_{i-1,j}} \lor s_{i,j}) \\
+\end{array}\right\} \quad \text{für } 1 < j \leq k \\
+\hspace{4pt}(\overline{x_i} \lor \overline{s_{i-1,k}})\\
+\end{array}\right\} \quad \text{für } 1 < i < n \\
+\\
+&\hspace{7pt}(\overline{x_n} \lor \overline{s_{n-1,k}}) 
+\end{align*}
+\fabian{Vernünftig links bündig machen }
+Diese Klauseln stellen sicher, dass genau \(k\) Variablen von \((x_1 \lor x_2 \lor \ldots \lor x_n)\) wahr sind.
+Alle Literale, die auf \(s_{i,j}\) basieren, müssen mit der Hilfsvariable \(v_i\) verknüpft werden.
+
+
+Bei der Codierung mit PySAT besteht die Möglichkeit, die Kardinalität auf den exakten Sollgrad zu setzen oder festzulegen, dass der Knoten mindestens den Sollgrad erreicht.
 Insgesamt erzielen beide Bedingungen denselben Effekt da der Maximale Grad durch die Anzahl der Kanten begrenzt ist.
 Wenn jedoch nur gefordert wird, dass der Knoten mindestens den Sollgrad erreicht, müssen weniger Hilfsvariablen eingeführt werden.
 Bei der Exakten Methode könnte der Solver allerdings schneller zu einer Lösung finden da diese Bedingung stärker ist, also mehr Informationen liefert.
@@ -264,15 +308,15 @@ Insgesamt wird so eine Kardinalitäts Codierung erzeugt.
 Diese Methode hat den Vorteil, dass keine Hilfsvariablen benötigt werden, allerdings entstehen sehr viele Klauseln.
 
 
-\fabian{sollte ich hier noch nennen wie der \emph{sequential counter} oder der Native Ansatz funktioniert weil diese am Ende am besten sind. Ich müsste dann aus den Experimenten vorgreifen. Auch brauche ich Information nicht wirklich da ich PySat hier als Blackbox nutzen kann.} 
-\phillip{den Sequential Counter kannst Du hier gern erklären.\\}
-\fabian{
+% \fabian{sollte ich hier noch nennen wie der \emph{sequential counter} oder der Native Ansatz funktioniert weil diese am Ende am besten sind. Ich müsste dann aus den Experimenten vorgreifen. Auch brauche ich Information nicht wirklich da ich PySAT hier als Blackbox nutzen kann.} 
+% \phillip{den Sequential Counter kannst Du hier gern erklären.\\}
+% \fabian{
 
-Ich glaube inzwischen das die native Codierung durch Glucard4 besser ist, soll ich hier nur erklären was ich am ende nutze obwohl ich dann aus den Experimenten vorgreife?
-}
+% Ich glaube inzwischen das die native Codierung durch Glucard4 besser ist, soll ich hier nur erklären was ich am ende nutze obwohl ich dann aus den Experimenten vorgreife?
+% }
 
 Die Fixierung von Kanten kann analog wie in OrTools und Gurobi umgesetzt werden.
-Hierbei werden anstatt die Variablen auf \emph{Wahr} und \emph{Falsch} zu setzen, die Klausen \((x_e)\) und \((\neg x_e)\) hinzugefügt.
+Hierbei werden anstatt die Variablen auf \emph{Wahr} und \emph{Falsch} zu setzen, die Klausen \((x_e)\) und \((\overline{x_e})\) hinzugefügt.
 
 Für die \emph{alternative Kantenbeschränkung} können folgende Klauseln genutzt werden:
 \[
@@ -316,7 +360,7 @@ Es muss also zusätzlich getestet werden ob sie sich nicht Berüheren.
 \michael{Kannst du machen würde ich aber so nicht schreiben. Prinzipiell sollte CGAL schon schneller sein als Shapely wenn beide unter den gleichen Exaktheitsbedingungen arbeiten. Es kann sein, dass Shapely dir falsche Ergebnisse liefert, weil es mit Floats rechnet. Ich würde eher sagen du hast auch eine exakte Implementierung mit CGAL die aber aufgrund der Exaktheit langsamer ist und daher wurde in den späteren Experimenten Shapely genutzt.}
 \fabian{Ich kann mir gut vorstellen das meine Implementierung vorallem schlechter ist. Weil vorallem das mit dem Berühren in CGAL nerviger war. Sollte ich da irgendwas schreiben oder es einfach so lassen. Oder sollte ich genau das schreiben das es auch eine Implemntierung in CGAL gibt diese aber langsamer ist weil Berührungen schlechter von mir implementiert wurden?}
 
-Die Formulierungen für OrTools, Gurobi und PySat können analog zur Kantenformulierung umgesetzt werden.
+Die Formulierungen für OrTools, Gurobi und PySAT können analog zur Kantenformulierung umgesetzt werden.
 
 
 
