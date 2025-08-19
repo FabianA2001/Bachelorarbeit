@@ -18,6 +18,7 @@ from dc_triangulation import (
 asdict
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
+benchmark_path = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
 NUMBER_RUNS = 5  # Number of runs for each instance
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
@@ -109,7 +110,7 @@ outer_parameter = {
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.11)
+                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.1)
             ),
             "hack_eval_6": True,
             "hack_eval_6_data": data,
@@ -118,7 +119,7 @@ outer_parameter = {
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.51)
+                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.5)
             ),
             "hack_eval_6": True,
             "hack_eval_6_data": data,
@@ -127,7 +128,7 @@ outer_parameter = {
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.81)
+                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.8)
             ),
             "hack_eval_6": True,
             "hack_eval_6_data": data,
@@ -141,10 +142,9 @@ RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
+    path_benchmark=benchmark_path,
     host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
 )
-
-
 
 
 @slurminade.slurmify()
@@ -256,7 +256,6 @@ if __name__ == "__main__":
         )
         run_list = RI.get_run_list()
         for key in run_list:
-            # run_solver_on_inst(key)
             run_solver_on_inst.distribute(key)
 
         slurminade.join()
