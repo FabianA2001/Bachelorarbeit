@@ -109,29 +109,29 @@ outer_parameter = {
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.1)
+                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.11)
             ),
             "hack_eval_6": True,
             "hack_eval_6_data": data,
-            "hack_eval_6_PERCENT": -0.11,
+            "hack_eval_6_PERCENT": -0.1,
         },
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.5)
+                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.51)
             ),
             "hack_eval_6": True,
             "hack_eval_6_data": data,
-            "hack_eval_6_PERCENT": -0.51,
+            "hack_eval_6_PERCENT": -0.5,
         },
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.8)
+                Ortools_Parameter(intersection=True, degree=True, maximize_edges=-0.81)
             ),
             "hack_eval_6": True,
             "hack_eval_6_data": data,
-            "hack_eval_6_PERCENT": -0.81,
+            "hack_eval_6_PERCENT": -0.8,
         },
     ]
 }
