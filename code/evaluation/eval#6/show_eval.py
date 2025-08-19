@@ -68,15 +68,15 @@ def ja():
 def nein():
     outer_parameter = {
         Ortools: [
-            # {
-            #     "timeout": TIMEOUT,
-            #     "args": asdict(
-            #         Ortools_Parameter(
-            #             intersection=True,
-            #             degree=True,
-            #         )
-            #     ),
-            # },
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    Ortools_Parameter(
+                        intersection=True,
+                        degree=True,
+                    )
+                ),
+            },
             {
                 "timeout": TIMEOUT,
                 "args": asdict(
