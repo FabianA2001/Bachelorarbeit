@@ -390,19 +390,20 @@ def permute_instance():
 
 def create_instance():
     FLIPS = 500
-    PATH = "instance"
+    PATH = "eval_instance"
     for NAME, gen in zip(
-        ["d_flips", "delaunay", "greedy", "iterative", "random"],
+        ["random"],
+        # ["d_flips", "delaunay", "greedy", "iterative", "random"],
         [
-            generate.Generate_Edges_Delaunay_Flips(FLIPS),
-            generate.Generate_Edges_Delaunay(),
-            generate.Generate_Edges_Greedy(),
-            generate.Generate_Edges_Iterative(),
+            # generate.Generate_Edges_Delaunay_Flips(FLIPS),
+            # generate.Generate_Edges_Delaunay(),
+            # generate.Generate_Edges_Greedy(),
+            # generate.Generate_Edges_Iterative(),
             generate.Generate_Edges_Random(),
         ],
     ):
-        INST_NAME = "example_20"
-        for i in [20]:
+        INST_NAME = NAME
+        for i in [190, 200]:
             FILE_NAME = f"{NAME}"
             generate.Generate_Instance(
                 INST_NAME,
@@ -492,9 +493,9 @@ def draw_example():
 
 
 if __name__ == "__main__":
-    run_algo()
+    # run_algo()
     # show_all_instanzes()
-    # create_instance()
+    create_instance()
     # permute_instance()
     # generate_example()
     # draw_example()
