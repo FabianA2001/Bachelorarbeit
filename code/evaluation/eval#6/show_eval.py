@@ -55,16 +55,20 @@ def ja():
         ]
     }
 
+    arg_names = {"Ortools": ["Referenz", "10%", "50%", "80%"]}
+
     RI = Run_Algbench(
         inst_path=path,
         outer_parameter=outer_parameter,
         path_benchmark=benchmark_path,
         figure_path=os.path.dirname(__file__),
-        # host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
+        host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
         name="ja",
+        arg_names=arg_names,
+        show_solver_in_legend=False,
     )
 
-    RI.show(timelimit=100)
+    RI.show(view_line=60)
 
 
 def nein():
@@ -106,16 +110,19 @@ def nein():
         ]
     }
 
+    arg_names = {"Ortools": ["Referenz", "10%", "50%", "80%"]}
     RI = Run_Algbench(
         inst_path=path,
         outer_parameter=outer_parameter,
         path_benchmark=benchmark_path,
         figure_path=os.path.dirname(__file__),
         ignore_correct=True,
-        # host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
+        host=["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"],
         name="nein",
+        arg_names=arg_names,
+        show_solver_in_legend=False,
     )
-    RI.show()
+    RI.show(view_line=60)
 
 
 if __name__ == "__main__":

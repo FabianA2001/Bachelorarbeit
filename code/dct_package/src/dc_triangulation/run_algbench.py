@@ -370,6 +370,7 @@ class Run_Algbench:
     def show(
         self,
         timelimit: int = 300,
+        view_line: int = 325,
         block: bool = False,
     ):
         table = self.get_table()
@@ -388,6 +389,7 @@ class Run_Algbench:
             y="total_runtime",
             block=block,
             timelimit=timelimit,
+            view_line=view_line,
         )
 
     def create_cactus(
@@ -396,6 +398,7 @@ class Run_Algbench:
         y: str,
         block: bool = False,
         timelimit: int = 300,
+        view_line: int = 325,
     ):
         """
         Erstellt einen Cactus Plot für die Benchmark-Daten.
@@ -542,7 +545,7 @@ class Run_Algbench:
 
             # Y-Achse auf 0-105% setzen, damit 100%-Linie und Beschriftung sichtbar sind
             ax.set_ylim(0, 105)
-            ax.set_xlim(0, timelimit + 25)
+            ax.set_xlim(0, view_line)
 
             # Schriftgröße der Achsen-Zahlen anpassen
             ax.tick_params(axis="both", which="major", labelsize=ACHSEN_FONT_SIZE)
@@ -568,27 +571,28 @@ class Run_Algbench:
             #     alpha=0.8,
             # )
 
-            # Vertikale Linie bei timelimit hinzufügen
-            ax.axvline(
-                x=timelimit,
-                color="red",
-                linestyle="--",
-                alpha=0.7,
-                linewidth=1.5,
-            )
+            if not view_line < timelimit:
+                # Vertikale Linie bei timelimit hinzufügen
+                ax.axvline(
+                    x=timelimit,
+                    color="red",
+                    linestyle="--",
+                    alpha=0.7,
+                    linewidth=1.5,
+                )
 
-            # Beschriftung direkt an die Linie
-            ax.text(
-                timelimit + 20,
-                50,
-                f"Timelimit ({timelimit}s)",
-                rotation=90,
-                verticalalignment="center",
-                horizontalalignment="right",
-                fontsize=ACHSEN_FONT_SIZE,
-                color="red",
-                alpha=0.8,
-            )
+                # Beschriftung direkt an die Linie
+                ax.text(
+                    timelimit + 20,
+                    50,
+                    f"Timelimit ({timelimit}s)",
+                    rotation=90,
+                    verticalalignment="center",
+                    horizontalalignment="right",
+                    fontsize=ACHSEN_FONT_SIZE,
+                    color="red",
+                    alpha=0.8,
+                )
 
         # Verstecke überschüssige Subplots
         for idx in range(n_instances, len(axes)):
