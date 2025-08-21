@@ -8,7 +8,7 @@ Im ersten Abschnitt werden die Externen Solver kurz erklärt die in dieser Arbei
 In den beiden darauf folgenden Abschnitten werden zwei Mögliche Ansätze beschrieben die das Problem als Entscheidungsproblem betrachten.
 Im vierten Abschnitt wird der Problem als Optimirungsproblem betrachtet.
 Danach wird erklärt wie die Instanzen Generiert werden.
-Im letzten Abschnitt wird kurz sich mit der Eindeutigkeit der Lösungen beschäftigt.
+Im letzten Abschnitt wird die Eindeutigkeit der Lösungen betrachtet.
 
 
 \section{Solver}
@@ -34,13 +34,15 @@ OrTools ist open source und kostenlos unter der Apache License 2.0.
 Der letzte Solver ist Gurobi.
 Es werden ebenfalls Modellierungen wie LP, MIP und quadratische Programmierung (QP) unterstützt.
 Auch hier wird eine Schnittstelle für Python bereitgestellt.
-Gurobi ist kostenpflichtig, bietet jedoch eine kostenlose Lizenz für Forschung an.
+Gurobi ist kostenpflichtig, bietet jedoch eine kostenlose Lizenz für die Forschung an.
 \fabian{Ist diese Übersicht in Ordnung, es fühlt sich irgenwie zu wenig technisch an.}
 
 \section{Kanten Formulierung}
+Bei der ersten Formulierung werden Kanten betrachtet. 
+Das bedeutet das Ziel der gradbeschränkte Triangulierung wird erreicht indem bestimmte Bedingungen an die Kanten gestellt werden.
+Dafür werden zuerst zwei notwendige Bedingung erklärt und dann weitere optinonale die die Lautzeit berbessern könnten.
 % \michael{Beschränkungen ist ein eher unübliches Wort. Üblicher wäre Bedingung oder Neben/Randbedingung.}
-Es gibt zwei notwendige Bedingung für eine gradbeschränkte Triangulierung.
-\subsubsection{notwendig Bedingung}
+\subsubsection{notwendig Bedingungen}
 Da eine Triangulierung keine Überschneidungen enthalten darf, werden alle Kantenpaare berechnet.
 Von jedem dieser Paare darf dann nur eine Kante aktiv sein.
 
@@ -60,14 +62,15 @@ Diese Anzahl der Kanten kann in folgender Formel genutzt werden, um die Gradbesc
 \[
 \left| E \right| \cdot 2 \overset{!}{=} \sum \degrees(i)
 \]
+Ist diese Formel nicht erfüllbar so kann direkt zurückgegeben werden das die Instanze nicht lösebar ist.
 
 \subsubsection{Kanten Fixieren/Ausschluss}
 \label{sec:exclude_edges}
 Die erste und naheliegendste Bedingung ist die \emph{fixierte Hülle}.
 Hierbei werden die Kanten der konvexen Hülle immer hinzugefügt.
 Diese dürfen hinzugefügt werden, da sie keine Schnittkanten besitzen.
-Andernfalls wäre der Graph nicht maximal und somit keine Triangulierung.
-Da die Kanten der Hüllen in jeder möglichen Triangulierung vorhanden sind, verletzen sie auch nicht die Gradbeschränkung.
+Würde eine Kante nicht hinzugefügt werden welche keine Schnittkannte besitzt wäre der Graph nicht maximal somit keine Triangulierung.
+Da die Kanten der Hüllen in jeder möglichen Triangulierung vorhanden sind, verletzen sie auch nicht eine valide Gradbeschränkung.
 
 Eine weitere optionale Bedingung ist zuvor berechnete Kanten zu fixieren oder auszuschließen.
 \begin{figure}[htb]
@@ -82,6 +85,7 @@ Sollte \(\degrees(v_2) = 2\) sein, muss die Kante \(e_1\) in der Triangulierung 
 Der Grund dafür ist das alle Schnittkanten von \(e_1\) nicht aktiv sein dürfen, da sie den Grad von \(v_2\) erhöhen würden.
 Analog dazu kann die Kante \(e_1\) ausgeschlossen werden sollte \(\degrees(v_2) > 2\).
 Sonst kann der Sollgrad nicht erreicht werden.
+Ein \(\degrees(v_2) < 2\) ist nicht möglich in einer Triangulation.
 
 Zwei weitere Bedingungen, um Kanten auszuschließen, basieren auf der Teilung der Punktmenge.
 Es können also alle Kanten betrachtet werden, welche beide Knoten auf der Hülle haben.
@@ -169,11 +173,10 @@ Der Vorteil dieses Algorithmus liegt darin, dass alle vier Knicküberprüfungen 
 In der Praxis werden dadurch viele Knoten bereits ausgeschlossen, da sie die erste Knickbedingung nicht erfüllen.
 
 \subsubsection{Schnittkanten ausschließen}
-Um die Kanten zu finden bei denen die Schnittkanten zu viele Kanten ausschließen, wird jede Kante einzeln betrachtet.
-Dafür werden alle Kanten iterativ betrachtet.
+Um die Kanten zu finden bei denen die Schnittkanten zu viele Kanten ausschließen, wird jede Kante iterativ betrachtet.
 Für jede betrachtete Kante werden zunächst Zähler für jeden Knoten erstellt.
 Danach werden nacheinander alle Schnittkanten der betrachteten Kante aufgerufen.
-Für alle Schnittkanten wird der Zähler die beiden Endknoten der Kante um eins erhöht.
+Für alle Schnittkanten wird der Zähler die beiden Endknoten der Schnittkanten um eins erhöht.
 Am Ende werden alle Knoten durchgegangen, sollte ein Knoten \(v\) folgende Formel erfüllen wird die Kante ausgeschlossen.
 \[
 \degree(v) - \text{node\_count}[v] > \degrees(v)
@@ -206,7 +209,7 @@ Nun muss unterschieden werden wie viele Lösungen die Instanz hat.
 Sollte die Instanze nur eine Lösung haben so sind alle gefundenen Kanten fixierbar und alle anderen Kanten können ausgeschlossen werden.
 Sollte es mehr als eine Lösung geben muss nach jedem Lösen eine neue Beschränkung hinzugefügt werden die mindestens eine Kante der gefundenen verbietet.
 Dies wird so lange wiederholt bis keine Lösungen mehr gefunden werden.
-Nun können alle jemals gefundenen Kanten als fixierbar betrachten und alle anderen Kanten als ausschließbar.
+Nun können alle jemals gefundenen Lösungen als fixierbar betrachten und für jede Lösung alle anderen Kanten als ausschließbar.
 
 \subsubsection{OrTools und Gurobi}
 Da OrTools und Gurobi eine ähnliche Art der Formulierung verwenden werden sie hier zusammengefasst.
@@ -292,7 +295,7 @@ Mit diesen Variablen können die folgenden Klauseln erstellt werden
 \end{align*}
 \fabian{Vernünftig links bündig machen }
 Diese Klauseln stellen sicher, dass genau \(k\) Variablen von \((x_1 \lor x_2 \lor \ldots \lor x_n)\) wahr sind.
-Alle Literale, die auf \(s_{i,j}\) basieren, müssen mit der Hilfsvariable \(v_i\) verknüpft werden.
+Alle Literale, die auf \(s_{i,j}\) basieren, müssen mit Hilfsvariablen verknüpft werden.
 
 
 Bei der Codierung mit PySAT besteht die Möglichkeit, die Kardinalität auf den exakten Sollgrad zu setzen oder festzulegen, dass der Knoten mindestens den Sollgrad erreicht.
@@ -313,7 +316,7 @@ Dann werden folgende Klauseln erstellt
 Damit diese vier Klauseln erfüllt sind, müssen mindestens zwei der Variablen wahr sein.
 Die Idee basiert darauf das für jede Klausel angenommen wird, dass nur noch eine Kante zum Erreichen des Sollgrads fehlt und die in der Klausel genannten Kanten noch nicht aktiv sind.
 Insgesamt wird so eine Kardinalitäts Codierung erzeugt.
-Diese Methode hat den Vorteil, dass keine Hilfsvariablen benötigt werden, allerdings entstehen sehr viele Klauseln.
+Diese Methode hat den Vorteil, dass keine Hilfsvariablen benötigt werden, allerdings entstehen \(\binom{E_i}{\left|E_i\right| - (\degrees(i) - 1)}\) viele Klauseln.
 
 
 % \fabian{sollte ich hier noch nennen wie der \emph{sequential counter} oder der Native Ansatz funktioniert weil diese am Ende am besten sind. Ich müsste dann aus den Experimenten vorgreifen. Auch brauche ich Information nicht wirklich da ich PySAT hier als Blackbox nutzen kann.} 
@@ -352,7 +355,8 @@ Zur Erstellung aller Dreiecke werden zunächst alle möglichen Kanten hinzugefü
 Es werden also wieder alle Kanten betrachtet, die keinen Knoten schneiden.
 Anschließend werden alle Knoten nacheinander durchlaufen.
 Hierbei kann gleichzeitig zum Beispiel ein \emph{Map} genutzt werden um für jeden Knoten die zugehörigen Dreiecke zu speichern.
-Für jeden Knoten werden alle Nachbarn bestimmt und mit den anderen Knoten diesen Nachbarn alle möglichen Zweierkombinationen gebildet.
+Für jeden Knoten werden alle Nachbarn bestimmt.
+Mit allen Nachbarknoten werden alle möglichen Zweierkombinationen gebildet.
 Wenn eine dieser Zweierkombinationen eine Kante besitzt, wird ein Dreieck erstellt.
 Für eine Triangulierung sind jedoch nur die Dreiecke relevant, die keine weiteren Knoten enthalten.
 Es werden daher nur die Dreiecke gespeichert, die keine zusätzlichen Knoten enthalten.
@@ -362,7 +366,7 @@ Zusätzlich wird darauf geachtet das jedes Dreieck nur einmal gespeichert wird, 
 Die Überschneidung wird mit der \emph{Shapely} Bibliothek berechnet.
 Dafür werden alle Dreiecke paarweise verglichen.
 Dabei ist zu beachten das \emph{Shapely} eine Überschneidung schon bei einer Berührung bestätigt.
-Es muss also zusätzlich getestet werden ob sie sich nicht Berüheren.
+Es muss also zusätzlich getestet werden ob sie sich nicht nur Berüheren.
 
 \fabian{Sollte ich hier erwähnen, dass ich dies auch mit CGAL implementiert habe, es jedoch langsamer ist?}
 \michael{Kannst du machen würde ich aber so nicht schreiben. Prinzipiell sollte CGAL schon schneller sein als Shapely wenn beide unter den gleichen Exaktheitsbedingungen arbeiten. Es kann sein, dass Shapely dir falsche Ergebnisse liefert, weil es mit Floats rechnet. Ich würde eher sagen du hast auch eine exakte Implementierung mit CGAL die aber aufgrund der Exaktheit langsamer ist und daher wurde in den späteren Experimenten Shapely genutzt.}
@@ -399,12 +403,12 @@ e_i &= \left\{
 0 & \, \textrm{sonst} \\
 \end{array}
 \right. \label{eq:evaluation}\\
-Q_T &= \sum_{i=0}^{n} \frac{e_i}{n} \label{eq:total_evaluation}
+Q &= \sum_{i=0}^{n} \frac{e_i}{n} \label{eq:total_evaluation}
 \end{align}
 
-Die Formel liefert eine Bewertung (\(Q_T\)) für einen Triangulierung mit \(n\) Knoten.
-Hierbei gibt \(\degrees(i)\) den gewünschten Grad an der stelle i an.
-Dazu passend gibt \(\degree(i)\) den aktuellen Grad an.
+Die Formel liefert eine Bewertung (\(Q\)) für einen Triangulierung mit \(n\) Knoten.
+% Hierbei gibt \(\degrees(i)\) den gewünschten Grad an der stelle i an.
+% Dazu passend gibt \(\degree(i)\) den aktuellen Grad an.
 In der Brechnung~\eqref{eq:difference} wird die Difference zwischen dem gewünschten und aktuellen Grad berechnet.
 In~\eqref{eq:evaluation} wird diese Abweichung Prozentual bewertet.
 Am Ende wird in~\eqref{eq:total_evaluation} ein Durchschnitt über alle Prozentualen Werte gebildet.
@@ -418,7 +422,7 @@ Dabei wird ausgenutzt, dass Flips den Grad eines Knotens verändern können die 
 Das Verfahren beginnt mit einer initialen Triangulierung.
 Diese wird durch ein klassisches Triangulationsverfahren erzeugt. 
 Anschließend werden maximal \(k\) Flips durchgeführt. 
-Ziel ist es, die Gradbeschränkung zu erfüllen. 
+% Ziel ist es, die Gradbeschränkung zu erfüllen. 
 
 Zunächst wird mit dem~\cref{algo:choose_edge} eine Kante ausgewählt. 
 Diese soll geflippt werden. 
@@ -428,8 +432,7 @@ Dadurch kann auch eine Kante ausgewählt werden, deren Knoten den Sollgrad erfü
 Dies verhindert, dass das Verfahren in einem lokalen Optimum stecken bleibt. 
 
 \label{sec:flips}
-Die ausgewählte Kante wird anschließend wie folgt geflippt.
-Für jeden Flip wird zufällig eine Kante \(e_0\) ausgewählt.
+Die ausgewählte Kante \(e_0\) wird anschließend wie folgt geflippt.
 Für diese Kante werden zunächst alle Dreiecke gesucht, die diese Kante enthalten.
 Dies geschieht, indem für die beiden Knoten \(x_{0,0}\) und \(x_{0,1}\) der Kante \(e_0\) alle ausgehenden Kanten verglichen werden.
 Sollten zwei dieser Kanten den gleichen Knoten \(v\) haben, muss das Tripel (\(x_{0,0}, x_{0,1}, v\)) ein Dreieck bilden, welches die Kante \(e_0\) enthält.
@@ -460,6 +463,8 @@ Nach jedem Flip wird überprüft, ob die Gradbeschränkung für alle Knoten erf�
 
 \subsection{OrTools mit Durchschnitts Abweichung}
 \label{sec:OrTools_mit_Durchschnitts_Abweichung}
+In diesem Ansatz wird der OrTools Solver genutzt.
+Hierbei werden aber zusätzlich Zielfunktionen übergeben an denen sicher der Solver Orientieren kann.
 Für die erste Zielfunktion wird sich an der Gleichung~\eqref{eq:total_evaluation} orientiert.
 Hier wird die Zielfunktion definiert durch die Maximierung von \(Q_T\)
 Die Teiler in~\eqref{eq:total_evaluation} und~\eqref{eq:evaluation} werden entfernt. 
@@ -522,12 +527,12 @@ Dies lässt sich als Baum darstellen (siehe~\cref{fig:sat_tree}).
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=1\linewidth]{figures/sat_tree.png}
-	\caption{Ein Baum welcher die Möglichen Entscheidungen eines SAT-Solvers darstellt. Jeder Ast entspricht Belegungen der Literale}
+	\caption{Ein Baum welcher die Möglichen Entscheidungen eines SAT-Solvers darstellt. Jeder Ast entspricht einer Belegung der Literale}
 	\label{fig:sat_tree}
 \end{figure}
 Das Besondere am CDCL-Ansatz ist, dass nicht die Äste iterativ abgearbeitet werden, sondern dass es einen Pfad gibt.
-Der Pfad ist eine aktuelle Teilbelegung der Literale. Theoretisch entspricht dieser einem Ast im Baum, aber die Auswahl der Belegung basiert nicht direkt auf dem Baum.
-Zusätzlich muss für jedes belegte Literal eine Begründung angegeben werden. 
+Der Pfad ist eine aktuelle Teilbelegung der Literale. Theoretisch entspricht der Pfad einem Ast im Baum, aber die Auswahl der Belegung basiert nicht auf dem Baum.
+Zusätzlich muss für jedes belegte Literal eine Begründung in Form einer Klausel angegeben werden. 
 Diese Begründungen werden bei Konflikten relevant.
 
 \subsection{\emph{Unit-Klauseln}}
@@ -565,7 +570,7 @@ Damit kann folgende Klausel erzeugt werden
 \[
 c' = (\overline{a_1} \lor \ldots \lor \overline{a_k} \lor \overline{r_1} \lor \ldots \lor \overline{r_k})
 \]
-obei \(c'\) mindestens eine Belegung aus der Entscheidungsebene \(d\) enthält.
+wobei \(c'\) mindestens eine Belegung aus der Entscheidungsebene \(d\) enthält.
 Sollte es ein weiteres Literal außer \(a_i\) geben, das auf der Entscheidungsebene \(d\) belegt wurde, ist \(c'\) ebenfalls eine Konfliktklausel.
 In diesem Fall wird \(c'\) rekursiv so lange erzeugt bis es genau ein Literal \(\overline{x}\) gibt, das auf Entscheidungsebene \(d\) belegt wurde.
 Der rekursive Aufruf fügt dabei die Begründung des zweiten Literals aus Entscheidungsebene \(d\) ohne dieses Literal zu \(c'\) hinzu.
@@ -602,7 +607,7 @@ Für die Erstellung der Delaunay-Triangulierung wird die Bibliothek \emph{scipy}
 
 \subsubsection{Delaunay mit zufälligen Flips}
 \label{sec:Delaunay_mit_zufällig_Flips}
-Das zweite Verfahren zur Erzeugung von Ja-Instanzen basiert auf der Delaunay-Triangulierung, zusätzlich werden jedoch zufällige Flips durchgeführt.
+Das zweite Verfahren zur Erzeugung von Ja-Instanzen basiert ebenfalls auf der Delaunay-Triangulierung, zusätzlich werden jedoch zufällige Flips durchgeführt.
 Zunächst wird eine Delaunay-Triangulierung der Knotenmenge erstellt.
 Auf dieser Triangulierung werden anschließend \(k\) zufällige Flips gemäß~\cref{def:flip} durchgeführt.
 Das genau verfahren wurde in~\cref{sec:flips} schon beschrieben.
@@ -618,7 +623,7 @@ Die verbleibenden gültigen Kanten werden dann in einer zufälligen Reihenfolge 
 Für die betrachteten Kanten wird geprüft ob sie eine der bereits ausgewählten Kanten schneidet.
 Nur wenn keine Schnittkanten entstehen, wird die Kante der Triangulierung hinzugefügt.
 
-Dieses Verfahren ist maximal da alle möglichen Kanten betrachtet wurden.
+Dieses Verfahren ist maximal da alle möglichen Kanten iterative betrachtet wurden.
 
 
 \subsubsection{Iteration}
@@ -721,7 +726,7 @@ Wie in \cref{fig:mehrere_Lösungen} zu erkennen ist, existieren zwei verschieden
 Die Zahlen an den Knoten geben hierbei den Sollgrad an.
 Diese Eigenschaft wird auch nochmal in~\cref{sec:eval8:anzahl_lösungen} im Zusammenhang mit der Schwierigkeit einer Instanz untersucht.
 Das es mehrere Lösungen gibt lässt sich darauf zurück führen das der Sollgrad hier \emph{Im} und \emph{Gegen} den Uhrzeigersinn erfüllt wird.
-Diese Art von Konstruktion kann theoretisch unendlich groß fortgesetzt werden, diese Eigenschaft könnte theoretisch genutzt werden auf andere Probleme zu reduzieren.
+Diese Art von Konstruktion kann theoretisch unendlich groß fortgesetzt werden, diese Eigenschaft könnte genutzt werden auf andere Probleme zu reduzieren.
 Also die Anzahl der Lösungen einer Instanze kann als eine Eigenschaft dieser betrachtet werden.
 
 

@@ -3,7 +3,8 @@
 \fabian{Passen die Übergänge? Bin unsicher was du hier erwartest.}
 
 In diesem Kapitel werden die Definitionen vorgestellt, die für diese Arbeit benötigt werden.
-Dabei werden insbesondere grundlegende Begriffe erläutert, die in den folgenden Kapiteln vorausgesetzt werden.
+Dabei werden insbesondere grundlegende Begriffe erläutert, die in den folgenden Kapiteln verwendet werden.
+
 Zu Beginn werden Überschneidungen zwischen Kanten betrachtet. 
 \begin{definition}[Überschneidung]
     Zwei Kanten gelten als überschneidend, wenn sie sich in der Ebene kreuzen.
@@ -23,7 +24,7 @@ Auf grundlage der  Überschneidungen können nun die grundlegenden Begriffe der 
     Das bedeutet, es können keine weiteren Kanten hinzugefügt werden, ohne dass sich Kanten schneiden.
 \end{definition}
 
-Für die gradbeschränkte Triangulierung wird allerdings zuerst der Grad eines Knotens definiert.
+Für die gradbeschränkte Triangulierung wird zuerst der Grad eines Knotens definiert.
 
 \begin{definition}[Grad]
     Der Grad eines Knotens ist die Anzahl der anliegenden Kanten.
@@ -38,7 +39,7 @@ Basierend auf dem Grad eines Knotens wird nun die gradbeschränkte Triangulierun
     Diese gibt den Grad an, den ein Knoten haben muss.
 \end{definition}
 
-Im Folgenden wird die Operation des Kantenflips beschrieben, die eine wichtige Rolle bei der Umstrukturierung von Triangulierungen spielt.
+Im Folgenden wird die Durchführung des des Kantenflips beschrieben, die eine wichtige Rolle bei der Umstrukturierung von Triangulierungen spielt.
 \begin{definition}[Kantenflip]
     \label{def:flip}
     \begin{figure}[h]
@@ -63,7 +64,7 @@ Da die konvexe Hülle in dieser Arbeit um alle Randpunkte erweitert werden muss.
 \end{definition}
 
 Abschließend wird die konjunktive Normalform eingeführt, die im weiteren Verlauf für die Benutzung der SAT-Solver benötigt wird. 
-
+\fabian{Sollte ich hier Literal und Klausel extra definieren?}
 \begin{definition}[Konjunktive Normalform]
     Eine Formel in konjunktiver Normalform (KNF) ist eine logische Formel, die als Konjunktion (UND-Verknüpfung) von Klauseln dargestellt wird, wobei jede Klausel eine Disjunktion (ODER-Verknüpfung) von Literalen ist.
     Ein Literal ist entweder eine Variable oder ihre Negation.
