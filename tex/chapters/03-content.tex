@@ -585,7 +585,7 @@ Anschließend wird \(\overline{x}\) dem aktuellen Pfad hinzugefügt und \(c'\) a
 % TODO als Bild veranschaulichen? keine Idee wie
 
 
-\section{Instanzgenerierung}
+\chapter{Instanzgenerierung}
 \label{sec:instanz_generierung}
 In diesem Kapitel werden die verschiedenen Instanzen Typen und ihre Generierung dargestellt.
 Auf diesem Instanzen werden die späteren Experimente ausgeführt.
@@ -593,7 +593,7 @@ Auf diesem Instanzen werden die späteren Experimente ausgeführt.
 Die Knotenmengen werden hierbei durch die von Python bereit gestellt Funktion \emph{randint} geniert. 
 Mit dieser werden so lange verschiedene Koordinaten berechnet bis eine Gewünschte Anzahl erreicht wurde.
 
-\subsection{Ja - Instanzen}
+\section{Ja - Instanzen}
 Bei den Ja-Instanzen handelt es sich um Knotenmengen, bei denen die \(\degrees\)-Funktion Grade liefert, welche eine gradbeschränkte Triangulierung ermöglichen.
 Hierbei ist nicht bekannt, wie viele mögliche Lösungen existieren, sondern nur, dass es mindestens eine gibt.
 
@@ -604,14 +604,14 @@ Von dieser werden dann die Grade gespeichert, um sie als Eingabe für die zu tes
 
 Alle fünf Verfahren zur Erzeugung von Ja-Instanzen werden in~\cref{fig:all_instance_types} visualisiert.
 
-\subsubsection{Delaunay}
+\subsection{Delaunay}
 Das erste klassische Verfahren zur Gradbestimmung verwendet die Delaunay-Triangulierung.
 Die Delaunay-Triangulierung wurde bereits im Kapitel~\cref{sec:delaunay_triangulation} vorgestellt.
 Für die Erstellung der Delaunay-Triangulierung wird die Bibliothek \emph{scipy} genutzt.
 
 
 
-\subsubsection{Delaunay mit zufälligen Flips}
+\subsection{Delaunay mit zufälligen Flips}
 \label{sec:Delaunay_mit_zufällig_Flips}
 Das zweite Verfahren zur Erzeugung von Ja-Instanzen basiert ebenfalls auf der Delaunay-Triangulierung, zusätzlich werden jedoch zufällige Flips durchgeführt.
 Zunächst wird eine Delaunay-Triangulierung der Knotenmenge erstellt.
@@ -620,7 +620,7 @@ Das genau verfahren wurde in~\cref{sec:flips} schon beschrieben.
 Dieser Prozess verändert die lokale Struktur der Triangulierung und erzeugt so Knotenmengen mit unterschiedlichen Gradverteilungen, behält aber die Triangulationseigenschaft bei.
 
 
-\subsubsection{Zufällige Kantenerzeugung}
+\subsection{Zufällige Kantenerzeugung}
 Das nächste Verfahren basiert auf der zufälligen Auswahl von Kanten.
 Hierbei werden zunächst alle geometrisch möglichen Kanten zwischen den Punkten identifiziert.
 In diesem Schritt werden Kanten ausgeschlossen, welche andere Knoten schneiden würden.
@@ -632,7 +632,7 @@ Nur wenn keine Schnittkanten entstehen, wird die Kante der Triangulierung hinzug
 Dieses Verfahren ist maximal da alle möglichen Kanten iterative betrachtet wurden.
 
 
-\subsubsection{Iteration}
+\subsection{Iteration}
 Ein weiteres Verfahren zur Erzeugung von Ja-Instanzen basiert auf der Iteration.
 Hierbei werden zunächst alle möglichen Kanten zwischen den Punkten identifiziert.
 Diese werden nun nacheinander betrachtet und wenn sie keine andere Kante schneiden hinzugefügt.
@@ -643,7 +643,7 @@ Das hat den Effekt das alle Kanten des ersten Knoten hinzugefügt werden können
 
 
 
-\subsubsection{Greedy}
+\subsection{Greedy}
 Das letze Verfahren ist das Greedy Verfahren.
 Hierbei werden auch alle möglichen Kanten zwischen den Punkten identifiziert.
 Allerdings werden sie im gegensatz zum Iterativen Verfahren zunächst nach der Länge aufsteigend sortiert.
@@ -681,7 +681,7 @@ Anschließend wird wie beim Iterativen Verfahren jede Mögliche Kante nacheinand
 	\label{fig:all_instance_types}
 \end{figure}
 
-\subsection{Nein-Instanzen}
+\section{Nein-Instanzen}
 Nein-Instanzen sind Knotenmengen, bei denen die \(\degrees\) Funktion Gradwerte liefert, die keine gradbeschränkte Triangulierung zulassen.
 Diese Instanzen entstehen nicht direkt, sondern werden aus Ja Instanzen abgeleitet.
 Nach der Generierung muss zusätzlich geprüft werden, ob die Instanz nicht möglich ist.
