@@ -63,7 +63,8 @@ class OrTools_Tri(Solver):
                 self.edge_to_triangles[edge].append(triangle)
 
     def pre_solve(self, parameter: Parameter):
-        self.add_time(self.setup)(parameter)
+        # self.add_time(self.setup)(parameter)
+        self.setup(parameter)
         if not self.triangle:
             raise ValueError("No triangles found in the graph.")
         if parameter.intersection:

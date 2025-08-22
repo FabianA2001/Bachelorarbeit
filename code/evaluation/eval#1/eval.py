@@ -4,18 +4,12 @@ from dataclasses import asdict
 import slurminade
 from dc_triangulation import (
     SAT,
-    SAT_TRI,
     Gurobi,
     Gurobi_Parameter,
-    Gurobi_Tri,
-    Gurobi_Tri_Parameter,
     Ortools,
     Ortools_Parameter,
-    OrTools_Tri,
-    Ortools_Tri_Parameter,
     Run_Algbench,
     SAT_Parameter,
-    SAT_Tri_Parameter,
 )
 
 TIMEOUT = 300
@@ -24,36 +18,36 @@ path = os.path.join(os.path.dirname(__file__), "instances")
 # It will run the Run_Instance class from run_algbench module
 outer_parameter = {
     SAT: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(SAT_Parameter(intersection=True, degree_atleast=True)),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(intersection=True, degree_atleast=True, fix_hull=True)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    intersection=True,
-                    degree_atleast=True,
-                    all_edges=True,
-                )
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Parameter(
-                    intersection=True,
-                    degree_atleast=True,
-                    exclude_edges=True,
-                )
-            ),
-        },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(SAT_Parameter(intersection=True, degree_atleast=True)),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(intersection=True, degree_atleast=True, fix_hull=True)
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             intersection=True,
+        #             degree_atleast=True,
+        #             all_edges=True,
+        #         )
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(
+        #             intersection=True,
+        #             degree_atleast=True,
+        #             exclude_edges=True,
+        #         )
+        #     ),
+        # },
         {
             "timeout": TIMEOUT,
             "args": asdict(
@@ -62,32 +56,32 @@ outer_parameter = {
         },
     ],
     Ortools: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(Ortools_Parameter(intersection=True, degree=True)),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, fix_hull=True)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, all_edges=True)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Parameter(
-                    intersection=True,
-                    degree=True,
-                    exclude_edges=True,
-                )
-            ),
-        },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(Ortools_Parameter(intersection=True, degree=True)),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         Ortools_Parameter(intersection=True, degree=True, fix_hull=True)
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         Ortools_Parameter(intersection=True, degree=True, all_edges=True)
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         Ortools_Parameter(
+        #             intersection=True,
+        #             degree=True,
+        #             exclude_edges=True,
+        #         )
+        #     ),
+        # },
         {
             "timeout": TIMEOUT,
             "args": asdict(
@@ -96,28 +90,28 @@ outer_parameter = {
         },
     ],
     Gurobi: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(Gurobi_Parameter(intersection=True, degree=True)),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Gurobi_Parameter(intersection=True, degree=True, fix_hull=True)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Gurobi_Parameter(intersection=True, degree=True, all_edges=True)
-            ),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Gurobi_Parameter(intersection=True, degree=True, exclude_edges=True)
-            ),
-        },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(Gurobi_Parameter(intersection=True, degree=True)),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         Gurobi_Parameter(intersection=True, degree=True, fix_hull=True)
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         Gurobi_Parameter(intersection=True, degree=True, all_edges=True)
+        #     ),
+        # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         Gurobi_Parameter(intersection=True, degree=True, exclude_edges=True)
+        #     ),
+        # },
         {
             "timeout": TIMEOUT,
             "args": asdict(
@@ -125,44 +119,44 @@ outer_parameter = {
             ),
         },
     ],
-    Gurobi_Tri: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Gurobi_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
-            ),
-        },
-    ],
-    OrTools_Tri: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(Ortools_Tri_Parameter(intersection=True, degree=True)),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Tri_Parameter(
-                    intersection=True, degree=True, exclude_edges=True
-                )
-            ),
-        },
-    ],
-    SAT_TRI: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
-            ),
-        },
-    ],
+    # Gurobi_Tri: [
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Gurobi_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
+    #         ),
+    #     },
+    # ],
+    # OrTools_Tri: [
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(Ortools_Tri_Parameter(intersection=True, degree=True)),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Ortools_Tri_Parameter(
+    #                 intersection=True, degree=True, exclude_edges=True
+    #             )
+    #         ),
+    #     },
+    # ],
+    # SAT_TRI: [
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             SAT_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
+    #         ),
+    #     },
+    # ],
 }
 
 RI = Run_Algbench(
@@ -185,7 +179,7 @@ def compress_results():
 
 
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
@@ -202,21 +196,5 @@ if __name__ == "__main__":
         slurminade.join()
         compress_results.distribute()
     else:
-        # for key in RI.get_run_list():
-        #     RI.delete_key_from_runlist(key)
-        #     # RI.show_key_from_runlist(key)
-        # RI.delete_runlist()
-        RI.show()
-        # counter = 0
-        # for key in RI.get_run_list():
-        #     counter += 1
-        #     solver, nodes, possible, inst, file_name = RI.get_solver_inst_from_runlist[
-        #         key
-        #     ]
-        #     if solver.NAME != "SAT":
-        #         continue
-        #     if "iterative" not in inst:
-        #         continue
-        #     RI.show_key_from_runlist(key, check_correct=True)
-
-        # print(f"Total entries in run list: {counter}")
+        RI.delete_runlist()
+        # RI.show()
