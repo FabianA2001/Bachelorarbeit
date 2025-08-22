@@ -4,12 +4,18 @@ from dataclasses import asdict
 import slurminade
 from dc_triangulation import (
     SAT,
+    SAT_TRI,
     Gurobi,
     Gurobi_Parameter,
+    Gurobi_Tri,
+    Gurobi_Tri_Parameter,
     Ortools,
     Ortools_Parameter,
+    OrTools_Tri,
+    Ortools_Tri_Parameter,
     Run_Algbench,
     SAT_Parameter,
+    SAT_Tri_Parameter,
 )
 
 TIMEOUT = 300
@@ -119,44 +125,44 @@ outer_parameter = {
             ),
         },
     ],
-    # Gurobi_Tri: [
-    #     {
-    #         "timeout": TIMEOUT,
-    #         "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
-    #     },
-    #     {
-    #         "timeout": TIMEOUT,
-    #         "args": asdict(
-    #             Gurobi_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
-    #         ),
-    #     },
-    # ],
-    # OrTools_Tri: [
-    #     {
-    #         "timeout": TIMEOUT,
-    #         "args": asdict(Ortools_Tri_Parameter(intersection=True, degree=True)),
-    #     },
-    #     {
-    #         "timeout": TIMEOUT,
-    #         "args": asdict(
-    #             Ortools_Tri_Parameter(
-    #                 intersection=True, degree=True, exclude_edges=True
-    #             )
-    #         ),
-    #     },
-    # ],
-    # SAT_TRI: [
-    #     {
-    #         "timeout": TIMEOUT,
-    #         "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
-    #     },
-    #     {
-    #         "timeout": TIMEOUT,
-    #         "args": asdict(
-    #             SAT_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
-    #         ),
-    #     },
-    # ],
+    Gurobi_Tri: [
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Gurobi_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
+            ),
+        },
+    ],
+    OrTools_Tri: [
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(Ortools_Tri_Parameter(intersection=True, degree=True)),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                Ortools_Tri_Parameter(
+                    intersection=True, degree=True, exclude_edges=True
+                )
+            ),
+        },
+    ],
+    SAT_TRI: [
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
+        },
+        {
+            "timeout": TIMEOUT,
+            "args": asdict(
+                SAT_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
+            ),
+        },
+    ],
 }
 
 RI = Run_Algbench(
@@ -183,7 +189,7 @@ if __name__ == "__main__":
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
-            constraint="alggen04",  # Which workstations within the partition to use
+            constraint="alggen05",  # Which workstations within the partition to use
             exclusive=True,  # To use all cores on a node exclusively
             mail_type="FAIL",  # Send mail on failure
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
