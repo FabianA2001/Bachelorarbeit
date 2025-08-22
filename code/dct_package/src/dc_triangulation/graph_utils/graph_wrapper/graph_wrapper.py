@@ -214,10 +214,10 @@ class Graph_Wrapper:
         return self._data.get_empty_triangles_for_node(node)
 
     def get_triangles_for_edge(
-        self, edge: tuple[int, int]
+        self, edge: tuple[int, int], check_active: bool = True
     ) -> list[tuple[int, int, int, int]]:
         """Gibt die Dreiecke des Graphen zurück."""
-        return self._data.get_triangles_for_edge(edge)
+        return self._data.get_triangles_for_edge(edge, check_active=check_active)
 
     def get_all_triangles(self) -> list[tuple[int, int, int]]:
         """Gibt alle Dreiecke des Graphen zurück."""

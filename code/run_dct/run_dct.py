@@ -94,18 +94,24 @@ time_function
 
 def custom_points() -> list[Node]:
     if True:
+        # return [
+        #     Node((4, 1), 3),
+        #     Node((4, 3), 5),
+        #     Node((2, 4), 3),
+        #     Node((6, 4), 3),
+        #     Node((2, 5), 5),
+        #     Node((6, 5), 5),
+        #     Node((4, 7), 6),
+        #     Node((2, 8), 3),
+        #     Node((2, 10), 3),
+        #     Node((6, 10), 3),
+        #     Node((6, 8), 3),
+        # ]
         return [
-            Node((4, 1), 3),
-            Node((4, 3), 5),
-            Node((2, 4), 3),
-            Node((6, 4), 3),
-            Node((2, 5), 5),
-            Node((6, 5), 5),
-            Node((4, 7), 6),
-            Node((2, 8), 3),
-            Node((2, 10), 3),
-            Node((6, 10), 3),
-            Node((6, 8), 3),
+            Node((0, 0), 3),
+            Node((0, 2), 2),
+            Node((2, 0), 2),
+            Node((2, 2), 3),
         ]
     else:
         nodes = [
@@ -326,8 +332,8 @@ def run_algo():
     PATH = os.path.join(
         os.path.dirname(__file__),
         "eval_instance",
-        "random",
-        "001_random_30.json",
+        "delaunay",
+        "008_delaunay_50.json",
     )
 
     logging.info(f"Loading nodes from {PATH}")
@@ -343,13 +349,13 @@ def run_algo():
 
     # time_function(lambda: graph.get_intersection_clique_cpp)()
     # sat_algorithm(graph)
-    cadical_algorithm(graph, nodes)
+    # cadical_algorithm(graph, nodes)
     # count_algorithm(graph)
     # sat_Tri_algorithm(graph)
     # ortools_algorithm(graph)
     # for edge in graph.fix_edges:
     #     print(edge)
-    # ortools_tri_algorithm(graph)
+    ortools_tri_algorithm(graph)
     # gurobi_tri_algorithm(graph)
     # gurobi_algorithm(graph)
     # raw_flips_algorithm(graph)
@@ -493,9 +499,9 @@ def draw_example():
 
 
 if __name__ == "__main__":
-    # run_algo()
+    run_algo()
     # show_all_instanzes()
-    create_instance()
+    # create_instance()
     # permute_instance()
     # generate_example()
     # draw_example()
