@@ -215,7 +215,7 @@ class Graph_Wrapper:
 
     def get_triangles_for_edge(
         self, edge: tuple[int, int]
-    ) -> list[tuple[int, int, int]]:
+    ) -> list[tuple[int, int, int, int]]:
         """Gibt die Dreiecke des Graphen zurück."""
         return self._data.get_triangles_for_edge(edge)
 

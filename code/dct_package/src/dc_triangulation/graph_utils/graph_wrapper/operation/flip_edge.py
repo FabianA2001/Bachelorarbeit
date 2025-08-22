@@ -58,6 +58,7 @@ def flip_edge(data: Data, check: Check, edge: tuple[int, int]) -> bool:
         return False
 
     triangles = data.get_triangles_for_edge(edge)
+    triangles = [tri[:3] for tri in triangles]
     if len(triangles) <= 1:
         return False
 

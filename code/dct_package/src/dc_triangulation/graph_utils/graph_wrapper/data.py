@@ -54,8 +54,12 @@ class Data(Data_Raw):
 
     def get_triangles_for_edge(
         self, edge: tuple[int, int], check_active: bool = True
-    ) -> list[tuple[int, int, int]]:
-        """Gibt die Dreiecke des Graphen zurück."""
+    ) -> list[tuple[int, int, int, int]]:
+        """Gibt die Dreiecke des Graphen zurück.
+        ersten drei int sind die Knoten des Dreiecks,
+        der vierte int ist die orientierung zu der kante, die das Dreieck bildet.
+        -1 rechts, 1 links
+        """
         triangles = []
         node1, node2 = edge
         neighbors1 = set(self[node1])
@@ -69,7 +73,13 @@ class Data(Data_Raw):
                 continue
             if check_active and not self.is_edge_active((node1, u)):
                 continue
-            triangles.append(tuple(sorted([node1, node2, u])))
+            x1, y1 = self.get_pos_from_node(node1)
+            x2, y2 = self.get_pos_from_node(node2)
+            xp, yp = self.get_pos_from_node(u)
+            cross = (x2 - x1) * (yp - y1) - (y2 - y1) * (xp - x1)
+            orientation = 1 if cross > 0 else -1  # 1 = links, -1 = rechts
+            sorted_tri = tuple(sorted([node1, node2, u]))
+            triangles.append(tuple(sorted_tri) + (orientation,))
         return triangles
 
     def get_edges_for_node(self, node: int) -> list[tuple[int, int]]:

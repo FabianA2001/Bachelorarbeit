@@ -109,6 +109,7 @@ def test_get_triangles_for_edge():
     graph.add_convex_hull()
     graph.add_edge(0, 3)
     triangles = graph.get_triangles_for_edge((0, 3))
+    triangles = [tri[:3] for tri in triangles]
     assert len(triangles) == 2
     assert (0, 1, 3) in triangles
     assert (0, 2, 3) in triangles
