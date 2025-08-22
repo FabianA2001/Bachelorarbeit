@@ -28,7 +28,7 @@ Der zweite Solver ist OrTools (Google Optimization Tools) von Google.
 Dieser unterstützt verschiedene Modellierungsarten wie lineare Programmierung (LP), gemischt-ganzzahlige Programmierung (MIP), Constraint Programming (CP) und Routing-Algorithmen.
 Auch hier sind die Solver in C++ implementiert und es wird eine Python-Schnittstelle bereitgestellt.
 Mit OrTools können sowohl Entscheidungsprobleme als auch Optimierungsprobleme gelöst werden.
-Kardinalitäten werden direkt unterstützt und müssen nicht codiert werden.
+Kardinalitätsbeschränkungen und andere lineare Bedingungen werden direkt unterstützt und müssen nicht codiert werden.
 OrTools ist open source und kostenlos unter der Apache License 2.0.
 
 Der letzte Solver ist Gurobi.
@@ -37,12 +37,12 @@ Auch hier wird eine Schnittstelle für Python bereitgestellt.
 Gurobi ist kostenpflichtig, bietet jedoch eine kostenlose Lizenz für die Forschung an.
 \fabian{Ist diese Übersicht in Ordnung, es fühlt sich irgenwie zu wenig technisch an.}
 
-\section{Kanten Formulierung}
+\section{Kantenformulierung}
 Bei der ersten Formulierung werden Kanten betrachtet. 
 Das bedeutet das Ziel der gradbeschränkte Triangulierung wird erreicht indem bestimmte Bedingungen an die Kanten gestellt werden.
 Dafür werden zuerst zwei notwendige Bedingung erklärt und dann weitere optinonale die die Lautzeit berbessern könnten.
 % \michael{Beschränkungen ist ein eher unübliches Wort. Üblicher wäre Bedingung oder Neben/Randbedingung.}
-\subsubsection{notwendig Bedingungen}
+\subsubsection{Notwendig Bedingungen}
 Da eine Triangulierung keine Überschneidungen enthalten darf, werden alle Kantenpaare berechnet.
 Von jedem dieser Paare darf dann nur eine Kante aktiv sein.
 
@@ -62,9 +62,9 @@ Diese Anzahl der Kanten kann in folgender Formel genutzt werden, um die Gradbesc
 \[
 \left| E \right| \cdot 2 \overset{!}{=} \sum \degrees(i)
 \]
-Ist diese Formel nicht erfüllbar so kann direkt zurückgegeben werden das die Instanze nicht lösebar ist.
+Ist diese Formel nicht erfüllt so kann direkt zurückgegeben werden das die Instanz nicht lösebar ist.
 
-\subsubsection{Kanten Fixieren/Ausschluss}
+\subsubsection{Kanten fixieren/ausschließen}
 \label{sec:exclude_edges}
 Die erste und naheliegendste Bedingung ist die \emph{fixierte Hülle}.
 Hierbei werden die Kanten der konvexen Hülle immer hinzugefügt.
@@ -214,6 +214,7 @@ Nun können alle jemals gefundenen Lösungen als fixierbar betrachten und für j
 \subsubsection{OrTools und Gurobi}
 Da OrTools und Gurobi eine ähnliche Art der Formulierung verwenden werden sie hier zusammengefasst.
 Für die Überschneidungsbeschränkung wird die Funktion \emph{add\_at\_most\_one} von OrTools verwendet.
+Alternative könnte auch 
 Diese Funktion wird mit den folgenden Variablenpaaren aufgerufen.
 \[
 	( x_{e_1}, x_{e_2}) \myhspace \forall e_1, e_2 \in E : e_2 \in \intersection(e_1)

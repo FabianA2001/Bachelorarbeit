@@ -1,31 +1,31 @@
 %!TeX root=../thesis.tex
-\chapter{Introduction}
+\chapter{Einleitung}
 \label{ch:introduction}%
-\fabian{Sollte ich hier gradbeschränkte Triangulierung irgendwie abkürzen?}
-Triangulierungen sind ein wichtiger Bestandteil der algorithmischen Geometrie
-eine Triangulierung liefert eine Zerlegung der konvexen Hülle einer Punktemenge in Dreiecke.
-In dieser Arbeit wird das Problem um eine weitere Bedingung erweitert.
+
+Triangulierungen sind ein zentraler Bestandteil der algorithmischen Geometrie.
+Eine Triangulierung zerlegt die konvexe Hülle einer Punktemenge in Dreiecke.
+In dieser Arbeit wird das klassische Problem um eine zusätzliche Bedingung erweitert.
 Für jeden Knoten wird ein Sollgrad vorgegeben.
 
 Die gradbeschränkte Triangulierung untersucht, ob es für eine gegebene Punktemenge eine Triangulierung gibt, bei der jeder Knoten einen vorgegebenen Grad besitzt.
-Also es für jeden Knoten eine Vorgegebene Anzahl an ausgehenden Kanten gibt.
-Diese Erweiterung der Triangulierung ist nicht nur theoretisch interessant, sondern hat auch praktische Anwendungen.
-So kann zum Beispiel in Sensornetzwerken die Verbindungsdichte zwischen Knoten reguliert werden.
-Auch in Logistikproblemen können vorgegebene Kapazitäten an Knoten berücksichtigt werden.
+Das bedeutet, dass für jeden Knoten eine bestimmte Anzahl an inzidenten Kanten festgelegt ist.
+Diese Erweiterung ist nicht nur theoretisch interessant, sondern hat auch praktische Anwendungen.
+So kann beispielsweise in Sensornetzwerken die Verbindungsdichte zwischen Knoten gezielt gesteuert werden.
+Auch in Logistikproblemen lassen sich vorgegebene Kapazitäten an Knoten berücksichtigen.
 
-Das Ziel dieser Arbeit ist es, Verfahren zur Lösung von gradbeschränkten Triangulierungen zu untersuchen.
-Neben der Betrachtung als Entscheidungsproblem, bei dem Methoden wie Integer Programming, Constraint Programming oder SAT Solver verwendet werden, wird das Problem auch als Optimierungsproblem betrachtet.
+Das Ziel dieser Arbeit ist es, Verfahren zur Lösung gradbeschränkter Triangulierungen zu untersuchen.
+Neben der Betrachtung als Entscheidungsproblem, bei dem Methoden wie Integer Programming, Constraint Programming oder SAT-Solver eingesetzt werden, wird das Problem auch als Optimierungsproblem betrachtet.
 Ein Schwerpunkt liegt auf dem Fixieren und Ausschließen von Kanten, um die Suche nach Lösungen zu beschleunigen.
 Im gleichen Zusammenhang werden verschiedene Methoden zur Instanzgenerierung vorgestellt.
 
 Die Arbeit beginnt mit grundlegenden Definitionen und relevanten theoretischen Grundlagen.
-Anschließend werden verschiedene Lösungsansätze vorgestellt und eine mögliche Implementierung beschrieben.
-Mit dieser Implementierung werden dann die verschiedenen Lösungsansätze evaluiert.
+Anschließend werden verschiedene Lösungsansätze präsentiert und eine mögliche Implementierung beschrieben.
+Mit dieser Implementierung werden die unterschiedlichen Ansätze evaluiert.
 Der Fokus liegt dabei auf der Laufzeit und dem Finden des besten Lösungsansatzes.
 Abschließend werden die generierten Instanzen hinsichtlich ihrer Schwierigkeit untersucht.
 
 \section{Das Problem}
-Das in dieser Arbeit betrachtete Problem sind die gradbeschränkten Triangulierungen.
+Das in dieser Arbeit betrachtete Problem sind gradbeschränkte Triangulierungen.
 Es wird untersucht, ob für eine gegebene Punktmenge eine Triangulierung existiert, bei der jeder Knoten einen vorgegebenen Grad besitzt.
 \begin{figure}[h]
     \centering
@@ -34,17 +34,19 @@ Es wird untersucht, ob für eine gegebene Punktmenge eine Triangulierung existie
     \label{fig:problem}
 \end{figure}
 In~\cref{fig:problem} sind zwei Instanzen mit Lösungen dargestellt.
-Die Zahlen an den Knoten bezeichnen dabei die Sollgrade.
+
+Die Zahlen an den Knoten geben die jeweiligen Sollgrade an.
 Die obere Instanz ist eine Ja-Instanz, da die Sollgrade mit der Triangulierung eingehalten werden können.
-Bei der unteren Instanz, einer Nein-Instanz, ist hingegen mit den gegebenen Sollgraden keine Triangulierung möglich.
+Bei der unteren Instanz, einer Nein-Instanz, ist mit den gegebenen Sollgraden keine Triangulierung möglich.
 
 Eine Praktische Anwendung dieses Problems könnte zum Beispiel in der Computergrafik genauer in der Erzeugung von Netzen für die Modellierung von Oberflächen genutzt werden.
-Durch den Sollgrad kann dann die Dichte oder der Platzverbrauch in bestimmten Bereichen gezielt gesteuert werden.
-Analog kann in der Nachrichtentechnik eine gradbeschränkte Triangulierung verwendet werden, um die Verbindungsdichte zwischen Knoten in einem Sensornetzwerk zu regulieren.
-Ebenso kann die gradbeschränkte Triangulierung genutzt werden wenn Güter von einem Ort an einen anderen Transportiert werden sollen.
-Der Sollgrad könnte angeben wie viele Güter an jedem Ort vorhanden sind und weiterbewegt werden sollen.
 
-\section{Results}
+Durch den Sollgrad lässt sich die Dichte oder der Platzverbrauch in bestimmten Bereichen gezielt steuern.
+Analog kann in der Nachrichtentechnik eine gradbeschränkte Triangulierung verwendet werden, um die Verbindungsdichte zwischen Knoten in einem Sensornetzwerk zu regulieren.
+Auch beim Transport von Gütern kann die gradbeschränkte Triangulierung genutzt werden.
+Der Sollgrad gibt dann an, wie viele Güter an jedem Ort vorhanden sind und weiterbewegt werden sollen.
+
+\section{Ergebnisse der Arbeit}
 % We proof that the \textsc{Traveling Salesmen Problem}(TSP) is NP-complete.
 % \begin{verbatim}
 % ... that the \textsc{Traveling Salesmen Problem}(TSP) is ...
@@ -54,25 +56,27 @@ Der Sollgrad könnte angeben wie viele Güter an jedem Ort vorhanden sind und we
 
 % Formel zwischen lagern:
 \fabian{muss/soll ich hier was angeben? Weil ich ja jetzt nicht Das Ergebnis habe.}
+TODO schreiben
 
 
 
 
 
 \section{Related Work}
-In diesem Abschnitt werden verschiedene wissenschaftliche Arbeiten aus diesem Themenbereich betrachtet.
-Dies dient dazu, einen Überblick über den aktuellen Entwicklungsstand zu erhalten.
-Dazu werden drei Bereiche begutachtet.
-Der erste Bereich behandelt die \emph{Delaunay Triangulierung}.
-Diese zählt zu den bekanntesten Triangulationen und bietet einen grundlegenden Einblick in das Thema Triangulierung.
-Der zweite Bereich umfasst \emph{Flips in Triangulationen}.
-Hier wird untersucht, wie sich Triangulierung durch lokale Änderungen gezielt modifizieren lassen.
-Der dritte und letzte Bereich befasst sich mit dem Problem des \emph{degree constrained minimum spanning tree}.
-Dabei werden insbesondere Ansätze zur Einhaltung von Grad Beschränkungen betrachtet.
 
-Es ist noch zu erwähnen, dass Sharir et. al.~\cite{On_degrees_in_random_triangulations_of_point_setss} den minimalen und maximalen Grad in einer Triangulierung untersucht haben.
-Darüber hinaus haben Datta et. al.~\cite{Degree_regular_triangulations_of_surfaces} und Gewali et. al.~\cite{Degree_aware_triangulation_of_annular_regions} sich mit Triangulierungen beschäftigt, bei denen jeder Knoten einen geraden Grad hat.
-Da diese beiden Themenbereiche keinen direkten Mehrwert für die vorliegende Arbeit bieten, werden sie hier lediglich der Vollständigkeitshalber namentlich erwähnt.
+In diesem Abschnitt werden verschiedene wissenschaftliche Arbeiten aus dem Themenbereich betrachtet.
+Dies dient dazu, einen Überblick über den aktuellen Entwicklungsstand zu geben.
+Es werden drei Bereiche betrachtet.
+Der erste Bereich behandelt die \emph{Delaunay Triangulierung}.
+Diese zählt zu den bekanntesten Triangulationen und bietet einen grundlegenden Einblick in das Thema.
+Der zweite Bereich umfasst \emph{Flips in Triangulationen}.
+Hier wird untersucht, wie sich Triangulierungen durch lokale Änderungen gezielt modifizieren lassen.
+Der dritte Bereich befasst sich mit dem Problem des \emph{degree constrained minimum spanning tree}.
+Dabei werden insbesondere Ansätze zur Einhaltung von Gradbeschränkungen betrachtet.
+
+Erwähnenswert ist, dass Sharir et al.~\cite{On_degrees_in_random_triangulations_of_point_setss} den minimalen und maximalen Grad in einer Triangulierung untersucht haben.
+Darüber hinaus haben Datta et al.~\cite{Degree_regular_triangulations_of_surfaces} und Gewali et al.~\cite{Degree_aware_triangulation_of_annular_regions} sich mit Triangulierungen beschäftigt, bei denen jeder Knoten einen geraden Grad besitzt.
+Da diese beiden Themenbereiche keinen direkten Mehrwert für die vorliegende Arbeit bieten, werden sie hier lediglich der Vollständigkeit halber namentlich erwähnt.
 
 \subsection{Delaunay Triangulierung}
 \label{sec:delaunay_triangulation}
@@ -116,12 +120,11 @@ flipbare Kanten besitzt, wobei \( n \) die Anzahl der Knoten bezeichnet.
 Laut der wissenschaftliche Arbeit \emph{Flips in planar graphs}~\cite{Flips_in_planar_graphs} lässt sich jede mögliche Triangulierung in jede beliebige andere Triangulierung überführen, indem die notwendigen Flips durchgeführt werden.
 Daraus folgt, dass, wenn eine gradbeschränkte Triangulierung möglich ist, diese durch Flips konstruiert werden kann.
 Dieser Ansatz wird in~\cref{sec:flips} nochmal näher betrachtet.
+In Triangulierungen gibt es nur eine Art von Flips, die sogenannten diagonalen Flips.
+Bei diesen wird ein konvexes Viereck betrachtet und die Diagonale durch die andere Diagonale ersetzt.
+Genauer wird dies in~\cref{def:flip} beschrieben.
 
-Eine weitere Art von Flips sind sogenannte \( k \)-Flips.
-Diese stellen eine zusätzliche Möglichkeit dar, Kanten innerhalb einer Triangulierung zu verschieben.
-Dabei werden \( k \) Kanten entfernt und durch \( k \) neue Kanten ersetzt.
-% Normale Flips entsprechen somit \( 1 \)-Flips.
-Der Vorteil von \( k \)-Flips liegt darin, dass mit einem Schritt größere strukturelle Veränderungen möglich sind.
+
 \begin{figure}[ht]
   \centering
   \includegraphics[width=\linewidth]{drei_flips.png}
@@ -129,12 +132,20 @@ Der Vorteil von \( k \)-Flips liegt darin, dass mit einem Schritt größere stru
   \label{fig:drei_flips}
 \end{figure}
 
+Wenn man Flips außerhalb von Triangulierungen betrachtet, gibt es verschiedene Arten von Flips.
 Drei beispielhafte Flips sind in~\cref{fig:drei_flips} dargestellt.
 Zum einen der \emph{edge move}, hierbei handelt es sich um das einfache Entfernen und anschließende Einfügen einer Kante.
 Etwas stärker eingeschränkt ist die \emph{edge rotation}, bei der ein Endpunkt der Kante unverändert bleibt.
 Die Rotation erfolgt also nur um einen Knoten.
 Die dritte Variante, der \emph{edge slide}, schränkt die \emph{edge rotation} weiter ein.
 Hier darf der veränderte Knoten nur ein Nachbar des ursprünglichen Knotens sein.
+
+Mann kann Flips noch weiter unterteilen.
+In sogenannte \( k \)-Flips bei diesen wird noch der Anzahl der veränderten Kanten gruppiert.
+% Diese stellen eine zusätzliche Möglichkeit dar, Kanten innerhalb einer Triangulierung zu verschieben.
+Dabei werden \( k \) Kanten entfernt und durch \( k \) neue Kanten ersetzt.
+Die bisher genannten Flips entsprechen somit \( 1 \)-Flips.
+% Der Vorteil von \( k \)-Flips liegt darin, dass mit einem Schritt größere strukturelle Veränderungen möglich sind.
 
 \subsection{Degree constrained minimum spanning tree}
 Eine Gradbeschränkung gibt es auch beim Minimum Spanning Tree.
@@ -184,7 +195,7 @@ Bei diesem Ansatz werden jedoch neue Knoten gemäß der folgenden Formel überno
 p\{\textrm{accept }j\} = \left\{
   \begin{array}{ll}
   1 & \textrm{if } f(j) \leq f(i) \\
-  \exp{(\frac{f(i) - f(j)}{c})} & \, \textrm{sonst} \\
+  \exp{\left(\frac{f(i) - f(j)}{c}\right)} & \, \textrm{sonst} \\
   \end{array}
   \right.
 \]
@@ -231,7 +242,7 @@ dabei bezeichnet \(\bar{b}\) die durchschnittliche Gradbeschränkung.
 Diese Formel sorgt dafür, dass große Instanzen mehr Iterationen erhalten, während leichtere Instanzen (mit höherem Grad) schneller bearbeitet werden.
 
 
-Sandor P. Fekete et al~\cite{A_network-flow_technique_for_finding_low-weight_bounded-degree_spanning_trees} betrachten ebenfalls das \emph{degree constrained minimum spanning tree} problem.
+Sandor P. Fekete et al\cite{A_network-flow_technique_for_finding_low-weight_bounded-degree_spanning_trees} betrachten ebenfalls das \emph{degree constrained minimum spanning tree} problem.
 Hierbei wird ein \emph{Flow based Algorithmus} verwendet.
 Da dieser Ansatz wahrscheinlich nicht gut auf Triangulations übertragbar ist, wird er hier nur kurz behandelt.
 
@@ -268,7 +279,3 @@ Dies konnte damit erklärt werden, dass die zugehörige Formel für den minimale
 
 
 \newpage
-
-\section{Overview}
-If needed, write down where to find everything.
-\fabian{Würde ich rausnehmen}
