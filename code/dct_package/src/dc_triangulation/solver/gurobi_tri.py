@@ -94,6 +94,41 @@ class Gurobi_Tri(Solver):
         return tri1_poly.intersects(tri2_poly) and not tri1_poly.touches(tri2_poly)
 
     def intersection_constraint(self):
+        all_edges = self.graph.get_all_edges()
+        hull_nodes = self.graph.get_hull_nodes_sorted()
+        for node1, node2 in zip(hull_nodes, hull_nodes[1:] + [hull_nodes[0]]):
+            hull_edge = (node1, node2)
+            # self.logger.info(f"Adding hull edge constraint for {hull_edge}")
+            summ_hull = 0
+            sorted_hull_edge = (min(hull_edge), max(hull_edge))
+            if sorted_hull_edge in all_edges:
+                all_edges.remove(sorted_hull_edge)
+            for tri in self.graph.get_triangles_for_edge(hull_edge, check_active=False):
+                # self.logger.info(f"Adding hull triangle {tri} for edge {hull_edge}")
+                if tri[3] == -1:
+                    if tri[:3] in self.vars:
+                        summ_hull += self.vars[tri[:3]]
+            assert not isinstance(summ_hull, int), "No triangles found for hull edge."
+            self.model.addConstr(summ_hull == 1)
+
+        left_summ = 0
+        right_summ = 0
+        for edge in all_edges:
+            left_summ = 0
+            right_summ = 0
+            for tri in self.graph.get_triangles_for_edge(edge, check_active=False):
+                if tri[3] == 1:
+                    if tri[:3] in self.vars:
+                        left_summ += self.vars[tri[:3]]
+                else:
+                    if tri[:3] in self.vars:
+                        right_summ += self.vars[tri[:3]]
+            assert not isinstance(left_summ, int) and not isinstance(right_summ, int), (
+                "No triangles found for edge."
+            )
+            self.model.addConstr(left_summ == right_summ)
+
+    def intersection_constraint_old(self):
         if not self.triangle:
             raise ValueError("No triangles found in the graph.")
 

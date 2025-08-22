@@ -209,9 +209,9 @@ class Graph_Wrapper:
         for edge in self.get_hull_edges():
             self.add_edge(edge[0], edge[1], True)
 
-    def get_triangles_from_node(self, node: int) -> list[int]:
+    def get_triangles_from_node(self, node: int) -> list[tuple[int, int, int]]:
         """Gibt die Dreiecke des Graphen zurück."""
-        return self._data.get_empty_triangles_for_node(node)
+        return self._data.get_all_triangles_for_node_map[node]
 
     def get_triangles_for_edge(
         self, edge: tuple[int, int], check_active: bool = True

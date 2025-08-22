@@ -127,6 +127,17 @@ class Data(Data_Raw):
                 triangles.add(tri)
         return list(triangles)
 
+    @cached_property
+    def get_all_triangles_for_node_map(self) -> dict[int, list[tuple[int, int, int]]]:
+        """Gibt ein Dictionary zurück, das für jeden Knoten die zugehörigen Dreiecke enthält."""
+        triangles_map = {}
+        for tri in self.get_all_empty_triangles:
+            for node in tri:
+                if node not in triangles_map:
+                    triangles_map[node] = []
+                triangles_map[node].append(tri)
+        return triangles_map
+
     @staticmethod
     def sorted_nodes_clock_wise(nodes: list[shapely.Point]) -> list[shapely.Point]:
         """Sortiert die Punkte im Uhrzeigersinn."""

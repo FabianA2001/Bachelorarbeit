@@ -355,8 +355,8 @@ def run_algo():
     # ortools_algorithm(graph)
     # for edge in graph.fix_edges:
     #     print(edge)
-    ortools_tri_algorithm(graph)
-    # gurobi_tri_algorithm(graph)
+    # ortools_tri_algorithm(graph)
+    gurobi_tri_algorithm(graph)
     # gurobi_algorithm(graph)
     # raw_flips_algorithm(graph)
 
