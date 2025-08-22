@@ -252,7 +252,7 @@ Der erste Ansatz nutzt die Kardinalitätscodierungen die PySAT anbietet.
 \phillip{hier aufpassen mit den Spaces}
 \fabian{ @Phillip meintest du das ich hier das tilde zeichen einfügen soll?}
 Hierfür kommen nur \emph{sequential counters}~\cite{sequential_counters}, \emph{sorting networks}~\cite{sorting_networks}, \emph{cardinality networks}~\cite{cardinality_networks}, \emph{totalizer}~\cite{totalizer}, \emph{modulo totalizer}~\cite{modulo_totalizer}, \emph{modulo totalizer for k-cardinality}~\cite{modulo_totalizer_for_k_cardinality} und eine Native Codierung für manche Solver in Frage.
-Die Restlichen Codierungen bieten keine Möglichkeit um k-Kardinalitäten zu erzeugen. 
+Die Restlichen Codierungen bieten keine Möglichkeit um Kardinalitätsbeschränkungen zu erzeugen. 
 Also das k viele Variablen wahr sind.
 
 
@@ -260,7 +260,7 @@ Wie in~\cref{sec:eval5:sat_degree} gezeigt wird, ist der Ansatz der \emph{sequen
 Daher wird dieser im Folgenden genauer erläutert.
 Der Ansatz der \emph{sequential counters} wurde von Carsten Sinz~\cite{counter} entwickelt.
 Er basiert auf einer Idee aus der Computerhardware.
-Zur Berechnung der Kardinalität \(k\) für die Klausel \((x_1 \lor x_2 \lor \ldots \lor x_n)\) werden \(n-1\) Variablen \(s_i\) in der unären Darstellung benötigt.
+Zur Berechnung der Kardinalität \(k\) für die Klausel \((x_1 \lor x_2 \lor \ldots \lor x_n)\) werden \(n-1\) Variablen \(s_i\) der länge \(k\) in der unären Darstellung benötigt.
 Zusätzlich werden \(n\) Hilfsvariablen \(v_i\) verwendet.
 Für \(i = 1\) werden \(s_1\) und \(v_1\) wie folgt definiert
 \begin{align*}
@@ -268,7 +268,7 @@ s_{1,1} &\Leftrightarrow x_1 \\
 s_{1,j} &\Leftrightarrow 0 \myhspace &\text{für } 1 < j \leq k \\
 v_{1} &\Leftrightarrow 0
 \end{align*}
-Für den Abschluss mit \(i=n\) wird \(v_n\) wie folgt gesetzt
+Für \(i=n\) wird \(v_n\) wie folgt gesetzt
 \[v_n \iff x_n \land s_{n-1,k}\]
 Iterativ werden dann \(s_i\) und \(v_i\) für \(i \in \{2, \ldots, n-1\}\) wie folgt definiert
 \begin{align*}
@@ -317,7 +317,8 @@ Dann werden folgende Klauseln erstellt
 Damit diese vier Klauseln erfüllt sind, müssen mindestens zwei der Variablen wahr sein.
 Die Idee basiert darauf das für jede Klausel angenommen wird, dass nur noch eine Kante zum Erreichen des Sollgrads fehlt und die in der Klausel genannten Kanten noch nicht aktiv sind.
 Insgesamt wird so eine Kardinalitäts Codierung erzeugt.
-Diese Methode hat den Vorteil, dass keine Hilfsvariablen benötigt werden, allerdings entstehen \(\binom{E_i}{\left|E_i\right| - (\degrees(i) - 1)}\) viele Klauseln.
+Diese Methode hat den Vorteil, dass keine Hilfsvariablen benötigt werden, allerdings entstehen \[\binom{\left|E_i\right|}{\left|E_i\right| - (\degrees(i) - 1)}\] viele Klauseln.
+Das währen allerdings \[O\left(n \cdot \binom{\left|E_{\text{max}}\right|}{\left|E_{\text{max}}\right| - d_{\text{min}}}\right)\] Klauseln. Wobei \(E_{\text{max}}\) die maximale Kantenanzahl pro Knoten und \(d_{\text{min}}\) der minimalen Sollgrad ist.
 
 
 % \fabian{sollte ich hier noch nennen wie der \emph{sequential counter} oder der Native Ansatz funktioniert weil diese am Ende am besten sind. Ich müsste dann aus den Experimenten vorgreifen. Auch brauche ich Information nicht wirklich da ich PySAT hier als Blackbox nutzen kann.} 
@@ -337,7 +338,7 @@ x_e \lor \bigvee_{e_j \in I(e)} x_{e_j} \myhspace \forall e \in E
 
 
 
-\section{Dreieck Formulierung}
+\section{Dreiecksformulierung}
 Bei der Dreiecksformulierung wird nicht jeder Kante eine Variable zugeordnet. 
 Stattdessen erhält jedes mögliche Dreieck eine eigene Variable.
 Die Überschneidungen können wie bei der Kantenformulierung übernommen werden, da die Variablen entsprechend angepasst wurden.
@@ -425,7 +426,7 @@ Diese wird durch ein klassisches Triangulationsverfahren erzeugt.
 Anschließend werden maximal \(k\) Flips durchgeführt. 
 % Ziel ist es, die Gradbeschränkung zu erfüllen. 
 
-Zunächst wird mit dem~\cref{algo:choose_edge} eine Kante ausgewählt. 
+Zunächst wird mit~\cref{algo:choose_edge} eine Kante ausgewählt. 
 Diese soll geflippt werden. 
 Der Algorithmus versucht, eine Kante zu finden, deren Knoten nicht den Sollgrad erfüllen. 
 Zusätzlich wird über den Parameter \(p\) eine Wahrscheinlichkeit eingeführt. 
@@ -525,16 +526,20 @@ Dafür wird \emph{Conflict-driven clause learning} (CDCL) betrachtet.
 Die in diesem Kapitel vorgestellen Informationen stammen aus dem Buch \emph{The Art of Computer Programming, Volume 4, Fascicle 6: Satisfiability}~\cite{The_Art_of_Computer_Programming_Volume_4_Fascicle_6_Satisfiability}
 Im Allgemeinen funktionieren SAT-Solver so, dass sie jede Möglichkeit ausprobieren.
 Dies lässt sich als Baum darstellen (siehe~\cref{fig:sat_tree}).
+Natürlich werden Algorithmen angewendet, die diese Suche effizienter machen.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=1\linewidth]{figures/sat_tree.png}
 	\caption{Ein Baum welcher die Möglichen Entscheidungen eines SAT-Solvers darstellt. Jeder Ast entspricht einer Belegung der Literale}
 	\label{fig:sat_tree}
 \end{figure}
-Das Besondere am CDCL-Ansatz ist, dass nicht die Äste iterativ abgearbeitet werden, sondern dass es einen Pfad gibt.
+Eine Möglichkeit wie effizient die relevanten Äste betrachtet werde können ist der CDCL-Ansatz.
+Das Besondere am CDCL-Ansatz ist das es einen Pfad gibt.
 Der Pfad ist eine aktuelle Teilbelegung der Literale. Theoretisch entspricht der Pfad einem Ast im Baum, aber die Auswahl der Belegung basiert nicht auf dem Baum.
 Zusätzlich muss für jedes belegte Literal eine Begründung in Form einer Klausel angegeben werden. 
 Diese Begründungen werden bei Konflikten relevant.
+Eine Ausnahme stellt hierbei eine neue Entscheidungsebene da.
+Hier können keine weiteren Begründungen angegeben werden weshalb ein Literal ohne gesetzt wird.
 
 \subsection{\emph{Unit-Klauseln}}
 Der Grundansatz zur Erweiterung des Pfades besteht darin, \emph{Unit-Klauseln} zu finden.

@@ -123,7 +123,7 @@ Es zeigt sich aber das bei diesem Problem weder der native noch der \emph{sequen
 Für den weiteren Verlauf wird \emph{Glucose42} verwendet, da dieser bei Greedy eine Instanze in guter Zeit geschafft hat welche \emph{Gluecard4} nicht geschafft hat.
 
 
-\section{Grund Solver}
+\section{Vergleich der Modellierungstechniken}
 % (Eval1)
 \label{sec:eval1:grund_solver}
 In diesem Experiment werden alle möglichen Bedingungen an die Solver übergeben und einzeln getestet.
@@ -200,7 +200,7 @@ Der unterschied ist das 80 Prozent schneller sind als 50 Prozent.
 Abschließend lässt sich sagen das bestätigt wurde das das ausschließen und fixieren der Kanten in~\cref{sec:eval1:grund_solver} nur schlecht war weil zu wenig Kanten ausgeschlossen bzw. fixiert wurden.
 Überraschent ist das beim fixieren es keinen unterschied macht ob 50 oder 80 Prozent fixiert wurden.
 Das dies bei ausschließen nicht das Fall ist lässt sich damit erklären das zum einem mehr Kanten theoretisch ausgeschlossen werden können, und somit der Absolute unterschied größer ist. 
-Zum andern das beim fixieren so viele Kanten durch den solver indirekt durch andere Bedingungen ausgeschlossen werden können das ab einer bestimmten Menge an fixierten Kanten es nurnoch ein fertig rechen und kein Ausprobieren mehr ist.
+Zum andern das beim fixieren so viele Kanten durch den solver indirekt durch andere Bedingungen ausgeschlossen werden können das ab einer bestimmten Menge an fixierten Kanten die Teilinstanz gleich groß sind.
 
 \section{Größerer Timeout}
 \label{sec:eval15}
@@ -244,12 +244,12 @@ Bei Ja-Instenzen ist interesannt wie schnell die Instanze gelöst werden kann un
 Bei den Nein-Intanzen ist hingegen interesannter wie nah der Solver an eine Lösung kommt.
 In beiden Instanzen wird ein Referenz Solver verwendet.
 Dieser Betrachtet das Problem weiterhin als Entscheidungsproblem.
-Ausgewählt wurde der OrTools Solver mit Überschneidungsbeschränkung, Gradbeschränkung, fixierung der Hülle und der alternativen Kantenformulierung.
+Ausgewählt wurde der OrTools Solver mit den in~\cref{sec:eval1:grund_solver} gefundenen Bedingungen ohne die Gradbeschränkung.
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval11/eval_progression_39.pdf}
-    \caption[Zielfunktion mit Nein-Instanz]{Eine Nein-Instanz mit 120 Knoten. Hier werden zwei verschiedene Ansätze mit Zielfunktionen mit einem Referenzsolver aus~\cref{sec:eval1:grund_solver} verglichen. Der Durchschnittsansatz ist in den meisten Fällen besser als der Min-Max Ansatz. Es lässt sich nicht klar erkennen welcher Ansatz besser ist.}
+    \caption[Zielfunktion mit Nein-Instanz]{Eine Nein-Instanz mit 120 Knoten. Hier werden zwei verschiedene Ansätze mit Zielfunktionen mit einem Referenzsolver aus~\cref{sec:eval1:grund_solver} verglichen. Der Durchschnittsansatz ist in den meisten Fällen besser als der Min-Max Ansatz. Es ist nicht erkennbar ob der Zielfunktionen Ansatz besser oder schlechter als der Referenzsolver ist.}
     \label{fig:eval11:move}
 \end{figure}
 
@@ -276,8 +276,8 @@ Bei Nein-Instanzen erzielt der Durchschnittsansatz die besseren Ergebnisse.
 
 \section{\emph{Propagation} CDCL}
 \fabian{sollte ich dashier noch teilweise in Kapitel drei verschieben?}
-Der CDCL Solver namens \emph{CaDiCaL}~\cite{cadical} von Armin Biere ermöglicht es, eine neue Entscheidungsebene mit einer eigenen Funktion zu erzeugen.
-Diese Funktion kann dann das nächste Literal setzen.
+Der CDCL Solver namens \emph{CaDiCaL}~\cite{cadical} von Armin Biere ermöglicht es, eigene Funktionen in den Lösungsprozess einzubinden.
+Diese Funktion erlaubt es Literale mit Begründung zu setzen.
 Im Folgenden wird diese Funktion \emph{Propagation} genannt.
 Die Idee bei dieser \emph{Propagation} ist es, die Bedingungen aus~\cref{sec:exclude_edges} auf Teilinstanzen anzuwenden.
 
@@ -332,7 +332,7 @@ wobei \(E_A\) die Menge der aktiven Kanten bezeichnet.
 In diesem Experiment wird betrachtet wie viele Erfolgreiche \emph{Propagation} also jene, welche eine Kante ausschließen können, in einer Instanz möglich sind.
 Dafür werden alle Erfolgreichen Aufrufe gezählt und diese Zahl durch die Anzahl der \emph{Propagation} Aufrufe geteilt.
 Dabei wird in diesem Experiment nicht die Laufzeit gemässen da durch die vielen Kanten welche Getestet werden die Laufzeit stark beeinflusst wird.
-Eine \emph{Propagation} soll im normalfall sehr schnell entscheiden welche Kante als nächstes betrachtet wird.
+Eine \emph{Propagation} soll im normalfall sehr schnell entscheiden welche Literale mit der aktuellen belegung noch gesetzt werden können. 
 In diesem Experiment geht es nur darum zu bestimmen ob es sinnvoll ist eine \emph{Propagation} mit diesem Ansatz zu nutzen.
 Bei diesem Experiment wurden Instanzen der größe 30 bis 60 Knoten betrachtet.
 Das Experiment wurde auf dem Ryzen 9 durchgeführt.
@@ -373,9 +373,9 @@ Vorallem ist aber zu sehen das es keinen Zusammenhang zwischen der Anzahl der L�
 Es kann also davon ausgegangen werden das die Anzahl der Lösungen keinen Einfluss auf die Schwierigkeit der Instanzen hat.
 Interesannter weiße ist zu sehen das die Kanten welche in einer Instanze unterschiedliche sind klar einem Bereich zugeordnet werden könne.
 Wie man in~\cref{fig:eval8:left} sieht, sind die Kanten in der linken Hälfte der Instanz unterschiedlich, während die rechte Hälfte keine Unterschiede aufweist.
-Man könnte also die Grade welche mehrere Lösungen zulassen einem Lokalen Bereich zuordnen.
+% Man könnte also die Grade welche mehrere Lösungen zulassen einem Lokalen Bereich zuordnen.
 
-\subsection{Grad Verteilung}
+\subsection{Gradverteilung}
 In diesem Experiment wird Probiert anhand der Gradverteilung der Knoten zu erkennen ob es einen Zusammenhang zwischen der Schwierigkeit und dem Grad gibt.
 Dafür werden die Ja-Instanzen der Größe 30 bis 120 Knoten betrachtet.
 % (Eval9)
@@ -393,7 +393,7 @@ Auch das Delaunay-Flips Rechtsschiefer als Delaunay und Greedy ist würde passen
 Es lässt sich also Anhand dieser Beispiel vermuten das einfachere Instanzen eher kleinere Grade haben und schwierigere Instanzen mehr Verteile mittlere Grade.
 
 
-\subsection{Kantenlängen Verteilung}
+\subsection{Verteilung der Kantenlängen}
 % (Eval10)
 In diesem Experiment wird ebenfalls probiert einen Zusammenhang zwischen der Schwierigkeit und einer Eigenschaft zu finden.
 In diesem Fall werden die Kantenlängen betrachtet.
@@ -413,7 +413,7 @@ Leichtere Instanzen haben eher lange Kanten als schwere Instanzen.
 So sind bei schweren Instanzen wie Greedy und Delaunay die Kantenlängen eher links also bei den kurzen Kanten angesiedelt.
 Leichte Instanzen wie Iterativ hingegen haben deutlich weniger kurze Kante und dafür mehr längere Kanten.
 
-\subsection{Schwierigkeit Zusammenfassung}
+\subsection{Zusammenfassung}
 In diesm Abschnitt wurde festgestellt das die Anzahl der Lösungen keinen Einfluss auf die Schwierigkeit hat.
 Die Gradverteilung und die Kantenlängenverteilung hingegen scheinen einen Einfluss auf die Schwierigkeit zu haben.
 Hierbei deuten viele kurze Kanten und verteile Grade auf eine schwere Instanz hin.
