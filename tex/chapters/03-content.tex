@@ -10,34 +10,14 @@ Im vierten Abschnitt wird der Problem als Optimirungsproblem betrachtet.
 Danach wird erklärt wie die Instanzen Generiert werden.
 Im letzten Abschnitt wird die Eindeutigkeit der Lösungen betrachtet.
 
+\section{Entscheidungsproblem}
+\begin{itemize}
+	\item Ja oder nein
+	\item Sollgrad gesamt aus Kantenansatz auslagern
+\end{itemize}
+TODO
 
-\section{Solver}
-In dieser Arbeit werden drei verschiedene Solver verwendet
-PySAT, OrTools und Gurobi.
-
-PySAT ist eine Python-Bibliothek, die eine Sammlung von SAT-Solvern bereitstellt.
-Diese SAT-Solver entscheiden, ob eine KNF-Formel erfüllbar ist.
-Dementsprechend kann PySAT nur Entscheidungsprobleme, aber keine Optimierungsprobleme lösen.
-Alle Solver sind in C oder C++ implementiert und es wird eine einheitliche Schnittstelle für alle Solver in Python bereitgestellt.
-Zusätzlich werden verschiedene Codierungen für Kardinalitäten angeboten.
-Das bedeutet, man gibt eine Bedingung ein und erhält eine KNF-Formel, die diese Bedingung abbildet.
-PySAT stellt hierfür verschiedene Codierungen mit Implementierung bereit.
-PySAT ist open source und kostenlos.
-
-Der zweite Solver ist OrTools (Google Optimization Tools) von Google.
-Dieser unterstützt verschiedene Modellierungsarten wie lineare Programmierung (LP), gemischt-ganzzahlige Programmierung (MIP), Constraint Programming (CP) und Routing-Algorithmen.
-Auch hier sind die Solver in C++ implementiert und es wird eine Python-Schnittstelle bereitgestellt.
-Mit OrTools können sowohl Entscheidungsprobleme als auch Optimierungsprobleme gelöst werden.
-Kardinalitätsbeschränkungen und andere lineare Bedingungen werden direkt unterstützt und müssen nicht codiert werden.
-OrTools ist open source und kostenlos unter der Apache License 2.0.
-
-Der letzte Solver ist Gurobi.
-Es werden ebenfalls Modellierungen wie LP, MIP und quadratische Programmierung (QP) unterstützt.
-Auch hier wird eine Schnittstelle für Python bereitgestellt.
-Gurobi ist kostenpflichtig, bietet jedoch eine kostenlose Lizenz für die Forschung an.
-\fabian{Ist diese Übersicht in Ordnung, es fühlt sich irgenwie zu wenig technisch an.}
-
-\section{Kantenformulierung}
+\section{Kantenansatz}
 Bei der ersten Formulierung werden Kanten betrachtet. 
 Das bedeutet das Ziel der gradbeschränkte Triangulierung wird erreicht indem bestimmte Bedingungen an die Kanten gestellt werden.
 Dafür werden zuerst zwei notwendige Bedingung erklärt und dann weitere optinonale die die Lautzeit berbessern könnten.
@@ -145,120 +125,53 @@ Weiter unten im Bild ist zu sehen das alle möglichen Triangulierung mindestens 
 Zu beachten ist allerdings das die Anzahl der Schnittkanten nicht gleich eins gesetzt werden darf sondern nur auf mindestens eine.
 Wie man in~\cref{fig:allEdges} sieht können die Kanten \(e_2\) und \(e_3\) gleichzeitig aktiv sein.
 
-\subsection{Implementierung der Kanten Formulierung}
-Für alle Solver wird angenommen das \(V\) die Menge aller Knoten und \(E\) die Menge aller möglicher Kanten also Kanten die keine Punkte schneiden sei.
+\subsection{Formulierungen}
+Für diese Formulierung wird angenommen das \(V\) die Menge aller Knoten und \(E\) die Menge aller möglicher Kanten also Kanten die keine Punkte schneiden sei.
 Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
 Diese Variable ist wahr wenn die Kante \(e\) in der Triangulierung enthalten ist.
 
-\subsubsection{Graph operationen}
-Alle Kanten werden mit der Bibliothek \emph{Networkx} verwaltet.
-Mit dieser können auch die ausgehenden Kanten eines Knotens abgefragt werden.
-Beim Erstellen der Kanten muss getestet werden, ob die Kanten keinen Knoten schneiden.
-Dies wird mit der Bibliothek \emph{Shapely} getestet.
-Bei er Berechnung der Hülle muss beachtet werden, dass alle Knoten, welche auf der Hülle liegen betrachtet werden.
-Die \emph{convex\_hull} Funktion von Shapely liefert nur die Eckpunkte der Hülle. 
-Damit auch Punkte auf einer Graden zwischen zwei Eckpunkten betrachtet werden, muss nach der Berechnung der Convexen Hülle noch der Schnitt zwischen Convexer Hülle und allen Punkten berechnet werden.
-In diesem Schnitt sind dann alle Punkte enthalten, welche auf der Hülle liegen.
 
-\subsubsection{Schnittkanten}
-\label{sec:intersection_edges}
-Für die Bestimmung der Schnittkanten wird ein Algorithmus verwendet, der auf dem Konzept des \emph{Rechtsknicks} beziehungsweise \emph{Linksknicks} basiert.
-Dafür ist es notwendig, dass ein vollständiger Graph betrachtet wird, da angenommen wird, dass zwischen allen Knoten eine Kante existiert.
-Es wird jede Kante \(e_i \in E\), bestehend aus den Knoten \(v_{i,1}\) und \(v_{i,2}\), nacheinander betrachtet.
-Anschließend werden zwei Knoten \(v_3\) und \(v_4\) gesucht, die auf unterschiedlichen Seiten der Kante liegen.
-Dabei gilt: Das Tripel \((v_{i,1}, v_{i,2}, v_3)\) bildet einen Rechtsknick und das Tripel \((v_{i,1}, v_{i,2}, v_4)\) einen Linksknick.
-Danach muss überprüft werden, ob \(v_{i,1}\) und \(v_{i,2}\) auf verschiedenen Seiten der Kante liegen, die durch \(v_3\) und \(v_4\) gebildet wird.
-Sind alle diese Bedingungen erfüllt, so ist die Kante \((v_3, v_4)\) eine Schnittkante von \(e_i\).
-Der Vorteil dieses Algorithmus liegt darin, dass alle vier Knicküberprüfungen notwendige Eigenschaften darstellen.
-In der Praxis werden dadurch viele Knoten bereits ausgeschlossen, da sie die erste Knickbedingung nicht erfüllen.
-
-\subsubsection{Schnittkanten ausschließen}
-Um die Kanten zu finden bei denen die Schnittkanten zu viele Kanten ausschließen, wird jede Kante iterativ betrachtet.
-Für jede betrachtete Kante werden zunächst Zähler für jeden Knoten erstellt.
-Danach werden nacheinander alle Schnittkanten der betrachteten Kante aufgerufen.
-Für alle Schnittkanten wird der Zähler die beiden Endknoten der Schnittkanten um eins erhöht.
-Am Ende werden alle Knoten durchgegangen, sollte ein Knoten \(v\) folgende Formel erfüllen wird die Kante ausgeschlossen.
+\subsubsection{Mathematische Formulierung}
+\label{sec:kanten_formulierung:mathematisch}
+Für die Überschneidungsbeschränkung darf für jedes Variablenpaaren nur eine Variable aktiv sein.
 \[
-\degree(v) - \text{node\_count}[v] > \degrees(v)
+	(x_{e_1}, x_{e_2}) \myhspace \forall e_1, e_2 \in E : e_2 \in \intersection(e_1)
 \]
-\michael{Kann man diesen Algorithmus nicht einfacher als Text erklären?}
-\fabian{Ist das Besser, also sollte ich probieren möglichst wenig als Algo zu machen?}
-% Für jede Kante wird folgender Algorithmsus aufgerufen:
-% \begin{algorithm}[H]
-% 	\caption{EXCLUDE EDGE INTERSECTION(\(e\))}
-% 	\begin{algorithmic}[1]
-% 		\STATE erstelle \emph{Map} node\_count mit \emph{Key} Knoten und \emph{Value} Integer 
-% 		\FOR{\(e_{i} \in \intersection(e)\)}
-% 			\STATE seien \(v_1\) und \(v_2\) die Knoten von \(e_i\)
-% 			\STATE node\_count[\(v_1\)] += 1
-% 			\STATE node\_count[\(v_2\)] += 1
-% 		\ENDFOR
-% 		\FOR{\(v \in node\_count\)}
-% 			% \IF{\(\degree(v_1)\) - node\_count[\(v\)] > \(\degrees(v_1)\)}
-% 			\IF{\(\degree(v_1) - \text{node\_count[}v\text{]} > \degrees(v_1)\)}
-% 				\RETURN \emph{True}
-% 			\ENDIF
-% 		\ENDFOR
-% 		\RETURN \emph{False}
-% 	\end{algorithmic}
-% \end{algorithm}
-
-\subsubsection{Kanten Theoretisch ausschließen}
-Damit Kanten ausgeschlossen werden können muss zunächst die Instanz mit einem beliebigen Lösungsansatz gelöst werden.
-Nun muss unterschieden werden wie viele Lösungen die Instanz hat.
-Sollte die Instanze nur eine Lösung haben so sind alle gefundenen Kanten fixierbar und alle anderen Kanten können ausgeschlossen werden.
-Sollte es mehr als eine Lösung geben muss nach jedem Lösen eine neue Beschränkung hinzugefügt werden die mindestens eine Kante der gefundenen verbietet.
-Dies wird so lange wiederholt bis keine Lösungen mehr gefunden werden.
-Nun können alle jemals gefundenen Lösungen als fixierbar betrachten und für jede Lösung alle anderen Kanten als ausschließbar.
-
-\subsubsection{OrTools und Gurobi}
-Da OrTools und Gurobi eine ähnliche Art der Formulierung verwenden werden sie hier zusammengefasst.
-Für die Überschneidungsbeschränkung wird die Funktion \emph{add\_at\_most\_one} von OrTools verwendet.
-Alternative könnte auch 
-Diese Funktion wird mit den folgenden Variablenpaaren aufgerufen.
-\[
-	( x_{e_1}, x_{e_2}) \myhspace \forall e_1, e_2 \in E : e_2 \in \intersection(e_1)
-\]
-Gurobi nutzt hier äquivalent
-
+Dies kann mit folgender Formel umgesetzt werden.
 \[
 	x_{e_1} + x_{e_2} \leq 1 \myhspace \forall e_1, e_2 \in E : e_2 \in \intersection(e_1)
 \]
 Für die Gradbeschränkung wird die Summe der booleschen Variablen \(x_e\) für alle Kanten eines Knotens \(i\) auf den Sollgrad \(\degrees(i)\) beschränkt.
 
-Dafür werden folgende Bedingungen hinzugefügt:
+Dafür kann folgende Formel genutzt genutzt werden.
 \[
 	\sum x_{e_i} = \degrees(i) \myhspace \forall i \in V
 \]
 Wobei \(e_i\) alle Kanten für den Knoten \(i\) sind.
 
-Für die \emph{alternative Kanteneschränkung} werden folgende Bedingungen hinzugefügt:
+Für die \emph{alternative Kanteneschränkung} kann folgende Gleichung genutzt werden.
 \[
 	\sum_{j \in \intersection(e)}{x_{j}} + x_e \leq 1 \myhspace \forall e \in E
 \]
 
 Für die fixierung bzw. ausschließung der Kanten werden die zugehöhrigen Variablen auf \emph{Wahr} oder \emph{Falsch} gesetzt.
 
-\subsubsection{PySAT}
-\label{sec:pysat}
-Da PySAT eine SAT Formulierung also Klauseln in der KNF verwendet, müssen die Bedingungen etwas angepasst werden.
+\subsubsection{KNF Formulierung}
+\label{sec:kanten_formulierung:knf}
 Die Überschneidungen können sehr ähnlich mit folgender Formel umgesetzt werden:
 \[
 \overline{x_{e_1}} \lor \overline{x_{e_2}} \myhspace \forall e_1, e_2 \in E: e_2 \in \intersection(e_1)
 \]
-Für die Gradbeschränkung ist das Problem das bei PySAT für eine Menge von Variablen nicht festgelegt werden kann wie viele von ihnen wahr sein müssen.
-Hierfür gibt es zwei Ansätze.
-Der erste Ansatz nutzt die Kardinalitätscodierungen die PySAT anbietet.
-\phillip{hier aufpassen mit den Spaces}
-\fabian{ @Phillip meintest du das ich hier das tilde zeichen einfügen soll?}
-Hierfür kommen nur \emph{sequential counters}~\cite{sequential_counters}, \emph{sorting networks}~\cite{sorting_networks}, \emph{cardinality networks}~\cite{cardinality_networks}, \emph{totalizer}~\cite{totalizer}, \emph{modulo totalizer}~\cite{modulo_totalizer}, \emph{modulo totalizer for k-cardinality}~\cite{modulo_totalizer_for_k_cardinality} und eine Native Codierung für manche Solver in Frage.
-Die Restlichen Codierungen bieten keine Möglichkeit um Kardinalitätsbeschränkungen zu erzeugen. 
-Also das k viele Variablen wahr sind.
+Für die Gradbeschränkung ist das Problem das in KNF für eine Menge von Variablen nicht direkt festgelegt werden kann wie viele von ihnen wahr sein müssen.
+Im folgenden werden zwei verschiedene Ansätze beschrieben um dies doch zu erreichen.
+Der erste Ansatz nutzt Kardinalitätscodierungen aus einer Sammlung von Codierungen.
+Diese Sammlung wird von der Python Bibliothek PySAT bereitgestellt.
+Von diesen Codierungen kommen nur \emph{sequential counters}~\cite{sequential_counters}, \emph{sorting networks}~\cite{sorting_networks}, \emph{cardinality networks}~\cite{cardinality_networks}, \emph{totalizer}~\cite{totalizer}, \emph{modulo totalizer}~\cite{modulo_totalizer}, \emph{modulo totalizer for k-cardinality}~\cite{modulo_totalizer_for_k_cardinality} und eine Native Codierung in Frage.
+Die Restlichen Codierungen bieten keine Möglichkeit um Kardinalitätsbeschränkungen größer als eins zu erzeugen. 
 
-
-Wie in~\cref{sec:eval5:sat_degree} gezeigt wird, ist der Ansatz der \emph{sequential counters} am relevantesten.
+In~\cref{sec:eval5:sat_degree} wird sich zeigen das \emph{sequential counters} am relevantesten ist.
 Daher wird dieser im Folgenden genauer erläutert.
-Der Ansatz der \emph{sequential counters} wurde von Carsten Sinz~\cite{counter} entwickelt.
+Der Ansatz der \emph{sequential counters} wurde von Carsten Sinz~\cite{sequential_counters} entwickelt.
 Er basiert auf einer Idee aus der Computerhardware.
 Zur Berechnung der Kardinalität \(k\) für die Klausel \((x_1 \lor x_2 \lor \ldots \lor x_n)\) werden \(n-1\) Variablen \(s_i\) der länge \(k\) in der unären Darstellung benötigt.
 Zusätzlich werden \(n\) Hilfsvariablen \(v_i\) verwendet.
@@ -299,7 +212,7 @@ Diese Klauseln stellen sicher, dass genau \(k\) Variablen von \((x_1 \lor x_2 \l
 Alle Literale, die auf \(s_{i,j}\) basieren, müssen mit Hilfsvariablen verknüpft werden.
 
 
-Bei der Codierung mit PySAT besteht die Möglichkeit, die Kardinalität auf den exakten Sollgrad zu setzen oder festzulegen, dass der Knoten mindestens den Sollgrad erreicht.
+Bei den Codierungen besteht die Möglichkeit, die Kardinalität auf den exakten Sollgrad oder den mindestens Sollgrad zu setzen.
 Insgesamt erzielen beide Bedingungen denselben Effekt da der Maximale Grad durch die Anzahl der Kanten begrenzt ist.
 Wenn jedoch nur gefordert wird, dass der Knoten mindestens den Sollgrad erreicht, müssen weniger Hilfsvariablen eingeführt werden.
 Bei der Exakten Methode könnte der Solver allerdings schneller zu einer Lösung finden da diese Bedingung stärker ist, also mehr Informationen liefert.
@@ -318,17 +231,12 @@ Damit diese vier Klauseln erfüllt sind, müssen mindestens zwei der Variablen w
 Die Idee basiert darauf das für jede Klausel angenommen wird, dass nur noch eine Kante zum Erreichen des Sollgrads fehlt und die in der Klausel genannten Kanten noch nicht aktiv sind.
 Insgesamt wird so eine Kardinalitäts Codierung erzeugt.
 Diese Methode hat den Vorteil, dass keine Hilfsvariablen benötigt werden, allerdings entstehen \[\binom{\left|E_i\right|}{\left|E_i\right| - (\degrees(i) - 1)}\] viele Klauseln.
-Das währen allerdings \[O\left(n \cdot \binom{\left|E_{\text{max}}\right|}{\left|E_{\text{max}}\right| - d_{\text{min}}}\right)\] Klauseln. Wobei \(E_{\text{max}}\) die maximale Kantenanzahl pro Knoten und \(d_{\text{min}}\) der minimalen Sollgrad ist.
+Das währen in \[O\left(n \cdot \binom{\left|E_{\text{max}}\right|}{\left|E_{\text{max}}\right| - d_{\text{min}}}\right)\] viele Klauseln.
+ Wobei \(E_{\text{max}}\) die maximale Kantenanzahl pro Knoten und \(d_{\text{min}}\) der minimalen Sollgrad ist.
+ Da dies nicht polynomialel ist werden warscheinlich zu viele Klauseln erzeugt.
 
 
-% \fabian{sollte ich hier noch nennen wie der \emph{sequential counter} oder der Native Ansatz funktioniert weil diese am Ende am besten sind. Ich müsste dann aus den Experimenten vorgreifen. Auch brauche ich Information nicht wirklich da ich PySAT hier als Blackbox nutzen kann.} 
-% \phillip{den Sequential Counter kannst Du hier gern erklären.\\}
-% \fabian{
-
-% Ich glaube inzwischen das die native Codierung durch Glucard4 besser ist, soll ich hier nur erklären was ich am ende nutze obwohl ich dann aus den Experimenten vorgreife?
-% }
-
-Die Fixierung von Kanten kann analog wie in OrTools und Gurobi umgesetzt werden.
+Die Fixierung von Kanten kann ähnlich zur Mathematischen Formulierung umgesetzt werden.
 Hierbei werden anstatt die Variablen auf \emph{Wahr} und \emph{Falsch} zu setzen, die Klausen \((x_e)\) und \((\overline{x_e})\) hinzugefügt.
 
 Für die \emph{alternative Kantenbeschränkung} können folgende Klauseln genutzt werden:
@@ -338,65 +246,99 @@ x_e \lor \bigvee_{e_j \in I(e)} x_{e_j} \myhspace \forall e \in E
 
 
 
-\section{Dreiecksformulierung}
-Bei der Dreiecksformulierung wird nicht jeder Kante eine Variable zugeordnet. 
+\section{Dreiecksansatz}
+Bei dem Dreiecksansatz wird nicht jeder Kante eine Variable zugeordnet. 
 Stattdessen erhält jedes mögliche Dreieck eine eigene Variable.
-Die Überschneidungen können wie bei der Kantenformulierung übernommen werden, da die Variablen entsprechend angepasst wurden.
-Auch die Gradbeschränkung kann aus der Kantenformulierung übernommen werden.
+
+Die Gradbeschränkung kann aus der Kantenformulierung übernommen werden.
 Lediglich die Knoten auf der Hülle müssen gesondert betrachtet werden.
 Für diese Knoten muss der Sollgrad um eins reduziert werden, da ein Dreieck am Rand beide Kanten stellt.
-Auch bei der Dreiecksformulierung können Dreiecke ausgeschlossen werden.
+
+Für die Überschneidungsbeschränkung können zwei verschiedene Ansätze genutzt werden.
+Zum einem können einfach sich überschneidende Dreiecke ausgeschlossen werden.
+Die Andere Möglichkeit ist es wieder Kanten zu betrachten.
+Wenn man die Kanten auf der Hülle gegen den Uhrzeigersinn betrachtet muss auf der linken Seite immer genau ein Dreieck aktiv sein.
+Für alle anderen inneren Kanten müssen auf der linken sowie auf der rechten Seite immer genau gleich viele Dreiecke aktiv sein.
+Da es in einer Triangulierung keine Überschneidungen gibt, gibt es hierbei nur zwei Möglichkeiten.
+Entweder ist auf der linken Seite und auf der rechten Seite kein Dreieck aktiv oder auf beiden Seiten genau ein Dreieck aktiv.
+
+
+Auch hier können Dreiecke ausgeschlossen werden.
 Dafür können die gleichen Bedingungen wie beim Ausschluss von Kanten verwendet werden.
 Es werden dann alle Dreiecke ausgeschlossen, die eine ausgeschlossene Kante enthalten.
 
-\subsection{Implementierung der Dreiecksformulierung}
-Die Implementierung der Dreiecke kann in weiten Teilen von der Implementierung der Kanten übernommen werden.
-Angepasst werden müssen lediglich die Berechnung der Dreiecke, deren Überschneidung sowie die Bestimmung aller Dreiecke für einen gegebenen Knoten.
+\subsection{Solver Formulierungen}
+Für diese Formulierung wird ebenfalls angenommen das \(V\) die Menge aller Knoten und \(E\) die Menge aller möglicher Kanten also Kanten die keine Punkte schneiden sei.
+Zusätzlich wird \(T\) die Menge aller möglichen Dreiecke sein.
+Also nur leere Dreiecke da nur diese in einer Triangulierung vorkommen können.
+Für jedes Dreieck \(t \in T\) wird eine Bool Variable \(x_t\) erstellt.
+Diese Variable ist wahr wenn das Dreieck \(t\) in der Triangulierung enthalten ist.
+Die einzige nicht notwendige Bedingung die umgesetzt werden kann ist das ausschließen von Dreicken.
+Dies kann Analog zum Ausschließen von Kanten umgesetzt werden in dem alle Dreiecke ausgeschlossen werden, die eine ausgeschlossene Kante enthalten.
 
-Zur Erstellung aller Dreiecke werden zunächst alle möglichen Kanten hinzugefügt. 
-Es werden also wieder alle Kanten betrachtet, die keinen Knoten schneiden.
-Anschließend werden alle Knoten nacheinander durchlaufen.
-Hierbei kann gleichzeitig zum Beispiel ein \emph{Map} genutzt werden um für jeden Knoten die zugehörigen Dreiecke zu speichern.
-Für jeden Knoten werden alle Nachbarn bestimmt.
-Mit allen Nachbarknoten werden alle möglichen Zweierkombinationen gebildet.
-Wenn eine dieser Zweierkombinationen eine Kante besitzt, wird ein Dreieck erstellt.
-Für eine Triangulierung sind jedoch nur die Dreiecke relevant, die keine weiteren Knoten enthalten.
-Es werden daher nur die Dreiecke gespeichert, die keine zusätzlichen Knoten enthalten.
-Dies kann wieder mit \emph{shapley} überprüft werden.
-Zusätzlich wird darauf geachtet das jedes Dreieck nur einmal gespeichert wird, da mit dieser Methode jedes Dreieck theoretisch bis zu drei Mal betrachtet werden kann.
+\subsubsection{Mathematische Formulierung}
+\label{sec:dreiecks_formulierung:mathematisch}
+Die Gradbeschränkung kann Analog zum Kantenansatz übernommen werden.
+Es müssen nur für die Knoten auf der Hülle die Sollgrade um eins reduziert werden.
+In Formeln wird das wie folgt definiert.
+\begin{align*}
+	\sum x_{t_i} &= \degrees(i) \myhspace \forall i \in V \setminus V_H \\
+	\sum x_{t_i} &= \degrees(i) - 1 \myhspace \forall i \in V_H 
+\end{align*}
+Wobei \(V_H\) die Menge der Knoten auf der Hülle ist und \(t_i\) alle Dreiecke für den Knoten \(i\).
 
-Die Überschneidung wird mit der \emph{Shapely} Bibliothek berechnet.
-Dafür werden alle Dreiecke paarweise verglichen.
-Dabei ist zu beachten das \emph{Shapely} eine Überschneidung schon bei einer Berührung bestätigt.
-Es muss also zusätzlich getestet werden ob sie sich nicht nur Berüheren.
+Der Ansatz ohne die Kantenüberschneidungen eignet sich besser für den Mathematischen Formulierung.
+Er kann mit folgenden Formeln umgesetzt werden.
+\begin{align*}
+	\sum_{t \in T_e} x_t &= 1 \myhspace \forall e \in E_H \\
+	\sum_{t \in T_{e,l}} x_t &= \sum_{t' \in T_{e,r}} x_{t'} \myhspace \forall e \in E \setminus E_H
+\end{align*}
+Ebenfalls bezeichnet \(E_H\) die Menge der Kanten auf der Hülle und \(T_{e,l}\) und \(T_{e,r}\) die Menge aller Dreiecke auf der linken und rechten Seite der Kante \(e\).
+Bei der Menge \(E_H\) ist wichtig zu beachten das die Kanten gegen den Uhrzeigersinn betrachtet werden.
 
-\fabian{Sollte ich hier erwähnen, dass ich dies auch mit CGAL implementiert habe, es jedoch langsamer ist?}
-\michael{Kannst du machen würde ich aber so nicht schreiben. Prinzipiell sollte CGAL schon schneller sein als Shapely wenn beide unter den gleichen Exaktheitsbedingungen arbeiten. Es kann sein, dass Shapely dir falsche Ergebnisse liefert, weil es mit Floats rechnet. Ich würde eher sagen du hast auch eine exakte Implementierung mit CGAL die aber aufgrund der Exaktheit langsamer ist und daher wurde in den späteren Experimenten Shapely genutzt.}
-\fabian{Ich kann mir gut vorstellen das meine Implementierung vorallem schlechter ist. Weil vorallem das mit dem Berühren in CGAL nerviger war. Sollte ich da irgendwas schreiben oder es einfach so lassen. Oder sollte ich genau das schreiben das es auch eine Implemntierung in CGAL gibt diese aber langsamer ist weil Berührungen schlechter von mir implementiert wurden?}
+\subsubsection{KNF Formulierung}
+\label{sec:dreiecks_formulierung:knf}
+Für die Gradbeschränkung müssen auch hier die Sollgrade der Knoten auf der Hülle um eins reduziert werden.
+Diese Kardinalitäten können anschließend mit den Codierugen aus~\cref{sec:kanten_formulierung:knf} umgesetzt werden.
+Für die Überschneidungen werden in diesem Fall einfach sich überschneidende Dreiecke ausgeschlossen.
+Dies kann mit folgender Formel umgesetzt werden.
+\[\overline{x_{t_1}} \lor \overline{x_{t_2}} \myhspace \forall t_1, t_2 \in T: t_2 \in \intersection(t_1)\]
+Der Ansatz ohne Kantenüberschneidungen eigenet sich auf Grund der direkten Kardinalitätsunterstützung nicht für die KNF Formulierung.
 
-Die Formulierungen für OrTools, Gurobi und PySAT können analog zur Kantenformulierung umgesetzt werden.
+
+% Die Implementierung der Dreiecke kann in weiten Teilen von der Implementierung der Kanten übernommen werden.
+% Angepasst werden müssen lediglich die Berechnung der Dreiecke, deren Überschneidung sowie die Bestimmung aller Dreiecke für einen gegebenen Knoten.
+
+% Zur Erstellung aller Dreiecke werden zunächst alle möglichen Kanten hinzugefügt. 
+% Es werden also wieder alle Kanten betrachtet, die keinen Knoten schneiden.
+% Anschließend werden alle Knoten nacheinander durchlaufen.
+% Hierbei kann gleichzeitig zum Beispiel ein \emph{Map} genutzt werden um für jeden Knoten die zugehörigen Dreiecke zu speichern.
+% Für jeden Knoten werden alle Nachbarn bestimmt.
+% Mit allen Nachbarknoten werden alle möglichen Zweierkombinationen gebildet.
+% Wenn eine dieser Zweierkombinationen eine Kante besitzt, wird ein Dreieck erstellt.
+% Für eine Triangulierung sind jedoch nur die Dreiecke relevant, die keine weiteren Knoten enthalten.
+% Es werden daher nur die Dreiecke gespeichert, die keine zusätzlichen Knoten enthalten.
+% Dies kann wieder mit \emph{shapley} überprüft werden.
+% Zusätzlich wird darauf geachtet das jedes Dreieck nur einmal gespeichert wird, da mit dieser Methode jedes Dreieck theoretisch bis zu drei Mal betrachtet werden kann.
+
+% Die Überschneidung wird mit der \emph{Shapely} Bibliothek berechnet.
+% Dafür werden alle Dreiecke paarweise verglichen.
+% Dabei ist zu beachten das \emph{Shapely} eine Überschneidung schon bei einer Berührung bestätigt.
+% Es muss also zusätzlich getestet werden ob sie sich nicht nur Berüheren.
+
+% Die Formulierungen für OrTools, Gurobi und PySAT können analog zur Kantenformulierung umgesetzt werden.
 
 
 
 \section{Optimierungsproblem}
+\label{sec:optimierungsproblem}
 Im Gegensatz zu den vorherigen Ansätzen wird das Problem in diesem Abschnitt nicht als Entscheidungsproblem, sondern als Optimierungsproblem betrachtet.
 Dies hat zum einen den Vorteil, dass bei einem \emph{Timeout} des Solvers nicht der gesamte Fortschritt verloren geht.
 Ein weiterer Vorteil ist, dass bei Nein-Instanzen versucht wird, dennoch eine Lösung zu finden.
 Das bedeutet, sollte es in bestimmten Bereichen nicht möglich sein, eine gradbeschränkte Triangulierung zu finden, aber diese benötigt werden, kann zumindest eine möglichst nahe Triangulierung bestimmt werden.
 
-Dafür wurde die~\cref{eq:total_evaluation} eingeführt.
-Diese Formel berechnet den Gesamtdurchschnitt wie weit der Grad von der Gradbeschränkung entfernt ist.
-Es werden drei Ansätze vorgestellt.
-Der erste ist ein naiver Ansatz der versucht mit Flips die Gradbeschränkung zu erreichen.
-Die anderen beiden Ansätze verwenden OrTools.
-Hierbei können die Bedingung aus der oben beschriebenen Kantenformulierung übernommen werden.
-Nur die Gradbeschränkung wird durch eine Zielfunktion ersetzt.
-Zum einen wird als Zielfunktion die~\cref{eq:total_evaluation} genutzt.
-Der andere Ansatz versucht die maximale Gradabweichung zu minimieren.
-
-Für die Bewertung der Lösungen wird folgende Formel verwendet.
-Diese Liefert einen Durchschnitt über alle Prozentualen Gradabweichung.
-
+Für die Bewertung der Lösungen wurde folgende eingeführt.
+Diese Formel berechnet den Gesamtdurchschnitt von allen Prozentualen Gradabweichungen.
 \begin{align}
  \text{diff}_i &= \left| \degrees(i) - \degree(i) \right| \label{eq:difference} \\
 e_i &= \left\{
@@ -407,13 +349,16 @@ e_i &= \left\{
 \right. \label{eq:evaluation}\\
 Q &= \sum_{i=0}^{n} \frac{e_i}{n} \label{eq:total_evaluation}
 \end{align}
-
-Die Formel liefert eine Bewertung (\(Q\)) für einen Triangulierung mit \(n\) Knoten.
-% Hierbei gibt \(\degrees(i)\) den gewünschten Grad an der stelle i an.
-% Dazu passend gibt \(\degree(i)\) den aktuellen Grad an.
+Diese Formel liefert eine Bewertung (\(Q\)) für einen Triangulierung mit \(n\) Knoten.
 In der Brechnung~\eqref{eq:difference} wird die Difference zwischen dem gewünschten und aktuellen Grad berechnet.
 In~\eqref{eq:evaluation} wird diese Abweichung Prozentual bewertet.
 Am Ende wird in~\eqref{eq:total_evaluation} ein Durchschnitt über alle Prozentualen Werte gebildet.
+
+\subsection{Ansätze}
+Es werden drei Ansätze vorgestellt.
+Der erste ist ein naiver Ansatz der versucht mit Flips die Gradbeschränkung zu erreichen.
+Die anderen beiden Ansätze verwenden einen Mathematischen Ansatz.
+Einen KNF Ansatz ist nicht möglich da KNF Formel nur für Entscheidungsprobleme geeignet sind.
 
 \subsection{Flips}
 \label{sec:flips}
@@ -463,60 +408,37 @@ Nach jedem Flip wird überprüft, ob die Gradbeschränkung für alle Knoten erf�
 	\end{algorithmic}
 \end{algorithm}
 
-\subsection{OrTools mit Durchschnitts Abweichung}
+\subsection{Mathematische Ansatz}
 \label{sec:OrTools_mit_Durchschnitts_Abweichung}
-In diesem Ansatz wird der OrTools Solver genutzt.
-Hierbei werden aber zusätzlich Zielfunktionen übergeben an denen sicher der Solver Orientieren kann.
-Für die erste Zielfunktion wird sich an der Gleichung~\eqref{eq:total_evaluation} orientiert.
-Hier wird die Zielfunktion definiert durch die Maximierung von \(Q_T\)
+Für beide Ansätze können die Bedingung aus~\cref{sec:kanten_formulierung:mathematisch} übernommen werden.
+Nur die Gradbeschränkung wird durch eine Zielfunktion ersetzt.
+Zum einen wird als Zielfunktion die~\cref{eq:total_evaluation} genutzt.
+Für diese Zielfunktion wird eine angepasste Version der~\cref{eq:total_evaluation} Maximiert.
 Die Teiler in~\eqref{eq:total_evaluation} und~\eqref{eq:evaluation} werden entfernt. 
 Diese sind für die Maximierung nicht relevant.
-Da OrTools keine Betragsfunktion in Formeln erlaubt, muss die Funktion \emph{AddAbsEquality} verwendet werden.
-Diese erzeugt den Betrag mit den folgenden Bedingung
-\begin{align*}
-	abs_i &\geq \degrees(i) - \degree(i) \\
-	abs_i &\geq \degree(i) - \degrees(i) \\
-	abs_i &= (\degrees(i) - \degree(i)) \lor (\degree(i) - \degrees(i) )
-\end{align*}
-Die Variable \(abs_i\) ist hierbei eine Integer-Hilfsvariable, die den Betrag der Differenz erhält.
-Diese Variable kann dann für die Formel~\eqref{eq:difference} genutzt werden.
 
-Eine Fallunterscheidung für~\eqref{eq:evaluation} ist ebenfalls nicht möglich.
+Eine Fallunterscheidung für~\eqref{eq:evaluation} ist für eine Zielfunktion nicht sinnvoll.
 Die Variablen \(e_i\) werden daher mit folgender Formel berechnet.
 \[
 e_i = \degrees(i) - \min(\text{diff}_i, \degrees(i))
 \]
-OrTools erlaubt allerdings keine \emph{min}-Funktion in Formeln. Deshalb wird die Funktion \emph{AddMinEquality} verwendet.
-Diese nutzt das eine Minimierung mit Folgender Formel in ein Maximierung umgewandelt werden kann.
+Zusammengefasst ergibt das folgende Zielfunktion.
 \[
-	\min(a,b) = -\max(-a, -b)
+\max\left(\sum_{i=0}^{n}\degrees(i) - \min(\text{diff}_i, \degrees(i))\right)
 \]
-Eine Betragsfunktions kann auf eine Maximierungfunktions reduziert werden.
-Da dies im obriegen Beispiel passiert ist, können hier die gleichen angepassten Bedingungen genutzt werden.
+% \begin{align*}
+%  \text{diff}_i &= \left| \degrees(i) - \degree(i) \right|\\
+% Q &= \sum_{i=0}^{n}\degrees(i) - \min(\text{diff}_i, \degrees(i))
+% \end{align*}
 
-zusammengefasst bekommen wir folgende Bedingungen
-\begin{align*}
-	abs_i &\geq \degrees(i) - \degree(i) \\
-	abs_i &\geq \degree(i) - \degrees(i) \\
-	abs_i &= (\degrees(i) - \degree(i)) \lor (\degree(i) - \degrees(i) ) \\
-	min_i &\geq - abs_i \\
-	min_i &\geq - \degrees(i) \\
-	min_i &= (-abs_i) \lor (-\degrees(i)) \\
-	e_i &= \degrees(i) - ( - min_i) \\
-	Q_T &= \sum e_i 
-\end{align*}
-Als Zielfunktion wird dann \(Q_T\) maximiert.
-
-\subsection{OrTools mit Minimierter Maximaler Abweichung}
-Als zweite Zielfunktion wird für OrTools die maximale Abweichung minimiert.
-Dafür wird eine Integer-Hilfsvariable \(max\_min\) eingeführt.
-Zusätzlich wird die \(abs_i\) Variable mit ihren Bedingungen aus~\cref{sec:OrTools_mit_Durchschnitts_Abweichung} verwendet.
-Anschließend werden folgende Bedingungen eingeführt.
+Die andere Zielfunktion minimiert die maximale Gradabweichung.
+Dafür wird eine Hilfsvariable \(max\_min\) eingeführt.
+Mit folgenden Formeln kann die Zielfunktion definiert werden
 \begin{align*}
 	max\_min &\geq abs_i \myhspace \forall i \in V \\
 	max\_min &\geq 0
 \end{align*}
-Die Variable \(max\_min\) wird anschließend minimiert.
+Die Variable \(max\_min\) wird als Zielfunktion minimiert.
 
 \section{\emph{Conflict-driven clause learning}}
 \label{sec:cdcl}
