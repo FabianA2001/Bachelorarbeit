@@ -28,6 +28,7 @@ Zum Abschluss wird in drei verschiedenen Experimenten versucht, die Schwierigkei
 In diesem Abschnitt werden die Bedingungen für die Experimente beschrieben.
 Alle Experimente welche eine Laufzeit beinhalten wurden entweder auf \emph{AMD Ryzen 7 5800X @ 8x 3.8GHz-4.7GHz} mit \emph{128GB} Arbeitsspeicher oder auf \emph{AMD Ryzen 9 7900 @ 12x 3.7GHz-5.4GHz} mit \emph{96GB} Arbeitsspeicher durchgeführt.
 Im folgenden werden in den Experiment die \emph{Ryzen} zwischen 7 und 9 unterschieden.
+Gespeichert werden die Ergebnisse mit der Python-Bibliothek \emph{Algbench}.
 Dabei wurden für alle Experimente mit Ausnahme von~\cref{sec:eval15} ein Timeout von 5 Minuten (300 Sekunden) gesetzt.
 Alle Laufzeiten sind dabei die Vorbereitungszeit plus die Laufzeit des Solvers. 
 Diese komplette Laufzeit musste in den 5 Minuten liegen.
@@ -350,7 +351,7 @@ Iterativ hatte anscheinend keine Erfolgreichen \emph{Propagation} da die Instanz
 Nicht ganz deutlich aber zu erkennen ist das Nein-Instanzen mehr Erfolgreiche \emph{Propagation} haben als Ja-Instanzen.
 Bei diesem Muster kann es sich aber auch um einen Zufall handeln da nur wenige verschiedene Instanzen betrachtet wurden.
 
-\section{Instanzen Schwierigkeit}
+\section{Schwierigkeit der Insanzen}
 In diesem Abschnitt wird Probiert die Schwierigkeit der Instanzen zu bestimmen.
 Aus den vorigen Experimenten ist bekannt das \emph{Delaunay} und \emph{Greedy} die schwereren Instanzen sind,\emph{Delaunay Flips} im Mittelfeld und \emph{Iterativ} nach \emph{Random}  die einfachsten Instanzen sind.
 Im ersten Teil wird geschaut ob die Anzahl der Lösungen pro Instanz einen Einfluss auf die Schwierigkeit hat. 
