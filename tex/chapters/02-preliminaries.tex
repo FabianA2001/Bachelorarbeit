@@ -70,6 +70,8 @@ Abschließend wird die konjunktive Normalform eingeführt, die im weiteren Verla
     Ein Beispiel für eine KNF ist \[(x_1 \lor \overline{x_2}) \land (x_2 \lor x_3)\] wobei \(x_1\), \(x_2\) und \(x_3\) Variablen sind. Eine Negation wird durch das Symbol \(\overline{x}\) dargestellt.
 \end{definition}
 
+Da in einigen Ansätzen die Orientierung von Punkten eine Rolle spielt, werden im Folgenden die relevanten Definitionen vorgestellt.
+Zunächst wird das Kreuzprodukt definiert, das die Orientierung von Vektoren beschreibt.
 \begin{definition}[Kreuzprodukt]
     Das Kreuzprodukt zweier Vektoren \(\overrightarrow{a} = (a_1, a_2)\) und \(\overrightarrow{b} = (b_1, b_2)\) in der Ebene ist ein Skalarwert, der die Orientierung der beiden Vektoren zueinander beschreibt.
     Es wird definiert als:
@@ -78,11 +80,17 @@ Abschließend wird die konjunktive Normalform eingeführt, die im weiteren Verla
     \]
 \end{definition}
 
+Das Kreuzprodukt kann anschließend verwendet werden, um die Orientierung von drei Punkten zu bestimmen.
 \begin{definition}[Rechtsknick / Linksknick]
     Ein Rechtsknick ist eine Abfolge von drei Punkten \(p_1\), \(p_2\) und \(p_3\), die im Uhrzeigersinn angeordnet sind.
     Ein Linksknick ist eine Abfolge von drei Punkten \(p_1\), \(p_2\) und \(p_3\), die gegen den Uhrzeigersinn angeordnet sind.
     Die Orientierung der Punkte kann durch das Kreuzprodukt der Vektoren \(\overrightarrow{p_1p_2}\) und \(\overrightarrow{p_2p_3}\) bestimmt werden.
     Wenn das Kreuzprodukt positiv ist, handelt es sich um einen Linksknick, wenn es negativ ist, um einen Rechtsknick.
     Ist das Kreuzprodukt null, liegen die Punkte auf einer Geraden.
-    
+\end{definition}
+
+Der Rechts- und Linksknick wird verwendet, um zu bestimmen, ob ein Punkt links oder rechts von einer Kante liegt.
+\begin{definition}[Links/Rechts von einer Kante]
+    Ein Punkt \(p\) liegt links von einer Kante \((p_1, p_2)\), wenn die Punkte \(p_1\), \(p_2\) und \(p\) einen Linksknick bilden.
+    Analog liegt ein Punkt \(p\) rechts von einer Kante \((p_1, p_2)\), wenn die Punkte \(p_1\), \(p_2\) und \(p\) einen Rechtsknick bilden.
 \end{definition}
