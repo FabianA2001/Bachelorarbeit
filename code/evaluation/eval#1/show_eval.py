@@ -318,8 +318,8 @@ def gesamt():
 
 
 if __name__ == "__main__":
-    show_tri()
     show_sat()
     show_gurobi()
     show_ortools()
-    # gesamt()
+    gesamt()
+    show_tri()
