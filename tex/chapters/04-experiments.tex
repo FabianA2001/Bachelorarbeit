@@ -354,16 +354,13 @@ Dafür werden die Daten aus~\cref{sec:eval15} wiederverwendet.
 \section{Zielfunktion}
 \label{sec:eval11}
 % (Eval11)
-\fabian{@Michael du meintest ich soll hier die Bound mit im Diagramm anzeigen. Ich weiß grade nicht wie ich das machen soll da er auf einer Achse mit Prozent nicht sinnvoll angezeigt werden kann}
-\fabian{Wie soll ich die Diagramme aufbauen? Ich habe akutell Nur Greedy 120 Knoten instanzen und dann jetzt alle vier als eigene Diagramme.}
-\fabian{Ich finde es komisch das der Durchscnitts ansatz immer am ende erst eine bessere Lösung findet kann aber keinen Fehler in der Implemntierung finden. Sollte ich dazu noch irgenendwas schreiben, oder habt ihr eine Idee woran das liegen könnte?}
-
-In diesem Experiment werden die drei verschiedenen Optimierungsansätze vergleichen.
-Erste Ansatz ist der Flips Ansatz, die anderen beiden Ansätze sind die Zielfunktionen von OrTools
-
-Der Flips Ansatz schafft Instanzen mit Maximal 8 Knoten. 
-Dementsprechend wird er im weiteren nicht betrachtet.
-Alle anderen Druchläufe in diesem Experiment wurden mit 120 Knoten durchgeführt.
+% \fabian{@Michael du meintest ich soll hier die Bound mit im Diagramm anzeigen. Ich weiß grade nicht wie ich das machen soll da er auf einer Achse mit Prozent nicht sinnvoll angezeigt werden kann}
+% \fabian{Wie soll ich die Diagramme aufbauen? Ich habe akutell Nur Greedy 120 Knoten instanzen und dann jetzt alle vier als eigene Diagramme.}
+% \fabian{Ich finde es komisch das der Durchscnitts ansatz immer am ende erst eine bessere Lösung findet kann aber keinen Fehler in der Implemntierung finden. Sollte ich dazu noch irgenendwas schreiben, oder habt ihr eine Idee woran das liegen könnte?}
+In diesem Experiment werden die beiden Zielfunktion aus~\cref{sec:optimierungsproblem} vergleichen.
+Es sei noch zu erwähnen das der Flips Ansatz vorab getestet wurde.
+Dieser Ansatz hat im Maximalfall 8 Knoten geschafft.
+Da die andern beiden Zielfunktionen auf Instanzen mit 120 Knoten getestet werden, ist der Flips Ansatz nicht mehr relevant.
 Das Experiment wurde auf dem Ryzen 9 durchgeführt.
 
 Im folgenden werden Ja-Instanzen und Nein-Instanzen getrennt betrachtet.
@@ -371,35 +368,27 @@ Bei Ja-Instenzen ist interesannt wie schnell die Instanze gelöst werden kann un
 Bei den Nein-Intanzen ist hingegen interesannter wie nah der Solver an eine Lösung kommt.
 In beiden Instanzen wird ein Referenz Solver verwendet.
 Dieser Betrachtet das Problem weiterhin als Entscheidungsproblem.
-Ausgewählt wurde der OrTools Solver mit den in~\cref{sec:eval1:grund_solver} gefundenen Bedingungen ohne die Gradbeschränkung.
+Ausgewählt wurde der OrTools Solver mit den in~\cref{sec:eval1:grund_solver} gefundenen Bedingungen.
+Die Zielfunktionen nutzen ebenfalls diese Bedingungen, nur die Gradbeschränkung wird durch die Zielfunktion ersetzt.
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval11/eval_progression_39.pdf}
-    \caption[Zielfunktion mit Nein-Instanz]{Eine Nein-Instanz mit 120 Knoten. Hier werden zwei verschiedene Ansätze mit Zielfunktionen mit einem Referenzsolver aus~\cref{sec:eval1:grund_solver} verglichen. Der Durchschnittsansatz ist in den meisten Fällen besser als der Min-Max Ansatz. Es ist nicht erkennbar ob der Zielfunktionen Ansatz besser oder schlechter als der Referenzsolver ist.}
+    \caption[Zielfunktion mit Nein-Instanz]{Eine Nein-Instanz mit 120 Knoten. Hier werden zwei verschiedene Zielfunktionen mit einem Referenzsolver aus~\cref{sec:eval1:grund_solver} verglichen. Es ist zu erkennen das der Durchschnittsansatz in den meisten Fällen bessere Ergebnisse liefert als der Min-Max-Ansatz.Oft findet er erst beim Timeout eine Verbesserung, diese ist jedoch besser als die des Min-Max-Ansatzes.
+    In den meisten Fällen stagniert der Min-Max-Ansatz bei etwas über 80 Prozent.
+    Der Min-Max-Ansatz bricht vermutlich früher ab, da er aus seiner Sicht ein Optimum gefunden hat.
+    Der Referenzsolver erkennt nur bei Greedy und Iterative früher, dass es sich um eine Nein-Instanz handelt.
+    In allen anderen Fällen benötigt er mindestens genauso lange wie der Min-Max-Ansatz.
+    }
     \label{fig:eval11:move}
 \end{figure}
 
-
-Bei der Ja-Instanz in~\cref{fig:eval11:36} zeigt sich, dass der Min-Max-Ansatz in den meisten Fällen bessere Ergebnisse erzielt als der Durchschnittsansatz.
-Nur bei Delaunay erreichen beide Ansätze nicht die vollen 100 Prozent.
-Der Durchschnittsansatz erzielt bei Delaunay jedoch höhere Werte als Min-Max.
-Der Referenzsolver liefert bei Delaunay kein Ergebnis.
-Ein klares Muster, welcher Ansatz insgesamt am besten abschneidet, ist nicht zu erkennen, da in jeder Instanz unterschiedliche Ansätze vorne liegen.
-Der Durchschnittsansatz erzielt, wie erwähnt, bei Delaunay die besten Resultate.
-Der Referenzsolver ist bei Iterative und Greedy am schnellsten.
-Min-Max ist fast immer schneller als der Durchschnittsansatz und in drei Fällen mindestens genauso schnell wie der Referenzsolver.
-
-Bei den Nein-Instanzen in~\cref{fig:eval11:move} zeigt sich, dass der Durchschnittsansatz in den meisten Fällen bessere Ergebnisse liefert als der Min-Max-Ansatz.
-Oft findet er erst beim Timeout eine Verbesserung, diese ist jedoch besser als die des Min-Max-Ansatzes.
-Der Min-Max-Ansatz bricht vermutlich früher ab, da er aus seiner Sicht ein Optimum gefunden hat.
-In den meisten Fällen stagniert der Min-Max-Ansatz bei etwas über 80 Prozent.
-Der Referenzsolver erkennt nur bei Greedy und Iterative früher, dass es sich um eine Nein-Instanz handelt.
-In allen anderen Fällen benötigt er mindestens genauso lange wie der Min-Max-Ansatz.
-
-Insgesamt lässt sich nicht eindeutig feststellen, ob der Referenzsolver besser oder schlechter als die Zielfunktionen ist.
-Bei den Zielfunktionen selbst zeigt sich, dass bei Ja-Instanzen der Min-Max-Ansatz besser abschneidet.
-Bei Nein-Instanzen erzielt der Durchschnittsansatz die besseren Ergebnisse.
+In~\cref{fig:eval11sdfsdf:36} zeigt sich das bei Ja-Instanzen der Min-Max-Ansatz besser abschneidet.
+Bei Nein-Instanzen erzielt der Durchschnittsansatz die besseren Ergebnisse, dies ist in~\cref{fig:eval11:move} zusehen.
+Generell lässt sich aber sagen das beide Zielfunktionen bei Ja und Nein Instanzen gute Egebnisse erzielen.
+Es ist nicht erkennbar das die Zeilfunktionen oder der Referenzsolver eindeutig besser sind.
+Es lässt sich sagen das jeder der drei Ansätze stärken an jeder stelle hat.
+Es ist auch anzumerken das nur auf zwei ausgewählten Instanzen getestet wurde und die unterschiede nicht sehr groß sind.
 
 \section{\emph{Propagation} CDCL}
 In diesem Experiemnt wird der CDCL Ansatz genauer betrachtet.

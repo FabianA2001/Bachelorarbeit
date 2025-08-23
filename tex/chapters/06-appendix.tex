@@ -179,8 +179,18 @@ Knoten Anzahl & Delaunay Flips & Delaunay & Greedy & Iterative & Random \\
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval11/eval_progression_36.pdf}
-    \caption{eval11 36}
-    \label{fig:eval11:36}
+    \caption{In diesem Experiment wird eine Ja-Instanze mit 120 Knoten betrachtet.
+    Als Referenz wird der Solver aus~\cref{sec:eval1:grund_solver} verwendet.
+    Es ist zu sehen das der Min-Max-Ansatz in den meisten Fällen bessere Ergebnisse erzielt als der Durchschnittsansatz.
+    Nur bei Delaunay erreichen beide Ansätze nicht die vollen 100 Prozent.
+    Der Durchschnittsansatz erzielt bei Delaunay jedoch höhere Werte als Min-Max.
+    Der Referenzsolver liefert bei Delaunay kein Ergebnis.
+    Ein klares Muster, welcher Ansatz insgesamt am besten abschneidet, ist nicht zu erkennen, da in jeder Instanz unterschiedliche Ansätze vorne liegen.
+    Der Durchschnittsansatz erzielt, wie erwähnt, bei Delaunay die besten Resultate.
+    Der Referenzsolver ist bei Iterative und Greedy am schnellsten.
+    Min-Max ist fast immer schneller als der Durchschnittsansatz und in drei Fällen mindestens genauso schnell wie der Referenzsolver.
+     }
+    \label{fig:eval11sdfsdf:36}
 \end{figure}
 
 \chapter{Theoretische Fixierung von Kanten}
