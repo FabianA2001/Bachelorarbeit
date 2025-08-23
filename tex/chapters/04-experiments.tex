@@ -306,50 +306,34 @@ Im folgenden wird nur noch OrTools mit der alternativen Kantenformulierung und d
 \fabian{Dreiecke sind noch nicht final da gen3 blockiert ist}
 \fabian{Kanten fixieren hatte einene Feheler und muss neu gestetet werden. Sollte aber keine Relevanz haben und am Text nichts ändern.}
 
-\subsubsection{Kanten Theoretisch ausschließen}
-Damit Kanten ausgeschlossen werden können muss zunächst die Instanz mit einem beliebigen Lösungsansatz gelöst werden.
-Nun muss unterschieden werden wie viele Lösungen die Instanz hat.
-Sollte die Instanze nur eine Lösung haben so sind alle gefundenen Kanten fixierbar und alle anderen Kanten können ausgeschlossen werden.
-Sollte es mehr als eine Lösung geben muss nach jedem Lösen eine neue Beschränkung hinzugefügt werden die mindestens eine Kante der gefundenen verbietet.
-Dies wird so lange wiederholt bis keine Lösungen mehr gefunden werden.
-Nun können alle jemals gefundenen Lösungen als fixierbar betrachten und für jede Lösung alle anderen Kanten als ausschließbar.
-
 \section{Kanten vorab berechnen}
 % (Eval6)
-In diesem Experiment wird die theoretische Ausschließung und Fixierung von Kanten untersucht.
-Für eine Auswahl von Instanzen wird vor dem Experiment eine Menge von Kanten bestimmt, die sicher ausgeschlossen oder fixiert werden können.
-Dies basiert auf der theoretischen Beschränkung aus~\cref{sec:exclude_edges:theoretisch_ausschließen}.
-Die Grundlage für dieses Experiment ist die Annahme, dass das Ausschließen und Fixieren von Kanten in~\cref{sec:eval1:grund_solver} nur schlecht performed hat, weil zu wenige Kanten ausgeschlossen wurden.
-In diesem Experiment wurde OrTools mit den Standart Bedingunen also Überschneidungsbeschränkung und Gradbeschränkung ausgewählt.
+In~\cref{sec:eval1:grund_solver} wurde festgestellt, dass das Ausschließen und Fixieren von Kanten nur schlecht Ergebnis liefert.
+Die Hypotese dazu ist das zu wenig Kanten ausgeschlossen bzw. fixiert wurden.
+Um das zu überprüfen wird vor dem Experiment eine Menge von Kanten bestimmt, die sicher ausgeschlossen oder fixiert werden können.
+Somit können wärend des Lösungsprozess beliebig viele Kanten ausgeschlossen oder fixiert werden.
+In diesem Experiment wurde OrTools mit der Überschneidungsbeschränkung und Gradbeschränkung ausgewählt.
 Für die Knotengröße wurden Instanzen mit 30 bis 80 Knoten gewählt und das Experiment wurden auf dem Ryzen 9 durchgeführt.
-
+Um das Experiment zu vereinfachen wurden nur Instanzen betrachtet die genau eine Lösung besitzen.
+Somit konnte eine beliebige Lösung der Instanze genommen werden und mit dieser die Kanten bestimmt werden die fixiert oder ausgeschlossen werden.
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval6/nein.pdf}
-    \caption{In diesem Experiment wird die theoretische Ausschließung von Kanten untersucht. Für das Experiment wurde der normale Solver als Referenz verwendet sowie Solver, bei denen 10, 50 und 80 Prozent der ausschließbaren Kanten ausgeschlossen wurden.}
+    \caption[In diesem Experiment wird die theoretische Fixierung von Kanten untersucht.]{
+    In diesem Experiment wird die theoretische Ausschließung von Kanten untersucht. 
+    Für das Experiment wurde OrTools mit Grad und Überschneidungsbeschränkung als Referenz und zusätzlich OrTools mit 10, 50 und 80 Prozent der benötigten Kanten ausgeschlossen verwendet. 
+    In dem Diagramm wurde der betrachtete Zeitraum auf 60 Sekunden begrenzt da hier alle Relevanten Informationen zu sehen sind. 
+    Es ist klar zu erkennen das der Refernz Solver die schlechtesten Ergebnisse erzielt.
+    Auch die anderen Solver sind in der erwarteten Reihenfolge.
+    Nur 50 Prozent und 80 Prozent sind deutlich näher beiandern also die andern Ansätze.
+    }
     \label{fig:eval6:nein}
 \end{figure}
 
-In~\cref{fig:eval6:ja} sind die Ergebnisse für das Fixieren der Kanten dargestellt.
-Es wurden nur Instanzen betrachtet, die genau eine Lösung besitzen. 
-Für diese Instanzen wurden alle Kanten bestimmt, die für die Lösung benötigt werden.
-Von diesen Kanten wurden 10, 50 und 80 Prozent fixiert.
-
-Es zeigt sich, dass der normale Solver mit Abstand am langsamsten ist. 
-Wie zu erwarten, ist der Solver, bei dem nur 10 Prozent der Kanten fixiert wurden, langsamer als die beiden anderen.
-Überraschend ist, dass es bei keiner Instanz einen Unterschied macht, ob 50 oder 80 Prozent der Kanten fixiert wurden.
-Die beiden Solver sind genau gleich schnell.
-
-In~\cref{fig:eval6:nein} sind die Ergebnisse für das Ausschließen der Kanten dargestellt.
-Auch hier wurde für alle Instanzen eine Menge von Kanten berechnet, die ausgeschlossen werden können.
-Von diesen Kanten wurden 10, 50 und 80 Prozent ausgeschlossen.
-Hier zeigt sich ähnlich wie bei den Ja Instanzen die erwartete Reinfolge.
-Der unterschied ist das 80 Prozent schneller sind als 50 Prozent. 
-
-Abschließend lässt sich sagen das bestätigt wurde das das ausschließen und fixieren der Kanten in~\cref{sec:eval1:grund_solver} nur schlecht war weil zu wenig Kanten ausgeschlossen bzw. fixiert wurden.
-Überraschent ist das beim fixieren es keinen unterschied macht ob 50 oder 80 Prozent fixiert wurden.
+Anhand von~\cref{fig:eval6:ja} und~\cref{fig:eval6:nein} lässt sich bestätigt das das ausschließen und fixieren der Kanten in~\cref{sec:eval1:grund_solver} nur schlecht war weil zu wenig Kanten ausgeschlossen bzw. fixiert wurden.
+Es ist Überraschend das beim fixieren es keinen unterschied macht ob 50 oder 80 Prozent der Kanten fixiert wurden.
 Das dies bei ausschließen nicht das Fall ist lässt sich damit erklären das zum einem mehr Kanten theoretisch ausgeschlossen werden können, und somit der Absolute unterschied größer ist. 
-Zum andern das beim fixieren so viele Kanten durch den solver indirekt durch andere Bedingungen ausgeschlossen werden können das ab einer bestimmten Menge an fixierten Kanten die Teilinstanz gleich groß sind.
+Zum andern das beim fixieren so viele Kanten durch den solver indirekt durch andere Bedingungen ausgeschlossen werden können das ab einer bestimmten Menge an fixierten Kanten die Resultierenden Teilinstanz gleich groß sind.
 
 \section{Größerer Timeout}
 \label{sec:eval15}

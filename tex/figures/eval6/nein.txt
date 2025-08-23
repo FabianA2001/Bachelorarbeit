@@ -3,7 +3,7 @@ Args Legend Mapping (by Solver):
 ==================================================
 
 Ortools:
-|#1 in 300s: 
+|#Referenz in 300s: 
 ||intersection:                       True
 ||all_edges:                          False
 ||degree:                             True
@@ -17,7 +17,7 @@ Ortools:
 ||fix_edges:                          False
 ||run_num:                            0
 
-|#2 in 300s: 
+|#10% in 300s: 
 ||intersection:                       True
 ||all_edges:                          False
 ||degree:                             True
@@ -31,7 +31,7 @@ Ortools:
 ||fix_edges:                          False
 ||run_num:                            0
 
-|#3 in 300s: 
+|#50% in 300s: 
 ||intersection:                       True
 ||all_edges:                          False
 ||degree:                             True
@@ -45,7 +45,7 @@ Ortools:
 ||fix_edges:                          False
 ||run_num:                            0
 
-|#4 in 300s: 
+|#80% in 300s: 
 ||intersection:                       True
 ||all_edges:                          False
 ||degree:                             True

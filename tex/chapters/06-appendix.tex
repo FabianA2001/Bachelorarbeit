@@ -132,6 +132,14 @@ Knoten Anzahl & Delaunay Flips & Delaunay & Greedy & Iterative & Random \\
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval6/ja.pdf}
-    \caption[In diesem Experiment wird die theoretische Fixierung von Kanten untersucht.]{In diesem Experiment wird die theoretische Fixierung von Kanten untersucht. Für das Experiment wurden der normale Solver als Referenz genommen und Solver wo 10, 50 und 80 Prozent der benötigten Kanten fixiert wurden wurden. In dem Diagramm wurde der betrachtete Zeitraum auf 100 Sekunden begrenzt da hier alle Relevanten Informationen zu sehen sind.}
+    \caption[In diesem Experiment wird die theoretische Fixierung von Kanten untersucht.]{
+    In diesem Experiment wird die theoretische Fixierung von Kanten untersucht. 
+    Für das Experiment wurde OrTools mit Grad und Überschneidungsbeschränkung als Referenz und zusätzlich OrTools mit 10, 50 und 80 Prozent der benötigten Kanten fixiert verwendet. 
+    In dem Diagramm wurde der betrachtete Zeitraum auf 60 Sekunden begrenzt da hier alle Relevanten Informationen zu sehen sind. 
+    Es ist klar zu erkennen das normale Solver mit Abstand am langsamsten ist. 
+    Wie zu erwarten, ist der Solver, bei dem nur 10 Prozent der Kanten fixiert wurden, langsamer als die beiden anderen.
+    Überraschend ist, dass es bei keiner Instanz einen Unterschied macht, ob 50 oder 80 Prozent der Kanten fixiert wurden.
+    Die beiden Solver sind genau gleich schnell.
+    }
     \label{fig:eval6:ja}
 \end{figure}
