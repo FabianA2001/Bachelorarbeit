@@ -1,7 +1,6 @@
 \chapter{Definitionen}
-\michael{Schreib am Kapitelanfang immer ein zwei Einführungssätze, was hier passiert. Du kannst auch zwischen den Definitionen ein paar Überleitungen schreiben, damit sich das nicht liest wie ein Skript.}
-\fabian{Passen die Übergänge? Bin unsicher was du hier erwartest.}
-
+% \michael{Schreib am Kapitelanfang immer ein zwei Einführungssätze, was hier passiert. Du kannst auch zwischen den Definitionen ein paar Überleitungen schreiben, damit sich das nicht liest wie ein Skript.}
+% \fabian{Passen die Übergänge? Bin unsicher was du hier erwartest.}
 In diesem Kapitel werden die Definitionen vorgestellt, die für diese Arbeit benötigt werden.
 Dabei werden insbesondere grundlegende Begriffe erläutert, die in den folgenden Kapiteln verwendet werden.
 
@@ -34,7 +33,7 @@ Für die gradbeschränkte Triangulierung wird zuerst der Grad eines Knotens defi
 Basierend auf dem Grad eines Knotens wird nun die gradbeschränkte Triangulierung eingeführt.
 
 \begin{definition}[Gradbeschränkte Triangulierung]
-    Die gradbeschränkte Triangulierung hat die gleichen Voraussetzungen wie eine Triangulierung.
+    Die gradbeschränkte Triangulierung (DCT) hat die gleichen Voraussetzungen wie eine Triangulierung.
     Zusätzlich gibt es eine Funktion \(\degrees: \mathbb{Q}^2 \longrightarrow \mathbb{Q}\).
     Diese gibt den Grad an, den ein Knoten haben muss.
 \end{definition}
@@ -65,9 +64,25 @@ Da die konvexe Hülle in dieser Arbeit um alle Randpunkte erweitert werden muss.
 \end{definition}
 
 Abschließend wird die konjunktive Normalform eingeführt, die im weiteren Verlauf für die Benutzung der SAT-Solver benötigt wird. 
-\fabian{Sollte ich hier Literal und Klausel extra definieren?}
 \begin{definition}[Konjunktive Normalform]
     Eine Formel in konjunktiver Normalform (KNF) ist eine logische Formel, die als Konjunktion (UND-Verknüpfung) von Klauseln dargestellt wird, wobei jede Klausel eine Disjunktion (ODER-Verknüpfung) von Literalen ist.
     Ein Literal ist entweder eine Variable oder ihre Negation.
     Ein Beispiel für eine KNF ist \[(x_1 \lor \overline{x_2}) \land (x_2 \lor x_3)\] wobei \(x_1\), \(x_2\) und \(x_3\) Variablen sind. Eine Negation wird durch das Symbol \(\overline{x}\) dargestellt.
+\end{definition}
+
+\begin{definition}[Kreuzprodukt]
+    Das Kreuzprodukt zweier Vektoren \(\overrightarrow{a} = (a_1, a_2)\) und \(\overrightarrow{b} = (b_1, b_2)\) in der Ebene ist ein Skalarwert, der die Orientierung der beiden Vektoren zueinander beschreibt.
+    Es wird definiert als:
+    \[
+    \overrightarrow{a} \times \overrightarrow{b} = a_1 b_2 - a_2 b_1
+    \]
+\end{definition}
+
+\begin{definition}[Rechtsknick / Linksknick]
+    Ein Rechtsknick ist eine Abfolge von drei Punkten \(p_1\), \(p_2\) und \(p_3\), die im Uhrzeigersinn angeordnet sind.
+    Ein Linksknick ist eine Abfolge von drei Punkten \(p_1\), \(p_2\) und \(p_3\), die gegen den Uhrzeigersinn angeordnet sind.
+    Die Orientierung der Punkte kann durch das Kreuzprodukt der Vektoren \(\overrightarrow{p_1p_2}\) und \(\overrightarrow{p_2p_3}\) bestimmt werden.
+    Wenn das Kreuzprodukt positiv ist, handelt es sich um einen Linksknick, wenn es negativ ist, um einen Rechtsknick.
+    Ist das Kreuzprodukt null, liegen die Punkte auf einer Geraden.
+    
 \end{definition}

@@ -6,7 +6,7 @@ In diesem Kapitel wird eine Übersicht über diese gegeben und eine Implementier
 \section{Generelle Implementierungen}
 Generell implementierungen welche in alle Solvern verwendet werden.
 Zum einen wird betrachtet wie der Graph verwaltet wird.
-Danach wir erklärt wie die Schnittkanten bestimmt werden.
+Danach wird erklärt wie die Schnittkanten bestimmt werden.
 Im letzten Abschnitt wird eine Implementierung für das in~\cref{sec:intersection_edges} beschriebene Ausschließen von Kanten anhand von Schnittkanten gegeben.
 
 \subsubsection{Graph operationen}
@@ -42,12 +42,13 @@ Am Ende werden alle Knoten durchgegangen, sollte ein Knoten \(v\) folgende Forme
 \]
 
 \section{PySAT}
+\label{sec:pysat}
 PySAT ist eine Python-Bibliothek, die eine Sammlung von SAT-Solvern bereitstellt.
 Diese SAT-Solver entscheiden, ob eine KNF-Formel erfüllbar ist.
 Dementsprechend kann PySAT nur Entscheidungsprobleme, aber keine Optimierungsprobleme lösen.
 Für alle SAT-Solver wird eine einheitliche Schnittstelle in Python bereitgestellt.
 Zusätzlich werden verschiedene Codierungen für Kardinalitäten angeboten.
-Das bedeutet, man gibt eine Bedingung ein und erhält eine KNF-Formel, die diese Bedingung abbildet.
+Das bedeutet, man gibt für eine Menge von Variablen an wie viele von ihnen wahr sein sollen und erhält eine KNF-Formel, die diese Bedingung abbildet.
 PySAT stellt hierfür verschiedene Codierungen mit Implementierung bereit.
 PySAT ist open source und kostenlos.
 
@@ -57,12 +58,13 @@ Es wurde alle Bedingungen aus~\cref{sec:kanten_formulierung:knf} und~\cref{sec:d
 \section{OrTools}
 Der zweite Solver ist OrTools (Google Optimization Tools) von Google.
 Dieser unterstützt verschiedene Modellierungsarten wie lineare Programmierung (LP), gemischt-ganzzahlige Programmierung (MIP), Constraint Programming (CP) und Routing-Algorithmen.
-Auch hier sind die Solver in C++ implementiert und es wird eine Python-Schnittstelle bereitgestellt.
+OrTools ist in C++ implementiert und es wird eine Python-Schnittstelle bereitgestellt.
 Mit OrTools können sowohl Entscheidungsprobleme als auch Optimierungsprobleme gelöst werden.
 Kardinalitätsbeschränkungen und andere lineare Bedingungen werden direkt unterstützt und müssen nicht codiert werden.
 OrTools ist open source und kostenlos unter der Apache License 2.0.
 
 Für OrTools wird die mathematische Formulierung verwendet.
+OrTools würde auch die KNF-Formulierung unterstützen, allerdings ist die mathematische Formulierung durch die direkte Unterstützung von Kardinalitäten deutlich einfacher umzusetzen.
 Die Dreiecksformulierungen aus~\cref{sec:dreiecks_formulierung:mathematisch} kännen mit \emph{add} direkt übergeben werden.
 
 Die Kantenformulierung aus~\cref{sec:kanten_formulierung:mathematisch} kann ebenfalls übergeben werden.
@@ -95,7 +97,7 @@ Diese nutzt das eine Minimierung mit Folgender Formel in ein Maximierung umgewan
 Eine Betragsfunktions kann auf eine Maximierungfunktions reduziert werden.
 Da dies im obriegen Beispiel passiert ist, können hier die gleichen angepassten Bedingungen genutzt werden.
 
-Alle angepassten Formeln zusammengefasst bekommen wir folgendes:
+Alle angepassten Formeln zusammengefasst sieht wie folgt aus:
 \begin{align*}
 	\text{diff}_i &\geq \degrees(i) - \degree(i) \\
 	\text{diff}_i &\geq \degree(i) - \degrees(i) \\
@@ -151,12 +153,11 @@ Führt das Testen einer Kante zu einem Konflikt, kann das zugehörige Literal \(
 wobei \(E_A\) die Menge der aktiven Kanten bezeichnet.
 
 \chapter{Auswertung}
-\fabian{anpassen}
 In diesem Kapitel werden die Ansätze aus~\cref{chap:theoretischer_hintergrund} ausgewertet.
 Die ersten beiden Experimente testen, ob die Solver bei gleichen Bedingungen die gleichen Ergebnisse liefern.
-Die beiden Experimente danach werden genutzt, um den besten SAT-Solver für die gradbeschränkte Triangulierung aus~\cref{sec:pysat} zu finden.
+Die beiden Experimente danach werden genutzt, um den besten SAT-Solver für DCT aus~\cref{sec:pysat} zu finden.
 Danach folgt in~\cref{sec:eval1:grund_solver} ein Experiment, welches die verschiedenen Solver mit den verschiedenen Beschränkungen vergleicht, um den besten Solver zu bestimmen.
-Dieser wird genutzt, um in den folgenden Experimenten zum einen die theoretische Ausschließung von Kanten zu testen, Ja-Instanzen und Nein-Instanzen getrennt voneinander zu betrachten und möglichst große Instanzen zu lösen.
+Dieser wird genutzt, um in den folgenden Experimenten zum einen die theoretische Ausschließung von Kanten zu testen, möglichst große Instanzen zu lösen und Ja-Instanzen und Nein-Instanzen getrennt voneinander zu betrachten.
 Anschließend werden in~\cref{sec:eval11} die Zielfunktionen betrachtet.
 In dem darauf folgenden Experiment wird der CDCL-Ansatz aus~\cref{sec:cdcl} genauer betrachtet, um während des Lösens Einfluss auf den Solver zu nehmen.
 Zum Abschluss wird in drei verschiedenen Experimenten versucht, die Schwierigkeit der Instanzen zu bestimmen.
