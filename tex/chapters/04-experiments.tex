@@ -36,7 +36,7 @@ Um die Kanten zu finden bei denen die Schnittkanten zu viele Kanten ausschließe
 Für jede betrachtete Kante werden zunächst Zähler für jeden Knoten erstellt.
 Danach werden nacheinander alle Schnittkanten der betrachteten Kante aufgerufen.
 Für alle Schnittkanten wird der Zähler die beiden Endknoten der Schnittkanten um eins erhöht.
-Am Ende werden alle Knoten durchgegangen, sollte ein Knoten \(v\) folgende Formel erfüllen wird die Kante ausgeschlossen.
+Am Ende werden alle Knoten überprüft, sollte ein Knoten \(v\) folgende Formel erfüllen wird die Kante ausgeschlossen.
 \[
 \degree(v) - \text{node\_count}[v] > \degrees(v)
 \]

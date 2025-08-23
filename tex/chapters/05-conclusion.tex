@@ -1,11 +1,24 @@
 \chapter{Conclusion (and Future Work)}
+% \begin{itemize}
+%     \item meine Random instanzen waren nicht normalverteilt
+%     \item Könnte man in zukunft anschauen
+%     \item gibt Paper mit einfachen Polygone mit normalverteilter Triangulierung
+% \end{itemize}
+In dieser Arbeit wurde das neuartige Problem der gradbeschränkten Triangulierungen (Degree Constrained Triangulations, DCT) untersucht.
+Dabei wurde es als Entscheidungsproblem sowie als Optimierungsproblem betrachtet.
+Für das Entscheidungsproblem wurde eine Kanten basierte und eine dreiecksbasierte Kodierung entwickelt.
+Hierbei wurde ein Fokus auf das fixieren und ausschließen von Kanten gelegt.
+Beide wurden als Mathematische und KNF Formulierungen umgesetzt.
+Diese Formulierungen wurden mit PySAT, Gurobi und OR-Tools implementiert.
+Diese Implementierungen wurden an zuvor generierten Instanzen getestet.
+Es wurden fünf verschiedene Instanztypen entwickelt, um sowohl lösbare als auch unlösbare Fälle zu erzeugen.
+Die experimentelle Evaluation zeigte, dass insbesondere OR-Tools die besten Ergebnisse liefern konnte und Instanzen bis zu einer Größe von 170 Knoten löst.
+Zuästzlich wurde mit dem CDCL Ansatz eine Theoretische möglichkeit gefunden den Lösungsprozess zu optimieren.
+Dennoch bleibt die Skalierbarkeit auf große Instanzen eine Herausforderung, da die vorgestellten Verfahren vor allem für kleinere Punktmengen praktikabel sind.
+Darüber hinaus wurde festgestellt, dass die Struktur der Instanzen, insbesondere die Verteilung der Kantenlängen und Knotengrade, einen erheblichen Einfluss auf die Schwierigkeit der Instanz hat.
 
-This is the end of you thesis! 
-Give a summary of what you did.
+Ein vielversprechender Ausblick besteht darin, die vorgestellten Verfahren hinsichtlich ihrer Skalierbarkeit zu verbessern, etwa durch leistungsfähigere Heuristiken oder hybride Ansätze, die exakte und heuristische Methoden kombinieren.
+Zudem wäre es interesannt bei der Instanzengenerierung auf normalverteilte Triangulierungen zu achten, um einheitliche Szenarien abzubilden.
 
-You can also write down possible future work you or other people could look at.
-\begin{itemize}
-    \item meine Random instanzen waren nicht normalverteilt
-    \item Könnte man in zukunft anschauen
-    \item gibt Paper mit einfachen Polygone mit normalverteilter Triangulierung
-\end{itemize}
+\fabian{Dreicke mehr nennen}
+\fabian{@Michael oder Phillip: Habt ihr noch Ideen was in den Schluss muss?}

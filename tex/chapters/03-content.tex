@@ -53,11 +53,11 @@ Eine weitere optionale Bedingung ist zuvor berechnete Kanten zu fixieren oder au
 \caption[Gesonderte Betrachtung von Knoten auf der Hülle mit Grad zwei]{Abhängig von dem Sollgrad von \(v_2\) kann entschieden werden, ob \(e_1\) aktiv oder nicht aktiv sein muss. Sollte \(\degrees(v_2) = 2\) sein, dann muss \(e_1\) aktiv sein damit alle Kanten wie \(e_2\) nicht aktiv sein können. Sollte \(\degrees(v_2) > 2\) sein, dann muss \(e_1\) nicht aktiv sein damit der Sollgrad erreicht werden kann.}
 \label{fig:excludeGrad2}
 \end{figure}
-Eine Möglichkeit um Kanten zu fixieren ist es immer drei aufeinander folgende Knoten der Hülle zu betrachten.
+Eine Möglichkeit um Kanten zu fixieren ist immer drei aufeinander folgende Knoten der Hülle zu betrachten.
 Ein mögliches Beispiel ist in~\cref{fig:excludeGrad2} zu sehen.
 Sollte \(\degrees(v_2) = 2\) sein, muss die Kante \(e_1\) in der Triangulierung genutzt werden.
 Der Grund dafür ist das alle Schnittkanten von \(e_1\) nicht aktiv sein dürfen, da sie den Grad von \(v_2\) erhöhen würden.
-Analog dazu kann die Kante \(e_1\) ausgeschlossen werden sollte \(\degrees(v_2) > 2\).
+Analog dazu kann die Kante \(e_1\) ausgeschlossen werden sollte \(\degrees(v_2) > 2\) sein.
 Sonst kann der Sollgrad nicht erreicht werden.
 Ein \(\degrees(v_2) < 2\) ist nicht möglich in DCT.
 
@@ -96,11 +96,11 @@ Wenn eine Kante \(e_1\) zu viele Kanten eines Knotens \(v_1\) blockiert, sodass 
 \end{figure}
 
 In~\cref{fig:excludeEdgeIntersection} ist zu erkennen, dass \(e_2\), \(e_3\) und \(e_4\) durch \(e_1\) blockiert werden.
-Da \(v_1\) jedoch einen Sollgrad von 3 besitzt und nur 5 mögliche Kanten existieren, kann \(v_1\) mit aktiver Kante \(e_1\) seinen Sollgrad nicht erreichen.
+Da \(v_1\) jedoch einen Sollgrad von 3 besitzt und nur 5 mögliche Kanten existieren, kann \(v_1\) mit der aktiven Kante \(e_1\) seinen Sollgrad nicht erreichen.
 
 
 
-\subsubsection{\emph{alternative Kanten}}
+\subsubsection{\emph{Alternative Kanten}}
 Eine andere mögliche Bedingung ist die \emph{alternative Kantenbeschränkung}.
 Diese wurde von Sándor P. Fekete et.al.~\cite{Exact_Algorithms_for_Minimum_Dilation_Triangulation} übernommen.
 \begin{figure}[htb]
@@ -113,7 +113,7 @@ Diese Bedingung nutzt aus, dass der Graph maximal sein muss.
 Damit dies der Fall sein kann, muss für jede Kante gelten, dass entweder die Kante aktiv ist oder eine der Schnittkanten aktiv ist.
 Wie man in~\cref{fig:allEdges} sieht, ist \(e_1\) die ausgewählte Kante und \(e_2\) und \(e_3\) die Schnittkanten.
 Weiter unten im Bild ist zu sehen das alle möglichen Triangulierung mindestens eine der drei Kanten verwendet.
-Zu beachten ist allerdings das die Anzahl der Schnittkanten nicht gleich eins gesetzt werden darf sondern nur auf mindestens eine.
+Zu beachten ist allerdings das die Anzahl der Schnittkanten nicht gleich eins gesetzt werden darf sondern nur auf mindestens eins.
 Wie man in~\cref{fig:allEdges} sieht können die Kanten \(e_2\) und \(e_3\) gleichzeitig aktiv sein.
 
 \subsubsection{Formulierungen}
@@ -163,10 +163,10 @@ Diese Sammlung wird von der Python Bibliothek PySAT bereitgestellt.
 Von diesen Codierungen kommen nur \emph{sequential counters}~\cite{sequential_counters}, \emph{sorting networks}~\cite{sorting_networks}, \emph{cardinality networks}~\cite{cardinality_networks}, \emph{totalizer}~\cite{totalizer}, \emph{modulo totalizer}~\cite{modulo_totalizer}, \emph{modulo totalizer for k-cardinality}~\cite{modulo_totalizer_for_k_cardinality} und eine Native Codierung in Frage.
 Die Restlichen Codierungen bieten keine Möglichkeit um Kardinalitätsbeschränkungen größer als eins zu erzeugen. 
 
-In~\cref{sec:eval5:sat_degree} wird sich zeigen das \emph{sequential counters} am relevantesten ist.
+In~\cref{sec:eval5:sat_degree} wird sich zeigen das \emph{sequential counters} am besten geeignet ist.
 Daher wird dieser im Folgenden genauer erläutert.
 Der Ansatz der \emph{sequential counters} wurde von Carsten Sinz~\cite{sequential_counters} entwickelt.
-Er basiert auf einer Idee aus der Computerhardware.
+Er basiert auf einer Idee aus der Computerhardwareentwicklung.
 Zur Berechnung der Kardinalität \(k\) für die Klausel \((x_1 \lor x_2 \lor \ldots \lor x_n)\) werden \(n-1\) Variablen \(s_i\) der länge \(k\) in der unären Darstellung benötigt.
 Zusätzlich werden \(n\) Hilfsvariablen \(v_i\) verwendet.
 Für \(i = 1\) werden \(s_1\) und \(v_1\) wie folgt definiert
@@ -213,9 +213,8 @@ Bei der Exakten Methode könnte der Solver allerdings schneller zu einer Lösung
 
 Die andere Methode ist die sogenannte \emph{subset} Methode.
 Bei dieser Methode wird für jeden Knoten \(i\) eine Menge von Klauseln erstellt.
-Diese Klauseln umfassen alle Kombinationen der Kanten \(E_i\) der Größe
-\[\left|E_i\right| - (\degrees(i) - 1)\]
-wobei \(E_i\) die Menge aller Kanten für den Knoten \(i\) ist.
+Diese Klauseln umfassen alle Kombinationen der Kanten \(E_i\) der Größe \(\left|E_i\right| - (\degrees(i) - 1)\).
+Wobei \(E_i\) die Menge aller Kanten für den Knoten \(i\) ist.
 Angenommen, der Knoten \(v_1\) besitzt die Kanten \(e_1\), \(e_2\), \(e_3\), \(e_4\) und den Sollgrad \(2\).
 Dann werden folgende Klauseln erstellt
 \[
@@ -224,7 +223,8 @@ Dann werden folgende Klauseln erstellt
 Damit diese vier Klauseln erfüllt sind, müssen mindestens zwei der Variablen wahr sein.
 Die Idee basiert darauf das für jede Klausel angenommen wird, dass nur noch eine Kante zum Erreichen des Sollgrads fehlt und die in der Klausel genannten Kanten noch nicht aktiv sind.
 Insgesamt wird so eine Kardinalitäts Codierung erzeugt.
-Diese Methode hat den Vorteil, dass keine Hilfsvariablen benötigt werden, allerdings entstehen \[\binom{\left|E_i\right|}{\left|E_i\right| - (\degrees(i) - 1)}\] viele Klauseln.
+Diese Methode hat den Vorteil, dass keine Hilfsvariablen benötigt werden.
+Allerdings entstehen \[\binom{\left|E_i\right|}{\left|E_i\right| - (\degrees(i) - 1)}\] viele Klauseln.
 Das währen in O-Notation \[O\left(n \cdot \binom{\left|E_{\text{max}}\right|}{\left|E_{\text{max}}\right| - d_{\text{min}}}\right)\] viele Klauseln.
  Wobei \(E_{\text{max}}\) die maximale Kantenanzahl pro Knoten und \(d_{\text{min}}\) der minimale Sollgrad ist.
  Da dies nicht polynomialel ist werden warscheinlich zu viele Klauseln erzeugt.
@@ -246,7 +246,7 @@ Stattdessen erhält jedes mögliche Dreieck eine eigene Variable.
 
 Die Gradbeschränkung kann aus der Kantenformulierung übernommen werden.
 Lediglich die Knoten auf der Hülle müssen gesondert betrachtet werden.
-Für diese Knoten muss der Sollgrad um eins reduziert werden, da ein Dreieck am Rand beide Kanten stellt.
+Für diese Knoten muss der Sollgrad um eins reduziert werden, da ein Dreieck am Rand zwei Kanten der Hülle stellt.
 
 Für die Überschneidungsbeschränkung können zwei verschiedene Ansätze genutzt werden.
 Zum einem können sich überschneidende Dreiecke ausgeschlossen werden.
@@ -326,10 +326,10 @@ Der Ansatz ohne Kantenüberschneidungen eigenet sich auf Grund der fehlenden dir
 
 \section{Optimierungsproblem}
 \label{sec:optimierungsproblem}
-Im Gegensatz zu den vorherigen Ansätzen wird das Problem in diesem Abschnitt nicht als Entscheidungsproblem, sondern als Optimierungsproblem betrachtet.
+Im Gegensatz zu den vorherigen Ansätzen wird DCT in diesem Abschnitt nicht als Entscheidungsproblem, sondern als Optimierungsproblem betrachtet.
 Dies hat zum einen den Vorteil, dass bei einem \emph{Timeout} des Solvers nicht der gesamte Fortschritt verloren geht.
 Ein weiterer Vorteil ist, dass bei Nein-Instanzen versucht wird, dennoch eine Lösung zu finden.
-Das bedeutet, sollte es in bestimmten Bereichen nicht möglich sein, eine gradbeschränkte Triangulierung zu finden, aber diese benötigt werden, kann zumindest eine möglichst nahe Triangulierung bestimmt werden.
+Das bedeutet, sollte es in bestimmten Bereichen nicht möglich sein, eine DCT zu finden, kann zumindest eine möglichst nahe Triangulierung bestimmt werden.
 
 Für die Bewertung der Lösungen wurde folgende Formel eingeführt.
 Diese Formel berechnet den Gesamtdurchschnitt von allen Prozentualen Gradabweichungen.
@@ -344,9 +344,9 @@ e_i &= \left\{
 Q &= \sum_{i=0}^{n} \frac{e_i}{n} \label{eq:total_evaluation}
 \end{align}
 Diese Formel liefert eine Bewertung (\(Q\)) für einen Triangulierung mit \(n\) Knoten.
-In der Brechnung~\eqref{eq:difference} wird die Difference zwischen dem gewünschten und aktuellen Grad berechnet.
-In~\eqref{eq:evaluation} wird diese Abweichung Prozentual bewertet.
-Am Ende wird in~\eqref{eq:total_evaluation} ein Durchschnitt über alle Prozentualen Werte gebildet.
+In~\cref{eq:difference} wird die Difference zwischen dem gewünschten und aktuellen Grad berechnet.
+In~\cref{eq:evaluation} wird diese Abweichung Prozentual bewertet.
+Am Ende wird in~\cref{eq:total_evaluation} ein Durchschnitt über alle Prozentualen Werte gebildet.
 
 \subsubsection{Ansätze}
 Es werden drei Ansätze vorgestellt.
