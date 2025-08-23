@@ -139,7 +139,7 @@ def show_sat():
         figure_path=figure_path,
         host=HOST,
         name="sat",
-        arg_names=arg_names,
+        # arg_names=arg_names,
         show_solver_in_legend=False,
     )
     ri.show(block=False)
@@ -194,7 +194,7 @@ def show_gurobi():
         host=HOST,
         name="gurobi",
         show_solver_in_legend=False,
-        arg_names=arg_names,
+        # arg_names=arg_names,
     )
     ri.show(block=False)
 
@@ -254,7 +254,7 @@ def show_ortools():
         host=HOST,
         name="ortools",
         show_solver_in_legend=False,
-        arg_names=arg_names,
+        # arg_names=arg_names,
     )
     ri.show(block=False)
 
@@ -318,8 +318,8 @@ def gesamt():
 
 
 if __name__ == "__main__":
-    # show_tri()
+    show_tri()
     show_sat()
     show_gurobi()
     show_ortools()
-    gesamt()
+    # gesamt()
