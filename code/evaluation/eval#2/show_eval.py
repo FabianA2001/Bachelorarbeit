@@ -19,6 +19,7 @@ figure_path = os.path.join(os.path.dirname(__file__), "figures")
 def show_lokal(RI: Run_Algbench):
     table = RI.get_table()
     table = RI.apply_instance(table)
+    table = RI.apply_args(table)
     table["total_runtime"] = table["pre_time"] + table["runtime"]
 
     # Group table by "solver" and "instance_file" and add index to solver names
