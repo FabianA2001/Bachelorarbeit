@@ -5,7 +5,7 @@
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval2/gurobi.pdf}
-    \caption{In diesem Diagramm wird untersucht ob Gurobi bei verschiedenen Permuation unterschiedliche Laufzeiten hat.
+    \caption[Mehrfache Durchläufe mit verschiedenen Permutation für Gurobi vergleichen.]{In diesem Diagramm wird untersucht ob Gurobi bei verschiedenen Permuation unterschiedliche Laufzeiten hat.
     Dazu wird jede Permuation als eine Linie dargestellt.
     Es ist zu erkennen das vorallem bei Delaunay\_Flips Linen verschiedene Laufzeiten haben, dementsprechend hat Gurobi bei verschiedenen Permuation unterschiedliche Laufzeiten. 
     }
@@ -14,7 +14,7 @@
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval2/Ortools.pdf}
-    \caption{In diesem Diagramm wird untersucht ob OrTools bei verschiedenen Permuation unterschiedliche Laufzeiten hat.
+    \caption[Mehrfache Durchläufe mit verschiedenen Permutation für OrTools vergleichen.]{In diesem Diagramm wird untersucht ob OrTools bei verschiedenen Permuation unterschiedliche Laufzeiten hat.
     Dazu wird jede Permuation als eine Linie dargestellt.
     Es ist zu erkennen das die meisten Instanzen die gleichen Laufzeiten haben.
     Nur bei Delaunay sind die Laufzeiten leicht unterschiedlich.
@@ -24,7 +24,7 @@
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval2/SAT.pdf}
-    \caption{In diesem Diagramm wird untersucht ob PySAT bei verschiedenen Permuation unterschiedliche Laufzeiten hat.
+    \caption[Mehrfache Durchläufe mit verschiedenen Permutation für PySAT vergleichen.]{In diesem Diagramm wird untersucht ob PySAT bei verschiedenen Permuation unterschiedliche Laufzeiten hat.
     Dazu wird jede Permuation als eine Linie dargestellt.
     Bei Random und Iterativ unterscheiden sich die Laufzeiten kaum.
     Bei den anderen drei Instanzen vorallem bei Delaunay unterscheiden sie sich aber.
@@ -36,7 +36,7 @@
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval7/gurobi.pdf}
-    \caption{In diesem Diagramm wird untersucht ob Gurobi bei den gleichen Argumenten und den gleichen unveränderten Instanzen unterschiedliche Laufzeiten hat.
+    \caption[Mehrfache Durchläufe mit gleichen Bedingungen für Gurobi vergleichen.]{In diesem Diagramm wird untersucht ob Gurobi bei den gleichen Argumenten und den gleichen unveränderten Instanzen unterschiedliche Laufzeiten hat.
     Dazu wird jede Durchgang als eine Linie dargestellt.
     Es ist zu sehen das alle Linien fast identisch sind. 
     Daraus lässt sich folgen das Gurobi bei gleichen Bedingungen die gleichen Ergebnise liefert.
@@ -46,7 +46,7 @@
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval7/ortools.pdf}
-    \caption{In diesem Diagramm wird untersucht ob OrTools bei den gleichen Argumenten und den gleichen unveränderten Instanzen unterschiedliche Laufzeiten hat.
+    \caption[Mehrfache Durchläufe mit gleichen Bedingungen für OrTools vergleichen.]{In diesem Diagramm wird untersucht ob OrTools bei den gleichen Argumenten und den gleichen unveränderten Instanzen unterschiedliche Laufzeiten hat.
     Dazu wird jede Durchgang als eine Linie dargestellt.
     Es fällt aud das außer bei Iterativ alle Linien unterschiedlich sind.
     Vorallem bei Delaunay\_Flips und Greedy sind die Unterschiede groß.
@@ -56,7 +56,7 @@
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval7/sat.pdf}
-    \caption{In diesem Diagramm wird untersucht ob PySAT bei den gleichen Argumenten und den gleichen unveränderten Instanzen unterschiedliche Laufzeiten hat.
+    \caption[Mehrfache Durchläufe mit gleichen Bedingungen für PySAT vergleichen.]{In diesem Diagramm wird untersucht ob PySAT bei den gleichen Argumenten und den gleichen unveränderten Instanzen unterschiedliche Laufzeiten hat.
     Dazu wird jede Durchgang als eine Linie dargestellt.
     Es ist zu sehen das alle Linien fast identisch sind. 
     Daraus lässt sich folgen das PySAT bei gleichen Bedingungen die gleichen Ergebnise liefert.}
@@ -79,7 +79,7 @@
         \caption{Mindest Sollgrad: $\sum x_{e_i} \geq \deg(i) \; \forall i \in V$}
         \label{fig:eval5_atleast}
     \end{subfigure}
-    \caption{In diesem Diagrammen werden verschiedene Codierungen für Kardinalitäten in einer KNF vergleichen. 
+    \caption[Vergleich von Kardinalitätscodierungen in eine KNF.]{In diesem Diagrammen werden verschiedene Codierungen für Kardinalitäten in einer KNF vergleichen. 
     Diese Kardinalität werden dazu genutzt das in einer KNF für jeden Knoten alle inzidenten Kanten gleich bzw. mindestens dem Sollgrad entsprechen müssen.
     Dabei wird zum einem der exakte Sollgrad (a) und zum anderen der minimale Sollgrad (b) betrachtet.
     In beiden Diagrammen ist klar zu erkennen das die \emph{sequential counters} Methode am besten funktioniert, gefolgt von \emph{totalizer}.
@@ -103,7 +103,7 @@
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{figures/eval1/sat.pdf}
-    \caption{In diesem Experiment werden fünf verschiedene Optimierungsansätze für PySAT getestet.
+    \caption[Die besten Bedingungen für PySAT finden]{In diesem Experiment werden fünf verschiedene Optimierungsansätze für PySAT getestet.
     Hierbei wird untersucht welche Optimierungen besser sind als der Normale Ansatz.
     In diesem Diagramm ist klar erkennbar das der einzige Ansatz welcher besser ist das fixieren der Hülle ist.
     Allerdings ist der Unterschied nicht sehr groß.
@@ -115,7 +115,7 @@
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{figures/eval1/ortools.pdf}
-    \caption{In diesem Experiment werden fünf verschiedene Optimierungsansätze für OrTools getestet.
+    \caption[Die besten Bedingungen für OrTools finden]{In diesem Experiment werden fünf verschiedene Optimierungsansätze für OrTools getestet.
     Hierbei wird untersucht welche Optimierungen besser sind als der Normale Ansatz.
     Es zeigt sich das das fixieren der Hülle ähnliche teilweise bessere Ergebnisse als der normale Ansatz liefert.
     Das fixieren und ausschließen der Kanten ist allerdings deutlich schlechter.
@@ -129,7 +129,7 @@
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{figures/eval1/gurobi.pdf}
-    \caption{In diesem Experiment werden fünf verschiedene Optimierungsansätze für Gurobi getestet.
+    \caption[Die besten Bedingungen für Gurobi finden]{In diesem Experiment werden fünf verschiedene Optimierungsansätze für Gurobi getestet.
     Hierbei wird untersucht welche Optimierungen besser sind als der Normale Ansatz.
     Es ist zu erkennen das das ausschließen von Kanten schlechter als der Normale Ansatz ist.
     Das fixieren der Hülle sowie die alternative Kantenbedingung liefern ähnliche Ergebnisse
@@ -169,7 +169,7 @@ Knoten Anzahl & Delaunay Flips & Delaunay & Greedy & Iterative & Random \\
 120\_2 & -1 & -1 & -1 & 1 & 1 \\
 \hline
 \end{tabular}
-\caption{In dieser Tabelle werden die Anzahl der Lösungen für die verschiedenen Ansätze dargestellt.In der erste Spalte werden die Anzahl der Knoten der Instanz angegeben. Hierbei wurde jede Knotengröße zwei mal getestet. In den anderen Spalten sind jeweils die Werte für eine Instanz gegeben. Der Wert -1 bedeuten, dass nach einer Stunde ein Timeout erreicht wurde und somit keine Lösung gefunden wurde konnte. Auffällig ist, dass es nur eine einzige Instanz gibt welche zwei Lösungen besitzt.}
+\caption[Anzahl der Lösungen pro Instanz]{In dieser Tabelle werden die Anzahl der Lösungen für die verschiedenen Ansätze dargestellt.In der erste Spalte werden die Anzahl der Knoten der Instanz angegeben. Hierbei wurde jede Knotengröße zwei mal getestet. In den anderen Spalten sind jeweils die Werte für eine Instanz gegeben. Der Wert -1 bedeuten, dass nach einer Stunde ein Timeout erreicht wurde und somit keine Lösung gefunden werden konnte. Auffällig ist, dass es nur eine einzige Instanz gibt welche zwei Lösungen besitzt.}
 \label{tab:triangulation_results}
 \end{table}
 
@@ -179,8 +179,9 @@ Knoten Anzahl & Delaunay Flips & Delaunay & Greedy & Iterative & Random \\
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{eval11/eval_progression_36.pdf}
-    \caption{In diesem Experiment wird eine Ja-Instanze mit 120 Knoten betrachtet.
+    \caption[Eine Ja-Instanz als Optimierungsproblem betrachten]{In diesem Experiment wird eine Greedy Ja-Instanze mit 120 Knoten als Optimierungsproblem betrachtet.
     Als Referenz wird der Solver aus~\cref{sec:eval1:grund_solver} verwendet.
+    Dieser betrachtet die Instanz als Entscheidungsproblem.
     Es ist zu sehen das der Min-Max-Ansatz in den meisten Fällen bessere Ergebnisse erzielt als der Durchschnittsansatz.
     Nur bei Delaunay erreichen beide Ansätze nicht die vollen 100 Prozent.
     Der Durchschnittsansatz erzielt bei Delaunay jedoch höhere Werte als Min-Max.
