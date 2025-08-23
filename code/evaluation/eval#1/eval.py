@@ -4,7 +4,6 @@ from dataclasses import asdict
 import slurminade
 from dc_triangulation import (
     SAT,
-    SAT_TRI,
     Gurobi,
     Gurobi_Parameter,
     Gurobi_Tri,
@@ -15,7 +14,6 @@ from dc_triangulation import (
     Ortools_Tri_Parameter,
     Run_Algbench,
     SAT_Parameter,
-    SAT_Tri_Parameter,
 )
 
 TIMEOUT = 300
@@ -151,24 +149,25 @@ outer_parameter = {
             ),
         },
     ],
-    SAT_TRI: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                SAT_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
-            ),
-        },
-    ],
+    # SAT_TRI: [
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             SAT_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
+    #         ),
+    #     },
+    # ],
 }
 
 RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
+    path_benchmark=os.path.join(os.path.dirname(__file__), "benchmark_fehlerhaft"),
     host=["algry01", "algry02", "algry03", "algry04"],
 )
 
