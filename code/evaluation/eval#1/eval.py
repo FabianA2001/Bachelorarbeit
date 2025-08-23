@@ -189,7 +189,7 @@ if __name__ == "__main__":
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
-            constraint="alggen05",  # Which workstations within the partition to use
+            constraint="alggen03",  # Which workstations within the partition to use
             exclusive=True,  # To use all cores on a node exclusively
             mail_type="FAIL",  # Send mail on failure
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
