@@ -3,7 +3,7 @@ Args Legend Mapping (by Solver):
 ==================================================
 
 SAT:
-|#exakt in 300s: 
+|#exakt-counters in 300s: 
 ||solver_name:                        Glucose42
 ||add_allEdges_or_exclude_edges:      True
 ||number_edges:                       False
@@ -19,7 +19,23 @@ SAT:
 ||fix_edges:                          False
 ||run_num:                            0
 
-|#mindest in 300s: 
+|#exakt-totalizer in 300s: 
+||solver_name:                        Glucose42
+||add_allEdges_or_exclude_edges:      True
+||number_edges:                       False
+||intersection:                       True
+||all_edges:                          False
+||degree_exact:                       True
+||degree_atleast:                     False
+||degree_encoding:                    6
+||degree_subset:                      False
+||fix_hull:                           False
+||exclude_edges:                      False
+||hack_eval6:                         False
+||fix_edges:                          False
+||run_num:                            0
+
+|#mindestens-counters in 300s: 
 ||solver_name:                        Glucose42
 ||add_allEdges_or_exclude_edges:      True
 ||number_edges:                       False
@@ -28,6 +44,22 @@ SAT:
 ||degree_exact:                       False
 ||degree_atleast:                     True
 ||degree_encoding:                    1
+||degree_subset:                      False
+||fix_hull:                           False
+||exclude_edges:                      False
+||hack_eval6:                         False
+||fix_edges:                          False
+||run_num:                            0
+
+|#mindestens-totalizer in 300s: 
+||solver_name:                        Glucose42
+||add_allEdges_or_exclude_edges:      True
+||number_edges:                       False
+||intersection:                       True
+||all_edges:                          False
+||degree_exact:                       False
+||degree_atleast:                     True
+||degree_encoding:                    6
 ||degree_subset:                      False
 ||fix_hull:                           False
 ||exclude_edges:                      False

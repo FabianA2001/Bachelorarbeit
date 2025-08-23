@@ -64,19 +64,33 @@
 \end{figure}
 
 \chapter{SAT Degree Auswertung}
-\fabian{Wie genau sollte ich die Bilder hier beschreiben und sollte ich so einen Anhang machen?}
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1\linewidth]{eval5/exact.pdf}
-    \caption{Gelöste Instanzen und Laufzeit unter verschiedenen Ansätzen, die Kardinalitätsbedingungen ($\sum_{vw \in E} x_{vw} = \deg*(v)$ in CNF zu kodieren; höher/weiter links ist besser. Man sieht, dass \emph{sequential counters} am besten funktionieren, gefolgt von \emph{totalizer}.}
-    \label{fig:eval5_exact}
+    % Beide großen Bilder als Subfigures untereinander
+    \begin{subfigure}{0.9\linewidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{eval5/exact.pdf}
+        \caption{Exakte Sollgrad: $\sum x_{e_i} = \deg(i) \; \forall i \in V$.}
+        \label{fig:eval5_exact}
+    \end{subfigure}\\[1.5ex]
+    \begin{subfigure}{0.9\linewidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{eval5/atleast.pdf}
+        \caption{Mindest Sollgrad: $\sum x_{e_i} \geq \deg(i) \; \forall i \in V$}
+        \label{fig:eval5_atleast}
+    \end{subfigure}
+    \caption{In diesem Diagrammen werden verschiedene Codierungen für Kardinalitäten in einer KNF vergleichen. 
+    Diese Kardinalität werden dazu genutzt das in einer KNF für jeden Knoten alle inzidenten Kanten gleich bzw. mindestens dem Sollgrad entsprechen müssen.
+    Dabei wird zum einem der exakte Sollgrad (a) und zum anderen der minimale Sollgrad (b) betrachtet.
+    In beiden Diagrammen ist klar zu erkennen das die \emph{sequential counters} Methode am besten funktioniert, gefolgt von \emph{totalizer}.
+    }
+    \label{fig:eval5:subfigures}
 \end{figure}
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=1\linewidth]{eval5/atleast.pdf}
-    \caption{Die \emph{atleast} Methode für die Gradbeschränkung  in einem SAT Solver, wurde mit verschiedenen Kardinalitätsbedingung getestet.}
-    \label{fig:eval5_atleast}
-\end{figure}
+
+% In diesem Diagramm werden verschiedene Codierungen für Kardinalitäten in einer KNF vergleichen. In diesem Fall wurde folgende Formel umgesetzt: \(\sum x_{e_i} = \degrees(i) \quad \forall i \in V\). 
+%     Also das alle inzidenten Kanten jedes Knoten genau dem Sollgrad entsprechen müssen.
+%     Es ist zu erkennen das die \emph{sequential counters} Methode am besten funktioniert, gefolgt von \emph{totalizer}.
+%     Im Gesamt überblick ist klar zuerkennen das die beiden Solver einen Abstand zu den anderen haben.
 
 \chapter{Alle Parameter}
 \begin{figure}[htb]
@@ -89,21 +103,40 @@
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{figures/eval1/sat.pdf}
-    \caption{Eval1 Sat}
+    \caption{In diesem Experiment werden fünf verschiedene Optimierungsansätze für PySAT getestet.
+    Hierbei wird untersucht welche Optimierungen besser sind als der Normale Ansatz.
+    In diesem Diagramm ist klar erkennbar das der einzige Ansatz welcher besser ist das fixieren der Hülle ist.
+    Allerdings ist der Unterschied nicht sehr groß.
+    Alle andern Optimierungen sind deutlich schlechter.
+    }
     \label{fig:eval1:sat}
 \end{figure}
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{figures/eval1/ortools.pdf}
-    \caption{Eval1 OrTools}
+    \caption{In diesem Experiment werden fünf verschiedene Optimierungsansätze für OrTools getestet.
+    Hierbei wird untersucht welche Optimierungen besser sind als der Normale Ansatz.
+    Es zeigt sich das das fixieren der Hülle ähnliche teilweise bessere Ergebnisse als der normale Ansatz liefert.
+    Das fixieren und ausschließen der Kanten ist allerdings deutlich schlechter.
+    Die altervative Kanten bedinung gibt den größten Unterschied. 
+    Hier ist in der gesamt übersicht zu erkennen das dieser Ansatz deutlich besser ist als alle anderen.
+    Nur in den Iterativen Instanzen ist der normale Solver am besten.
+    }
     \label{fig:eval1:ortools}
 \end{figure}
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{figures/eval1/gurobi.pdf}
-    \caption{Eval1 Gurobi}
+    \caption{In diesem Experiment werden fünf verschiedene Optimierungsansätze für Gurobi getestet.
+    Hierbei wird untersucht welche Optimierungen besser sind als der Normale Ansatz.
+    Es ist zu erkennen das das ausschließen von Kanten schlechter als der Normale Ansatz ist.
+    Das fixieren der Hülle sowie die alternative Kantenbedingung liefern ähnliche Ergebnisse
+    Es ist aber klar erkennbar das Gurobi keine guten Ergebnisse liefert.
+    Bis auf die Iterativen Instanzen werden meistens nicht die 50 Prozent erreicht.
+    In der Gesamt übersicht ist zu erkennen das das fixieren der Hülle leicht besser ist als der normale Solver.
+    }
     \label{fig:eval1:gurobi}
 \end{figure}
 

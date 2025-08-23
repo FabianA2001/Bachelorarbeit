@@ -58,18 +58,4 @@ Ortools:
 ||exclude_edges:                      True
 ||fix_edges:                          False
 ||run_num:                            0
-
-|#Kanten fixieren in 300s: 
-||intersection:                       True
-||all_edges:                          False
-||degree:                             True
-||fix_hull:                           False
-||number_edges:                       False
-||evaluation_direction:               False
-||save_state_after_solution:          False
-||min_max_direction:                  False
-||maximize_edges:                     False
-||exclude_edges:                      False
-||fix_edges:                          True
-||run_num:                            0
 ==================================================

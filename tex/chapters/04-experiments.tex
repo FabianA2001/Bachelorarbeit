@@ -184,10 +184,13 @@ Ebenso wurde der CDCL-Ansatz in c++ implementiert.
 In vielen Experimenten werden sogenannte Kaktus-Diagramme verwendet.
 Bei diesen werden auf der X-Achse die Zeit angezeigt und auf der Y-Achse die Anzahl der gelösten Instanzen.
 Bei diesen Diagrammen werden alle Solver mit allen Instanzen \emph{gleichzeitig} gestartet.
-Sollte ein Solver dann eine Instanz lösen wird wird die Linie vertikal nach oben versetzt. 
+Sollte ein Solver dann eine Instanz lösen wird wird die Linie vertikal um eine Einheit nach oben versetzt. 
 So ergibt sich eine Treppenlinie.
-Bei diesen ist es positive wenn eine Line nach oben links verläuft.
+Bei diesen ist es positive wenn eine Line möglichst weit oben und links ist.
 Im folgenden werden immer Kaktus-Diagramme verwendet außer es wird explizit erwähnt, dass ein anderes Diagramm verwendet wird.
+
+Da es zu viele Diagramme sind um sie alle im Text anzuzeigen wurden einige in den Anhang verschoben.
+Immer wenn ein Diagramm mit einem Buchstaben verwiesen wird, ist dieses im Anhang zu finden.
 
 
 
@@ -227,28 +230,21 @@ Für die Knotengröße wurden Instanzen der Größe 30 bis 90 verwendet.
 Bei der \emph{subset} Methode wurde nur die Instanz mit 30 Knoten verwendet. 
 Da bei größeren Knotenmengen der Arbeitsspeicher zu klein war.
 Als zusätzliche Bedingung wurde die Überschneidungsbeschränkung verwendet.
-Für die Exakte Methode sieht man in~\cref{fig:eval5_exact} das \emph{sequential counters} die besten Ergebnisse erzielen.
-Die einzige andere relevante Codierung ist \emph{totalizer}, aber auch dieser ist vorallem bei Delaunay Flips schlechter als \emph{sequential counters}.
-Auch für den Mindest Sollgrad ist \emph{sequential counters} die beste Variante gefolgt von \emph{totalizer} wie man in~\cref{fig:eval5_atleast} sieht.
-
-
-
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{eval5/gesamt.pdf}
-    \caption[Vergleich von Kardinalitätscodierungen für SAT-Solver]{In der Abbildung werden für alle Instanzen Arten die drei Kardinalitätsbeschränungen vergliechen. Die \emph{subset} Methode ist die schlechteste, da sie nur für kleine Instanzen funktioniert. Die anderen beiden Methoden unterscheiden sich nicht signifikant.}
+    \caption[Vergleich von Kardinalitätscodierungen für SAT-Solver]{In der Abbildung werden für alle Instanzen Arten die drei Kardinalitätsbeschränungen vergliechen. Dabei werden für die Exakte und die Mindest Methode \emph{sequential counters} und \emph{totalizer} genutzt. Die \emph{subset} Methode ist die schlechteste, da sie nur für kleine Instanzen funktioniert.Es zeigt sich das exakt sowie mindest bei \emph{sequential counters} und \emph{totalizer} sehr ähnliche Ergebnisse erziehlen.
+    \emph{sequential counters} ist dabei eindeutig vor \emph{totalizer}.
+    Im gesamt überblick lässt sich erkennen das mindest mit \emph{sequential counters} minimal besser ist als exakt mit \emph{sequential counters}.
+    }
+
     \label{fig:eval5_gesamt}
 \end{figure}
 
-
-Der Vergleich der drei Methoden ist in~\cref{fig:eval5_gesamt} zu sehen.
-Hier wurden aus jedem der drei Ansätze das beste Ergebnis genommen.
-Hier ist klar erkennbar das \emph{subset} die schlechteste Methode ist.
-Das lässt sich leicht daran erklären das nur die kleinsten Instanzgrößen gelöst werden konnten.
-Die anderen beiden Methoden unterscheiden sich nicht signifikant.
-Es ist zu sehen das öfter die Methode mit dem exakten Sollgrad langsamer ist.
-Dementsprechend werden in folgenden Experimenten die Kardinalitätsbeschränkung mit Mindest Sollgrad und \emph{sequential counters} Codierung verwendet.
-
+In~\cref{fig:eval5:subfigures} ist zu erkennen das \emph{sequential counters} und \emph{totalizer} beim exakten sowie beim mindest Sollgrad die besten Ergebnisse erzielen.
+Diese werden in~\cref{fig:eval5_gesamt} noch mal vergleichen.
+Hier ist zu sehen das \emph{sequential counters} die besten Ergebnisse erzielt.
+Da der exakte Ansatz leicht besser ist wird dieser in den folgenden Experimenten verwendet.
 
 \section{SAT Solver Vergleich}
 % (Eval3)
@@ -263,56 +259,43 @@ Er wurde aber zusätzlich mit dem besten Solver vergleichen und hat schlechtere 
 \emph{CryptoMinisat} wurde nicht verwendet, da dieser Solver speziell für XOR-Probleme optimiert ist.
 Für die Instanzengröße wurden 60 bis 90 Knoten gewählt und es wurde auf dem Ryzen 9 getestet.
 Das Ziel besteht darin, den Solver zu identifizieren, der die besten Ergebnisse liefert, um diesen in zukünftigen Experimenten einzusetzen.
-\begin{figure}[htb]
+\begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{eval3/cactus_total_runtime.pdf}
-    \caption[Vergleich verschiedener SAT-Solver]{In dieser Abbildung sind die Laufzeiten der verschiedenen SAT-Solver für die verschiedenen Instanzen zu sehen. Hierbei ist klar erkennbar das \emph{Gluecard4} und \emph{Glucose42} die besten Ergebnisse erzielen.}
+    \caption[Vergleich verschiedener SAT-Solver]{In dieser Abbildung sind die Laufzeiten der verschiedenen SAT-Solver aus PySAT zu sehen. Hierbei ist klar erkennbar das \emph{Gluecard4} und \emph{Glucose42} die besten Ergebnisse erzielen.Das diese beiden Solver ähnliche Ergebnisse liefern ist nicht verwunderlich, da sie beide auf dem Glucose-Algorithmus basieren.
+    Es zeigt sich aber das bei diesem Problem weder der native noch der \emph{sequential counters} Ansatz einen signifikanten Unterschied machen.
+    Es ist aber zu erkennen das \emph{Glucose42} bei Greedy eine Instanze in guter Zeit geschafft hat welche \emph{Gluecard4} nicht geschafft.
+    }
+
     \label{fig:eval3:gesamt}
 \end{figure}
-In~\cref{fig:eval3:gesamt} ist zu erkennen, dass \emph{Gluecard4} und \emph{Glucose42} die besten Ergebnisse erzielen.
-Das diese beiden Solver ähnliche Ergebnisse liefern ist nicht verwunderlich, da sie beide auf dem Glucose-Algorithmus basieren.
-Es zeigt sich aber das bei diesem Problem weder der native noch der \emph{sequential counters} Ansatz einen signifikanten Unterschied machen.
-Für den weiteren Verlauf wird \emph{Glucose42} verwendet, da dieser bei Greedy eine Instanze in guter Zeit geschafft hat welche \emph{Gluecard4} nicht geschafft hat.
 
+In~\cref{fig:eval3:gesamt} ist zu erkennen, dass \emph{Gluecard4} und \emph{Glucose42} die besten Ergebnisse erzielen.
+Für den weiteren Verlauf wird \emph{Glucose42} verwendet dieser bei Greedy etwas besser war.
 
 \section{Vergleich der Modellierungstechniken}
 % (Eval1)
 \label{sec:eval1:grund_solver}
 In diesem Experiment werden alle möglichen Bedingungen an die Solver übergeben und einzeln getestet.
-Untersucht werden die Solver SAT, OrTools und Gurobi jeweils mit der Kantenformulierung sowie der Dreiecksformulierung.
+Untersucht werden die Solver PySAT, OrTools und Gurobi jeweils mit dem Kantenansatz sowie dem Dreiecksansatz.
 Für alle Durchläufe wurden die Überschneidungsbeschränkung und die Gradbeschränkung genutzt.
-Bei der Kantenformulierung wurden das Fixieren und Ausschließen von Kanten sowie die \emph{alternative Kantenformulierung} getestet.
-Bei der Dreiecksformulierung wurde nur das Ausschließen von Kanten getestet.
+Bei dem Kantenansatz wurden das Fixieren und Ausschließen von Kanten sowie die \emph{alternative Kantenformulierung} getestet.
+Bei dem Dreiecksansatz wurde nur das Ausschließen von Kanten getestet.
 Die Instanzengröße liegt bei 30 bis 120 Knoten und es wurde auf dem Ryzen 7 getestet.
 
-\begin{figure}[htb]
+\begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{figures/eval1/gesamt.pdf}
-    \caption[Vergleich aller Solver]{In dieser Abbildung werden für die sechs verschiedenen Ansätze die besten Solver vergleichen. Hierbei ist klar erkennbar das OrTools die besten Ergebnisse erzielt}
+    \caption[Vergleich aller Solver]{In dieser Abbildung werden für die sechs verschiedenen Ansätze die besten Solver vergleichen. Für PySAT und Gurobi ist die beste Methode das Fixieren der Kanten bei der Kantenformulierung. Bei OrTools hingegen ist die beste Methode die alternative Kantenformulierung bei der Kantenformulierung. Insgesamt erzielt OrTools die besten Ergebnisse, gefolgt von PySAT. Gurobi ist in allen Fällen mit Abstand schlechter als PySAT und OrTools. PySAT ist in leichten Instanzen wie Iterativ und Random allerdings besser als OrTools. Es ist auch klar zu erkennen das die Dreiecksformulierung bei allen Solvern schlechtere Ergebnisse erzielt als die Kantenformulierung.}
     \label{fig:eval1:gesamt}
 \end{figure}
 
-In~\cref{fig:eval1:gurobi} ist zu erkennen, dass Gurobi bis auf die Iterativen Instanzen keine guten Ergebnisse erzielt.
-Es wurden fast nie 50 Prozent der Instanzen gelöst.
-Es ist zu erkennen das die alternative Kantenformulierung bei kleinen Instanzen die besten Ergebnisse erziehlt.
-Bei größeren Instanzen sind die standart Bedingungen besser.
+In~\cref{fig:eval1:gurobi} und~\cref{fig:eval1:sat} ist zu erkennen, dass Gurobi und PySAT am besten mit dem fixieren der Hülle optimiert werden.
+Bei OrTools hingegen erzielt die alternative Kantenformulierung die besten Ergebnisse, wie in~\cref{fig:eval1:ortools} zu sehen ist.
 
-SAT liefert die besten Ergebnisse, wie in~\cref{fig:eval1:sat} zu sehen ist beim fixieren der Hülle. 
-Alle anderen Bediungen sind schlechter als nur die Überschneidungs und Gradbeschränkung.
-Es ist wieder zu sehen das Iterative warscheinlich zu einfach ist da der SAT solver hier alle Knotengrößen in kürtzester Zeit schafft.
-Nur das auschließen der Kanten schafft die größeren Instanzen nicht.
-Warscheinlich dauert hier das Ausschließen der Kanten zu lange.
+In~\cref{fig:eval1:gesamt} ist zu sehen das OrTools die besten Ergebnisse erzielt, gefolgt von PySAT.
+In folgenden Experimenten wird OrTools zusammen mit der alternativen Kantenformulierung  und der fixierung der Hülle verwendet.
 
-In der letzen~\cref{fig:eval1:ortools} ist zu sehen das OrTools mit der alternativen Kantenformulierung die besten Ergebnisse erzielt.
-Dies auch mit klarem Abstand wie in der Gesamt übersicht zu sehen ist.
-Es zeigt sich auch hier das das fixieren der Hülle etwas besser als die Standart Bedingungen ist.
-
-In~\cref{fig:eval1:gesamt} sind von allen Solvern die besten Bedingungen zu sehen.
-Hier ist zu sehen das OrTools die besten Ergebnisse erzielt.
-Gefolgt von SAT welches sogar bei kleinen Instanzen bessere Ergebnisse als OrTools erzielt.
-Gurobi ist in allen Fällen mit Abstand schlechter als SAT und OrTools.
-Es ist auch klar zu erkennen das die Dreiecksformulierung bei allen Solvern schlechtere Ergebnisse erzielt als die Kantenformulierung.
-Im folgenden wird nur noch OrTools mit der alternativen Kantenformulierung und dem fixieren der Hülle betrachtet.
 
 \fabian{Dreiecke sind noch nicht final da gen3 blockiert ist}
 \fabian{Kanten fixieren hatte einene Feheler und muss neu gestetet werden. Sollte aber keine Relevanz haben und am Text nichts ändern.}
