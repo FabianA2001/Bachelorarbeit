@@ -28,8 +28,6 @@ outer_parameter = {
                 SAT_Parameter(
                     intersection=True,
                     degree_exact=True,
-                    fix_hull=True,
-                    all_edges=True,
                 )
             ),
         },
@@ -41,8 +39,6 @@ outer_parameter = {
                 Gurobi_Parameter(
                     intersection=True,
                     degree=True,
-                    fix_hull=True,
-                    all_edges=True,
                 )
             ),
         },
@@ -54,8 +50,6 @@ outer_parameter = {
                 Ortools_Parameter(
                     intersection=True,
                     degree=True,
-                    fix_hull=True,
-                    all_edges=True,
                 )
             ),
         },

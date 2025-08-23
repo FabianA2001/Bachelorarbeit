@@ -19,6 +19,7 @@ figure_path = os.path.join(os.path.dirname(__file__), "figures")
 def show_lokal(RI: Run_Algbench):
     table = RI.get_table()
     table = RI.apply_instance(table)
+    table = RI.apply_args(table)
     table["total_runtime"] = table["pre_time"] + table["runtime"]
 
     # Group table by "solver" and "instance_file" and add index to solver names
@@ -53,8 +54,6 @@ def show_sat():
                     SAT_Parameter(
                         intersection=True,
                         degree_exact=True,
-                        fix_hull=True,
-                        all_edges=True,
                     )
                 ),
             },
@@ -79,8 +78,6 @@ def show_ortools():
                     Ortools_Parameter(
                         intersection=True,
                         degree=True,
-                        fix_hull=True,
-                        all_edges=True,
                     )
                 ),
             },
@@ -105,8 +102,6 @@ def show_gurobi():
                     Gurobi_Parameter(
                         intersection=True,
                         degree=True,
-                        fix_hull=True,
-                        all_edges=True,
                     )
                 ),
             },
