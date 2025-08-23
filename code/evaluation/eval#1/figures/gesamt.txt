@@ -45,4 +45,28 @@ Ortools:
 ||exclude_edges:                      False
 ||fix_edges:                          False
 ||run_num:                            0
+
+
+gurobi_tri:
+|#1 in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+
+
+OrTools_tri:
+|#1 in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+
+
+SAT_TRI:
+|#1 in 300s: 
+||solver_name:                        glucose3
+||add_allEdges_or_exlucde_edges:      True
+||number_tri:                         False
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
 ==================================================

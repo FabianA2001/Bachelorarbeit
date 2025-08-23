@@ -287,24 +287,24 @@ def gesamt():
                 ),
             }
         ],
-        # Gurobi_Tri: [
-        #     {
-        #         "timeout": TIMEOUT,
-        #         "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
-        #     }
-        # ],
-        # OrTools_Tri: [
-        #     {
-        #         "timeout": TIMEOUT,
-        #         "args": asdict(Ortools_Tri_Parameter(intersection=True, degree=True)),
-        #     }
-        # ],
-        # SAT_TRI: [
-        #     {
-        #         "timeout": TIMEOUT,
-        #         "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
-        #     }
-        # ],
+        Gurobi_Tri: [
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
+            }
+        ],
+        OrTools_Tri: [
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(Ortools_Tri_Parameter(intersection=True, degree=True)),
+            }
+        ],
+        SAT_TRI: [
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
+            }
+        ],
     }
 
     ri = Run_Algbench(
