@@ -7,20 +7,20 @@ Eine Triangulierung zerlegt die konvexe Hülle einer Punktemenge in Dreiecke.
 In dieser Arbeit wird das klassische Problem um eine zusätzliche Bedingung erweitert.
 Für jeden Knoten wird ein Sollgrad vorgegeben.
 
-Die gradbeschränkte Triangulierung untersucht, ob es für eine gegebene Punktemenge eine Triangulierung gibt, bei der jeder Knoten einen vorgegebenen Grad besitzt.
+Die gradbeschränkte Triangulierung (DCT) untersucht, ob es für eine gegebene Punktemenge eine Triangulierung gibt, bei der jeder Knoten einen vorgegebenen Grad besitzt.
 Das bedeutet, dass für jeden Knoten eine bestimmte Anzahl an inzidenten Kanten festgelegt ist.
 Diese Erweiterung ist nicht nur theoretisch interessant, sondern hat auch praktische Anwendungen.
 So kann beispielsweise in Sensornetzwerken die Verbindungsdichte zwischen Knoten gezielt gesteuert werden.
 Auch in Logistikproblemen lassen sich vorgegebene Kapazitäten an Knoten berücksichtigen.
 
-Das Ziel dieser Arbeit ist es, Verfahren zur Lösung gradbeschränkter Triangulierungen zu untersuchen.
+Das Ziel dieser Arbeit ist es, Verfahren zur Lösung des DCT zu untersuchen.
 Neben der Betrachtung als Entscheidungsproblem, bei dem Methoden wie Integer Programming, Constraint Programming oder SAT-Solver eingesetzt werden, wird das Problem auch als Optimierungsproblem betrachtet.
 Ein Schwerpunkt liegt auf dem Fixieren und Ausschließen von Kanten, um die Suche nach Lösungen zu beschleunigen.
 Im gleichen Zusammenhang werden verschiedene Methoden zur Instanzgenerierung vorgestellt.
 
 Die Arbeit beginnt mit grundlegenden Definitionen und relevanten theoretischen Grundlagen.
 Anschließend werden verschiedene Lösungsansätze präsentiert und eine mögliche Implementierung beschrieben.
-Mit dieser Implementierung werden die unterschiedlichen Ansätze evaluiert.
+Mit dieser Implementierung und zuvor generierten Instanzen werden die unterschiedlichen Ansätze evaluiert.
 Der Fokus liegt dabei auf der Laufzeit und dem Finden des besten Lösungsansatzes.
 Abschließend werden die generierten Instanzen hinsichtlich ihrer Schwierigkeit untersucht.
 
@@ -46,17 +46,18 @@ Analog kann in der Nachrichtentechnik eine gradbeschränkte Triangulierung verwe
 Auch beim Transport von Gütern kann die gradbeschränkte Triangulierung genutzt werden.
 Der Sollgrad gibt dann an, wie viele Güter an jedem Ort vorhanden sind und weiterbewegt werden sollen.
 
-\section{Ergebnisse der Arbeit}
-% We proof that the \textsc{Traveling Salesmen Problem}(TSP) is NP-complete.
-% \begin{verbatim}
-% ... that the \textsc{Traveling Salesmen Problem}(TSP) is ...
-% \end{verbatim}
-% You can use abbreviations for your problem names to avoid redundancy.
-% Try to use existing abbreviations from related work if possible.
+\section{Ergebnisse dieser Arbeit}
+In der Arbeit wurden zwei Hauptmodellierungen für gradbeschränkte Triangulierungen entwickelt, ein Kantenansatz und ein Dreiecksansatz. 
+Beide Ansätze wurden sowohl als mathematische Modelle für Integer- beziehungsweise Constraint-Programming als auch als KNF-Formulierungen umgesetzt. 
+Ergänzend wurden Heuristiken wie flip-basierte Verfahren entwickelt, die durch lokale Modifikationen versuchen, eine gültige Triangulierung zu erzeugen.
+Um den Lösungsprozess direkt zu optimieren wurde eine \emph{Propagation} für einen CDCL-Solver implementiert.
 
-% Formel zwischen lagern:
-\fabian{muss/soll ich hier was angeben? Weil ich ja jetzt nicht Das Ergebnis habe.}
-TODO schreiben
+Für die Evaluation wurden verschiedene Instanzentypen generiert, darunter zufällige Punktmengen, Delaunay-basierte Instanzen und Greedy Ansätze.
+
+Für die Lösung der Modelle wurden verschiedene Solver evaluiert.
+Dabei wurde PySAT für die KNF-Formulierungen verwendet und OR-Tools sowie Gurobi für die mathematischen Modelle.
+Bei diesen zeigte sich das OrTools Knotengrößen bis zu \textbf{\textcolor{red}{170}} Knoten Lösen konnte.
+
 
 
 
