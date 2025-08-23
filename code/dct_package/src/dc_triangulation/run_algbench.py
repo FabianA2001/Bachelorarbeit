@@ -92,19 +92,22 @@ class Run_Algbench:
                         solver.NAME,
                         inst,
                         file_name,
-                        para.get("args", {}),
+                        para["args"],
                     )
                 )
 
         def func(dictionary: dict) -> bool:
-            if (
-                dictionary["parameters"]["args"]["solver_name"],
-                dictionary["parameters"]["args"]["instance_name"],
-                dictionary["parameters"]["args"]["file_name"],
-                dictionary["parameters"]["args"]["parameter"].get("args", {}),
-            ) in delete_list and dictionary["env"]["hostname"] in self.host:
-                return True
-            return False
+            try:
+                if (
+                    dictionary["parameters"]["args"]["solver_name"],
+                    dictionary["parameters"]["args"]["instance_name"],
+                    dictionary["parameters"]["args"]["file_name"],
+                    dictionary["parameters"]["args"]["parameter"]["args"],
+                ) in delete_list and dictionary["env"]["hostname"] in self.host:
+                    return True
+                return False
+            except KeyError:
+                return False
 
         bevor_delete = len(self.benchmark)
         self.benchmark.delete_if(func)
