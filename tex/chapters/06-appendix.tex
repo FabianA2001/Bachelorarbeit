@@ -1,44 +1,67 @@
 % !TeX root = ../thesis.tex
 \appendix
-% \chapter{Permuation}
-% \begin{figure}[htb]
-%     \centering
-%     \includegraphics[width=1\linewidth]{eval2/gurobi.pdf}
-%     \caption{Es ist zu sehen das gurobi bei mehreren Permuation vorallem bei den delaunay\_flips unterschiedliche Laufzeiten hat.}
-%     \label{fig:eval2:gurobi}
-% \end{figure}
-% \begin{figure}[htb]
-%     \centering
-%     \includegraphics[width=1\linewidth]{eval2/Ortools.pdf}
-%     \caption{Es ist zu sehen das OrTools bei mehreren Permuation vorallem bei den delaunay leicht unterschiedliche Laufzeiten hat.}
-%     \label{fig:eval2:ortools}
-% \end{figure}
-% \begin{figure}[htb]
-%     \centering
-%     \includegraphics[width=1\linewidth]{eval2/SAT.pdf}
-%     \caption{Es ist zu sehen das SAT bei mehreren Permuation vorallem bei den delaunay leicht unterschiedliche Laufzeiten hat.}
-%     \label{fig:eval2:sat}
-% \end{figure}
+\chapter{Permuation}
+\fabian{alle drei Bilder haben den gleichen Anfang ich weiß aber nicht wie ich das andes machen kann}
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{eval2/gurobi.pdf}
+    \caption{In diesem Diagramm wird untersucht ob Gurobi bei verschiedenen Permuation unterschiedliche Laufzeiten hat.
+    Dazu wird jede Permuation als eine Linie dargestellt.
+    Es ist zu erkennen das vorallem bei Delaunay\_Flips Linen verschiedene Laufzeiten haben, dementsprechend hat Gurobi bei verschiedenen Permuation unterschiedliche Laufzeiten. 
+    }
+    \label{fig:eval2:gurobi}
+\end{figure}
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{eval2/Ortools.pdf}
+    \caption{In diesem Diagramm wird untersucht ob OrTools bei verschiedenen Permuation unterschiedliche Laufzeiten hat.
+    Dazu wird jede Permuation als eine Linie dargestellt.
+    Es ist zu erkennen das die meisten Instanzen die gleichen Laufzeiten haben.
+    Nur bei Delaunay sind die Laufzeiten leicht unterschiedlich.
+    }
+    \label{fig:eval2:ortools}
+\end{figure}
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{eval2/SAT.pdf}
+    \caption{In diesem Diagramm wird untersucht ob PySAT bei verschiedenen Permuation unterschiedliche Laufzeiten hat.
+    Dazu wird jede Permuation als eine Linie dargestellt.
+    Bei Random und Iterativ unterscheiden sich die Laufzeiten kaum.
+    Bei den anderen drei Instanzen vorallem bei Delaunay unterscheiden sie sich aber.
+    }
+    \label{fig:eval2:sat}
+\end{figure}
 
-% \chapter{Mehrmalige Durchläufe}
-% \begin{figure}[htb]
-%     \centering
-%     \includegraphics[width=1\linewidth]{eval7/gurobi.pdf}
-%     \caption{Es ist zu sehen das Gurobi bei der gleichen Instanze und den gleichen Beschränkungen bei Mehrmaligen durchlaufen die gleichen Laufzeiten hat.}
-%     \label{fig:eval7:gurobi}
-% \end{figure}
-% \begin{figure}[htb]
-%     \centering
-%     \includegraphics[width=1\linewidth]{eval7/ortools.pdf}
-%     \caption{Es ist zu sehen das Gurobi bei der gleichen Instanze und den gleichen Beschränkungen bei allen Instanzen außer \emph{iterativ}} unterschiedliche Laufzeiten hat.
-%     \label{fig:eval7:ortools}
-% \end{figure}
-% \begin{figure}[htb]
-%     \centering
-%     \includegraphics[width=1\linewidth]{eval7/sat.pdf}
-%     \caption{Es ist zu sehen das SAT bei der gleichen Instanze und den gleichen Beschränkungen bei Mehrmaligen durchlaufen die gleichen Laufzeiten hat.}
-%     \label{fig:eval7:sat}
-% \end{figure}
+\chapter{Mehrmalige Durchläufe}
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{eval7/gurobi.pdf}
+    \caption{In diesem Diagramm wird untersucht ob Gurobi bei den gleichen Argumenten und den gleichen unveränderten Instanzen unterschiedliche Laufzeiten hat.
+    Dazu wird jede Durchgang als eine Linie dargestellt.
+    Es ist zu sehen das alle Linien fast identisch sind. 
+    Daraus lässt sich folgen das Gurobi bei gleichen Bedingungen die gleichen Ergebnise liefert.
+    }
+    \label{fig:eval7:gurobi}
+\end{figure}
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{eval7/ortools.pdf}
+    \caption{In diesem Diagramm wird untersucht ob OrTools bei den gleichen Argumenten und den gleichen unveränderten Instanzen unterschiedliche Laufzeiten hat.
+    Dazu wird jede Durchgang als eine Linie dargestellt.
+    Es fällt aud das außer bei Iterativ alle Linien unterschiedlich sind.
+    Vorallem bei Delaunay\_Flips und Greedy sind die Unterschiede groß.
+    Daraus lässt sich folgen das OrTools bei gleichen Bedingungen unterschiedliche Ergebnise liefert.}
+    \label{fig:eval7:ortools}
+\end{figure}
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{eval7/sat.pdf}
+    \caption{In diesem Diagramm wird untersucht ob PySAT bei den gleichen Argumenten und den gleichen unveränderten Instanzen unterschiedliche Laufzeiten hat.
+    Dazu wird jede Durchgang als eine Linie dargestellt.
+    Es ist zu sehen das alle Linien fast identisch sind. 
+    Daraus lässt sich folgen das PySAT bei gleichen Bedingungen die gleichen Ergebnise liefert.}
+    \label{fig:eval7:sat}
+\end{figure}
 
 \chapter{SAT Degree Auswertung}
 \fabian{Wie genau sollte ich die Bilder hier beschreiben und sollte ich so einen Anhang machen?}

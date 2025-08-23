@@ -181,28 +181,39 @@ Alle Experimente wurden in Python 3.13.5 durchgeführt.
 Der Algorithmus zum finden von Überschneidungen wurde in c++ implementiert und mit \emph{pybind11} in Python eingebunden.
 Ebenso wurde der CDCL-Ansatz in c++ implementiert.
 
+In vielen Experimenten werden sogenannte Kaktus-Diagramme verwendet.
+Bei diesen werden auf der X-Achse die Zeit angezeigt und auf der Y-Achse die Anzahl der gelösten Instanzen.
+Bei diesen Diagrammen werden alle Solver mit allen Instanzen \emph{gleichzeitig} gestartet.
+Sollte ein Solver dann eine Instanz lösen wird wird die Linie vertikal nach oben versetzt. 
+So ergibt sich eine Treppenlinie.
+Bei diesen ist es positive wenn eine Line nach oben links verläuft.
+Im folgenden werden immer Kaktus-Diagramme verwendet außer es wird explizit erwähnt, dass ein anderes Diagramm verwendet wird.
+
+
 
 
 \section{Permutation}
 \label{sec:eval2:permuation}
+\fabian{Diagramme alt anpassen}
 % (Eval2)
 In diesem Experiment wird untersucht, ob es einen Einfluss hat, in welcher Reihenfolge die Knoten den Solvern übergeben werden.
-Es wurden Instanzen mit 60 bis 90 Knoten betrachtet und auf dem Ryzen 7 getestet.
+Es wurden Instanzen mit 30 bis 50 Knoten betrachtet und auf dem Ryzen 7 getestet.
 Als Beschränkungen kamen die Überschneidungsbeschränkung und die Gradbeschränkung zum Einsatz.
-% Wie in~\cref{fig:eval2:gurobi},~\cref{fig:eval2:ortools} und~\cref{fig:eval2:sat} zu erkennen ist, unterscheiden sich die Laufzeiten bei allen Solvern.
-Bei allen Solvern war das Ergebnis das die Laufzeiten bei den verschiedenen Permutationen unterschiedlich sind.
+Wie in~\cref{fig:eval2:gurobi},~\cref{fig:eval2:ortools} und~\cref{fig:eval2:sat} zu erkennen ist, unterscheiden sich die Laufzeiten bei jedem Solver in mindestens einer Instanz.
+% Bei allen Solvern war das Ergebnis das die Laufzeiten bei den verschiedenen Permutationen unterschiedlich sind.
 Daraus folgt, dass die Permutation der Knotenmenge einen Einfluss auf die Laufzeit hat.
 In den folgenden Experimenten wird für jeden Lauf die Knotenmenge fünfmal in unterschiedlichen Permutationen übergeben und der Durchschnitt berechnet.
 
 \section{Mehrmalige Durchläufe}
 % (Eval7) 
+\fabian{Diagramme alt anpassen}
 In diesem Experiment wird untersucht, ob sich bei mehrfachen Durchläufen derselben Instanz mit demselben Solver und gleichen Parametern sich die Laufzeit verändert.
-Auch hier wurden Instanzen mit 60 bis 90 Knoten betrachtet und auf dem Ryzen 7 getestet.
+Auch hier wurden Instanzen mit 30 bis 50 Knoten betrachtet und auf dem Ryzen 7 getestet.
 Als Beschränkungen kamen die Überschneidungsbeschränkung und die Gradbeschränkung zum Einsatz.
 Gurobi und SAT hatten bei allen Instanzen die gleichen Laufzeiten.
 Bei OrTools hingegen variieren die Laufzeiten bei den meisten Durchläufen.
-% In~\cref{fig:eval7:gurobi} und~\cref{fig:eval7:sat} ist zu erkennen, dass alle Durchläufe die gleichen Laufzeiten aufweisen.
-% Nur bei OrTools ist in~\cref{fig:eval7:ortools} zu sehen, dass die Laufzeiten unterschiedlich sind.
+In~\cref{fig:eval7:gurobi} und~\cref{fig:eval7:sat} ist zu erkennen, dass bei PySAT und Gurobi alle Durchläufe die gleichen Laufzeiten aufweisen.
+Nur bei OrTools ist in~\cref{fig:eval7:ortools} zu sehen, dass die Laufzeiten unterschiedlich sind.
 Da aufgrund von~\cref{sec:eval2:permuation} bereits mehrere Durchläufe mit unterschiedlichen Permutationen durchgeführt werden, werden die OrTools-Durchläufe nicht zusätzlich mehrfach ausgeführt.
 
 \section{SAT Gradbeschränkung}
