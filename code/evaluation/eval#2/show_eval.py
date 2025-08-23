@@ -54,8 +54,6 @@ def show_sat():
                     SAT_Parameter(
                         intersection=True,
                         degree_exact=True,
-                        fix_hull=True,
-                        all_edges=True,
                     )
                 ),
             },
@@ -80,8 +78,6 @@ def show_ortools():
                     Ortools_Parameter(
                         intersection=True,
                         degree=True,
-                        fix_hull=True,
-                        all_edges=True,
                     )
                 ),
             },
@@ -106,8 +102,6 @@ def show_gurobi():
                     Gurobi_Parameter(
                         intersection=True,
                         degree=True,
-                        fix_hull=True,
-                        all_edges=True,
                     )
                 ),
             },
