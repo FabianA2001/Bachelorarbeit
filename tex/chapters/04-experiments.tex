@@ -1,20 +1,17 @@
 \chapter{Solver}
 In dieser Arbeit werden drei verschiedene Solver verwendet
 PySAT, OrTools und Gurobi.
-In diesem Kapitel wird eine Übersicht über diese gegeben und eine Implementierung der in~\cref{chap:theoretischer_hintergrund} beschriebenen Ansätze gegeben.
-
-\section{Solver übersicht}
-
-
-
-
-
+In diesem Kapitel wird eine Übersicht über diese gegeben und eine Implementierung der in~\cref{chap:theoretischer_hintergrund} beschriebenen Ansätze.
 
 \section{Generelle Implementierungen}
 Generell implementierungen welche in alle Solvern verwendet werden.
+Zum einen wird betrachtet wie der Graph verwaltet wird.
+Danach wir erklärt wie die Schnittkanten bestimmt werden.
+Im letzten Abschnitt wird eine Implementierung für das in~\cref{sec:intersection_edges} beschriebene Ausschließen von Kanten anhand von Schnittkanten gegeben.
+
 \subsubsection{Graph operationen}
 Alle Kanten werden mit der Bibliothek \emph{Networkx} verwaltet.
-Mit dieser können auch die ausgehenden Kanten eines Knotens abgefragt werden.
+Mit dieser können auch die inzidente Kanten eines Knotens abgefragt werden.
 Beim Erstellen der Kanten muss getestet werden, ob die Kanten keinen Knoten schneiden.
 Dies wird mit der Bibliothek \emph{Shapely} getestet.
 Bei er Berechnung der Hülle muss beachtet werden, dass alle Knoten, welche auf der Hülle liegen betrachtet werden.
@@ -44,7 +41,7 @@ Am Ende werden alle Knoten durchgegangen, sollte ein Knoten \(v\) folgende Forme
 \degree(v) - \text{node\_count}[v] > \degrees(v)
 \]
 
-\subsection{PySAT}
+\section{PySAT}
 PySAT ist eine Python-Bibliothek, die eine Sammlung von SAT-Solvern bereitstellt.
 Diese SAT-Solver entscheiden, ob eine KNF-Formel erfüllbar ist.
 Dementsprechend kann PySAT nur Entscheidungsprobleme, aber keine Optimierungsprobleme lösen.
@@ -57,7 +54,7 @@ PySAT ist open source und kostenlos.
 Für PySAT wird die KNF-Formulierung verwendete.
 Es wurde alle Bedingungen aus~\cref{sec:kanten_formulierung:knf} und~\cref{sec:dreiecks_formulierung:knf} umgesetzt.
 
-\subsection{OrTools}
+\section{OrTools}
 Der zweite Solver ist OrTools (Google Optimization Tools) von Google.
 Dieser unterstützt verschiedene Modellierungsarten wie lineare Programmierung (LP), gemischt-ganzzahlige Programmierung (MIP), Constraint Programming (CP) und Routing-Algorithmen.
 Auch hier sind die Solver in C++ implementiert und es wird eine Python-Schnittstelle bereitgestellt.
@@ -111,7 +108,7 @@ Alle angepassten Formeln zusammengefasst bekommen wir folgendes:
 \end{align*}
 Als Zielfunktion wird dann \(Q_T\) maximiert.
 
-\subsection{Gurobi}
+\section{Gurobi}
 Der letze Solver ist Gurobi.
 Es werden ebenfalls Modellierungen wie LP, MIP und quadratische Programmierung (QP) unterstützt.
 Gurobi ist in c implementiert und bietet eine Python-Schnittstelle an.
@@ -121,8 +118,40 @@ Für Gurobi kann die Mathematische Formulierung genutzt werden.
 Umgesetzt wurde zum einem der Kantenansatz aus \cref{sec:kanten_formulierung:mathematisch} und der Dreiecksansatz aus \cref{sec:dreiecks_formulierung:mathematisch} implementiert.
 Gurobi biet durch die \emph{addConstr} Funktion direkt die Möglichkeit alle Formeln hinzuzufügen.
 
+\section{Simplified CDCL Solve}
+\label{sec:cdcl}
+Der CDCL Solver namens \emph{Simplified CDCL Solve (CaDiCaL)}~\cite{cadical} von Armin Biere ermöglicht es, eigene Funktionen in den Lösungsprozess einzubinden.
+Diese Funktion erlaubt es Literale mit Begründung zu setzen.
+Im Folgenden wird diese Funktion \emph{Propagation} genannt.
+Die Idee bei dieser \emph{Propagation} ist es, die Bedingungen aus~\cref{sec:exclude_edges} auf Teilinstanzen anzuwenden.
+
+Es wird angenommen, dass die Hülle fixiert wurde und alle Kanten, die die gesamte Instanz halbieren, bereits getestet wurden.
+Der Grund hierfür ist, dass die Hülle eine geeignete Fläche bietet, mit der alle Punkte betrachtet werden können.
+% Alle möglichen Kanten werden vor der \emph{Propagation} ausgeschlossen, damit sie durch Konflikte und Backtracking nicht mehrfach ausgeschlossen werden können.
+
+Zur Umsetzung wird mithilfe eines Arrangements verfolgt, welche Kanten aktuell aktiv sind.
+Es ist darauf zu achten, dass bei jeder neuen Entscheidungsebene das Arrangement gespeichert und eindeutig einer Ebene zugeordnet wird.
+Tritt ein Konflikt auf, wird das Arrangement auf die entsprechende Entscheidungsebene zurückgesetzt.
+
+Wird die \emph{Propagation} aufgerufen, können alle Flächen des Arrangements betrachtet werden.
+Relevant sind dabei nur Flächen, die mehr als drei Kanten besitzen.
+Zusätzlich kann die unbegrenzte Fläche ausgeschlossen werden, da alle Punkte durch die Hülle eingeschlossen sind.
+Für diese Flächen können dann alle teilenden Kanten erzeugt werden, indem sämtliche Zweierkombinationen der Randknoten betrachtet werden.
+Dadurch wird die Fläche in zwei Hälften geteilt und die Kante kann getestet werden.
+
+Vor dem Testen können alle Kanten übersprungen werden, die bereits festgelegt wurden oder keine gültigen Kanten sind.
+Für die Punktzuordnung kann zu Beginn jeder \emph{Propagation} jeder Punkt einer Fläche zugeordnet werden.
+Sollte dann eine Kante getestet werden, können alle Punkte der zugehörigen Fläche betrachtet und ähnlich wie in~\cref{sec:intersection_edges} mithilfe von \emph{Rechtsknicks} und \emph{Linksknicks} einer Teilhälfte zugeordnet werden.
+So können alle Kanten der Hülle der Teilhälfte betrachten werden und der Punkt der Hälfte zugewiesen werden bei der nur \emph{Rechtsknicks} oder nur \emph{Linksknicks} auftauchen.
+
+Führt das Testen einer Kante zu einem Konflikt, kann das zugehörige Literal \(l\) auf \emph{falsch} gesetzt werden. Als Begründung kann folgende Klausel verwendet werden
+\[
+(\overline{l} \lor \bigvee_{e \in E_A}\overline{x_e})
+\]
+wobei \(E_A\) die Menge der aktiven Kanten bezeichnet.
+
 \chapter{Auswertung}
-\fabian{wenn Beste solver un dja/nein getrennt wirklich getauscht werden, hier anpassen}
+\fabian{anpassen}
 In diesem Kapitel werden die Ansätze aus~\cref{chap:theoretischer_hintergrund} ausgewertet.
 Die ersten beiden Experimente testen, ob die Solver bei gleichen Bedingungen die gleichen Ergebnisse liefern.
 Die beiden Experimente danach werden genutzt, um den besten SAT-Solver für die gradbeschränkte Triangulierung aus~\cref{sec:pysat} zu finden.
@@ -134,20 +163,6 @@ Zum Abschluss wird in drei verschiedenen Experimenten versucht, die Schwierigkei
 
 
 \section{Versuchsumgebung}
-\phillip{ Ist sowas wie Pandas relevant? Das wird doch nur in der Auswertung gebraucht...,}
-\fabian{ Dann ist Slurminade und Algbench doch genauso unrelevant oder?, oder das die Plots mit plt und Seaborn erstellt wurden?}
-% \begin{itemize}
-%     \item Implementation details (e.g., libraries, third-party programs, \dots)
-%     \item In which environment are you testing (e.g., system specifications)
-%     \item What are you testing? (e.g., runtime, space needed, fps, \dots)
-%     \item What are the results? Show fancy figures!
-%     \item What does the results mean? (e.g., give a little discussion on your results)
-% \end{itemize}
-\begin{itemize}
-    \item Algbench und Slurminade, Pandas
-    \item plt und Seaborn
-\end{itemize}
-
 In diesem Abschnitt werden die Bedingungen für die Experimente beschrieben.
 Alle Experimente welche eine Laufzeit beinhalten wurden entweder auf \emph{AMD Ryzen 7 5800X @ 8x 3.8GHz-4.7GHz} mit \emph{128GB} Arbeitsspeicher oder auf \emph{AMD Ryzen 9 7900 @ 12x 3.7GHz-5.4GHz} mit \emph{96GB} Arbeitsspeicher durchgeführt.
 Im folgenden werden in den Experiment die \emph{Ryzen} zwischen 7 und 9 unterschieden.
@@ -409,13 +424,12 @@ Bei den Zielfunktionen selbst zeigt sich, dass bei Ja-Instanzen der Min-Max-Ansa
 Bei Nein-Instanzen erzielt der Durchschnittsansatz die besseren Ergebnisse.
 
 \section{\emph{Propagation} CDCL}
-\fabian{sollte ich dashier noch teilweise in Kapitel drei verschieben?}
-Der CDCL Solver namens \emph{CaDiCaL}~\cite{cadical} von Armin Biere ermöglicht es, eigene Funktionen in den Lösungsprozess einzubinden.
-Diese Funktion erlaubt es Literale mit Begründung zu setzen.
-Im Folgenden wird diese Funktion \emph{Propagation} genannt.
-Die Idee bei dieser \emph{Propagation} ist es, die Bedingungen aus~\cref{sec:exclude_edges} auf Teilinstanzen anzuwenden.
+In diesem Experiemnt wird der CDCL Ansatz genauer betrachtet.
+Dafür wird zum einem die Belegungen der Literale bei den \emph{Propagation} Aufrufen visualisiert.
+Zum anderen werden die Ansätze aus~\cref{sec:cdcl} genauer betrachtet.
 
 \subsection{Visualisierung}
+\label{sec:eval14:visualisierung}
 Der erste Schritt war es, die Teilinstanzen, mit denen die \emph{Propagation} aufgerufen wird, zu visualisieren.
 \begin{figure}[htb]
     \centering
@@ -423,46 +437,14 @@ Der erste Schritt war es, die Teilinstanzen, mit denen die \emph{Propagation} au
     \caption[Eine Teilinstanze in einem CDCL Solver]{Eine Teilinstanz bei einem \emph{Propagation} Aufruf. Blaue Kanten wurden auf False gesetzt grüne Kanten auf True. Die Zahlen in den Knoten geben den Sollgrad an. Sollte ein Knoten grün sein hat er seinene Sollgrad erreicht, bei rot nicht. Es ist zu erkennen das sich ein Konstrukt von oben Links noch unten vorarbeitet. Hier ist schon ein Teil fertig Trianguliert und viele Kanten wurden ausgeschlossen.} 
     \label{fig:cdcl:propagation}
 \end{figure}
-
 In~\cref{fig:cdcl:propagation} ist eine beispielhafte Teilinstanz dargestellt.
 Bei der Visualisierung wurde festgestellt, dass es häufig zwei Arten von Teilinstanzen gibt.
 Die erste Variante bildet ein Konstrukt, das eine Verbindung zum Rand besitzt.
 In diesem Konstrukt ist meist eine gültige gradbeschränkte Triangulierung vorhanden.
 Die zweite Variante besteht aus einzelnen Kanten, die isoliert in einer Fläche liegen.
 
-\subsection{Implementierung}
 
-Die Idee der \emph{Propagation} besteht darin, die in~\cref{sec:exclude_edges} beschriebenen Bedingungen zum Halbieren der Instanz anzuwenden.
-Die \emph{Propagation} ist dabei insbesondere für die erste Variante der Teilinstanzen optimiert.
-Der Vorteil dieser Teilinstanzen ist, dass die gesamte Instanz bereits teilweise halbiert ist.
-Daher können gezielt Kanten getestet werden, die diese Halbierung vervollständigen.
-
-Es wird angenommen, dass die Hülle fixiert wurde und alle Kanten, die die gesamte Instanz halbieren, bereits getestet wurden.
-Der Grund hierfür ist, dass die Hülle eine geeignete Fläche bietet, mit der alle Punkte betrachtet werden können.
-% Alle möglichen Kanten werden vor der \emph{Propagation} ausgeschlossen, damit sie durch Konflikte und Backtracking nicht mehrfach ausgeschlossen werden können.
-
-Zur Umsetzung wird mithilfe eines Arrangements verfolgt, welche Kanten aktuell aktiv sind.
-Es ist darauf zu achten, dass bei jeder neuen Entscheidungsebene das Arrangement gespeichert und eindeutig einer Ebene zugeordnet wird.
-Tritt ein Konflikt auf, wird das Arrangement auf die entsprechende Entscheidungsebene zurückgesetzt.
-
-Wird die \emph{Propagation} aufgerufen, können alle Flächen des Arrangements betrachtet werden.
-Relevant sind dabei nur Flächen, die mehr als drei Kanten besitzen.
-Zusätzlich kann die unbegrenzte Fläche ausgeschlossen werden, da alle Punkte durch die Hülle eingeschlossen sind.
-Für diese Flächen können dann alle teilenden Kanten erzeugt werden, indem sämtliche Zweierkombinationen der Randknoten betrachtet werden.
-Dadurch wird die Fläche in zwei Hälften geteilt und die Kante kann getestet werden.
-
-Vor dem Testen können alle Kanten übersprungen werden, die bereits festgelegt wurden oder keine gültigen Kanten sind.
-Für die Punktzuordnung kann zu Beginn jeder \emph{Propagation} jeder Punkt einer Fläche zugeordnet werden.
-Sollte dann eine Kante getestet werden, können alle Punkte der zugehörigen Fläche betrachtet und ähnlich wie in~\cref{sec:intersection_edges} mithilfe von \emph{Rechtsknicks} und \emph{Linksknicks} einer Teilhälfte zugeordnet werden.
-So können alle Kanten der Hülle der Teilhälfte betrachten werden und der Punkt der Hälfte zugewiesen werden bei der nur \emph{Rechtsknicks} oder nur \emph{Linksknicks} auftauchen.
-
-Führt das Testen einer Kante zu einem Konflikt, kann das zugehörige Literal \(l\) auf \emph{falsch} gesetzt werden. Als Begründung kann folgende Klausel verwendet werden
-\[
-(\overline{l} \lor \bigvee_{e \in E_A}\overline{x_e})
-\]
-wobei \(E_A\) die Menge der aktiven Kanten bezeichnet.
-
-\subsection{Experiment}
+\subsection{Relative Anzahl Erfolgreicher \emph{Propagation}}
 In diesem Experiment wird betrachtet wie viele Erfolgreiche \emph{Propagation} also jene, welche eine Kante ausschließen können, in einer Instanz möglich sind.
 Dafür werden alle Erfolgreichen Aufrufe gezählt und diese Zahl durch die Anzahl der \emph{Propagation} Aufrufe geteilt.
 Dabei wird in diesem Experiment nicht die Laufzeit gemässen da durch die vielen Kanten welche Getestet werden die Laufzeit stark beeinflusst wird.

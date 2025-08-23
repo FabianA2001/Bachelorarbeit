@@ -1,24 +1,32 @@
 
 
 
-\chapter{Theoretischer Hintergrund}
+\chapter{Lösungsansätze}
 \label{chap:theoretischer_hintergrund}
 In diesem Kapitel werden die verschiedenen Ansätze erklärt mit denen das Problem gelöst werden kann.
-Im ersten Abschnitt werden die Externen Solver kurz erklärt die in dieser Arbeit genutzt werden.
-In den beiden darauf folgenden Abschnitten werden zwei Mögliche Ansätze beschrieben die das Problem als Entscheidungsproblem betrachten.
-Im vierten Abschnitt wird der Problem als Optimirungsproblem betrachtet.
-Danach wird erklärt wie die Instanzen Generiert werden.
-Im letzten Abschnitt wird die Eindeutigkeit der Lösungen betrachtet.
+Im ersten Abschnitt wird das Problem als Optimierungsproblem betrachtet.	
+Also nur entschieden ob es eine Ja-Instanz oder eine Nein-Instanz ist.
+Danach wird das Problem als Optimierungsproblem betrachtet.
+Das bedeutet unabhängig von der Instanz wird probiert eine möglichst gute Lösung zu finden.
+Im letzten Abschnitt wird Probiert das Problem während dem Lösungsprozess zu optimieren.
 
 \section{Entscheidungsproblem}
-\begin{itemize}
-	\item Ja oder nein
-	\item Sollgrad gesamt aus Kantenansatz auslagern
-\end{itemize}
-TODO
+In diesem Abschnitt wird das DCT als Entscheidungsproblem betrachtet.
+Das bedeutet dem Solver wird eine Instanz übergeben und dieser soll entscheiden, ob eine Lösung existiert oder nicht.
 
-\section{Kantenansatz}
-Bei der ersten Formulierung werden Kanten betrachtet. 
+Für alle Ansätze die das DCT als Entscheidungsproblem betrachten kann als erstes überprüft werden ob die Summe der Sollgrade zur Anzahl der benötigten Kanten passt.
+Mit hilfe der Gleichung \[
+\left| E \right| = 3 n - 3 - k
+\]
+kann die Anzahl der benötigten Kanten in einer Triangulierung berechnet werden.
+Diese Anzahl kann dann in der Gleichung \[
+\left| E \right| \cdot 2 \overset{!}{=} \sum \degrees(i)
+\] genutzt werden um zu überprüft ob die Sollgrade eine Ja-Instanz ermöglichen.
+
+Im folgenden werden zwei verschiedene Ansätze beschreiben zum einen ein Katnenbasier Ansatz und zum anderen ein Dreiecksbasierter Ansatz.
+
+\subsection{Kantenansatz}
+Bei diesem Ansatz werden Kanten betrachtet. 
 Das bedeutet das Ziel der gradbeschränkte Triangulierung wird erreicht indem bestimmte Bedingungen an die Kanten gestellt werden.
 Dafür werden zuerst zwei notwendige Bedingung erklärt und dann weitere optinonale die die Lautzeit berbessern könnten.
 % \michael{Beschränkungen ist ein eher unübliches Wort. Üblicher wäre Bedingung oder Neben/Randbedingung.}
@@ -125,7 +133,7 @@ Weiter unten im Bild ist zu sehen das alle möglichen Triangulierung mindestens 
 Zu beachten ist allerdings das die Anzahl der Schnittkanten nicht gleich eins gesetzt werden darf sondern nur auf mindestens eine.
 Wie man in~\cref{fig:allEdges} sieht können die Kanten \(e_2\) und \(e_3\) gleichzeitig aktiv sein.
 
-\subsection{Formulierungen}
+\subsubsection{Formulierungen}
 Für diese Formulierung wird angenommen das \(V\) die Menge aller Knoten und \(E\) die Menge aller möglicher Kanten also Kanten die keine Punkte schneiden sei.
 Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
 Diese Variable ist wahr wenn die Kante \(e\) in der Triangulierung enthalten ist.
@@ -246,7 +254,7 @@ x_e \lor \bigvee_{e_j \in I(e)} x_{e_j} \myhspace \forall e \in E
 
 
 
-\section{Dreiecksansatz}
+\subsection{Dreiecksansatz}
 Bei dem Dreiecksansatz wird nicht jeder Kante eine Variable zugeordnet. 
 Stattdessen erhält jedes mögliche Dreieck eine eigene Variable.
 
@@ -267,7 +275,7 @@ Auch hier können Dreiecke ausgeschlossen werden.
 Dafür können die gleichen Bedingungen wie beim Ausschluss von Kanten verwendet werden.
 Es werden dann alle Dreiecke ausgeschlossen, die eine ausgeschlossene Kante enthalten.
 
-\subsection{Solver Formulierungen}
+\subsubsection{Formulierungen}
 Für diese Formulierung wird ebenfalls angenommen das \(V\) die Menge aller Knoten und \(E\) die Menge aller möglicher Kanten also Kanten die keine Punkte schneiden sei.
 Zusätzlich wird \(T\) die Menge aller möglichen Dreiecke sein.
 Also nur leere Dreiecke da nur diese in einer Triangulierung vorkommen können.
@@ -354,13 +362,13 @@ In der Brechnung~\eqref{eq:difference} wird die Difference zwischen dem gewünsc
 In~\eqref{eq:evaluation} wird diese Abweichung Prozentual bewertet.
 Am Ende wird in~\eqref{eq:total_evaluation} ein Durchschnitt über alle Prozentualen Werte gebildet.
 
-\subsection{Ansätze}
+\subsubsection{Ansätze}
 Es werden drei Ansätze vorgestellt.
 Der erste ist ein naiver Ansatz der versucht mit Flips die Gradbeschränkung zu erreichen.
 Die anderen beiden Ansätze verwenden einen Mathematischen Ansatz.
 Einen KNF Ansatz ist nicht möglich da KNF Formel nur für Entscheidungsprobleme geeignet sind.
 
-\subsection{Flips}
+\subsubsection{Flips}
 \label{sec:flips}
 In dieser Heuristik werden die in~\cref{def:flip} definierten Kantenflips verwendet. 
 Ziel ist es, die Gradbeschränkung zu erreichen. 
@@ -408,7 +416,7 @@ Nach jedem Flip wird überprüft, ob die Gradbeschränkung für alle Knoten erf�
 	\end{algorithmic}
 \end{algorithm}
 
-\subsection{Mathematische Ansatz}
+\subsubsection{Mathematische Ansatz}
 \label{sec:OrTools_mit_Durchschnitts_Abweichung}
 Für beide Ansätze können die Bedingung aus~\cref{sec:kanten_formulierung:mathematisch} übernommen werden.
 Nur die Gradbeschränkung wird durch eine Zielfunktion ersetzt.
@@ -442,8 +450,9 @@ Die Variable \(max\_min\) wird als Zielfunktion minimiert.
 
 \section{\emph{Conflict-driven clause learning}}
 \label{sec:cdcl}
-In diesem Kapitel werden Sat-Solver nochmal genauer betrachtet.
-Dabei werden nicht weitere Beschränkungen hinzugefügt sondern der Solver wird während des Lösens beeinflusst.
+In diesem Kapitel werden Sat-Solver genauer betrachtet.
+Diese SAT-Solver werden genutzt um KNF Formulierungen zu lösen.
+In diesem Abschnitt wird nicht probiert weitere Klauseln zu finden sondern der Solver wird während des Lösens beeinflusst.
 Dafür wird \emph{Conflict-driven clause learning} (CDCL) betrachtet.
 Die in diesem Kapitel vorgestellen Informationen stammen aus dem Buch \emph{The Art of Computer Programming, Volume 4, Fascicle 6: Satisfiability}~\cite{The_Art_of_Computer_Programming_Volume_4_Fascicle_6_Satisfiability}
 Im Allgemeinen funktionieren SAT-Solver so, dass sie jede Möglichkeit ausprobieren.
