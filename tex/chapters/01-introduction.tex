@@ -41,12 +41,12 @@ Bei der unteren Instanz, einer Nein-Instanz, ist mit den gegebenen Sollgraden ke
 Eine Praktische Anwendung dieses Problems könnte zum Beispiel in der Computergrafik genauer in der Erzeugung von Netzen für die Modellierung von Oberflächen genutzt werden.
 
 Durch den Sollgrad lässt sich die Dichte oder der Platzverbrauch in bestimmten Bereichen gezielt steuern.
-Analog kann in der Nachrichtentechnik eine gradbeschränkte Triangulierung verwendet werden, um die Verbindungsdichte zwischen Knoten in einem Sensornetzwerk zu regulieren.
-Auch beim Transport von Gütern kann die gradbeschränkte Triangulierung genutzt werden.
+Analog kann in der Nachrichtentechnik ein DCT verwendet werden, um die Verbindungsdichte zwischen Knoten in einem Sensornetzwerk zu regulieren.
+Auch beim Transport von Gütern kann DCT genutzt werden.
 Der Sollgrad gibt dann an, wie viele Güter an jedem Ort vorhanden sind und weiterbewegt werden sollen.
 
 \section{Ergebnisse dieser Arbeit}
-In der Arbeit wurden zwei Hauptmodellierungen für gradbeschränkte Triangulierungen entwickelt, ein Kantenansatz und ein Dreiecksansatz. 
+In der Arbeit wurden zwei Hauptmodellierungen für DCT entwickelt, ein Kantenansatz und ein Dreiecksansatz. 
 Beide Ansätze wurden sowohl als mathematische Modelle für Integer- beziehungsweise Constraint-Programming als auch als KNF-Formulierungen umgesetzt. 
 Ergänzend wurden Heuristiken wie flip-basierte Verfahren entwickelt, die durch lokale Modifikationen versuchen, eine gültige Triangulierung zu erzeugen.
 Um den Lösungsprozess direkt zu optimieren wurde eine \emph{Propagation} für einen CDCL-Solver implementiert.
@@ -118,7 +118,7 @@ Hurtado et al.~\cite{Flipping_edges_in_triangulations} zeigten, dass jede Triang
 \[\frac{n-4}{2}\]
 flipbare Kanten besitzt, wobei \( n \) die Anzahl der Knoten bezeichnet.
 Laut der wissenschaftliche Arbeit \emph{Flips in planar graphs}~\cite{Flips_in_planar_graphs} lässt sich jede mögliche Triangulierung in jede beliebige andere Triangulierung überführen, indem die notwendigen Flips durchgeführt werden.
-Daraus folgt, dass, wenn eine gradbeschränkte Triangulierung möglich ist, diese durch Flips konstruiert werden kann.
+Daraus folgt, dass, wenn DCT möglich ist, diese durch Flips konstruiert werden kann.
 Dieser Ansatz wird in~\cref{sec:flips} nochmal näher betrachtet.
 In Triangulierungen gibt es nur eine Art von Flips, die sogenannten diagonalen Flips.
 Bei diesen wird ein konvexes Viereck betrachtet und die Diagonale durch die andere Diagonale ersetzt.
