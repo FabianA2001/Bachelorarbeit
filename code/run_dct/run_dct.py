@@ -499,9 +499,9 @@ def draw_example():
 
 
 if __name__ == "__main__":
-    run_algo()
+    # run_algo()
     # show_all_instanzes()
-    # create_instance()
+    create_instance()
     # permute_instance()
     # generate_example()
     # draw_example()
