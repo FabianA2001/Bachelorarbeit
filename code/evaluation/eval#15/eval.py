@@ -172,7 +172,7 @@ def lokal_show():
 
 
 if __name__ == "__main__":
-    if False:
+    if True:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
@@ -186,7 +186,7 @@ if __name__ == "__main__":
             for key in run_list:
                 run_solver_on_inst.distribute(key)
 
-        slurminade.join()
-        compress_results.distribute()
+        # slurminade.join()
+        # compress_results.distribute()
     else:
         lokal_show()
