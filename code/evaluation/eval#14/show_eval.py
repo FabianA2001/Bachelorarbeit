@@ -14,7 +14,7 @@ ACHSEN_FONT_SIZE = 20
 LEGENDE_FONT_SIZE = 30
 
 TIMEOUT = 300
-path = os.path.join(os.path.dirname(__file__), "instances")
+path = os.path.join(os.path.dirname(__file__), "instances_show")
 lokal_benchmark = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
