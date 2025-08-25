@@ -125,9 +125,9 @@ def show_sat():
 
     arg_names = {
         "SAT": [
+            "alternative Kanten",
             "normal",
             "Hülle fixieren",
-            "alternative Kanten",
             "Kanten ausschließen",
             "Kanten fixieren",
         ]
@@ -139,7 +139,7 @@ def show_sat():
         figure_path=figure_path,
         host=HOST,
         name="sat",
-        # arg_names=arg_names,
+        arg_names=arg_names,
         show_solver_in_legend=False,
     )
     ri.show(block=False)
@@ -180,11 +180,11 @@ def show_gurobi():
     }
     arg_names = {
         "gurobi": [
+            "Kanten fixieren",
             "normal",
             "Hülle fixieren",
             "alternative Kanten",
             "Kanten ausschließen",
-            "Kanten fixieren",
         ]
     }
     ri = Run_Algbench(
@@ -194,7 +194,7 @@ def show_gurobi():
         host=HOST,
         name="gurobi",
         show_solver_in_legend=False,
-        # arg_names=arg_names,
+        arg_names=arg_names,
     )
     ri.show(block=False)
 
@@ -254,7 +254,7 @@ def show_ortools():
         host=HOST,
         name="ortools",
         show_solver_in_legend=False,
-        # arg_names=arg_names,
+        arg_names=arg_names,
     )
     ri.show(block=False)
 
@@ -266,7 +266,7 @@ def gesamt():
                 "timeout": TIMEOUT,
                 "args": asdict(
                     SAT_Parameter(
-                        intersection=True, degree_atleast=True, all_edges=True
+                        intersection=True, degree_atleast=True, fix_edges=True
                     )
                 ),
             }
@@ -275,7 +275,7 @@ def gesamt():
             {
                 "timeout": TIMEOUT,
                 "args": asdict(
-                    Gurobi_Parameter(intersection=True, degree=True, exclude_edges=True)
+                    Gurobi_Parameter(intersection=True, degree=True, fix_edges=True)
                 ),
             },
         ],
@@ -283,7 +283,7 @@ def gesamt():
             {
                 "timeout": TIMEOUT,
                 "args": asdict(
-                    Ortools_Parameter(intersection=True, degree=True, all_edges=True)
+                    Ortools_Parameter(intersection=True, degree=True, fix_edges=True)
                 ),
             }
         ],
