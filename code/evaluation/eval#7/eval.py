@@ -15,6 +15,7 @@ from dc_triangulation import (
 
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
+benchmark_path = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
 NUMBER_SOLVER_RUNS = 5
 
 outer_parameter = defaultdict(list)
@@ -33,6 +34,7 @@ RI = Run_Algbench(
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
     host=["algry01", "algry02", "algry03", "algry04"],
+    path_benchmark=benchmark_path,
 )
 
 

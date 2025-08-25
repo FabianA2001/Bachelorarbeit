@@ -18,6 +18,7 @@ from dc_triangulation import (
 
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
+benchmark_path = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
 outer_parameter = {
@@ -61,6 +62,7 @@ RI = Run_Algbench(
     figure_path=os.path.dirname(__file__),
     host=["algry01", "algry02", "algry03", "algry04"],
     name="permutation",
+    path_benchmark=benchmark_path,
 )
 
 
