@@ -199,8 +199,8 @@ if __name__ == "__main__":
             for key in run_list:
                 run_solver_on_inst.distribute(key)
 
-        # slurminade.join()
-        # compress_results.distribute()
+        slurminade.join()
+        compress_results.distribute()
     else:
         RI.delete_runlist()
         # RI.show()
