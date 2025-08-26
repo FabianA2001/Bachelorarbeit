@@ -4,18 +4,12 @@ from dataclasses import asdict
 import slurminade
 from dc_triangulation import (
     SAT,
-    SAT_TRI,
     Gurobi,
     Gurobi_Parameter,
-    Gurobi_Tri,
-    Gurobi_Tri_Parameter,
     Ortools,
     Ortools_Parameter,
-    OrTools_Tri,
-    Ortools_Tri_Parameter,
     Run_Algbench,
     SAT_Parameter,
-    SAT_Tri_Parameter,
 )
 
 TIMEOUT = 300
@@ -54,10 +48,21 @@ outer_parameter = {
         #         )
         #     ),
         # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         SAT_Parameter(intersection=True, degree_atleast=True, fix_edges=True)
+        #     ),
+        # },
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                SAT_Parameter(intersection=True, degree_atleast=True, fix_edges=True)
+                SAT_Parameter(
+                    intersection=True,
+                    degree_atleast=True,
+                    fix_edges=True,
+                    fix_hull=True,
+                )
             ),
         },
     ],
@@ -88,10 +93,22 @@ outer_parameter = {
         #         )
         #     ),
         # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         Ortools_Parameter(intersection=True, degree=True, fix_edges=True)
+        #     ),
+        # },
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                Ortools_Parameter(intersection=True, degree=True, fix_edges=True)
+                Ortools_Parameter(
+                    intersection=True,
+                    degree=True,
+                    fix_edges=True,
+                    fix_hull=True,
+                    all_edges=True,
+                )
             ),
         },
     ],
@@ -118,39 +135,51 @@ outer_parameter = {
         #         Gurobi_Parameter(intersection=True, degree=True, exclude_edges=True)
         #     ),
         # },
+        # {
+        #     "timeout": TIMEOUT,
+        #     "args": asdict(
+        #         Gurobi_Parameter(intersection=True, degree=True, fix_edges=True)
+        #     ),
+        # },
         {
             "timeout": TIMEOUT,
             "args": asdict(
-                Gurobi_Parameter(intersection=True, degree=True, fix_edges=True)
-            ),
-        },
-    ],
-    Gurobi_Tri: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Gurobi_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
-            ),
-        },
-    ],
-    OrTools_Tri: [
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(Ortools_Tri_Parameter(intersection=True, degree=True)),
-        },
-        {
-            "timeout": TIMEOUT,
-            "args": asdict(
-                Ortools_Tri_Parameter(
-                    intersection=True, degree=True, exclude_edges=True
+                Gurobi_Parameter(
+                    intersection=True,
+                    degree=True,
+                    fix_edges=True,
+                    all_edges=True,
+                    fix_hull=True,
                 )
             ),
         },
     ],
+    # Gurobi_Tri: [
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Gurobi_Tri_Parameter(intersection=True, degree=True, exclude_edges=True)
+    #         ),
+    #     },
+    # ],
+    # OrTools_Tri: [
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(Ortools_Tri_Parameter(intersection=True, degree=True)),
+    #     },
+    #     {
+    #         "timeout": TIMEOUT,
+    #         "args": asdict(
+    #             Ortools_Tri_Parameter(
+    #                 intersection=True, degree=True, exclude_edges=True
+    #             )
+    #         ),
+    #     },
+    # ],
     # SAT_TRI: [
     #     {
     #         "timeout": TIMEOUT,

@@ -489,6 +489,10 @@ class Run_Algbench:
                 if len(instance_solver_data) == 0:
                     continue
 
+                logging.info(
+                    f"{instance} - {solver}: {len(instance_solver_data)} valid data points"
+                )
+
                 # Sortieren für Cactus Plot (wichtig!)
                 times_sorted = np.sort(instance_solver_data)
                 y_values = np.arange(1, len(times_sorted) + 1)
