@@ -28,7 +28,11 @@ outer_parameter = {
             "timeout": TIMEOUT,
             "args": asdict(
                 Ortools_Parameter(
-                    intersection=True, degree=True, fix_hull=True, all_edges=True
+                    intersection=True,
+                    degree=True,
+                    fix_hull=True,
+                    all_edges=True,
+                    fix_edges=True,
                 )
             ),
         },
@@ -461,7 +465,7 @@ def lokal_show_ja_nein():
 
 
 if __name__ == "__main__":
-    if False:
+    if True:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
