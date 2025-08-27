@@ -223,10 +223,10 @@ if __name__ == "__main__":
             mail_type="FAIL",  # Send mail on failure
             mail_user="f.alich@tu-braunschweig.de",  # Mail to this address
         )
-        run_list = RI.get_run_list()
-        with slurminade.JobBundling(max_size=7):
-            for key in run_list:
-                run_solver_on_inst.distribute(key)
+        # run_list = RI.get_run_list()
+        # with slurminade.JobBundling(max_size=7):
+        #     for key in run_list:
+        #         run_solver_on_inst.distribute(key)
 
         slurminade.join()
         compress_results.distribute()
