@@ -160,7 +160,7 @@ def create_edge_length_distribution_plots(instance_data, max_x: int, max_y: int)
         sns.histplot(
             edge_lengths,
             bins=bins,
-            kde=True,
+            # kde=True,
             alpha=0.6,
             ax=ax,
             stat="percent",

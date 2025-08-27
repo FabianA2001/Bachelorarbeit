@@ -18,7 +18,7 @@ from dc_triangulation import (
 )
 
 TIMEOUT = 300
-path = os.path.join(os.path.dirname(__file__), "instances_copy")
+path = os.path.join(os.path.dirname(__file__), "instances")
 figure_path = os.path.join(os.path.dirname(__file__), "figures")
 HOST = ["algry01", "algry02", "algry03", "algry04"]
 
@@ -69,12 +69,19 @@ def show_tri():
         ],
     }
 
+    arg_names = {
+        "gurobi_tri": ["normal", "Kanten ausschließen"],
+        "OrTools_tri": ["normal", "Kanten ausschließen"],
+        "SAT_TRI": ["normal", "Kanten ausschließen"],
+    }
+
     ri = Run_Algbench(
         inst_path=path,
         outer_parameter=outer_parameter,
         figure_path=figure_path,
         host=HOST,
         name="tri",
+        arg_names=arg_names,
     )
     ri.show(block=False)
 
@@ -318,8 +325,8 @@ def gesamt():
 
 
 if __name__ == "__main__":
-    show_sat()
-    show_gurobi()
-    show_ortools()
-    gesamt()
+    # show_sat()
+    # show_gurobi()
+    # show_ortools()
+    # gesamt()
     show_tri()

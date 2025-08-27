@@ -63,7 +63,7 @@ def draw(table):
                 "All counter must be greater than or equal to find counter"
             )
             # counter = all_counter / find_counter
-            counter = find_counter / all_counter
+            counter = (find_counter / all_counter) * 100
             file = row["file"]
 
             # Extrahiere die erste Zahl am Anfang des Dateinamens
@@ -88,9 +88,15 @@ def draw(table):
             # Erstelle Display Label: "Knoten_Operation" (ohne erste Zahl, für Anzeige)
             display_label = f"{node_number}{operation_type}"
 
+            instance_label = ""
+            if instance_name == "d_flips":
+                instance_label = "Delunay-Flips"
+            else:
+                instance_label = instance_name.capitalize()
+
             plot_data.append(
                 {
-                    "instance": instance_name,
+                    "instance": instance_label,
                     "file": file,
                     "first_number": first_number,
                     "node_number": node_number,
@@ -132,7 +138,7 @@ def draw(table):
     #     fontweight="bold",
     # )
     plt.xlabel("Knoten Anzahl", fontsize=LABEL_FONT_SIZE)
-    plt.ylabel("Wert (%)", fontsize=LABEL_FONT_SIZE)
+    plt.ylabel("Erfolgsrate (%)", fontsize=LABEL_FONT_SIZE)
 
     # Natürliche Sortierung für Strings mit Zahlen
     def natural_sort_key(text):
@@ -149,10 +155,10 @@ def draw(table):
         unique_display_labels.append(display_label)
 
     plt.xticks(
-        range(len(unique_x_labels)), unique_display_labels, rotation=45, ha="right"
+        range(len(unique_x_labels)), unique_display_labels, rotation=90, ha="center"
     )
     plt.legend(
-        bbox_to_anchor=(0.5, -0.35),
+        bbox_to_anchor=(0.5, -0.43),
         loc="upper center",
         fontsize=LEGENDE_FONT_SIZE,
         ncol=4,
