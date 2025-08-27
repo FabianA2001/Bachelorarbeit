@@ -17,7 +17,7 @@ from dc_triangulation import (
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
 figure_path = os.path.join(os.path.dirname(__file__), "figures")
-HOST = ["algry01", "algry02", "algry03", "algry04"]
+HOST = ["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"]
 NUMBER_RUNS = 5
 benchmark_path = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
 

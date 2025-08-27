@@ -182,8 +182,6 @@ class Run_Algbench:
         return instances
 
     def get_table(self) -> pd.DataFrame:
-        pass
-
         table = read_as_pandas(
             self.path_benchmark,
             lambda result: {
@@ -620,14 +618,28 @@ class Run_Algbench:
         # Eine gemeinsame Legende für die gesamte Figur - unter allen Plots über die komplette Breite
         handles, labels = axes[0].get_legend_handles_labels()
         if handles:
+            replace = {
+                "gurobi": "Gurobi",
+                "Ortools": "OrTools",
+                "OrTools_tri-Kanten ausschließen": "OR-Tools (Tri) Kanten ausschließen",
+                "OrTools_tri-normal": "OR-Tools (tri) normal",
+                "SAT_TRI-Kanten ausschließen": "SAT (tri) Kanten ausschließen",
+                "SAT_TRI-normal": "SAT (tri) normal",
+                "Gurobi_tri-Kanten ausschließen": "Gurobi (tri) Kanten ausschließen",
+                "Gurobi_tri-normal": "Gurobi (tri) normal",
+                "OrTools_tri": "OR-Tools (tri)",
+                "OrTools": "OR-Tools",
+            }
             labels = [
-                label.replace("gurobi", "Gurobi") if "gurobi" in label else label
+                label.replace(old, new)
                 for label in labels
+                for old, new in replace.items()
+                if old in label
             ]
-            labels = [
-                label.replace("Ortools", "OrTools") if "Ortools" in label else label
-                for label in labels
-            ]
+            # labels = [
+            #         label.replace("Ortools", "OrTools") if "Ortools" in label else label
+            #         for label in labels
+            #     ]
             fig.legend(
                 handles,
                 labels,

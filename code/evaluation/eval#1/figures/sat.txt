@@ -83,7 +83,7 @@ SAT:
 ||fix_edges:                          True
 ||run_num:                            0
 
-|#bester (v1) in 300s: 
+|#bester (versuch) in 300s: 
 ||solver_name:                        Glucose42
 ||add_allEdges_or_exclude_edges:      True
 ||number_edges:                       False

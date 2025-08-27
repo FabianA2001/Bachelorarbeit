@@ -15,6 +15,7 @@ TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
 figure_path = os.path.join(os.path.dirname(__file__), "figures")
 benchmark_path = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
+HOST = ["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"]
 
 
 def show_lokal(RI: Run_Algbench):
@@ -64,7 +65,7 @@ def show_sat():
         inst_path=path,
         outer_parameter=outer_parameter,
         figure_path=figure_path,
-        host=["algry01", "algry02", "algry03", "algry04"],
+        host=HOST,
         name="SAT",
         path_benchmark=benchmark_path,
     )
@@ -89,7 +90,7 @@ def show_ortools():
         inst_path=path,
         outer_parameter=outer_parameter,
         figure_path=figure_path,
-        host=["algry01", "algry02", "algry03", "algry04"],
+        host=HOST,
         name="Ortools",
         path_benchmark=benchmark_path,
     )
@@ -114,8 +115,7 @@ def show_gurobi():
         inst_path=path,
         outer_parameter=outer_parameter,
         figure_path=figure_path,
-        host=["algry01", "algry02", "algry03", "algry04"],
-        name="gurobi",
+        host=HOST,
         path_benchmark=benchmark_path,
     )
     show_lokal(RI)
@@ -123,5 +123,5 @@ def show_gurobi():
 
 if __name__ == "__main__":
     show_sat()
-    show_ortools()
-    show_gurobi()
+    # show_ortools()
+    # show_gurobi()
