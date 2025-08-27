@@ -127,6 +127,17 @@ def show_sat():
                     )
                 ),
             },
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    SAT_Parameter(
+                        intersection=True,
+                        degree_atleast=True,
+                        fix_edges=True,
+                        fix_hull=True,
+                    )
+                ),
+            },
         ],
     }
 
@@ -137,6 +148,7 @@ def show_sat():
             "Hülle fixieren",
             "Kanten ausschließen",
             "Kanten fixieren",
+            "bester (v1)",
         ]
     }
 
@@ -183,6 +195,18 @@ def show_gurobi():
                     Gurobi_Parameter(intersection=True, degree=True, fix_edges=True)
                 ),
             },
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    Gurobi_Parameter(
+                        intersection=True,
+                        degree=True,
+                        fix_edges=True,
+                        all_edges=True,
+                        fix_hull=True,
+                    )
+                ),
+            },
         ],
     }
     arg_names = {
@@ -192,6 +216,7 @@ def show_gurobi():
             "Hülle fixieren",
             "alternative Kanten",
             "Kanten ausschließen",
+            "bester (v1)",
         ]
     }
     ri = Run_Algbench(
@@ -241,6 +266,18 @@ def show_ortools():
                     Ortools_Parameter(intersection=True, degree=True, fix_edges=True)
                 ),
             },
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    Ortools_Parameter(
+                        intersection=True,
+                        degree=True,
+                        fix_edges=True,
+                        fix_hull=True,
+                        all_edges=True,
+                    )
+                ),
+            },
         ]
     }
 
@@ -251,6 +288,7 @@ def show_ortools():
             "alternative Kanten",
             "Kanten ausschließen",
             "Kanten fixieren",
+            "bester",
         ]
     }
 
@@ -290,26 +328,20 @@ def gesamt():
             {
                 "timeout": TIMEOUT,
                 "args": asdict(
-                    Ortools_Parameter(intersection=True, degree=True, fix_edges=True)
+                    Ortools_Parameter(
+                        intersection=True,
+                        degree=True,
+                        fix_edges=True,
+                        fix_hull=True,
+                        all_edges=True,
+                    )
                 ),
-            }
-        ],
-        Gurobi_Tri: [
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(Gurobi_Tri_Parameter(intersection=True, degree=True)),
-            }
+            },
         ],
         OrTools_Tri: [
             {
                 "timeout": TIMEOUT,
                 "args": asdict(Ortools_Tri_Parameter(intersection=True, degree=True)),
-            }
-        ],
-        SAT_TRI: [
-            {
-                "timeout": TIMEOUT,
-                "args": asdict(SAT_Tri_Parameter(intersection=True, degree=True)),
             }
         ],
     }
@@ -325,8 +357,8 @@ def gesamt():
 
 
 if __name__ == "__main__":
-    # show_sat()
-    # show_gurobi()
-    # show_ortools()
-    # gesamt()
+    show_sat()
+    show_gurobi()
+    show_ortools()
+    gesamt()
     show_tri()

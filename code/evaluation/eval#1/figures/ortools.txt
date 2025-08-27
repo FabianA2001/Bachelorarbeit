@@ -72,4 +72,18 @@ Ortools:
 ||exclude_edges:                      False
 ||fix_edges:                          True
 ||run_num:                            0
+
+|#bester in 300s: 
+||intersection:                       True
+||all_edges:                          True
+||degree:                             True
+||fix_hull:                           True
+||number_edges:                       False
+||evaluation_direction:               False
+||save_state_after_solution:          False
+||min_max_direction:                  False
+||maximize_edges:                     False
+||exclude_edges:                      False
+||fix_edges:                          True
+||run_num:                            0
 ==================================================

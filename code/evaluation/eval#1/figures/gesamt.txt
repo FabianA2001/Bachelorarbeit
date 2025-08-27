@@ -34,9 +34,9 @@ gurobi:
 Ortools:
 |#1 in 300s: 
 ||intersection:                       True
-||all_edges:                          False
+||all_edges:                          True
 ||degree:                             True
-||fix_hull:                           False
+||fix_hull:                           True
 ||number_edges:                       False
 ||evaluation_direction:               False
 ||save_state_after_solution:          False
@@ -47,25 +47,8 @@ Ortools:
 ||run_num:                            0
 
 
-gurobi_tri:
-|#1 in 300s: 
-||intersection:                       True
-||degree:                             True
-||exclude_edges:                      False
-
-
 OrTools_tri:
 |#1 in 300s: 
-||intersection:                       True
-||degree:                             True
-||exclude_edges:                      False
-
-
-SAT_TRI:
-|#1 in 300s: 
-||solver_name:                        glucose3
-||add_allEdges_or_exlucde_edges:      True
-||number_tri:                         False
 ||intersection:                       True
 ||degree:                             True
 ||exclude_edges:                      False

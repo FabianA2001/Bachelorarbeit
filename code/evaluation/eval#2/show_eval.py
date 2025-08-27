@@ -14,6 +14,7 @@ from dc_triangulation import (
 TIMEOUT = 300
 path = os.path.join(os.path.dirname(__file__), "instances")
 figure_path = os.path.join(os.path.dirname(__file__), "figures")
+benchmark_path = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
 
 
 def show_lokal(RI: Run_Algbench):
@@ -65,6 +66,7 @@ def show_sat():
         figure_path=figure_path,
         host=["algry01", "algry02", "algry03", "algry04"],
         name="SAT",
+        path_benchmark=benchmark_path,
     )
     show_lokal(RI)
 
@@ -89,6 +91,7 @@ def show_ortools():
         figure_path=figure_path,
         host=["algry01", "algry02", "algry03", "algry04"],
         name="Ortools",
+        path_benchmark=benchmark_path,
     )
     show_lokal(RI)
 
@@ -113,6 +116,7 @@ def show_gurobi():
         figure_path=figure_path,
         host=["algry01", "algry02", "algry03", "algry04"],
         name="gurobi",
+        path_benchmark=benchmark_path,
     )
     show_lokal(RI)
 

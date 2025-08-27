@@ -19,6 +19,7 @@ path = os.path.join(os.path.dirname(__file__), "instances")
 figure_path = os.path.join(os.path.dirname(__file__), "figures")
 HOST = ["algry01", "algry02", "algry03", "algry04"]
 NUMBER_RUNS = 5
+benchmark_path = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
 
 
 def show_sat():
@@ -35,6 +36,7 @@ def show_sat():
         figure_path=figure_path,
         host=HOST,
         name="sat",
+        path_benchmark=benchmark_path,
     )
     ri.show(block=False)
 
@@ -53,6 +55,7 @@ def show_ortools():
         figure_path=figure_path,
         host=HOST,
         name="ortools",
+        path_benchmark=benchmark_path,
     )
     # ri.show(block=False)
     ########### hack ######################
@@ -161,6 +164,7 @@ def show_gurobi():
         figure_path=figure_path,
         host=HOST,
         name="gurobi",
+        path_benchmark=benchmark_path,
     )
     ri.show(block=False)
 

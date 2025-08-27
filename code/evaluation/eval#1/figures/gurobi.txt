@@ -47,4 +47,13 @@ gurobi:
 ||all_edges:                          False
 ||fix_edges:                          False
 ||run_num:                            0
+
+|#bester (v1) in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+||fix_hull:                           True
+||all_edges:                          True
+||fix_edges:                          True
+||run_num:                            0
 ==================================================
