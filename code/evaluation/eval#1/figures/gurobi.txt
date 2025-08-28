@@ -48,7 +48,7 @@ gurobi:
 ||fix_edges:                          False
 ||run_num:                            0
 
-|#bester (v1) in 300s: 
+|#bester (versuch) in 300s: 
 ||intersection:                       True
 ||degree:                             True
 ||exclude_edges:                      False

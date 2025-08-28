@@ -148,7 +148,7 @@ def show_sat():
             "Hülle fixieren",
             "Kanten ausschließen",
             "Kanten fixieren",
-            "bester (v1)",
+            "bester (versuch)",
         ]
     }
 
@@ -216,7 +216,7 @@ def show_gurobi():
             "Hülle fixieren",
             "alternative Kanten",
             "Kanten ausschließen",
-            "bester (v1)",
+            "bester (versuch)",
         ]
     }
     ri = Run_Algbench(
@@ -357,8 +357,8 @@ def gesamt():
 
 
 if __name__ == "__main__":
-    show_sat()
-    show_gurobi()
-    show_ortools()
+    # show_sat()
+    # show_gurobi()
+    # show_ortools()
     gesamt()
-    show_tri()
+    # show_tri()
