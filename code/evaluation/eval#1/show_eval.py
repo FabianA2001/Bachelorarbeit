@@ -355,10 +355,29 @@ def gesamt():
     )
     ri.show(block=False)
 
+    ri.name = "gesamt_solvetime"
+    table = ri.get_table()
+    table = ri.apply_instance(table)
+    table = ri.apply_args(table)
+    table = ri.get_mean(table)
+
+    # HACK Hardodet time
+    # table = table[table["total_runtime"] < 295]
+    # print(table)
+
+    # print(table["total_runtime"])
+    ri.create_cactus(
+        table=table,
+        y="runtime",
+        block=False,
+        timelimit=300,
+        view_line=325,
+    )
+
 
 if __name__ == "__main__":
     # show_sat()
     # show_gurobi()
     # show_ortools()
-    gesamt()
     # show_tri()
+    gesamt()

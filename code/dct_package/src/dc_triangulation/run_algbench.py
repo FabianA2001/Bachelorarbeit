@@ -620,7 +620,7 @@ class Run_Algbench:
         if handles:
             replace = {
                 "gurobi": "Gurobi",
-                "Ortools": "OrTools",
+                "Ortools": "OR-Tools",
                 "OrTools_tri-Kanten ausschließen": "OR-Tools (Tri) Kanten ausschließen",
                 "OrTools_tri-normal": "OR-Tools (tri) normal",
                 "SAT_TRI-Kanten ausschließen": "SAT (tri) Kanten ausschließen",
@@ -628,21 +628,16 @@ class Run_Algbench:
                 "Gurobi_tri-Kanten ausschließen": "Gurobi (tri) Kanten ausschließen",
                 "Gurobi_tri-normal": "Gurobi (tri) normal",
                 "OrTools_tri": "OR-Tools (tri)",
-                "OrTools": "OR-Tools",
             }
-            labels = [
-                label.replace(old, new)
-                for label in labels
-                for old, new in replace.items()
-                if old in label
-            ]
-            # labels = [
-            #         label.replace("Ortools", "OrTools") if "Ortools" in label else label
-            #         for label in labels
-            #     ]
+            label_names = []
+            for label in labels:
+                if label in replace:
+                    label_names.append(replace[label])
+                else:
+                    label_names.append(label)
             fig.legend(
                 handles,
-                labels,
+                label_names,
                 loc="upper center",
                 bbox_to_anchor=(0.5, 0.0),
                 ncol=min(3, len(handles)),  # Maximal 3 Einträge pro Zeile
