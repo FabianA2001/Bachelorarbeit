@@ -48,12 +48,21 @@ gurobi:
 ||fix_edges:                          False
 ||run_num:                            0
 
-|#bester (versuch) in 300s: 
+|#bester (versuch 1) in 300s: 
 ||intersection:                       True
 ||degree:                             True
 ||exclude_edges:                      False
 ||fix_hull:                           True
 ||all_edges:                          True
+||fix_edges:                          True
+||run_num:                            0
+
+|#bester (versuch 2) in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+||fix_hull:                           True
+||all_edges:                          False
 ||fix_edges:                          True
 ||run_num:                            0
 ==================================================

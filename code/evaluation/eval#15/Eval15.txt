@@ -14,6 +14,6 @@ Ortools:
 ||min_max_direction:                  False
 ||maximize_edges:                     False
 ||exclude_edges:                      False
-||fix_edges:                          False
+||fix_edges:                          True
 ||run_num:                            0
 ==================================================
