@@ -148,7 +148,7 @@ def show_sat():
             "Hülle fixieren",
             "Kanten ausschließen",
             "Kanten fixieren",
-            "bester (versuch)",
+            "bester (Versuch)",
         ]
     }
 
@@ -227,8 +227,8 @@ def show_gurobi():
             "Hülle fixieren",
             "alternative Kanten",
             "Kanten ausschließen",
-            "bester (versuch 1)",
-            "bester (versuch 2)",
+            "bester (Versuch 1)",
+            "bester (Versuch 2)",
         ]
     }
     ri = Run_Algbench(

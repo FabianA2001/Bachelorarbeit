@@ -194,33 +194,29 @@ def lokal_show_kaktus():
             if runtime <= 0 or runtime > TIMEOUT:
                 continue  # Skip if runtime is not valid or timeout
 
-            instance_runtimes.append(runtime)
-
-        # Sortiere die Laufzeiten für diese Instanz
-        instance_runtimes.sort()
-
-        # Füge die Daten für das Kaktusdiagramm hinzu
-        for i, runtime in enumerate(instance_runtimes):
+            file = row["file"]
+            numbers = re.findall(r"\d+", file)
+            node_number = int(numbers[0]) if len(numbers) > 1 else 0
+            node_name = int(numbers[1]) if len(numbers) > 1 else 0
             # Berechne die Knotenzahl: Start bei 80, nach jeder 4. Lösung +10
             # Bei 1-4 Lösungen: 80 Knoten, bei 5-8: 90 Knoten, bei 9-12: 100 Knoten, etc.
-            solved_count = i + 1
-            node_count = 80 + ((solved_count - 1) // 4) * 10
 
             plot_data.append(
                 {
                     "instance": str(instance_name),
                     "runtime": runtime,
-                    "solved_count": solved_count,  # Anzahl der bis zu dieser Zeit gelösten Probleme
-                    "node_count": node_count,  # Knotenzahl für X-Achse
+                    "node_count": node_name,  # Knotenzahl für X-Achse
                 }
             )
 
     if not plot_data:
         print("Keine gültigen Daten zum Plotten gefunden!")
         return
-
     # DataFrame für Plotting erstellen
     df_plot = pd.DataFrame(plot_data)
+    df_plot = df_plot.loc[
+        df_plot.groupby(["instance", "node_count"])["runtime"].idxmin()
+    ]
 
     # Seaborn Style setzen
     sns.set_style("whitegrid")
@@ -235,6 +231,20 @@ def lokal_show_kaktus():
 
         # Sortiere nach Laufzeit für eine saubere Linie
         instance_data = instance_data.sort_values("runtime")
+
+        # Entferne Einträge wo es vorher schon bessere Knotenzahlen gab (für monoton steigende Kurve)
+        filtered_data = []
+        max_node_count = 0
+
+        for _, row in instance_data.iterrows():
+            if row["node_count"] > max_node_count:
+                max_node_count = row["node_count"]
+                filtered_data.append(row)
+
+        if not filtered_data:
+            continue
+
+        instance_data = pd.DataFrame(filtered_data)
 
         inst_name = "Default"
         if instance == "d_flips":
@@ -346,16 +356,10 @@ def lokal_show_ja_nein():
                 continue  # Skip if runtime is not valid or timeout
 
             instance_runtimes.append(runtime)
-
-        # Sortiere die Laufzeiten für diese Gruppe
-        instance_runtimes.sort()
-
-        # Füge die Daten für das Kaktusdiagramm hinzu
-        for i, runtime in enumerate(instance_runtimes):
-            # Berechne die Knotenzahl: Start bei 80, nach jeder 4. Lösung +10
-            # Bei 1-4 Lösungen: 80 Knoten, bei 5-8: 90 Knoten, bei 9-12: 100 Knoten, etc.
-            solved_count = i + 1
-            node_count = 80 + ((solved_count - 1) // 10) * 10
+            file = row["file"]
+            numbers = re.findall(r"\d+", file)
+            node_number = int(numbers[0]) if len(numbers) > 1 else 0
+            node_name = int(numbers[1]) if len(numbers) > 1 else 0
 
             # Erstelle Labels für die Gruppierung
             group_label = "Nein-Instanzen" if is_nein_instanze else "Ja-Instanzen"
@@ -364,8 +368,7 @@ def lokal_show_ja_nein():
                 {
                     "group": group_label,
                     "runtime": runtime,
-                    "solved_count": solved_count,  # Anzahl der bis zu dieser Zeit gelösten Probleme
-                    "node_count": node_count,  # Knotenzahl für Y-Achse
+                    "node_count": node_name,  # Knotenzahl für Y-Achse
                     "is_nein": is_nein_instanze,
                 }
             )
@@ -374,8 +377,13 @@ def lokal_show_ja_nein():
         print("Keine gültigen Daten zum Plotten gefunden!")
         return
 
+    plot_data.sort(key=lambda x: x["runtime"])
+
     # DataFrame für Plotting erstellen
     df_plot = pd.DataFrame(plot_data)
+    df_plot = df_plot.loc[
+        df_plot.groupby(["node_count", "is_nein"])["runtime"].idxmin()
+    ]
 
     # Seaborn Style setzen
     sns.set_style("whitegrid")
@@ -390,6 +398,20 @@ def lokal_show_ja_nein():
 
         # Sortiere nach Laufzeit für eine saubere Linie
         group_data = group_data.sort_values("runtime")
+
+        # Entferne Einträge wo es vorher schon bessere Knotenzahlen gab (für monoton steigende Kurve)
+        filtered_data = []
+        max_node_count = 0
+
+        for _, row in group_data.iterrows():
+            if row["node_count"] > max_node_count:
+                max_node_count = row["node_count"]
+                filtered_data.append(row)
+
+        if not filtered_data:
+            continue
+
+        group_data = pd.DataFrame(filtered_data)
 
         plt.plot(
             group_data["runtime"],
@@ -465,7 +487,7 @@ def lokal_show_ja_nein():
 
 
 if __name__ == "__main__":
-    if False:
+    if True:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
@@ -479,8 +501,8 @@ if __name__ == "__main__":
             for key in run_list:
                 run_solver_on_inst.distribute(key)
 
-        # slurminade.join()
-        # compress_results.distribute()
+        slurminade.join()
+        compress_results.distribute()
     else:
         # lokal_show_balken()
         lokal_show_kaktus()

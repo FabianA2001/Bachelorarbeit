@@ -398,18 +398,18 @@ def create_instance():
     FLIPS = 500
     PATH = "eval_instance"
     for NAME, gen in zip(
-        ["random"],
+        ["iterative"],
         # ["d_flips", "delaunay", "greedy", "iterative", "random"],
         [
             # generate.Generate_Edges_Delaunay_Flips(FLIPS),
             # generate.Generate_Edges_Delaunay(),
             # generate.Generate_Edges_Greedy(),
-            # generate.Generate_Edges_Iterative(),
-            generate.Generate_Edges_Random(),
+            generate.Generate_Edges_Iterative(),
+            # generate.Generate_Edges_Random(),
         ],
     ):
         INST_NAME = NAME
-        for i in [190, 200]:
+        for i in [210, 220, 230, 240, 250]:
             FILE_NAME = f"{NAME}"
             generate.Generate_Instance(
                 INST_NAME,
