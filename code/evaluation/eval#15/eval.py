@@ -539,7 +539,7 @@ def lokal_show_punkte():
     # Punktdiagramm erstellen - getrennt nach Gruppen
     groups = df_plot["group"].unique()
     colors = ["green", "red"]  # Grün für Ja-Instanzen, Rot für Nein-Instanzen
-    markers = ["o", ""]  # Kreise für Ja-Instanzen, Quadrate für Nein-Instanzen
+    markers = ["o", "o"]  # Kreise für Ja-Instanzen, Quadrate für Nein-Instanzen
 
     for i, group in enumerate(groups):
         group_data = df_plot[df_plot["group"] == group]
@@ -638,6 +638,6 @@ if __name__ == "__main__":
         compress_results.distribute()
     else:
         # lokal_show_balken()
-        # lokal_show_kaktus()
+        lokal_show_kaktus()
         lokal_show_punkte()
         # lokal_show_ja_nein()
