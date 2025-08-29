@@ -5,8 +5,8 @@ from algbench import describe, read_as_pandas
 streamlit run read_benchmark.py --server.maxMessageSize=500
 """
 
-BENCHMARK_PATH = "./benchmark"
-# BENCHMARK_PATH = "./eval#8/lokal_benchmark"
+# BENCHMARK_PATH = "./benchmark"
+BENCHMARK_PATH = "/home/fabian/uni/Bachelorarbeit/bachelorarbeit-fabian-alich/code/evaluation/eval#2/lokal_benchmark"
 if False:
     describe(BENCHMARK_PATH)
 else:
@@ -21,7 +21,7 @@ else:
             "correct": result["result"]["correct"],
             "args": result["parameters"]["args"]["parameter"].get("args", {}),
             "evaluation": result["result"]["evaluation"],
-            "logging": result["logging"],
+            # "logging": result["logging"],
             "whole_runtime": result["runtime"],
             "timeout": result["parameters"]["args"]["parameter"]["timeout"],
             "time_solver": result["result"].get("time_solver", None),
@@ -36,7 +36,7 @@ else:
         st.error("Die Tabelle ist leer. Bitte überprüfen Sie die Eingabedaten.")
         st.stop()
 
-    df = df[df["solver"] == "Cadical"]
+    # df = df[df["solver"] == "Cadical"]
 
     # # Filtere nur Zeilen wo "Glucose42" in args enthalten ist
     # df = df[df["args"].astype(str).str.contains("Glucose42", na=False)]
@@ -51,7 +51,7 @@ else:
 
     # df = df[df["whole_runtime"] > df["timeout"]]
 
-    df["logging"] = df["logging"].apply(lambda x: "\n".join(k["msg"] for k in x))
+    # df["logging"] = df["logging"].apply(lambda x: "\n".join(k["msg"] for k in x))
 
     df.sort_values(
         by=["solver", "instance", "file"],

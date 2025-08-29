@@ -57,6 +57,25 @@ def show_ortools():
         name="ortools",
         path_benchmark=benchmark_path,
     )
+    ri.show(block=False)
+
+
+def show_ortools_alt():
+    outer_parameter = defaultdict(list)
+    for i in range(NUMBER_RUNS):
+        ortools_args = asdict(
+            Ortools_Parameter(intersection=True, degree=True, run_num=i)
+        )
+        outer_parameter[Ortools].append({"timeout": TIMEOUT, "args": ortools_args})
+
+    ri = Run_Algbench(
+        inst_path=path,
+        outer_parameter=outer_parameter,
+        figure_path=figure_path,
+        host=HOST,
+        name="ortools",
+        path_benchmark=benchmark_path,
+    )
     # ri.show(block=False)
     ########### hack ######################
 

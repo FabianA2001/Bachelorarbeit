@@ -1,7 +1,6 @@
 import os
 from dataclasses import asdict
 
-from algbench import describe
 from dc_triangulation import (
     SAT,
     Gurobi,
@@ -13,7 +12,7 @@ from dc_triangulation import (
 )
 
 TIMEOUT = 300
-path = os.path.join(os.path.dirname(__file__), "instance")
+path = os.path.join(os.path.dirname(__file__), "instances")
 figure_path = os.path.join(os.path.dirname(__file__), "figures")
 benchmark_path = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
 # HOST = ["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"]
@@ -34,9 +33,9 @@ def show_lokal(RI: Run_Algbench):
     table["solver_args"] = ""
 
     for (solver, instance_file), group in grouped:
-        assert len(group) == 5, (
-            f"Expected 5 rows for {solver} on {instance_file}, got {len(group)}"
-        )
+        # assert len(group) == 5, (
+        #     f"Expected 5 rows for {solver} on {instance_file}, got {len(group)}"
+        # )
         # Add index to solver name for groups with exactly 5 rows
         for idx, (original_idx, row) in enumerate(group.iterrows()):
             table.at[original_idx, "solver_args"] = f"{solver}_{idx}"
@@ -119,12 +118,12 @@ def show_gurobi():
         figure_path=figure_path,
         host=HOST,
         path_benchmark=benchmark_path,
+        name="Gurobi",
     )
     show_lokal(RI)
 
 
 if __name__ == "__main__":
-    # show_sat()
-    # show_ortools()
-    # show_gurobi()
-    describe(benchmark_path)
+    show_sat()
+    show_ortools()
+    show_gurobi()

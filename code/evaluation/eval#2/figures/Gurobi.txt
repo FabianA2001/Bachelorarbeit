@@ -1,0 +1,14 @@
+
+Args Legend Mapping (by Solver):
+==================================================
+
+gurobi:
+|#1 in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+||fix_hull:                           False
+||all_edges:                          False
+||fix_edges:                          False
+||run_num:                            0
+==================================================
