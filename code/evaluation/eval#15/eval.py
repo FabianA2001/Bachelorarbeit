@@ -19,7 +19,8 @@ ACHSEN_FONT_SIZE = 20
 LEGENDE_FONT_SIZE = 30
 
 TIMEOUT = 1800  # 30 minutes in seconds
-path = os.path.join(os.path.dirname(__file__), "instances")
+# path = os.path.join(os.path.dirname(__file__), "instances")
+path = os.path.join(os.path.dirname(__file__), "instances_copy")
 # This is the entry point for the evaluation script
 # It will run the Run_Instance class from run_algbench module
 outer_parameter = {
@@ -486,8 +487,140 @@ def lokal_show_ja_nein():
     plt.show()
 
 
+def lokal_show_punkte():
+    table = RI.get_table()
+    table = RI.apply_instance(table)
+    table = RI.apply_args(table)
+    table = RI.get_mean(table)
+
+    table["nein_instanze"] = table["file"].apply(
+        lambda x: True if "change" in x.lower() or "move" in x.lower() else False
+    )
+
+    # Vorbereitung der Daten für das Punktdiagramm
+    plot_data = []
+
+    # Sammle alle Datenpunkte
+    for index, row in table.iterrows():
+        # Runtime extrahieren (in Sekunden)
+        runtime = row.get("runtime", 0) + row.get("pre_time", 0)
+        if runtime <= 0:
+            continue  # Skip if runtime is not valid
+
+        file = row["file"]
+        numbers = re.findall(r"\d+", file)
+        node_name = int(numbers[1]) if len(numbers) > 1 else 0
+
+        # Bestimme ob es sich um eine Nein-Instanz handelt
+        is_nein_instanze = row["nein_instanze"]
+        group_label = "Nein-Instanzen" if is_nein_instanze else "Ja-Instanzen"
+
+        plot_data.append(
+            {
+                "group": group_label,
+                "runtime": runtime,
+                "node_count": node_name,
+                "is_nein": is_nein_instanze,
+                "timeout": runtime >= TIMEOUT,
+            }
+        )
+
+    if not plot_data:
+        print("Keine gültigen Daten zum Plotten gefunden!")
+        return
+
+    # DataFrame für Plotting erstellen
+    df_plot = pd.DataFrame(plot_data)
+
+    # Seaborn Style setzen
+    sns.set_style("whitegrid")
+    plt.figure(figsize=(16, 10))
+
+    # Punktdiagramm erstellen - getrennt nach Gruppen
+    groups = df_plot["group"].unique()
+    colors = ["green", "red"]  # Grün für Ja-Instanzen, Rot für Nein-Instanzen
+    markers = ["o", ""]  # Kreise für Ja-Instanzen, Quadrate für Nein-Instanzen
+
+    for i, group in enumerate(groups):
+        group_data = df_plot[df_plot["group"] == group]
+
+        # Normale Punkte (nicht Timeout)
+        normal_data = group_data[~group_data["timeout"]]
+        if len(normal_data) > 0:
+            plt.scatter(
+                normal_data["runtime"],
+                normal_data["node_count"],
+                label=group,
+                color=colors[i],
+                marker=markers[i],
+                s=80,
+                alpha=0.7,
+                edgecolors="black",
+                linewidths=0.5,
+            )
+
+        # Timeout-Punkte (falls vorhanden)
+        timeout_data = group_data[group_data["timeout"]]
+        if len(timeout_data) > 0:
+            plt.scatter(
+                timeout_data["runtime"],
+                timeout_data["node_count"],
+                color=colors[i],
+                marker="x",
+                s=120,
+                alpha=0.8,
+                linewidths=2,
+            )
+
+    # Diagramm anpassen
+    plt.xlabel("Laufzeit (Sekunden)", fontsize=LABEL_FONT_SIZE)
+    plt.ylabel("Knotenzahl", fontsize=LABEL_FONT_SIZE)
+    # plt.title("Punktdiagramm - Ja/Nein Instanzen", fontsize=TITEL_FONT_SIZE)
+
+    # Timeout-Linie hinzufügen
+    plt.axvline(x=TIMEOUT, color="red", linestyle="--", linewidth=2, alpha=0.7)
+
+    # Timeout-Text hinzufügen
+    plt.text(
+        TIMEOUT + 80,
+        plt.ylim()[1] * 0.9,
+        f"Timeout ({TIMEOUT}s)",
+        rotation=90,
+        verticalalignment="center",
+        horizontalalignment="right",
+        fontsize=ACHSEN_FONT_SIZE,
+        color="red",
+        alpha=0.8,
+    )
+
+    # Legende anpassen
+    plt.legend(
+        title="Instanz-Typ",
+        bbox_to_anchor=(1.05, 1),
+        loc="upper left",
+        fontsize=LEGENDE_FONT_SIZE,
+        title_fontsize=LEGENDE_FONT_SIZE,
+    )
+
+    # Achsen-Tick-Größen anpassen
+    plt.gca().tick_params(axis="both", which="major", labelsize=ACHSEN_FONT_SIZE)
+
+    # Grid für bessere Lesbarkeit
+    plt.grid(True, alpha=0.3)
+
+    # Layout anpassen
+    plt.tight_layout()
+
+    # Diagramm speichern
+    output_path = os.path.join(os.path.dirname(__file__), "punkte_eval15.pdf")
+    plt.savefig(output_path, dpi=300, bbox_inches="tight")
+
+    # Diagramm anzeigen
+    plt.show()
+
+
 if __name__ == "__main__":
-    if True:
+    if False:
         slurminade.update_default_configuration(
             # Your supervisor will tell you these details
             partition="alg",  # Which partition to use. Usually group name.
@@ -505,5 +638,6 @@ if __name__ == "__main__":
         compress_results.distribute()
     else:
         # lokal_show_balken()
-        lokal_show_kaktus()
-        lokal_show_ja_nein()
+        # lokal_show_kaktus()
+        lokal_show_punkte()
+        # lokal_show_ja_nein()
