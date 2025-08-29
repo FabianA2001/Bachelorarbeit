@@ -1,6 +1,7 @@
 import os
 from dataclasses import asdict
 
+from algbench import describe
 from dc_triangulation import (
     SAT,
     Gurobi,
@@ -12,10 +13,11 @@ from dc_triangulation import (
 )
 
 TIMEOUT = 300
-path = os.path.join(os.path.dirname(__file__), "instances")
+path = os.path.join(os.path.dirname(__file__), "instance")
 figure_path = os.path.join(os.path.dirname(__file__), "figures")
 benchmark_path = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
-HOST = ["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"]
+# HOST = ["algra01", "algra02", "algra03", "algra04", "algra05", "algra06"]
+HOST = ["algry01", "algry02", "algry03", "algry04"]
 
 
 def show_lokal(RI: Run_Algbench):
@@ -122,6 +124,7 @@ def show_gurobi():
 
 
 if __name__ == "__main__":
-    show_sat()
+    # show_sat()
     # show_ortools()
     # show_gurobi()
+    describe(benchmark_path)
