@@ -764,18 +764,18 @@ class Run_Algbench:
     def compress(self):
         self.benchmark.compress()
 
-    def add_entrys(
-        self,
-        key: str,
-        number_runs: int = NUMBER_RUNS_FOR_AVG,
-    ):
+    def add_entrys(self, key: str, number_runs: int = NUMBER_RUNS_FOR_AVG):
         solver, nodes, possible, inst, file_name = self.get_solver_inst_from_runlist[
             key
         ]
         parameters = self.outer_parameter[solver]
+        seed = parameters[0].get("seed", 0)
         for parameter in parameters:
             for i in range(number_runs):
-                run_seed = int(uuid.uuid4())
+                if seed != 0:
+                    run_seed = int(uuid.uuid4())
+                else:
+                    run_seed = seed
                 random.seed(run_seed)  # Seed für Reproduzierbarkeit
                 random.shuffle(nodes)  # Zufällige Reihenfolge der Knoten
                 graph = Graph_Wrapper(nodes)

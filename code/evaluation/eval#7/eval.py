@@ -19,15 +19,21 @@ benchmark_path = os.path.join(os.path.dirname(__file__), "lokal_benchmark")
 NUMBER_SOLVER_RUNS = 5
 
 outer_parameter = defaultdict(list)
+
+SEED = 42
 for i in range(NUMBER_SOLVER_RUNS):
     sat_args = asdict(SAT_Parameter(intersection=True, degree_exact=True, run_num=i))
-    outer_parameter[SAT].append({"timeout": TIMEOUT, "args": sat_args})
+    outer_parameter[SAT].append({"timeout": TIMEOUT, "args": sat_args, "seed": SEED})
 
     ortools_args = asdict(Ortools_Parameter(intersection=True, degree=True, run_num=i))
-    outer_parameter[Ortools].append({"timeout": TIMEOUT, "args": ortools_args})
+    outer_parameter[Ortools].append(
+        {"timeout": TIMEOUT, "args": ortools_args, "seed": SEED}
+    )
 
     gurobi_args = asdict(Gurobi_Parameter(intersection=True, degree=True, run_num=i))
-    outer_parameter[Gurobi].append({"timeout": TIMEOUT, "args": gurobi_args})
+    outer_parameter[Gurobi].append(
+        {"timeout": TIMEOUT, "args": gurobi_args, "seed": SEED}
+    )
 
 RI = Run_Algbench(
     inst_path=path,
