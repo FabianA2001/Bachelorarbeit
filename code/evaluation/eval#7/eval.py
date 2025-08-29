@@ -33,7 +33,6 @@ RI = Run_Algbench(
     inst_path=path,
     outer_parameter=outer_parameter,
     figure_path=os.path.dirname(__file__),
-    host=["algry01", "algry02", "algry03", "algry04"],
     path_benchmark=benchmark_path,
 )
 
