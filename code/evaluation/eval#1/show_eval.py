@@ -218,6 +218,17 @@ def show_gurobi():
                     )
                 ),
             },
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    Gurobi_Parameter(
+                        intersection=True,
+                        degree=True,
+                        fix_edges=True,
+                        all_edges=True,
+                    )
+                ),
+            },
         ],
     }
     arg_names = {
@@ -229,6 +240,7 @@ def show_gurobi():
             "Kanten ausschließen",
             "bester (Versuch 1)",
             "bester (Versuch 2)",
+            "bester (Versuch 3)",
         ]
     }
     ri = Run_Algbench(
@@ -388,8 +400,8 @@ def gesamt():
 
 
 if __name__ == "__main__":
-    show_sat()
+    # show_sat()
     show_gurobi()
-    show_ortools()
-    show_tri()
-    gesamt()
+    # show_ortools()
+    # show_tri()
+    # gesamt()
