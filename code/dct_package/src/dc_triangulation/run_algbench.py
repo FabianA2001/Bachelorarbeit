@@ -197,7 +197,7 @@ class Run_Algbench:
                 "pre_time": result["result"]["time_pre_solver"],
                 "env_runtime": result["runtime"],
                 "solution": result["result"].get("solution", None),
-                "run_number": result["parameters"]["args"]["run_number"],
+                "run_number": result["parameters"]["args"].get("run_number", -1),
             },
         )
         # Filter nach Host, falls host angegeben ist
@@ -431,7 +431,28 @@ class Run_Algbench:
 
         # Eindeutige Solver und Instanzen ermitteln
         unique_solvers = valid_data["solver_args"].unique()
-        unique_instances = valid_data["instance"].unique()
+
+        # Festgelegte Reihenfolge der Instanzen
+        desired_order = [
+            "d_flips",
+            "delaunay",
+            "greedy",
+            "iterative",
+            "random",
+            "gesamt",
+        ]
+        all_instances = valid_data["instance"].unique()
+
+        # Sortiere Instanzen nach gewünschter Reihenfolge
+        unique_instances = []
+        for instance in desired_order:
+            if instance in all_instances:
+                unique_instances.append(instance)
+
+        # Füge alle anderen Instanzen hinzu, die nicht in der gewünschten Reihenfolge sind
+        for instance in all_instances:
+            if instance not in unique_instances:
+                unique_instances.append(instance)
 
         # Bessere Farbpalette für Solver - verschiedene Optionen je nach Anzahl
         n_solvers = len(unique_solvers)
@@ -537,7 +558,7 @@ class Run_Algbench:
             if instance == "delaunay":
                 instance_titel = "Delaunay"
             if instance == "iterative":
-                instance_titel = "Iterative"
+                instance_titel = "Iterativ"
             if instance == "random":
                 instance_titel = "Random"
             if instance == "d_flips":
@@ -625,16 +646,20 @@ class Run_Algbench:
                 "OrTools_tri-normal": "OR-Tools (tri) normal",
                 "SAT_TRI-Kanten ausschließen": "SAT (tri) Kanten ausschließen",
                 "SAT_TRI-normal": "SAT (tri) normal",
-                "Gurobi_tri-Kanten ausschließen": "Gurobi (tri) Kanten ausschließen",
-                "Gurobi_tri-normal": "Gurobi (tri) normal",
+                "gurobi_tri-Kanten ausschließen": "Gurobi (tri) Kanten ausschließen",
+                "gurobi_tri-normal": "Gurobi (tri) normal",
                 "OrTools_tri": "OR-Tools (tri)",
             }
             label_names = []
             for label in labels:
                 if label in replace:
-                    label_names.append(replace[label])
+                    label_names.append(
+                        replace[label].replace("SAT", "PySAT").replace("Sat", "PySAT")
+                    )
                 else:
-                    label_names.append(label)
+                    label_names.append(
+                        label.replace("SAT", "PySAT").replace("Sat", "PySAT")
+                    )
             fig.legend(
                 handles,
                 label_names,

@@ -85,6 +85,7 @@ def show_exact():
         host=HOST,
         name="exact",
         arg_names=arg_names,
+        show_solver_in_legend=False,
     )
     ri.show(block=False)
 
@@ -161,6 +162,7 @@ def show_atleast():
         host=HOST,
         name="atleast",
         arg_names=arg_names,
+        show_solver_in_legend=False,
     )
     ri.show(block=False)
 
@@ -237,6 +239,7 @@ def show_subset():
         host=HOST,
         name="subset",
         arg_names=arg_names,
+        show_solver_in_legend=False,
     )
     ri.show(block=False)
 
@@ -285,6 +288,7 @@ def show_gesamt():
         host=HOST,
         name="gesamt",
         arg_names=arg_names,
+        show_solver_in_legend=False,
     )
     ri.show(block=False)
 

@@ -38,7 +38,8 @@ def show_lokal(RI: Run_Algbench):
         # )
         # Add index to solver name for groups with exactly 5 rows
         for idx, (original_idx, row) in enumerate(group.iterrows()):
-            table.at[original_idx, "solver_args"] = f"{solver}_{idx}"
+            solver_name = str(solver).capitalize()
+            table.at[original_idx, "solver_args"] = f"{solver_name}-{idx}"
 
     RI.create_cactus(
         table=table,
