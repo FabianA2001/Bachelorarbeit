@@ -1,35 +1,96 @@
-\chapter{Preliminaries}
+\chapter{Definitionen}
+% \michael{Schreib am Kapitelanfang immer ein zwei Einführungssätze, was hier passiert. Du kannst auch zwischen den Definitionen ein paar Überleitungen schreiben, damit sich das nicht liest wie ein Skript.}
+% \fabian{Passen die Übergänge? Bin unsicher was du hier erwartest.}
+In diesem Kapitel werden die Definitionen vorgestellt, die für diese Arbeit benötigt werden.
+Dabei werden insbesondere grundlegende Begriffe erläutert, die in den folgenden Kapiteln verwendet werden.
+Zunächst werden Überschneidungen zwischen Kanten betrachtet. 
 
 \begin{definition}[Überschneidung]
     Zwei Kanten gelten als überschneidend, wenn sie sich in der Ebene kreuzen.
     Im Folgenden bezeichnet die Funktion \(\intersection: (\mathbb{Q}^2 \times \mathbb{Q}^2) \to \mathcal{P}(\mathbb{Q}^2 \times \mathbb{Q}^2)\) die Menge aller Kanten, die eine gegebene Kante schneiden.
 \end{definition}
 
-\begin{definition}[Triangulation]
-    Eine Triangulation einer Punktemenge \(P \subset \mathbb{Q}^2\) ist ein maximaler kreuzungsfreier Graph auf \(P\).
+
+Im nächsten Schritt wird die Überschneidung von Dreiecken definiert, da diese in späteren Ansätzen relevant werden.
+\begin{definition}[Überschneidung Dreiecke]
+    Zwei Dreiecke gelten als überschneidend, wenn sie mindestens einen inneren Knoten gemeinsam haben.
+    Das bedeutet, dass sich zwei Außenkanten kreuzen und sich nicht nur berühren dürfen.
+    Im Folgenden bezeichnet die Funktion \(\intersection: (\mathbb{Q}^2 \times \mathbb{Q}^2 \times \mathbb{Q}^2) \to \mathcal{P}(\mathbb{Q}^2 \times \mathbb{Q}^2 \times \mathbb{Q}^2)\) die Menge aller Dreiecke, die ein gegebenes Dreieck schneiden.
+\end{definition}
+
+Auf Grundlage der Überschneidungen können nun die grundlegenden Begriffe der Triangulierung und DCT definiert werden.
+\begin{definition}[Triangulierung]
+    Eine Triangulierung einer Knotenmenge \(P \subset \mathbb{Q}^2\) ist ein maximaler kreuzungsfreier Graph auf \(P\).
     Das bedeutet, es können keine weiteren Kanten hinzugefügt werden, ohne dass sich Kanten schneiden.
 \end{definition}
+
+Für DCT wird zuerst der Grad eines Knotens definiert.
 
 \begin{definition}[Grad]
     Der Grad eines Knotens ist die Anzahl der anliegenden Kanten.
     Im Folgenden wird er durch die Funktion \(\degree: \mathbb{Q}^2 \to \mathbb{N}\) angegeben.
 \end{definition}
 
-\begin{definition}[Gradbeschränkte Triangulation]
-	Die Gradbeschränkte Triangulation hat die gleichen Vorraussetzungen wie eine Triangulation.
-	Zusätzlich gibt es noch eine Funktion \(\degrees: \mathbb{Q}^2 \longrightarrow \mathbb{Q}\).
-	Diese gibt den Grad an welcher ein Knoten haben muss.
+Basierend auf dem Grad eines Knotens wird nun DCT eingeführt.
+\begin{definition}[Gradbeschränkte Triangulierung]
+    Die gradbeschränkte Triangulierung (DCT) hat die gleichen Voraussetzungen wie eine Triangulierung.
+    Zusätzlich gibt es eine Funktion \(\degrees: \mathbb{Q}^2 \longrightarrow \mathbb{N}\).
+    Diese gibt den Grad an, den ein Knoten haben muss.
 \end{definition}
 
-\begin{definition}[Flip]
+Im Folgenden wird die Durchführung des Kantenflips beschrieben, die eine wichtige Rolle bei der Umstrukturierung von Triangulierungen spielt.
+\begin{definition}[Kantenflip]
     \label{def:flip}
-    Ein Flip ist eine Operation, bei der eine Kante entfernt und eine andere hinzugefügt wird, sodass die Eigenschaften einer Triangulation erhalten bleiben.
-    In dieser Arbeit wird nur der Diagonale Flip betrachtet, bei dem die Diagonale eines konvexen Vierecks durch die andere Diagonale ersetzt wird.
-    Ein Flip wird durch die Funktion \(\flip: (\mathbb{Q}^2 \times \mathbb{Q}^2) \to (\mathbb{Q}^2 \times \mathbb{Q}^2)\) definiert.
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.48\linewidth]{Flip.pdf}
+        \caption{Ein Kantenflip in einer Triangulation.}
+        \label{fig:flip}
+    \end{figure}
+    Ein Kantenflip oder kurz Flip ist eine Operation, bei der eine Kante entfernt und eine andere hinzugefügt wird, so dass die Eigenschaften einer Triangulierung erhalten bleiben.
+    In dieser Arbeit wird ausschließlich mit Triangulierungen gearbeitet, dementsprechend wird nur der diagonale Flip betrachtet.
+    Bei diesem wird die Diagonale eines konvexen Vierecks durch die andere Diagonale ersetzt.
+    Ein beispielhafter Flip ist in \cref{fig:flip} abgebildet.
+    % Ein Flip wird durch die Funktion \(\flip: (\mathbb{Q}^2 \times \mathbb{Q}^2) \to (\mathbb{Q}^2 \times \mathbb{Q}^2)\) definiert.
 \end{definition}
 
-\begin{definition}[Konvexe Hülle mit Randpunkten]
-    Die konvexe Hülle einer Punktmenge ist die kleinste konvexe Menge, die alle Punkte enthält.
-    Die Randpunkte sind die Punkte, die auf dem Rand der konvexen Hülle liegen, einschließlich solcher, die nicht an einer Ecke liegen.
-    Die konvexe Hülle inklusive Randpunkte wird durch die Funktion \(\convexhull: \mathcal{P}(\mathbb{Q}^2) \to \mathcal{P}(\mathbb{Q}^2)\) definiert.
+Im nächsten Schritt wird die konvexe Hülle mit Randknoten definiert.
+Da die konvexe Hülle in dieser Arbeit um alle Randknoten erweitert werden muss.
+\begin{definition}[Konvexe Hülle mit Randknoten]
+    Die konvexe Hülle einer Knotenmenge ist die kleinste konvexe Menge, die alle Knoten enthält.
+    Die Randknoten sind die Knoten, die auf dem Rand der konvexen Hülle liegen, einschließlich solcher, die nicht an einer Ecke liegen.
+    % Die konvexe Hülle inklusive RandKnoten wird durch die Funktion \(\convexhull: \mathcal{P}(\mathbb{Q}^2) \to \mathcal{P}(\mathbb{Q}^2)\) definiert.
+    In dieser Arbeit werden bei der konvexen Hülle immer die Randknoten mit einbezogen.
+\end{definition}
+
+Abschließend wird die konjunktive Normalform eingeführt, die im weiteren Verlauf für die Benutzung der SAT-Solver benötigt wird. 
+\begin{definition}[Konjunktive Normalform]
+    Eine Formel in konjunktiver Normalform (KNF) ist eine logische Formel, die als Konjunktion (UND-Verknüpfung) von Klauseln dargestellt wird, wobei jede Klausel eine Disjunktion (ODER-Verknüpfung) von Literalen ist.
+    Ein Literal ist entweder eine Variable oder ihre Negation.
+    Ein Beispiel für eine KNF ist \[(x_1 \lor \overline{x_2}) \land (x_2 \lor x_3)\] wobei \(x_1\), \(x_2\) und \(x_3\) Variablen sind. Eine Negation wird durch das Symbol \(\overline{x}\) dargestellt.
+\end{definition}
+
+Da in einigen Ansätzen die Orientierung von Knoten relevant ist, werden im Folgenden die relevanten Definitionen vorgestellt.
+Zunächst wird das Kreuzprodukt definiert, das die Orientierung von Vektoren beschreibt.
+\begin{definition}[Kreuzprodukt]
+    Das Kreuzprodukt zweier Vektoren \(\overrightarrow{a} = (a_1, a_2)\) und \(\overrightarrow{b} = (b_1, b_2)\) in der Ebene ist ein Skalarwert, der die Orientierung der beiden Vektoren zueinander beschreibt.
+    Es wird definiert als:
+    \[
+    \overrightarrow{a} \times \overrightarrow{b} = a_1 b_2 - a_2 b_1
+    \]
+\end{definition}
+
+Das Kreuzprodukt kann anschließend verwendet werden, um die Orientierung von drei Knoten zu bestimmen.
+\begin{definition}[Rechtsknick / Linksknick]
+    Ein Rechtsknick ist eine Abfolge von drei Knoten \(p_1\), \(p_2\) und \(p_3\), die im Uhrzeigersinn angeordnet sind.
+    Ein Linksknick ist eine Abfolge von drei Knoten \(p_1\), \(p_2\) und \(p_3\), die gegen den Uhrzeigersinn angeordnet sind.
+    Die Orientierung der Knoten kann durch das Kreuzprodukt der Vektoren \(\overrightarrow{p_1p_2}\) und \(\overrightarrow{p_2p_3}\) bestimmt werden.
+    Wenn das Kreuzprodukt positiv ist, handelt es sich um einen Linksknick, wenn es negativ ist, um einen Rechtsknick.
+    Ist das Kreuzprodukt null, liegen die Knoten auf einer Geraden.
+\end{definition}
+
+Der Rechts- und Linksknick wird verwendet, um zu bestimmen, ob ein Knoten links oder rechts von einer Kante liegt.
+\begin{definition}[Links/Rechts von einer Kante]
+    Ein Knoten \(p\) liegt links von einer Kante \((p_1, p_2)\), wenn die Knoten \(p_1\), \(p_2\) und \(p\) einen Linksknick bilden.
+    Analog liegt ein Knoten \(p\) rechts von einer Kante \((p_1, p_2)\), wenn die Knoten \(p_1\), \(p_2\) und \(p\) einen Rechtsknick bilden.
 \end{definition}

@@ -3,63 +3,87 @@ Args Legend Mapping (by Solver):
 ==================================================
 
 Ortools:
-|#1 in 300s: 
+|#normal in 300s: 
 ||intersection:                       True
 ||all_edges:                          False
 ||degree:                             True
 ||fix_hull:                           False
 ||number_edges:                       False
 ||evaluation_direction:               False
-||degree_direction:                   False
+||save_state_after_solution:          False
+||min_max_direction:                  False
 ||maximize_edges:                     False
 ||exclude_edges:                      False
 ||fix_edges:                          False
+||run_num:                            0
 
-|#2 in 300s: 
+|#Hülle fixieren in 300s: 
 ||intersection:                       True
 ||all_edges:                          False
 ||degree:                             True
 ||fix_hull:                           True
 ||number_edges:                       False
 ||evaluation_direction:               False
-||degree_direction:                   False
+||save_state_after_solution:          False
+||min_max_direction:                  False
 ||maximize_edges:                     False
 ||exclude_edges:                      False
 ||fix_edges:                          False
+||run_num:                            0
 
-|#3 in 300s: 
+|#alternative Kanten in 300s: 
 ||intersection:                       True
 ||all_edges:                          True
 ||degree:                             True
 ||fix_hull:                           False
 ||number_edges:                       False
 ||evaluation_direction:               False
-||degree_direction:                   False
+||save_state_after_solution:          False
+||min_max_direction:                  False
 ||maximize_edges:                     False
 ||exclude_edges:                      False
 ||fix_edges:                          False
+||run_num:                            0
 
-|#4 in 300s: 
+|#Kanten ausschließen in 300s: 
 ||intersection:                       True
 ||all_edges:                          False
 ||degree:                             True
 ||fix_hull:                           False
 ||number_edges:                       False
 ||evaluation_direction:               False
-||degree_direction:                   False
+||save_state_after_solution:          False
+||min_max_direction:                  False
 ||maximize_edges:                     False
 ||exclude_edges:                      True
 ||fix_edges:                          False
+||run_num:                            0
 
-|#5 in 300s: 
+|#Kanten fixieren in 300s: 
 ||intersection:                       True
 ||all_edges:                          False
 ||degree:                             True
 ||fix_hull:                           False
 ||number_edges:                       False
 ||evaluation_direction:               False
-||degree_direction:                   False
+||save_state_after_solution:          False
+||min_max_direction:                  False
 ||maximize_edges:                     False
 ||exclude_edges:                      False
 ||fix_edges:                          True
+||run_num:                            0
+
+|#bester in 300s: 
+||intersection:                       True
+||all_edges:                          True
+||degree:                             True
+||fix_hull:                           True
+||number_edges:                       False
+||evaluation_direction:               False
+||save_state_after_solution:          False
+||min_max_direction:                  False
+||maximize_edges:                     False
+||exclude_edges:                      False
+||fix_edges:                          True
+||run_num:                            0
 ==================================================

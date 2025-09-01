@@ -1,0 +1,88 @@
+% Offizielle Beispieldatei für beamer-Vorlage aus tubslatex Version 0.3beta2
+
+% Folien
+% \documentclass[fleqn,11pt,aspectratio=43]{beamer}
+% Notizen
+% \documentclass[notes=only,aspectratio=169]{beamer}
+% Folien + Notizen
+\documentclass[fleqn,11pt,aspectratio=169, notes]{beamer}
+
+
+\usetheme[%
+  blue,                  % secondary color (yellow/orange/blue/green/violet)
+  dark,                  % brightness (light,medium,dark)
+  tocinheader,           % toc in header
+  nosubsectionsinheader, % no subsections in header toc
+  nexus,                 % corporate design font
+%  lnum,                  % NOTE: only available since tubslatex 1.01,
+                         % use "Versalziffern" instead of "Mediaevalziffern"
+]{tubs}
+
+\usepackage[ngerman]{babel}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[backend=biber]{biblatex}
+
+
+\lstset{frame=tb,
+  language=C,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left, %left oder none
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=4
+}
+\setlength{\arrayrulewidth}{0.3mm}
+\setlength{\tabcolsep}{18pt}
+\renewcommand{\arraystretch}{1.5}
+\graphicspath{{./figures/}}%
+\renewcommand\lstlistingname{Code}
+\renewcommand\lstlistlistingname{Code}
+%kein Abbildung vor Bildern
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+
+\addbibresource{bibliography.bib}
+% Titelseite
+\title{Algorithmische Methoden zu gradbeschränkten Triangulierungen}
+\author{Fabian Alich}
+\titlegraphic[scaled]{\includegraphics{titlepicture.jpg}}
+
+% Logo, dass auf Titelseiten oben rechts und auf Inthaltsseiten unten rechts
+% dargestellt wird. Es wird jeweils automatisch skliert
+\logo{\includegraphics{institut.png}}
+%\logo{Institut für Unkreativität\\und Schreibschwäche}
+
+%Temp
+% \begin{minipage}{0.5\textwidth}
+% \end{minipage}
+% \hfill %wichtig, hier keine leerzeile im code
+% \begin{minipage}{0.49\textwidth}
+
+% \end{minipage}
+
+\newcommand{\e}[2]{\textbf{#1} -> #2}
+\newcommand{\gleicheSeite}[0]{\bigskip\bigskip \item \textcolor{red}{\textbf{gleiche Seite!!!}}}
+
+\begin{document}
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+\include{beamer_chapters/0-einleitung}
+\include{beamer_chapters/1-Lösungsansätze}
+\include{beamer_chapters/2-Instanzgenerierung}
+\include{beamer_chapters/3-Auswertung}
+
+%Motivation Problem mehr erklären
+% Problem -> Lösung
+% Subjekt verb
+
+\end{document}

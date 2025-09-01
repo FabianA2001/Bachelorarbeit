@@ -1,4 +1,26 @@
-\chapter*{Abstract}
-	Your abstract gives a short introduction to your thesis (context), the problem description, and a brief description of your results.
-	
-	You may want to include a german abstract, too.
+\section*{Abstract}
+This thesis examines the problem of degree constrained triangulations (DCT) where each vertex in a triangulation must have a given degree. 
+Several exact and approximate approaches were developed and implemented. 
+These include edge based and triangle based encodings. 
+In addition, strategies for fixing and excluding edges and systematic methods for generating instances for feasible and infeasible cases were introduced.
+
+The experimental evaluation presents a comparison of different solvers such as PySAT, CaDiCaL, OR-Tools and Gurobi as well as various modeling techniques with respect to runtime and success rate. 
+The results show that OR-Tools achieves the best results overall. 
+Optimization based formulations provide approximate solutions in infeasible or more complex cases.
+
+The thesis shows that degree constrained triangulations can be effectively modeled and solved for small input sizes.
+OR-Tool with an edge based encodings proves to be the most effective solver. 
+
+% so wäre mein Vorschlag
+\section*{Zusammenfassung}
+Diese Arbeit behandelt das Problem der gradbeschränkten Triangulationen (Degree Constrained Triangulations, DCT), bei denen jedem Knoten einer Triangulation ein vorgegebener Grad zugeordnet wird. 
+Hierfür wurden exakte und approximative Lösungsansätze entwickelt und implementiert.
+Dazu gehören kantenbasierte und dreiecksbasierte Codierungen. 
+Zusätzlich wurden Strategien zum Fixieren und Ausschließen von Kanten sowie systematische Verfahren zur Instanzgenerierung für lösbare und unlösbare Fälle entworfen.
+
+Die experimentelle Untersuchung umfasst einen Vergleich verschiedener Solver wie PySAT, CaDiCaL, OR-Tools und Gurobi sowie unterschiedlicher Modellierungstechniken im Hinblick auf Laufzeit und Erfolgsquote. 
+Die Ergebnisse zeigen, dass OR-Tools insgesamt die besten Resultate liefert. 
+Optimierungsbasierte Formulierungen liefern in unlösbaren oder komplexeren Fällen approximative Lösungen.
+
+Die Arbeit zeigt, dass gradbeschränkte Triangulationen für kleine Eingabegrößen effizient modelliert und gelöst werden können. 
+OR-Tools mit der kantenbasierten Codierungen erweist sich dabei als leistungsfähigster Ansatz. 

@@ -1,0 +1,328 @@
+%%
+%% This is file `tubs.lco',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% tubslttr2.dtx  (with options: `lco')
+%% 
+%% This is a generated file.
+%% 
+%% Copyright (C) 2011 by Tobias Rad and Enrico Jörns
+%% 
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either
+%% version 1.2 of this license or (at your option) any later
+%% version. The latest version of this license is in:
+%% 
+%%   http://www.latex-project.org/lppl.txt
+%% 
+%% and version 1.2 or later is part of all distributions of
+%% LaTeX version 1999/12/01 or later.
+%% 
+\PassOptionsToPackage{ngerman, orig}{isodate}
+\RequirePackage{isodate}
+\daymonthsepgerman{}
+\monthyearsepgerman{}{}
+\RequirePackage{geometry}[2010/02/12]
+\newif\if@OldGeometryVersion
+\@OldGeometryVersionfalse
+\@ifpackagelater{geometry}{2010/02/12}{%
+  \@OldGeometryVersionfalse%
+}{%
+  \@OldGeometryVersiontrue%
+}
+\geometry{%
+  left=2.45cm,%
+  top=3.3cm,%
+  bottom=3.5cm,%
+  headsep=0.5cm,%
+  headheight=2.2cm,%
+  textwidth=12.2cm
+}
+\RequirePackage{afterpage}
+\iftrue%
+  \newcommand*{\@newGeo}{%
+    \setlength\textwidth{16cm}%
+    \global\textwidth=\textwidth\relax
+    \onecolumn\onecolumn
+  }
+  \newcommand*{\@firstpageGeo}{%
+    \setlength\textwidth{12.2cm}%
+    \global\textwidth=\textwidth\relax
+    \onecolumn\onecolumn%
+  }
+\else%
+  \newcommand*{\@newGeo}{%
+    \newgeometry{%
+      left=2.45cm,%
+      textwidth=16cm,%
+      bottom=3.5cm}%
+  }
+  \newcommand*{\@firstpageGeo}{%
+    \newgeometry{%
+      left=2.45cm,%
+      textwidth=12.2cm,%
+      bottom=3.5cm}%
+  }
+\fi%
+\AtBeginLetter{\afterpage{\aftergroup\aftergroup\@newGeo}}
+\AtEndLetter{\aftergroup\@firstpageGeo}
+\providecommand{\ifarial}{\iffalse}
+\ifarial
+  \RequirePackage{uarial}
+  \RequirePackage[T1]{fontenc}
+  \renewcommand*{\ttdefault}{txtt}% TODO: Nach besser passenderer suchen
+\else
+  \RequirePackage{nexus}
+  \renewcommand{\familydefault}{\sfdefault}
+\fi
+\RequirePackage{tubscolors}
+\PassOptionsToPackage{a4paper, relscale=0.9}{tubslogo}
+\RequirePackage{tubslogo}
+\@ifpackagelater{scrbase}{2011/06/16}{%
+  \@setplength{firstheadhpos}{1.75cm}
+  \@setplength{firstheadwidth}{18.5cm}
+}{%
+  \@setplength{firstheadwidth}{\paperwidth}
+  \@addtoplength{firstheadwidth}{-3.5cm}
+}
+\@setplength{firstheadvpos}{1.75cm}
+\@setplength{backaddrheight}{21pt}
+\addtokomafont{specialmail}{\rule{0pt}{2ex}}
+
+\@setplength{toaddrhpos}{\dimexpr \oddsidemargin+1in\relax}
+\@setplength{toaddrvpos}{4.4cm} % 1.75 + 0.7
+\@setplength{toaddrwidth}{8.5cm}
+\@setplength{lochpos}{-15.5cm}
+\@setplength{locvpos}{4.4cm}
+\@setplength{locwidth}{5.2cm}% TODO
+\@setplength{locheight}{14.8cm}
+\@ifpackagelater{scrbase}{2011/06/16}{%
+  \@setplength{firstfoothpos}{2.45cm}
+}{}
+\@setplength{firstfootvpos}{27.5cm}
+\@setplength{refvpos}{9.5cm}
+\@setplength{foldmarkhpos}{0.8cm}
+\newkomavar{fromuniversity}
+\newkomavar{frominstitute}
+\newkomavar{frominstitute_short}
+\newkomavar{fromdepartment}
+\newkomavar{fromstreet}
+\newkomavar{fromtown}
+\newkomavar{fromtitle}
+\newkomavar{fromphonedirect}
+\newkomavar{fromfaxdirect}
+\newkomavar{mymail}
+\newkomavar{fromIBAN}
+\newkomavar{fromBIC}
+\newkomavar{fromUStID}
+\newkomavar{fromSteuernummer}
+\setkomavar{fromtown}{Braunschweig}
+\setkomavar{fromuniversity}{Technische Universit\"at\linebreak[1] Braunschweig}
+\providecommand{\if@OldKomaVersion}{\iffalse}
+\if@OldKomaVersion%
+\newkomavar{fixdate}
+\newsavebox{\@fixdate}
+\let\oldopening\opening
+\renewcommand\opening[1]{%
+    \sbox{\@fixdate}{\footnotesize\sffamily\usekomavar{date}}
+    \setkomavar{fixdate}{\usebox{\@fixdate}}
+    \setkomavar{date}{}
+\oldopening{#1}
+}
+\else\relax\fi
+\setkomafont{addressee}{\sffamily}
+\setkomafont{subject}{\sffamily\bfseries}
+\setkomafont{pageheadfoot}{\sffamily}
+\setkomafont{backaddress}{\bfseries\sffamily}
+\setkomafont{foldmark}{\color{tuRed}}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{\medskipamount}
+\@setplength{sigbeforevskip}{1.4cm}
+\RequirePackage{setspace}
+\onehalfspacing
+\newcommand{\locationspacing}{%
+  \setstretch{1.15}%  default
+  \ifcase \@ptsize \relax % 10pt
+    \setstretch {1.15}%
+  \or % 11pt
+    \setstretch {1.113}%
+  \or % 12pt
+    \setstretch {1.141}%
+  \fi
+}
+\newlength{\@fheadwidth}
+\if@OldKomaVersion%
+  \newcommand\@fix@firsthead[1]{\firsthead{#1}}
+  \newcommand\@fix@nexthead[1]{\nexthead{#1}}
+  \newcommand\@fix@firstfoot[1]{\firstfoot{#1}}
+\else%
+  \newcommand\@fix@firsthead[1]{\setkomavar{firsthead}{#1}}
+  \newcommand\@fix@nexthead[1]{\setkomavar{nexthead}{#1}}
+  \newcommand\@fix@firstfoot[1]{\setkomavar{firstfoot}{#1}}
+\fi
+\@fix@firsthead{%
+  \color{tuRed}%
+  \rule[-0.75\tubslogoHeight]{18.5cm}{1.2pt}\\[-0.75\tubslogoHeight]%
+  \tubslogo\\[-1.4\tubslogoHeight]%
+  \if@OldKomaVersion%
+    \setlength{\@fheadwidth}{\textwidth}
+    \addtolength{\@fheadwidth}{1cm}
+    \parbox[b][2cm]{\@fheadwidth}{%
+      \begingroup%
+      \raggedleft%
+      \vfill%
+      \presetkeys{Gin}{width=8cm,height=\headheight,keepaspectratio}{}%
+      \usekomavar{fromlogo}%
+      \vfill%
+      \endgroup%
+    }%
+  \else%
+    \parbox[b][2cm]{\textwidth}{%
+      \begingroup%
+      \raggedleft%
+      \vfill%
+      \presetkeys{Gin}{width=8cm,height=\headheight,keepaspectratio}{}%
+      \usekomavar{fromlogo}%
+      \vfill%
+      \endgroup%
+    }%
+  \fi%
+}
+\ifthenelse{\isundefined{\Ifkomavarempty}}{%
+  \let\Ifkomavarempty\ifkomavarempty
+}{}
+
+\newcommand{\usekomavarNL}[2][\relax]{%
+  \Ifkomavarempty{#2}{\relax}{\usekomavar{#2}%
+  \ifx#1\relax\\\else#1\fi}
+}
+\setkomavar{location}{%
+\begin{flushleft}\locationspacing
+\Ifkomavarempty{fromphonedirect}{\relax}{%
+  \setkomavar{fromphone}{Tel. +49\,(0)\,531\,391-\usekomavar{fromphonedirect}}}%
+\Ifkomavarempty{fromfaxdirect}{\relax}{%
+  \setkomavar{fromfax}{Fax +49\,(0)\,531\,391-\usekomavar{fromfaxdirect}}}%
+\footnotesize\sffamily
+\usekomavar{fromuniversity}\\
+\textbf{\usekomavar{frominstitute}}\\
+\Ifkomavarempty{fromdepartment}{%
+  \relax%
+}{%
+  ~\\%
+  \usekomavar{fromdepartment}\\%
+}
+~\\%
+\usekomavarNL{fromstreet}
+\usekomavar{fromzipcode}~\usekomavar{fromtown}\\
+Deutschland\\
+\Ifkomavarempty{fromname}{}{~\\}
+\usekomavarNL{fromtitle}
+\usekomavarNL{fromname}
+~\\
+\usekomavarNL{fromphone}
+\usekomavarNL{fromfax}
+\usekomavarNL{fromemail}
+\usekomavarNL{fromurl}
+~\\~\\
+\if@OldKomaVersion%
+\datename:~\usekomavar{fixdate}\\
+\else%
+\datename:~\usekomavar{date}\\
+\fi%
+~\\%TODO: better control for placement of newlines if opts not used
+\Ifkomavarempty{yourref}{\relax}{~\\\yourrefname: \usekomavar{yourref}\\}
+\Ifkomavarempty{yourmail}{\relax}{\yourmailname: \usekomavar{yourmail}\\}
+\Ifkomavarempty{myref}{\relax}{\myrefname: \usekomavar{myref}\\}
+\Ifkomavarempty{mymail}{\relax}{\mymailname: \usekomavar{mymail}\\}
+~\\
+\Ifkomavarempty{frombank}{\relax}{\usekomavar{frombank}\\~\\}
+\Ifkomavarempty{fromIBAN}{\relax}{IBAN: \usekomavar{fromIBAN}\\}
+\Ifkomavarempty{fromBIC}{\relax}{BIC (Swift Code): \usekomavar{fromBIC}\\}
+\Ifkomavarempty{fromUStID}{\relax}{\vatinname: \usekomavar{fromUStID}\\}
+\Ifkomavarempty{fromSteuernummer}{\relax}{\taxidname: \usekomavar{fromSteuernummer}}
+\end{flushleft}
+}
+\AtBeginDocument{%
+\iflanguage{ngerman}{%
+\renewcaptionname{ngerman}\yourmailname{Ihre Nachricht vom}%
+\providecaptionname{ngerman}\mymailname{Unsere Nachricht vom}%
+\providecaptionname{ngerman}\taxidname{Steuer-Nr.}%
+\providecaptionname{ngerman}\vatinname{USt.-ID-Nr.}%
+}{}%
+\iflanguage{english}{%
+\providecaptionname{english}\mymailname{Our letter of}%
+\providecaptionname{english}\taxidname{tax ID}%
+\providecaptionname{english}\vatinname{VATIN}%
+}{}%
+}%
+\pagestyle{headings}
+\removereffields
+\setkomavar{backaddress}{%
+  \parbox{8.5cm}{%
+    \usekomavar{fromuniversity}%
+    \Ifkomavarempty{frominstitute_short}{%
+      \Ifkomavarempty{frominstitute}{\relax}{~|\ \usekomavar{frominstitute}}
+    }{%
+      ~|\ \usekomavar{frominstitute_short}
+    }\\
+    \Ifkomavarempty{fromstreet}{\relax}{\usekomavar{fromstreet}~|\ }%
+    \usekomavar{fromzipcode}~\usekomavar{fromtown}\ |\ Deutschland}%
+}
+\@fix@nexthead{\footnotesize\sffamily%
+  \vbox to\headheight{%
+    \vfill%
+    \parbox{12.2cm}{%
+      \usekomafont{fromaddress}\usekomavar{fromuniversity}\\%
+      {\bfseries\usekomavar{frominstitute}}\\%
+      \Ifkomavarempty{fromdepartment}{\relax}{\usekomavar{fromdepartment}}%
+    }%
+    \vfill%
+  }%
+}
+\@ifpackagelater{scrbase}{2011/06/16}{%
+  \@setplength{firstfoothpos}{2.45cm}
+}{% Hack für alte Klasse:
+  % doppelte Breite des linken Randes von Seitenbreite abziehen
+  \@setplength{firstfootwidth}{\paperwidth}
+  \@addtoplength{firstfootwidth}{-4.9cm}%
+}
+\@setplength{firstfootvpos}{27.5cm}
+\def\pageof{%
+  \iflanguage{ngerman}{von}{of}%
+}%
+\newcounter{setlettercount}%
+\newcounter{uselettercount}%
+\setcounter{setlettercount}{1}%
+\let\oldletter\letter
+\renewcommand\letter{%
+  \stepcounter{uselettercount}% Setze counter fuer page reference
+  \oldletter
+}
+\let\oldendletter\endletter
+\renewcommand\endletter{%
+  \edef\@lblname{letter\arabic{setlettercount}}%
+  \label{\@lblname}%
+  \stepcounter{setlettercount}%
+  \oldendletter
+}%
+\renewcommand*{\pagemark}{{%
+    \edef\@lblname{letter\arabic{uselettercount}}%
+    \usekomafont{pagenumber}%
+    \pagename\ %
+    \thepage\ %
+    \pageof\ %
+    \pageref{\@lblname}}}
+\@fix@firstfoot{%
+  \ifnum\@pageat>2
+    \parbox[c]{\textwidth}{%
+      \ifcase\@pageat\or\or\or\raggedright\or\centering\or\raggedleft\fi
+      \strut\pagemark%
+      }%
+  \fi
+}%
+\renewcommand*{\raggedsignature}{\raggedright}
+\endinput
+%%
+%% End of file `tubs.lco'.

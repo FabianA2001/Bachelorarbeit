@@ -1,0 +1,62 @@
+% THIS FILE WAS AUTOMATICALLY GENERATED -- DO NOT EDIT
+
+%%AutoEnc_hsis747lko65vqfviyggzixg2d
+% Encoding created by otftotfm on Thu Feb 22 20:15:42 2024
+% Command line follows encoding
+/AutoEnc_hsis747lko65vqfviyggzixg2d [
+%00
+  /.notdef /Euro /.notdef /.notdef /fraction.sc /dotaccent /hungarumlaut /ogonek
+  /fl.sc /.notdef /.notdef /uniFB00 /fi.sc /.notdef /uniFB03 /uniFB04
+%10
+  /dotlessi.sc /dotlessj.sc /grave /acute /caron /breve /macron /ring
+  /cedilla /germandbls.sc /ae.sc /oe.sc /oslash.sc /AE /OE /Oslash
+%20
+  /space /exclam.sc /quotedbl /numbersign.sc /dollar.sc /percent.sc /ampersand.sc /quoteright
+  /parenleft.sc /parenright.sc /asterisk.sc /plus /comma /hyphen /period /slash.sc
+%30
+  /zero /one /two /three /four /five /six /seven
+  /eight /nine /colon /semicolon /less /equal /greater /question.sc
+%40
+  /at /A /B /C /D /E /F /G
+  /H /I /J /K /L /M /N /O
+%50
+  /P /Q /R /S /T /U /V /W
+  /X /Y /Z /bracketleft.sc /backslash.sc /bracketright.sc /circumflex /underscore
+%60
+  /quoteleft /a.sc /b.sc /c.sc /d.sc /e.sc /f.sc /g.sc
+  /h.sc /i.sc /j.sc /k.sc /l.sc /m.sc /n.sc /o.sc
+%70
+  /p.sc /q.sc /r.sc /s.sc /t.sc /u.sc /v.sc /w.sc
+  /x.sc /y.sc /z.sc /braceleft.sc /bar.sc /braceright.sc /tilde /dieresis
+%80
+  /Lslash /quotesingle /quotesinglbase /florin /quotedblbase /ellipsis.sc /dagger /daggerdbl
+  /.notdef /perthousand.sc /Scaron /guilsinglleft /.notdef /Zcaron /asciicircum /minus
+%90
+  /lslash.sc /.notdef /.notdef /quotedblleft /quotedblright /bullet /endash /emdash
+  /.notdef /trademark /scaron.sc /guilsinglright /.notdef /zcaron.sc /asciitilde /Ydieresis
+%A0
+  /uni00A0 /exclamdown.sc /cent.sc /sterling.sc /currency.sc /yen.sc /brokenbar.sc /section
+  /.notdef /copyright /ordfeminine.sc /guillemotleft /logicalnot /uni00AD /registered /.notdef
+%B0
+  /degree /plusminus /twosuperior /threesuperior /.notdef /mu /paragraph /periodcentered
+  /.notdef /onesuperior /ordmasculine.sc /guillemotright /onequarter.sc /onehalf.sc /threequarters.sc /questiondown.sc
+%C0
+  /Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /.notdef /Ccedilla
+  /Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis
+%D0
+  /Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply
+  /.notdef /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /.notdef
+%E0
+  /agrave.sc /aacute.sc /acircumflex.sc /atilde.sc /adieresis.sc /aring.sc /.notdef /ccedilla.sc
+  /egrave.sc /eacute.sc /ecircumflex.sc /edieresis.sc /igrave.sc /iacute.sc /icircumflex.sc /idieresis.sc
+%F0
+  /eth.sc /ntilde.sc /ograve.sc /oacute.sc /ocircumflex.sc /otilde.sc /odieresis.sc /divide
+  /.notdef /ugrave.sc /uacute.sc /ucircumflex.sc /udieresis.sc /yacute.sc /thorn.sc /ydieresis.sc
+] def
+% Command line: 'otftotfm --no-updmap --vendor=Fontshop
+% --name=NexusProSans-SmallCaps --warn-missing --encoding=texnansx
+% --feature=kern --feature=liga --force --tfm-directory=fonts/tfm/Nexus/
+% --vf-directory=fonts/vf/Nexus/ --type1-directory=fonts/type1/Nexus/
+% --encoding-directory=fonts/enc/dvips/Fontshop/ --feature=smcp
+% --map-file=fonts/map/dvips/NexusProSans.map
+% otf-src/NexusSansPro-Regular.otf'

@@ -1,0 +1,470 @@
+%%
+%% This is file `tubstypearea.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% ../tubsvers.inc  (with options: `default')
+%% tubstypearea.dtx  (with options: `package')
+%% 
+%% This is a generated file.
+%% 
+%% Copyright (C) 2011 by Enrico Jörns
+%% 
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either
+%% version 1.2 of this license or (at your option) any later
+%% version. The latest version of this license is in:
+%% 
+%%   http://www.latex-project.org/lppl.txt
+%% 
+%% and version 1.2 or later is part of all distributions of
+%% LaTeX version 1999/12/01 or later.
+%% 
+\RequirePackage{ifthen}
+\RequirePackage{scrlfile}%TODO: KOMA-Check?
+\RequirePackage{etoolbox}%
+\begingroup
+  \makeatletter
+  \ifx\tubslatexVersion\undefined
+    \newcommand*{\check@tubslatexVersion}[1]{%
+      \gdef\tubslatexVersion{#1}%
+    }%
+  \else
+    \newcommand*{\check@tubslatexVersion}[1]{%
+      \def\@tempa{#1}%
+      \ifx\tubslatexVersion\@tempa\else
+        \@latex@warning@no@line{%
+          \noexpand\tubslatexVersion\space is
+          `\tubslatexVersion',\MessageBreak
+          but `#1' was expected!\MessageBreak
+          You should not use classes, packages or files
+          from\MessageBreak
+          different tubslatex versions%
+        }%
+      \fi
+    }
+  \fi
+  \check@tubslatexVersion{2024/02/22 v1.3.5-r140 tubslatex}%
+\endgroup
+\providecommand{\tubslatex}{tubs\LaTeX}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tubstypearea}[\tubslatexVersion]
+\RequirePackage{ifthen}
+\RequirePackage{calc}
+\RequirePackage{xkeyval}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newboolean{tubspage@calconly}
+\newboolean{tubspage@landscape}
+\newboolean{tubspage@marginleft}
+\newboolean{tubspage@marginright}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newlength{\tubspage@bcor}
+\newlength{\tubsborderwidth}
+\newlength{\tubspage@module@padding}
+
+\newlength{\tubssenderheight}
+\newlength{\tubspage@headheight}
+\newlength{\tubscommunicationheight}
+\newlength{\tubspage@contentwidth}% TODO: used?
+\def\tubspage@xsegments{6}
+\def\tubspage@ysegments{8}
+\newcounter{tubspage@vsegments}\setcounter{tubspage@vsegments}{8}
+\newcounter{tubspage@gausssum}
+\newlength{\tubscolumnsep}
+\newlength{\tubsgaussbaseheight}
+\newlength{\tubscolumnwidth}
+\newboolean{tubspage@twosided}\setboolean{tubspage@twosided}{false}
+\newboolean{tubspage@bottomsender}\setboolean{tubspage@bottomsender}{false}
+\def\tubspage@paper{custompaper}
+\def\tubspage@modifications{}
+\newboolean{scifiposter}\setboolean{scifiposter}{false}
+\newboolean{tubspage@extramargin}\setboolean{tubspage@extramargin}{false}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DeclareOptionX{a0paper}{%
+  \def\tubspage@paper{a0paper}
+}
+\DeclareOptionX{a1paper}{%
+  \def\tubspage@paper{a1paper}
+}
+\DeclareOptionX{a2paper}{%
+  \def\tubspage@paper{a2paper}
+}
+\DeclareOptionX{a3paper}{%
+  \def\tubspage@paper{a3paper}
+}
+\DeclareOptionX{a4paper}{%
+  \def\tubspage@paper{a4paper}
+}
+\DeclareOptionX{a5paper}{%
+  \def\tubspage@paper{a5paper}
+}
+\DeclareOptionX{langpaper}{%
+  \def\tubspage@paper{langpaper}
+}
+\DeclareOptionX{a6paper}{%
+  \def\tubspage@paper{a6paper}
+}
+\DeclareOptionX{custompaper}{%
+  \def\tubspage@paper{custompaper}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DeclareOptionX{landscape}{%
+  \setboolean{tubspage@landscape}{true}
+}
+\DeclareOptionX{bcor}{%
+  \setlength{\tubspage@bcor}{#1}
+}
+\define@boolkey{tubstypearea.sty}[tt@]{twoside}[true]{%
+  \iftt@twoside
+    \setboolean{tubspage@twosided}{true}
+  \else
+    \setboolean{tubspage@twosided}{false}
+  \fi
+}
+\DeclareOptionX{calconly}{%
+  \setboolean{tubspage@calconly}{true}
+}
+\DeclareOptionX{marginleft}{%
+  \setboolean{tubspage@marginleft}{true}
+}
+\DeclareOptionX{marginright}{%
+  \setboolean{tubspage@marginright}{true}
+}
+\DeclareOptionX{extramargin}{%
+  \setboolean{tubspage@extramargin}{true}
+}
+\DeclareOptionX{scifiposter}{%
+  \setboolean{scifiposter}{true}
+  \g@addto@macro{\tubspage@modifications}{%
+    \setlength{\tubssenderheight}{0.0909\paperheight}% ~1/11
+    \setlength{\tubscommunicationheight}{%
+      \paperheight-\tubssenderheight-\tubsborderwidth}
+  }
+}
+\DeclareOptionX{sender}{%
+  \ifthenelse{\equal{#1}{bottom}}{%
+    \setboolean{tubspage@bottomsender}{true}
+  }{}
+}
+\DeclareOptionX*{%
+  \PassOptionsToPackage{\CurrentOption}{geometry}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ProcessOptionsX*\relax
+\ifthenelse{\boolean{tubspage@calconly}}{}{%
+  \RequirePackage{geometry}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\tubsgeometry}[1]{%
+  \setkeys{tubstypearea.sty}{#1}
+  \tubspage@process@paper
+  \tubspage@modifications
+  \tubspage@calclayout
+  \tubspage@setlayout
+}
+\newcommand{\tubspage@process@paper}{%
+  \ifthenelse{\equal{\tubspage@paper}{custompaper}}{%
+    \ifthenelse{\lengthtest{\paperwidth>\paperheight}}{%
+      \setboolean{tubspage@landscape}{true}
+      \PassOptionsToPackage{landscape}{tubslogo}
+    }{}
+    % custompaper
+    \ifthenelse{\boolean{tubspage@landscape}}{%
+      \setlength{\tubsborderwidth}{0.038\paperheight}%
+      \setlength{\tubssenderheight}{0.2\paperheight}% 1/5
+      \def\tubspage@ysegments{6}%
+      \setcounter{tubspage@vsegments}{6}%
+    }{%
+      \setlength{\tubsborderwidth}{0.038\paperwidth}%
+      \setlength{\tubssenderheight}{0.14286\paperheight}% ~1/7
+      \def\tubspage@ysegments{8}%
+      \setcounter{tubspage@vsegments}{8}%
+    }%
+  \setlength{\tubspage@module@padding}{0.7\tubsborderwidth}% TODO: hack...
+  \setlength{\tubscommunicationheight}{%
+    \paperheight-\tubssenderheight-\tubsborderwidth}%
+  }{%
+  \ifthenelse{\equal{\tubspage@paper}{a6paper}}{%
+    % a6paper
+    \ifthenelse{\boolean{tubspage@landscape}}{%
+      \setlength{\tubscommunicationheight}{75mm}%
+      \def\tubspage@ysegments{6}%
+      \setcounter{tubspage@vsegments}{6}
+    }{%
+      \setlength{\tubscommunicationheight}{118mm}%
+      \def\tubspage@ysegments{8}%
+      \setcounter{tubspage@vsegments}{8}
+    }
+    \setlength{\tubspage@module@padding}{5mm}%
+    \setlength{\tubsborderwidth}{5mm}%
+    \setlength{\tubssenderheight}{25mm}%
+  }{%
+  \ifthenelse{\equal{\tubspage@paper}{langpaper}}{%
+    % langpaper
+    \ifthenelse{\boolean{tubspage@landscape}}{%
+      \setlength{\tubscommunicationheight}{112.5mm}%
+      \setlength{\tubssenderheight}{25mm}%
+      \def\tubspage@ysegments{8}%
+      \setcounter{tubspage@vsegments}{8}
+    }{%
+      \setlength{\tubscommunicationheight}{175mm}%
+      \setlength{\tubssenderheight}{30mm}%
+      \def\tubspage@ysegments{8}%
+      \setcounter{tubspage@vsegments}{8}
+    }
+    \setlength{\tubspage@module@padding}{5mm}%
+    \setlength{\tubsborderwidth}{5mm}%
+    % TODO: senderheight??
+  }{%
+  \ifthenelse{\equal{\tubspage@paper}{a5paper}}{%
+    % a5paper
+    \ifthenelse{\boolean{tubspage@landscape}}{%
+      \setlength{\tubscommunicationheight}{112.5mm}%
+      \def\tubspage@ysegments{6}%
+      \setcounter{tubspage@vsegments}{6}
+    }{%
+      \setlength{\tubscommunicationheight}{174.5mm}%
+      \def\tubspage@ysegments{8}%
+      \setcounter{tubspage@vsegments}{8}
+    }
+    \setlength{\tubspage@module@padding}{5.5mm}%
+    \setlength{\tubsborderwidth}{5.5mm}%
+    \setlength{\tubssenderheight}{30mm}%
+  }{%
+  \ifthenelse{\equal{\tubspage@paper}{a4paper}}{%
+    % a4paper
+    \ifthenelse{\boolean{tubspage@landscape}}{%
+      \setlength{\tubscommunicationheight}{162mm}%
+      \def\tubspage@ysegments{6}%
+      \setcounter{tubspage@vsegments}{6}
+    }{%
+      \setlength{\tubscommunicationheight}{249mm}%
+      \def\tubspage@ysegments{8}%
+      \setcounter{tubspage@vsegments}{8}
+    }
+    \setlength{\tubspage@module@padding}{8mm}%
+    \setlength{\tubsborderwidth}{8mm}%
+    \setlength{\tubssenderheight}{40mm}%
+  }{%
+  \ifthenelse{\equal{\tubspage@paper}{a3paper}}{%
+    % a3paper
+    \ifthenelse{\boolean{tubspage@landscape}}{%
+      \setlength{\tubscommunicationheight}{226mm}%
+      \def\tubspage@ysegments{6}%
+      \setcounter{tubspage@vsegments}{6}
+    }{%
+      \setlength{\tubscommunicationheight}{349mm}%
+      \def\tubspage@ysegments{8}%
+      \setcounter{tubspage@vsegments}{8}
+    }
+    \setlength{\tubspage@module@padding}{11mm}%
+    \setlength{\tubsborderwidth}{11mm}%
+    \setlength{\tubssenderheight}{60mm}%
+  }{%
+  \ifthenelse{\equal{\tubspage@paper}{a2paper}}{%
+    % a2paper
+    \ifthenelse{\boolean{tubspage@landscape}}{%
+      \setlength{\tubscommunicationheight}{324mm}%
+      \def\tubspage@ysegments{6}%
+      \setcounter{tubspage@vsegments}{6}
+    }{%
+      \setlength{\tubscommunicationheight}{498mm}%
+      \def\tubspage@ysegments{8}%
+      \setcounter{tubspage@vsegments}{8}
+    }
+    \setlength{\tubspage@module@padding}{8mm}%
+    \ifthenelse{\boolean{scifiposter}\and\boolean{tubspage@landscape}}{%
+      \setlength{\tubsborderwidth}{11mm}%
+    }{%
+      \setlength{\tubsborderwidth}{16mm}%
+    }
+    \setlength{\tubssenderheight}{80mm}%
+  }{%
+  \ifthenelse{\equal{\tubspage@paper}{a1paper}}{%
+    % a1paper
+    \ifthenelse{\boolean{tubspage@landscape}}{%
+      \setlength{\tubscommunicationheight}{649mm}%
+      \def\tubspage@ysegments{6}%
+      \setcounter{tubspage@vsegments}{6}
+    }{%
+      \setlength{\tubscommunicationheight}{699mm}%
+      \def\tubspage@ysegments{8}%
+      \setcounter{tubspage@vsegments}{8}
+    }
+    \setlength{\tubspage@module@padding}{11mm}%
+    \ifthenelse{\boolean{scifiposter}\and\boolean{tubspage@landscape}}{%
+      \setlength{\tubsborderwidth}{16mm}%
+    }{%
+      \setlength{\tubsborderwidth}{22mm}%
+    }
+    \setlength{\tubssenderheight}{120mm}%
+  }{%
+  \ifthenelse{\equal{\tubspage@paper}{a0paper}}{%
+    % a0paper
+    \ifthenelse{\boolean{tubspage@landscape}}{%
+      \setlength{\tubscommunicationheight}{649mm}%
+      \def\tubspage@ysegments{6}%
+      \setcounter{tubspage@vsegments}{6}
+    }{%
+      \setlength{\tubscommunicationheight}{997mm}%
+      \def\tubspage@ysegments{8}%
+      \setcounter{tubspage@vsegments}{8}
+    }
+    \setlength{\tubspage@module@padding}{16mm}%
+    \ifthenelse{\boolean{scifiposter}\and\boolean{tubspage@landscape}}{%
+      \setlength{\tubsborderwidth}{22mm}%
+    }{%
+      \setlength{\tubsborderwidth}{32mm}%
+    }
+    \setlength{\tubssenderheight}{160mm}%
+  }{}}}}}}}}}
+}
+\newcommand{\tubspage@calclayout}{%
+  \setlength{\tubscolumnsep}{5mm}
+  % inner geometry
+  \setcounter{tubspage@gausssum}{%
+    \tubspage@ysegments*(\tubspage@ysegments+1)/2}
+  % dimension is a hack..
+  \setlength{\tubscolumnwidth}{%
+    (\textwidth)*\ratio{1mm}{\tubspage@xsegments mm}}%TODO: might cause problems
+  \setlength{\tubsgaussbaseheight}{%
+    (\tubscommunicationheight)*\ratio{1mm}{\value{tubspage@gausssum} mm}}
+  \setlength{\tubspage@headheight}{\tubssenderheight-2\tubsborderwidth}
+  \setlength{\tubspage@contentwidth}{%
+    \paperwidth-2\tubsborderwidth-\tubspage@bcor}
+}
+\newcommand{\@tubspage@setlayout}{%
+  % Layout nur setzen, wenn Option 'calconly' nicht benutzt
+  \ifthenelse{\boolean{tubspage@calconly}}{}{%
+    \ifthenelse{\boolean{scifiposter}}{%
+      % Die Innenränder der Module betragen jeweils 0.5\tubsborderwidth
+      \geometry{%
+        left=1.5\tubsborderwidth,
+        right=1.5\tubsborderwidth
+      }
+      % Abstand des Modulbereichs zum Formatrand auf der Seite
+      % des verkleinerten Absenderbereichs.
+      \ifthenelse{\boolean{tubspage@bottomsender}}{%
+        % Absenderbereich unten
+        \geometry{%
+          top=1.5\tubsborderwidth,
+          bottom=0.1429\paperheight+0.5\tubsborderwidth, % 1/7
+          headheight=0mm,nohead,
+          footskip=\tubssenderheight,%TODO: check
+        }
+      }{% Absenderbereich oben
+        \geometry{%
+          top=0.1429\paperheight+0.5\tubsborderwidth, % 1/7
+          headsep=0.05195\paperheight+\tubsborderwidth,% 1/7-1/11 + border
+          bottom=1.5\tubsborderwidth,
+        }
+        % Allow larger headline for landscape
+        \ifthenelse{\boolean{tubspage@landscape}}{%
+          \geometry{headheight=\tubssenderheight-\tubsborderwidth}
+        }{%
+          \geometry{headheight=\tubssenderheight-1.5\tubsborderwidth}
+        }
+
+      }
+    }
+    {
+      \geometry{%
+          columnsep=\tubscolumnsep,
+          bindingoffset=\tubspage@bcor
+      }
+      \ifthenelse{\boolean{tubspage@extramargin}}{%
+        % Extra breite Ränder
+        \geometry{%
+          left=3\tubsborderwidth,
+          right=3\tubsborderwidth
+        }
+      }{% Standardwerte für Ränder
+        \geometry{%
+          left=2\tubsborderwidth,
+          right=2\tubsborderwidth
+        }
+      }
+      \ifthenelse{\boolean{tubspage@bottomsender}}{%
+        % Absenderbereich unten
+        \setlength{\footheight}{\tubssenderheight+2\tubsborderwidth}
+             % above is needed to remove warnings by
+              % scrlayer-scrpage. idk why
+              % Anyway, it changes the layout which results in.. the footskip thing below
+        \geometry{%
+          nohead, % shouldn't matter if this is set or not
+          top=2\tubsborderwidth,
+          bottom=\tubssenderheight+\tubsborderwidth,
+          footskip=2\tubssenderheight-2\tubsborderwidth,
+                % Above should theoretically just be set to
+                % \tubssenderheight
+          head=15.4pt, % This isn't changing the layout
+                       % It's only used to remove scrlayer-scrpage warnings.. idk why
+        }
+        \ifthenelse{\boolean{tubspage@extramargin}}{%
+          \geometry{top=3\tubsborderwidth}
+        }{}
+      }{% Absenderbereich oben
+        \geometry{%
+          headheight=\tubssenderheight-2\tubsborderwidth,
+          headsep=1.5\tubsborderwidth,
+          top=\tubssenderheight+\tubsborderwidth,
+          nofoot, % shouldn't matter if this is set or not
+          bottom=2\tubsborderwidth
+        }
+        \ifthenelse{\boolean{tubspage@extramargin}}{%
+          \geometry{bottom=3\tubsborderwidth}
+        }{}
+      }
+      % Marginale links
+      \ifthenelse{\boolean{tubspage@marginleft}}{%
+        \geometry{%
+          lmargin=\tubscolumnwidth+2\tubsborderwidth+0.5\tubscolumnsep,
+          marginparsep=\tubscolumnsep,
+          marginparwidth=\tubscolumnwidth-0.5\tubscolumnsep}
+      }{}
+      % Marginale rechts
+      \ifthenelse{\boolean{tubspage@marginright}}{%
+        \geometry{%
+          rmargin=\tubscolumnwidth+2\tubsborderwidth+0.5\tubscolumnsep,
+          marginparsep=\tubscolumnsep,
+          marginparwidth=\tubscolumnwidth-0.5\tubscolumnsep}
+      }{}
+      % Zweiseitiges Layout
+      \ifthenelse{\boolean{tubspage@twosided}}{%
+        \geometry{twoside}
+      }
+    }
+  }
+}
+\let\tubspage@setlayout\@tubspage@setlayout
+\newcommand{\calc@gaussum}[2]{%
+\setcounter{#1}{%
+  (#2*(#2+1))/2}%
+}
+\newcounter{tmp@calc}
+\newcommand{\calc@gauss@elementpos}[3][]{%
+  % Invertierte Berechnung berechnet die Elementanzahlen für das bottomsender-Layout,
+  % ansonsten wird es für topdown berechnet (standard).
+  % TODO: evtl. mit Option bottomsender kombinieren?
+  \ifthenelse{\equal{#1}{inverted}}{%
+    \calc@gaussum{tmp@calc}{(\tubspage@ysegments-(\tubspage@ysegments-(#3)+1))}%
+    \setcounter{#2}{\thetubspage@gausssum-(\thetubspage@gausssum-\thetmp@calc)}%
+  }{%
+    \calc@gaussum{tmp@calc}{(\tubspage@ysegments-((#3)-1))}%
+    \setcounter{#2}{\thetubspage@gausssum-\thetmp@calc}%
+  }%
+}
+\tubspage@process@paper
+\tubspage@modifications
+\tubspage@calclayout
+\tubspage@setlayout
+\endinput
+%%
+%% End of file `tubstypearea.sty'.

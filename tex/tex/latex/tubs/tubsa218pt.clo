@@ -1,0 +1,117 @@
+%%
+%% This is file `tubsa218pt.clo',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% tubsfont.dtx  (with options: `clo,a2')
+%% 
+%% This is a generated file.
+%% 
+%% Copyright (C) 2011 by Enrico Jörns
+%% 
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either
+%% version 1.2 of this license or (at your option) any later
+%% version. The latest version of this license is in:
+%% 
+%%   http://www.latex-project.org/lppl.txt
+%% 
+%% and version 1.2 or later is part of all distributions of
+%% LaTeX version 1999/12/01 or later.
+%% 
+\setlength\footnotesep    {6.65\p@}
+\setlength{\skip\footins} {9\p@ \@plus 4\p@ \@minus 2\p@}
+\setlength\floatsep       {12\p@ \@plus 2\p@ \@minus 2\p@}
+\setlength\textfloatsep   {20\p@ \@plus 2\p@ \@minus 4\p@}
+\setlength\intextsep      {12\p@ \@plus 2\p@ \@minus 2\p@}
+\setlength\dblfloatsep    {12\p@ \@plus 2\p@ \@minus 2\p@}
+\setlength\dbltextfloatsep{20\p@ \@plus 2\p@ \@minus 4\p@}
+\setlength\@fptop         {0\p@ \@plus 1fil}
+\setlength\@fpsep         {8\p@ \@plus 2fil}
+\setlength\@fpbot         {0\p@ \@plus 1fil}
+\setlength\@dblfptop      {0\p@ \@plus 1fil}
+\setlength\@dblfpsep      {8\p@ \@plus 2fil}
+\setlength\@dblfpbot      {0\p@ \@plus 1fil}
+\setlength\partopsep      {2\p@ \@plus 1\p@ \@minus 1\p@}
+\def\@listi{\leftmargin\leftmargini
+            \parsep 4\p@ \@plus2\p@ \@minus\p@
+            \topsep 8\p@ \@plus2\p@ \@minus4\p@
+            \itemsep4\p@ \@plus2\p@ \@minus\p@}
+\let\@listI\@listi
+\def\@listii {\leftmargin\leftmarginii
+              \labelwidth\leftmarginii
+              \advance\labelwidth-\labelsep
+              \topsep    4\p@ \@plus2\p@ \@minus\p@
+              \parsep    2\p@ \@plus\p@  \@minus\p@
+              \itemsep   \parsep}
+\def\@listiii{\leftmargin\leftmarginiii
+              \labelwidth\leftmarginiii
+               \advance\labelwidth-\labelsep
+              \topsep    2\p@ \@plus\p@\@minus\p@
+              \parsep    \z@
+              \partopsep \p@ \@plus\z@ \@minus\p@
+              \itemsep   \topsep}
+\def\@listiv {\leftmargin\leftmarginiv
+              \labelwidth\leftmarginiv
+              \advance\labelwidth-\labelsep}
+\def\@listv  {\leftmargin\leftmarginv
+              \labelwidth\leftmarginv
+              \advance\labelwidth-\labelsep}
+\def\@listvi {\leftmargin\leftmarginvi
+              \labelwidth\leftmarginvi
+              \advance\labelwidth-\labelsep}
+%%% From File: scrkpar.dtx
+\@ifundefined{@list@extra}{}{%
+  \l@addto@macro{\@listi}{\@list@extra}%
+  \let\@listI=\@listi
+  \l@addto@macro{\@listii}{\@list@extra}%
+  \l@addto@macro{\@listiii}{\@list@extra}%
+  \l@addto@macro{\footnotesize}{\protect\add@extra@listi{ftns}}%
+  \l@addto@macro{\small}{\protect\add@extra@listi{sml}}%
+}
+\@listi
+\def\normalsize{%
+   \@setfontsize\normalsize{18}{25}%
+   \abovedisplayskip 15\p@ \@plus4\p@ \@minus8\p@
+   \abovedisplayshortskip \z@ \@plus4\p@
+   \belowdisplayshortskip 8\p@ \@plus4\p@ \@minus3\p@
+   \belowdisplayskip \abovedisplayskip
+   \let\@listi\@listI}
+\normalsize
+\def\small{%
+   \@setfontsize\small\@xivpt{17}%
+   \abovedisplayskip 12\p@ \@plus3\p@ \@minus7\p@
+   \abovedisplayshortskip \z@ \@plus3\p@
+   \belowdisplayshortskip 7\p@ \@plus4\p@ \@minus3\p@
+   \def\@listi{\leftmargin\leftmargini
+               \topsep 11\p@ \@plus4\p@ \@minus6\p@
+               \parsep 6\p@ \@plus3\p@ \@minus\p@
+               \itemsep \parsep
+%%               \itemindent\z@
+              }%
+   \belowdisplayskip \abovedisplayskip
+}
+\def\footnotesize{%
+   \@setfontsize\footnotesize\@xiipt{14}%
+   \abovedisplayskip 12\p@ \@plus3\p@ \@minus7\p@
+   \abovedisplayshortskip \z@ \@plus3\p@
+   \belowdisplayshortskip 6.5\p@ \@plus3.5\p@ \@minus3\p@
+   \def\@listi{\leftmargin\leftmargini
+               \topsep 6.5\p@ \@plus3.5\p@ \@minus3\p@
+               \parsep 4\p@ \@plus3\p@ \@minus\p@
+               \itemsep \parsep
+%%               \itemindent\z@
+              }%
+   \belowdisplayskip \abovedisplayskip
+}
+\def\large{\@setfontsize\large{28pt}{37}}
+\def\Large{\@setfontsize\Large{45pt}{54}}
+\def\huge{\@setfontsize\huge{90pt}{99}}
+\def\Huge{\@setfontsize\Huge{135pt}{149}}
+\def\tiny{\@setfontsize\tiny\@viiipt{11}}
+\def\scriptsize{\@setfontsize\scriptsize\@xpt{13}}
+\def\LARGE{\@setfontsize\LARGE{68pt}{81.6}}
+\endinput
+%%
+%% End of file `tubsa218pt.clo'.

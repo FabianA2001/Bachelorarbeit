@@ -1,0 +1,748 @@
+%%
+%% This is file `tubsbox.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% ../tubsvers.inc  (with options: `default')
+%% tubsbox.dtx  (with options: `package')
+%% 
+%% This is a generated file.
+%% 
+%% Copyright (C) 2011 by Enrico Jörns
+%% 
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either
+%% version 1.2 of this license or (at your option) any later
+%% version. The latest version of this license is in:
+%% 
+%%   http://www.latex-project.org/lppl.txt
+%% 
+%% and version 1.2 or later is part of all distributions of
+%% LaTeX version 1999/12/01 or later.
+%% 
+\RequirePackage{ifthen}
+\RequirePackage{scrlfile}%TODO: KOMA-Check?
+\RequirePackage{etoolbox}%
+\begingroup
+  \makeatletter
+  \ifx\tubslatexVersion\undefined
+    \newcommand*{\check@tubslatexVersion}[1]{%
+      \gdef\tubslatexVersion{#1}%
+    }%
+  \else
+    \newcommand*{\check@tubslatexVersion}[1]{%
+      \def\@tempa{#1}%
+      \ifx\tubslatexVersion\@tempa\else
+        \@latex@warning@no@line{%
+          \noexpand\tubslatexVersion\space is
+          `\tubslatexVersion',\MessageBreak
+          but `#1' was expected!\MessageBreak
+          You should not use classes, packages or files
+          from\MessageBreak
+          different tubslatex versions%
+        }%
+      \fi
+    }
+  \fi
+  \check@tubslatexVersion{2024/02/22 v1.3.5-r140 tubslatex}%
+\endgroup
+\providecommand{\tubslatex}{tubs\LaTeX}
+
+\RequirePackage{ifthen}
+\RequirePackage{xkeyval}
+\RequirePackage{etoolbox}
+\RequirePackage{forloop}
+\RequirePackage{tubsdebug}
+\RequirePackage{tubstypearea}
+\RequirePackage[absolute,overlay]{textpos}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newboolean{tubsbox@bottomsender}\setboolean{tubsbox@bottomsender}{false}
+\def\tubsbox@framebox{\relax}
+\newcommand{\tubsbox@colorbox}{\relax}
+\newcommand{\if@tubs@oddpage}[2]{%
+  \ifthenelse{\boolean{tubsstyle@twoside}}{%
+    \Ifthispageodd{#1}{#2}%
+  }{#1}%
+}
+\newcommand*{\modulesetup}[1][]{%
+  \setkeys*{tubsbox.sty}{#1}%
+  \setrmkeys*{tubsbox}%
+  \setrmkeys{modulebox}%
+}
+\newcommand*{\gausspagesetup}[1][]{%
+  \setkeys*{tubsbox.sty}{#1}%
+}
+\define@key{tubsbox.sty}{bgcolor}[]{}
+\define@choicekey{tubsbox.sty}{sender}[\var\nr]{top,bottom}{%
+  \ifcase\nr\relax
+    \setboolean{tubsbox@bottomsender}{false}
+  \or
+    \setboolean{tubsbox@bottomsender}{true}
+  \fi
+}
+\define@boolkey{tubsbox.sty}[@gb@]{nosep}[true]{}
+\ProcessOptionsX*\relax%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\define@key{tubsbox}{bgcolor}{%
+  \ifthenelse{\equal{#1}{none}}{%
+    \renewcommand\tubsbox@colorbox{\relax}
+  }{%
+    \def\bgcolor{#1}
+    \renewcommand\tubsbox@colorbox{\colorbox{\bgcolor}}
+  }
+}
+\define@key{tubsbox}{fgcolor}{
+  \ifthenelse{\equal{#1}{none}}{%
+  }{%
+    \color{#1}%
+  }
+}
+\newcommand\tb@topfill{\relax}
+\newcommand\tb@bottomfill{\relax}
+\define@key{tubsbox}{t}[true]{%
+  \renewcommand\tb@topfill{\relax}
+  \renewcommand\tb@bottomfill{\relax}
+}
+\define@key{tubsbox}{c}[true]{%
+  \renewcommand\tb@topfill{\vfil}
+  \renewcommand\tb@bottomfill{\vfil}
+}
+\define@key{tubsbox}{b}[true]{%
+  \renewcommand\tb@topfill{\vfill}
+  \renewcommand\tb@bottomfill{\relax}
+}
+\define@choicekey{tubsbox}{frame}[\val\nr]{none,fbox}{%
+  \ifcase\nr\relax
+    \def\tubsbox@framebox{\relax}
+  \or
+    \def\tubsbox@framebox{\fbox}
+  \fi
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand*\tubs@gb@addtoppadding{0mm}
+\define@boolkey{gaussbox}{logosep}[true]{%
+  \def\tubs@gb@toppadding@outer{3\tubsborderwidth}
+}
+\define@choicekey{gaussbox}{outerpadding}[\val\nr]{%
+        default,none,vnone,hnone}{%
+  \ifcase\nr\relax% default
+  \or% kein Außen-Padding
+    \def\tubs@gb@toppadding@outer{0mm}%
+    \def\tubs@gb@bottompadding@outer{0mm}%
+    \def\tubs@gb@leftpadding@outer{0mm}%
+    \def\tubs@gb@rightpadding@outer{0mm}%
+  \or% keine Abstände zum Blattrand
+    \def\tubs@gb@toppadding@outer{0mm}%
+    \def\tubs@gb@bottompadding@outer{0mm}%
+  \or% Innenabstände auf columnsep
+    \def\tubs@gb@leftpadding@outer{0mm}%
+    \def\tubs@gb@rightpadding@outer{0mm}%
+  \fi
+}
+\define@choicekey{gaussbox}{innerpadding}[\val\nr]{%
+        default,columnsep,none,vnone,hnone}{%
+  \ifcase\nr\relax% default
+  \or% Innenabstände auf columnsep
+    \def\tubs@gb@toppadding@inner{0.5\tubscolumnsep}%
+    \def\tubs@gb@bottompadding@inner{0.5\tubscolumnsep}%
+  \or% Alle Innenabstände auf 0
+    \def\tubs@gb@toppadding@inner{0mm}%
+    \def\tubs@gb@bottompadding@inner{0mm}%
+    \def\tubs@gb@leftpadding@inner{0mm}
+    \def\tubs@gb@rightpadding@inner{0mm}
+  \or% Alle vertikalen Innenabstände auf 0
+    \def\tubs@gb@toppadding@inner{0mm}%
+    \def\tubs@gb@bottompadding@inner{0mm}%
+  \or% Alle horizontalen Innenabstände auf 0
+    \def\tubs@gb@leftpadding@inner{0mm}
+    \def\tubs@gb@rightpadding@inner{0mm}
+  \fi
+}
+\define@choicekey{gaussbox}{padding}[\val\nr]{%
+        default,minimal,none}{%
+  \ifcase\nr\relax% default
+  \or% Abstände normal minimal
+    \setkeys{gaussbox}{outerpadding=none}%
+    \setkeys{gaussbox}{innerpadding=columnsep}%
+  \or% Alle Abstände auf 0
+    \setkeys{gaussbox}{outerpadding=none}%
+    \setkeys{gaussbox}{innerpadding=none}%
+  \fi
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\providecommand\tb@gb@setorig{%
+  \ifthenelse{\boolean{tubsbox@bottomsender}}{%
+    \if@tubs@oddpage{%
+      \textblockorigin{\tubsborderwidth+\tubspage@bcor}{%
+        \tubsborderwidth}%
+    }{%
+      \textblockorigin{\tubsborderwidth}{%
+        \tubsborderwidth}%
+    }%
+  }{%
+    \if@tubs@oddpage{%
+      \textblockorigin{\tubsborderwidth+\tubspage@bcor}{%
+        \tubssenderheight}%
+    }{%
+      \textblockorigin{\tubsborderwidth}{%
+        \tubssenderheight}%
+    }
+  }
+}
+\setlength{\TPHorizModule}{%
+  (\paperwidth-2\tubsborderwidth-\tubspage@bcor)*\ratio{1mm}{\tubspage@xsegments mm}}
+\setlength{\TPVertModule}{%
+  (\tubscommunicationheight)*\ratio{1mm}{\value{tubspage@gausssum} mm}}
+\newlength{\tubs@gb@toppadding}
+\newlength{\tubs@gb@bottompadding}
+\newlength{\tubs@gb@leftpadding}
+\newlength{\tubs@gb@rightpadding}
+\newsavebox{\tubs@gb@storebox}
+\newcounter{tubs@gb@lastelement}
+\newcounter{tubs@gb@calcypos}
+\newcounter{tubs@gb@calcheight}
+\newenvironment{gaussbox}[5][]{%
+\def\tubs@gb@toppadding@inner{\tubsborderwidth}%
+\def\tubs@gb@bottompadding@inner{\tubsborderwidth}%
+\def\tubs@gb@leftpadding@inner{0.5\tubscolumnsep}%
+\def\tubs@gb@rightpadding@inner{0.5\tubscolumnsep}%
+\def\tubs@gb@toppadding@outer{\tubsborderwidth}%
+\def\tubs@gb@bottompadding@outer{\tubsborderwidth}%
+\def\tubs@gb@leftpadding@outer{\tubsborderwidth}%
+\def\tubs@gb@rightpadding@outer{\tubsborderwidth}%
+\setkeys*{tubsbox}{#1}%
+\setrmkeys{gaussbox}%
+\tb@gb@setorig
+\ifnum#2=1% Segment beginnt bei erster column?
+  \setlength\tubs@gb@leftpadding{\tubs@gb@leftpadding@outer}%
+\else
+  \setlength\tubs@gb@leftpadding{\tubs@gb@leftpadding@inner}%
+\fi
+\setcounter{tubs@gb@lastelement}{#2-1}%
+\edef\tubs@gb@xpos{\thetubs@gb@lastelement}%TODO: etwas unschön...
+\addtocounter{tubs@gb@lastelement}{#4}%
+\ifnum\value{tubs@gb@lastelement}=\tubspage@xsegments% Segment endet bei letzter column?
+  \setlength{\tubs@gb@rightpadding}{\tubs@gb@rightpadding@outer}%
+\else
+  \setlength\tubs@gb@rightpadding{\tubs@gb@rightpadding@inner}%
+\fi
+\ifnum#3=1%
+  \setlength\tubs@gb@toppadding{\tubs@gb@toppadding@outer}% Erstes Segment?
+\else
+  \setlength\tubs@gb@toppadding{\tubs@gb@toppadding@inner}%
+\fi
+\setcounter{tubs@gb@lastelement}{#3+#5-1}%
+\ifnum\value{tubs@gb@lastelement}>\tubspage@ysegments%
+  \PackageError{tubstypearea}{Invalid segment number}{}%
+\fi
+\ifnum\value{tubs@gb@lastelement}=\tubspage@ysegments% Letztes Segment?
+  \setlength{\tubs@gb@bottompadding}{\tubs@gb@bottompadding@outer}%
+\else
+  \setlength{\tubs@gb@bottompadding}{\tubs@gb@bottompadding@inner}%
+\fi
+\def\@inv@arg{\relax}%
+\ifthenelse{\boolean{tubsbox@bottomsender}}{%
+  \def\@inv@arg{inverted}%
+}{}%
+\calc@gauss@elementpos[\@inv@arg]{tubs@gb@calcypos}{#3}%
+\def\tubs@gb@ypos{\thetubs@gb@calcypos}%
+\calc@gauss@elementpos[\@inv@arg]{tubs@gb@calcheight}{#3+#5}%
+\addtocounter{tubs@gb@calcheight}{-\thetubs@gb@calcypos}%
+\def\tubs@gb@width{#4}%
+\def\tubs@gb@height{\thetubs@gb@calcheight}%
+  \begin{lrbox}{\tubs@gb@storebox}%
+  % Store parskip and parindent to restore them in minipage
+  \newdimen\tubs@restore@parskip
+  \newdimen\tubs@restore@parindent
+  \tubs@restore@parskip\parskip
+  \tubs@restore@parindent\parindent
+  \begin{minipage}%
+        [t]%
+        [\tubs@gb@height\TPVertModule-\tubs@gb@toppadding-\tubs@gb@bottompadding]%
+        {\tubs@gb@width\TPHorizModule-\tubs@gb@leftpadding-\tubs@gb@rightpadding}% boxwidth minus text padding
+  % restore par-lengths, avoid initial parskip
+  \parskip\tubs@restore@parskip%
+  \parindent\tubs@restore@parindent%
+  \vspace*{-\parskip}%
+  % Standard-Version von |\includegraphics| mit imagefit-Version ersetzen, wenn keine Argumente angegeben
+  \let\oldincludegraphics\includegraphics
+  \renewcommand\includegraphics[2][\relax]{%
+    \ifx##1\relax
+      \tubs@sb@calc@autoscale{##2}{\tubs@gb@width\TPHorizModule-\tubs@gb@leftpadding-\tubs@gb@rightpadding}{\tubs@gb@height\TPVertModule-\tubs@gb@toppadding-\tubs@gb@bottompadding}%
+      \expandafter\oldincludegraphics\expandafter[\@img@scale@param]{##2}%
+    \else
+      \oldincludegraphics[##1]{##2}%
+    \fi
+  }%
+  \tb@topfill
+  \noindent\ignorespaces
+}{%
+  \ignorespacesafterend
+  \tb@bottomfill
+  \par%
+  \end{minipage}%
+  \end{lrbox}%
+  \setlength{\fboxsep}{0cm}% needed here??
+  \begin{textblock}{\tubs@gb@width}(\tubs@gb@xpos,\tubs@gb@ypos)%
+  \vspace*{-\parskip}%
+  \vspace*{\tubs@gb@toppadding}%
+  \newdimen\temp@
+  \newdimen\temp@b
+  \setlength\temp@{\tubs@gb@height\TPVertModule}%
+  \setlength\temp@b{\tubs@gb@width\TPHorizModule}%
+  \noindent
+  \fboxsep0mm%
+  \tubsbox@framebox{\tubsbox@colorbox{% inner paddings are set *only* here!
+    \hbox to \temp@b{%
+      \hspace*{\tubs@gb@leftpadding}%
+      \usebox{\tubs@gb@storebox}%
+      \hspace*{\tubs@gb@rightpadding}%
+    }%
+  }}%
+  \end{textblock}%
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\providecommand\tb@sb@setorig{%
+  \ifthenelse{\boolean{tubsbox@bottomsender}}{%
+    \if@tubs@oddpage{%
+      \textblockorigin{\tubsborderwidth+\tubspage@bcor}{%
+        \tubsborderwidth}%
+    }{%
+      \textblockorigin{\tubsborderwidth}{%
+        \tubsborderwidth}%
+    }%
+  }{%
+    \if@tubs@oddpage{%
+      \textblockorigin{\tubsborderwidth+\tubspage@bcor}{%
+        0.1429\paperheight}%
+    }{%
+      \textblockorigin{\tubsborderwidth}{%
+        0.1429\paperheight}% TODO: Kompatibilität mit Querformat
+    }
+  }
+}
+\newsavebox{\tubs@sb@storebox}
+\newsavebox{\tubs@sb@bgimagebox}
+\newcounter{tubs@sb@elementcount}
+\newcounter{tubs@sb@xcount}
+\newlength{\tubs@sb@xfreespace}
+\newlength{\tubs@sb@xlength}
+\newcounter{tubs@cnt}
+\newboolean{modulebox@showbgimage}
+\setboolean{modulebox@showbgimage}{false}
+\newcommand{\@bgimage@to@insert}{dummy}
+\define@key{modulebox}{bgimage}[none]{%
+  \ifthenelse{\equal{#1}{none}}{%
+    \setboolean{modulebox@showbgimage}{false}%
+  }{%
+    \setkeys{tubsbox}{bgcolor=none}%TODO?
+    \renewcommand{\@bgimage@to@insert}{#1}%
+    \setboolean{modulebox@showbgimage}{true}%
+  }
+}
+\define@choicekey{tubsbox}{imagefit}[\val\nr]{%
+        default,scaled,autoclip,cropped,hclip,cropx,vclip,cropy,fitheight,fitwidth}{%
+  \ifcase\nr\relax% default
+    \PackageInfo{tubsstyle}{%
+      Option 'imagefit' not set. Using standard value 'cropped'.
+    }
+    \renewcommand{\tubs@sb@imagefit}{cropped}
+  \or% scaled
+    \renewcommand{\tubs@sb@imagefit}{scaled}
+  \or% autoclip
+    \renewcommand{\tubs@sb@imagefit}{cropped}
+  \or% cropped
+    \renewcommand{\tubs@sb@imagefit}{cropped}
+  \or% clipx
+    \renewcommand{\tubs@sb@imagefit}{cropx}
+  \or% cropx
+    \renewcommand{\tubs@sb@imagefit}{cropx}
+  \or% clipy
+    \renewcommand{\tubs@sb@imagefit}{cropy}
+  \or% cropy
+    \renewcommand{\tubs@sb@imagefit}{cropy}
+  \or% fitheight
+    \renewcommand{\tubs@sb@imagefit}{cropx}
+  \or% fitwidth
+    \renewcommand{\tubs@sb@imagefit}{cropy}
+  \fi
+}
+\newcommand\tubs@sb@imagefit{cropped}
+\newcommand\@img@scale@param{}%
+\newcommand\tubs@sb@calc@autoscale[3]{%
+  % Temporäre Längen für die Berechnung
+  \newdimen{\@sb@image@xorig}
+  \newdimen{\@sb@image@xcalc}
+  \newdimen{\@sb@image@yorig}
+  \newdimen{\@sb@image@ycalc}
+  % store dimension arguments (width, height)
+  \newdimen\@view@width%
+  \newdimen\@view@height%
+  \setlength\@view@width{#2}%
+  \setlength\@view@height{#3}%
+  \ifthenelse{\equal{\tubs@sb@imagefit}{scaled}}{%
+    \renewcommand\@img@scale@param{clip,%
+        height=\@view@height,
+        width=\@view@width}
+  }{\ifthenelse{\equal{\tubs@sb@imagefit}{cropped}}{%
+      % Ermittelt, ob das Bild an den Seiten oder oben und unten beschnitten
+      % werden muss, um in den Darstellungsbereich zu passen
+      % Dazu wird die Höhe des auf korrekte Breite skalierten Bildes
+      % mit der Höhe des Darstellungsbereichs verglichen und entsprechend
+      % eine crop-Option gesetzt.
+      \settoheight{\@sb@image@ycalc}{%
+        \includegraphics[clip,width=\@view@width]{#1}}
+      \ifthenelse{\lengthtest{\@sb@image@ycalc>\@view@height}}{%
+        \renewcommand{\tubs@sb@imagefit}{cropy}
+      }{%
+        \renewcommand{\tubs@sb@imagefit}{cropx}
+      }
+    }{}
+    \ifthenelse{\equal{\tubs@sb@imagefit}{cropy}}{%
+      % Berechne abzuschneidende Ränder (oben+unten)
+      % Dazu wird die Differenz zwischen Darstellungsbereich und Höhe des
+      % korrekt auf die Breite skalierten Bildes berechnet und mit dem
+      % ermittelten Skalierungsfaktor multipliziert, sowie durch 2 geteilt.
+      % Das Ergebnis wir dann einmal am oberen und einmal am unteren Teil
+      % des (Original-)Bildes mit Hilfe der 'trim'-Option abgeschnitten.
+      \settoheight{\@sb@image@yorig}{%
+        \includegraphics[clip]{#1}}%
+      \settoheight{\@sb@image@ycalc}{%
+        \includegraphics[clip,width=\@view@width]{#1}}%
+      \setlength{\@sb@image@ycalc}{(\@sb@image@ycalc-\@view@height)*\ratio{\@sb@image@yorig}{\@sb@image@ycalc}}
+      \setlength{\@sb@image@ycalc}{0.5\@sb@image@ycalc}%
+      \renewcommand\@img@scale@param{clip,%
+          width=\@view@width,
+          trim=0pt {\@sb@image@ycalc} 0pt {\@sb@image@ycalc}}%
+    }{\ifthenelse{\equal{\tubs@sb@imagefit}{cropx}}{%
+      \settowidth{\@sb@image@xorig}{%
+        \includegraphics[clip]{#1}}%
+      \settowidth{\@sb@image@xcalc}{%
+        \includegraphics[clip,height=\@view@height]{#1}}%
+      \setlength{\@sb@image@xcalc}{(\@sb@image@xcalc-(\@view@width))*\ratio{\@sb@image@xorig}{\@sb@image@xcalc}}
+      \setlength{\@sb@image@xcalc}{0.5\@sb@image@xcalc}%
+      \renewcommand\@img@scale@param{clip,%
+          height=\@view@height,
+          trim={\@sb@image@xcalc} 0pt {\@sb@image@xcalc} 0pt}%
+    }{\ifthenelse{\equal{\tubs@sb@imagefit}{keepsize}}{%
+      \renewcommand\@img@scale@param{}%
+    }{}}}%
+  }%
+}
+\newcommand\tubs@sb@setelements[2]{%
+  \setcounter{tubs@sb@elementcount}{0}
+  \setcounter{tubs@sb@xcount}{0}
+  % Iteriere über Liste
+  \let\do\tubs@sb@parsenext
+  \docsvlist{#1}
+  % X-Länge setzen
+  \setlength\tubs@sb@xlength{\tubs@sb@xfreespace/\thetubs@sb@xcount}
+  % Iteriere über alle Zeilen und ersetze X-Zeilen durch die entsprechende Länge
+  \stepcounter{tubs@sb@elementcount}% only for forloop!
+  \forloop[1]{tubs@cnt}{1}{\value{tubs@cnt}<\thetubs@sb@elementcount}{%
+    \expandafter\def\expandafter\tubs@sb@current@row\expandafter{%
+      \csname tubs@sb@tmplength@\thetubs@cnt\endcsname%
+    }
+    % Schreibe nun gespeicherte Längen und X-Längen in endgültiges Makro
+    \ifthenelse{\equal{\tubs@sb@current@row}{X}}{%
+      \writetubslog{replace X with \the\tubs@sb@xlength}%
+      \expandafter\edef\csname #2\thetubs@cnt\endcsname{%
+        \the\tubs@sb@xlength%
+      }%
+    }{%
+      \expandafter\edef\csname #2\thetubs@cnt\endcsname{%
+        \tubs@sb@current@row%
+      }%
+    }
+  }
+  \addtocounter{tubs@sb@elementcount}{-1}% only for forloop!
+}
+\newcommand*{\tubs@sb@parsenext}[1]{%
+  \stepcounter{tubs@sb@elementcount}
+  \ifthenelse{\equal{#1}{X}}{% X
+    \stepcounter{tubs@sb@xcount}%
+    \expandafter\def\csname tubs@sb@tmplength@\thetubs@sb@elementcount\endcsname{X}
+  }{% Laenge
+    % Ziehe Länge von xfreespace ab und speichere sie.
+    \addtolength\tubs@sb@xfreespace{-#1}
+    \expandafter\def\csname%
+      tubs@sb@tmplength@\thetubs@sb@elementcount\endcsname{#1}%
+  }
+  % Ziehe zusätzlich Stegbreite ab.
+  \addtolength{\tubs@sb@xfreespace}{-0.5\tubsborderwidth}
+}
+\newenvironment{modcontainer}[2][]{%
+  \writetubslog{modcontainer: #1, #2}%
+  \setkeys{tubsbox.sty}{#1}%
+  \setkeys{tubsbox}{t,bgcolor=tuWhite,fgcolor=tuBlack}{}% TODO: check!
+  % reset modrow counter
+  \setcounter{tubs@sb@current@row}{0}%
+  \setlength{\tubs@sb@xfreespace}{\textheight+1.5\tubsborderwidth}%
+  \writetubslog{page: xfree: \the\tubs@sb@xfreespace}%
+  \tubs@sb@setelements{#2}{tubs@sb@rowlength@}%
+}{%
+}
+\newcounter{tubs@sb@current@col} % aktuelle Spalte
+\newcounter{tubs@sb@current@row} % aktuelle Zeile
+\newcounter{tubs@sb@current@subrow}  % aktuelle Subspalte
+\newboolean{tubs@sb@borderless}\setboolean{tubs@sb@borderless}{false}
+\newenvironment{@modrow}[1][X]{%
+  % setze keys
+  \setkeys*{tubsbox}{#1}%
+  \setrmkeys*{modulebox}%
+  \edef\@remaining@keys{\XKV@rm}%
+  % Ersetze mit X, falls keine Länge angegeben
+  \ifthenelse{\equal{\@remaining@keys}{}}{%
+    \edef\@remaining@keys{X}}{}%
+  % reset modcol counter
+  \setcounter{tubs@sb@current@col}{0}%
+  % Setze Länge auf Textbreite + linker und rechter Rand + Stegkorrektur
+  \setlength{\tubs@sb@xfreespace}{\textwidth+1.5\tubsborderwidth}%
+  % Parse Komma-Liste und speichere Längen mit Präfix 'tubs@sb@collength@'
+  \expandafter\tubs@sb@setelements\expandafter{\@remaining@keys}{tubs@sb@collength@}%
+  \stepcounter{tubs@sb@current@row}%
+  % Wenn nur eine Spalte, dann direkt modulebox setzen
+  \ifthenelse{\expandafter\equal\expandafter{\@remaining@keys}{X}}{%
+    \stepcounter{tubs@sb@current@col}%
+    \expandafter\edef\expandafter\@argI\expandafter{%
+      \csname tubs@sb@rowlength@\thetubs@sb@current@row\endcsname}%
+    \expandafter\edef\expandafter\@argII\expandafter{%
+      \csname tubs@sb@collength@\thetubs@sb@current@col\endcsname}%
+    \def\tubs@sb@box@cmd{\@modulebox{\@argI}{\@argII}}%
+    \def\tubs@sb@box@endcmd{\end@modulebox}%
+  }{%
+    \def\tubs@sb@box@cmd{\relax}%
+    \def\tubs@sb@box@endcmd{\relax}%
+  }
+  \writetubslog{modrow: xfree: \the\tubs@sb@xfreespace}%
+  \tubs@sb@box@cmd%
+}{%
+  \tubs@sb@box@endcmd%
+}
+
+\newcommand{\@@modrow}{%
+  \@ifnextchar[{%
+  }{%
+  }%
+  \@modrow%
+}
+\newenvironment{modrow}{%
+  \setboolean{tubs@sb@borderless}{false}%
+  \@@modrow%
+}{%
+  \end@modrow%
+}
+\newenvironment{modrow*}{%
+  \setboolean{tubs@sb@borderless}{true}%
+  \@@modrow%
+}{%
+  \end@modrow%
+}
+\newenvironment{@modcol}[1][]{%
+  % setze keys
+  \setkeys*{tubsbox}{#1}
+  \setrmkeys*{modulebox}
+  \edef\@remaining@keys{\XKV@rm}%
+  % Ersetze mit X, falls keine Länge angegeben
+  \ifthenelse{\equal{\@remaining@keys}{}}{%
+    \edef\@remaining@keys{X}}{}%
+  % reset modsubrow counter
+  \setcounter{tubs@sb@current@subrow}{0}%
+  % Setze Länge auf Zeilenhöhe + Trennstrich
+  \expandafter\setlength\expandafter\tubs@sb@xfreespace\expandafter{\csname tubs@sb@rowlength@\thetubs@sb@current@row\endcsname+0.5\tubsborderwidth}%
+  % Parse Komma-Liste und speichere Längen mit Präfix 'tubs@sb@subrowlength@'
+  \expandafter\tubs@sb@setelements\expandafter{\@remaining@keys}{tubs@sb@subrowlength@}%
+  \stepcounter{tubs@sb@current@col}%
+  % Wenn nur eine Spalte, dann direkt modulebox setzen
+  \ifthenelse{\expandafter\equal\expandafter{\@remaining@keys}{X}}{%
+    \stepcounter{tubs@sb@current@subrow}%
+    \expandafter\edef\expandafter\@argI\expandafter{%
+      \csname tubs@sb@subrowlength@\thetubs@sb@current@subrow\endcsname}%
+    \expandafter\edef\expandafter\@argII\expandafter{%
+      \csname tubs@sb@collength@\thetubs@sb@current@col\endcsname}%
+    \def\tubs@sb@box@cmd{\@modulebox{\@argI}{\@argII}}%
+    \def\tubs@sb@box@endcmd{\end@modulebox}%
+  }{%
+    \def\tubs@sb@box@cmd{\relax}%
+    \def\tubs@sb@box@endcmd{\relax}%
+  }
+  \tubs@sb@box@cmd%
+}{%
+  \tubs@sb@box@endcmd%
+}
+\newenvironment{modcol}{%
+  \setboolean{tubs@sb@borderless}{false}%
+  \@modcol%
+}{%
+  \end@modcol%
+}
+\newenvironment{modcol*}{%
+  \setboolean{tubs@sb@borderless}{true}%
+  \@modcol%
+}{%
+  \end@modcol%
+}
+\newenvironment{modsubrow}{%
+  \setboolean{tubs@sb@borderless}{false}%
+  \@modsubrow%
+}{%
+  \end@modsubrow%
+}
+\newenvironment{modsubrow*}{%
+  \setboolean{tubs@sb@borderless}{true}%
+  \@modsubrow%
+}{%
+  \end@modsubrow%
+}
+\newenvironment{@modsubrow}[1][]{%
+  % setze keys
+  \setkeys*{tubsbox}{#1}%
+  \setrmkeys{modulebox}%
+  \stepcounter{tubs@sb@current@subrow}%
+  \expandafter\edef\expandafter\@oarg\expandafter{%
+    \csname tubs@sb@rowlength@\thetubs@sb@current@row\endcsname}%
+  \expandafter\edef\expandafter\@argI\expandafter{%
+    \csname tubs@sb@subrowlength@\thetubs@sb@current@subrow\endcsname}%
+  \expandafter\edef\expandafter\@argII\expandafter{%
+    \csname tubs@sb@collength@\thetubs@sb@current@col\endcsname}%
+  \@modulebox[][\@oarg]{\@argI}{\@argII}%
+}{%
+  \end@modulebox%
+}
+\newlength{\modulewidth}
+\newlength{\moduleheight}
+\newdimen\@box@tmp% Generelle temp-Var.
+\newlength{\tubs@sb@box@xpos}% x-Position
+\newlength{\tubs@sb@box@ypos}% y-Position
+\newlength{\tubs@sb@box@rowheight}% Höhe einer Zeile, sofern als opt. Arg. gegeben
+\newlength{\tubs@sb@box@splitrow}% Speichert benutze Länge von Splitrow für späteren Reset
+\newlength{\tubs@sb@padding}% Abstand Text zu Boxrand
+\newenvironment{@@modulebox}[3][\relax]{%
+  % Argumente sichern
+  \ifx#1\relax%
+    \def\@current@rowheight{#2}%
+  \else%
+    \def\@current@rowheight{#1}%
+  \fi%
+  \def\@current@height{(#2)}%
+  \def\@current@width{(#3)}% Breite der weißen Box, ohne Ränder!
+  \ifthenelse{\boolean{tubs@sb@borderless}}{%
+    \setlength\tubs@sb@padding{0mm}%
+  }{%
+    \setlength\tubs@sb@padding{2\tubspage@module@padding}%
+  }%
+  \newdimen\@temp@width
+  \newdimen\@temp@height
+  \setlength\@temp@height{#2}%
+  \@temp@width#3%
+  \tb@sb@setorig%
+  \newdimen\tubs@restore@parskip%
+  \newdimen\tubs@restore@parindent%
+  \tubs@restore@parskip\parskip%
+  \tubs@restore@parindent\parindent%
+  % Speichere Inhalt in minipage-Box.
+  \begin{lrbox}{\tubs@sb@storebox}%
+    \begin{minipage}[t][\@current@height-\tubs@sb@padding]{\@current@width-\tubs@sb@padding}%
+      \setlength{\moduleheight}{\@current@height}%
+      \setlength{\modulewidth}{\@current@width}%
+      \parskip\tubs@restore@parskip%
+      \parindent\tubs@restore@parindent%
+      \tb@topfill
+      \noindent\ignorespaces
+}{%
+      \ignorespacesafterend
+      \tb@bottomfill
+    \end{minipage}%
+  \end{lrbox}%
+  \ifthenelse{\boolean{modulebox@showbgimage}}{%
+    \tubs@sb@calc@autoscale{\@bgimage@to@insert}%
+          {\@current@width}%
+          {\@current@height}%
+    \begin{lrbox}{\tubs@sb@bgimagebox}%
+      \expandafter\includegraphics\expandafter[\@img@scale@param]{%
+              \@bgimage@to@insert}%
+    \end{lrbox}%
+  }{}%
+  % Setze Box mit Hintergrundbild/-farbe
+  \begin{textblock*}{\@current@width}(\tubs@sb@box@xpos,\tubs@sb@box@ypos)%
+    \fboxsep0mm%
+    \tubsbox@framebox{\tubsbox@colorbox{%
+      \vbox to \@temp@height{\usebox{\tubs@sb@bgimagebox}}%
+    }}%
+  \end{textblock*}%
+  % Definiere und platziere Textblock mit gespeichertem Inhalt.
+  \begin{textblock*}{\@current@width}(\tubs@sb@box@xpos,\tubs@sb@box@ypos)%
+    \fboxsep0mm%
+    \vbox to \@temp@height{%
+      \vspace*{0.5\tubs@sb@padding}%
+      \hbox to \@temp@width{%
+        \hspace*{0.5\tubs@sb@padding}%
+        \usebox{\tubs@sb@storebox}%
+        \hspace*{0.5\tubs@sb@padding}%
+      }%
+      \vspace*{0.5\tubs@sb@padding}%
+    }%
+  \end{textblock*}%
+  \writetubslog{modulebox @(\the\tubs@sb@box@xpos, \the\tubs@sb@box@ypos)}%
+  \if@tubs@dbg% DEBUGGING output!!
+  \begin{textblock*}{\@current@width}(\tubs@sb@box@xpos,\tubs@sb@box@ypos)%
+    \colorbox{tuWhite}{\the\tubs@sb@box@xpos, \the\tubs@sb@box@ypos}%
+  \end{textblock*}%
+  \fi%
+  % Prüfe, ob Zeile gesplittet werden soll (opt. Arg. != \relax)
+  \ifthenelse{\equal{\@current@rowheight}{\relax}}{%
+    \addtolength\tubs@sb@box@xpos{\@current@width+0.5\tubsborderwidth}%
+  }{%
+    \setlength\tubs@sb@box@rowheight{\@current@rowheight}
+    \addtolength\tubs@sb@box@ypos{\@current@height+0.5\tubsborderwidth}%
+    \addtolength\tubs@sb@box@splitrow{\@current@height+0.5\tubsborderwidth}%
+    % Wenn Zeilenhöhe ausgefüllt, normal weiter machen...
+    \ifthenelse{\lengthtest{\tubs@sb@box@splitrow > \tubs@sb@box@rowheight}}{%
+      \addtolength\tubs@sb@box@xpos{\@current@width+0.5\tubsborderwidth}%
+      \addtolength\tubs@sb@box@ypos{-\tubs@sb@box@splitrow}%
+      \setlength\tubs@sb@box@splitrow{0mm}%
+    }{}
+  }
+  % Wenn Zeile gefüllt ist, springen in nächste Zeile
+  \setlength\@box@tmp{\textwidth+\tubsborderwidth}% Texthöhe + Rahmenhöhe
+  \writetubslog{width: is \the\tubs@sb@box@xpos > \the\@box@tmp ?}%
+  \ifthenelse{\lengthtest{\tubs@sb@box@xpos > \@box@tmp}}{%
+    \addtolength\tubs@sb@box@ypos{\@current@rowheight+0.5\tubsborderwidth}%
+    \setlength\tubs@sb@box@xpos{0mm}%
+    % Wenn darüber hinaus Seite gefüllt ist, fange neue an!
+    \setlength\@box@tmp{\textheight+\tubsborderwidth}% Texthöhe + Rahmenhöhe
+    \writetubslog{height: is \the\tubs@sb@box@ypos > \the\@box@tmp ?}%
+    \ifthenelse{\lengthtest{\tubs@sb@box@ypos > \@box@tmp}}{%
+      \setlength\tubs@sb@box@ypos{0mm}%
+    }{}
+  }{}
+  % speichere global!
+  \global\tubs@sb@box@xpos=\tubs@sb@box@xpos%
+  \global\tubs@sb@box@ypos=\tubs@sb@box@ypos%
+  \global\tubs@sb@box@splitrow=\tubs@sb@box@splitrow%
+}
+\let\end@modulebox\end@@modulebox
+\newcommand\modulebox@setdefault@opts{%
+  \setkeys{tubsbox}{bgcolor=tuWhite,fgcolor=tuRed}%TODO
+}
+\def\@modulebox@oparam[#1]{%
+  \setkeys*{modulebox}{#1}%
+  \setkeys*{gaussbox}{#1}%
+  \@@modulebox%
+}
+\def\@modulebox{%
+  \@ifnextchar[{%
+    \@modulebox@oparam%
+  }{%
+    \@@modulebox%
+  }%
+}
+\endinput
+%%
+%% End of file `tubsbox.sty'.

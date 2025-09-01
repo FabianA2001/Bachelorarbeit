@@ -3,43 +3,75 @@ Args Legend Mapping (by Solver):
 ==================================================
 
 gurobi:
-|#1 in 300s: 
-||intersection:                       True
-||degree:                             True
-||exclude_edges:                      False
-||fix_hull:                           False
-||all_edges:                          False
-||fix_edges:                          False
-
-|#2 in 300s: 
-||intersection:                       True
-||degree:                             True
-||exclude_edges:                      False
-||fix_hull:                           True
-||all_edges:                          False
-||fix_edges:                          False
-
-|#3 in 300s: 
-||intersection:                       True
-||degree:                             True
-||exclude_edges:                      False
-||fix_hull:                           False
-||all_edges:                          True
-||fix_edges:                          False
-
-|#4 in 300s: 
-||intersection:                       True
-||degree:                             True
-||exclude_edges:                      True
-||fix_hull:                           False
-||all_edges:                          False
-||fix_edges:                          False
-
-|#5 in 300s: 
+|#Kanten fixieren in 300s: 
 ||intersection:                       True
 ||degree:                             True
 ||exclude_edges:                      False
 ||fix_hull:                           False
 ||all_edges:                          False
 ||fix_edges:                          True
+||run_num:                            0
+
+|#normal in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+||fix_hull:                           False
+||all_edges:                          False
+||fix_edges:                          False
+||run_num:                            0
+
+|#Hülle fixieren in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+||fix_hull:                           True
+||all_edges:                          False
+||fix_edges:                          False
+||run_num:                            0
+
+|#alternative Kanten in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+||fix_hull:                           False
+||all_edges:                          True
+||fix_edges:                          False
+||run_num:                            0
+
+|#Kanten ausschließen in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      True
+||fix_hull:                           False
+||all_edges:                          False
+||fix_edges:                          False
+||run_num:                            0
+
+|#bester (Versuch 1) in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+||fix_hull:                           True
+||all_edges:                          True
+||fix_edges:                          True
+||run_num:                            0
+
+|#bester (Versuch 2) in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+||fix_hull:                           True
+||all_edges:                          False
+||fix_edges:                          True
+||run_num:                            0
+
+|#bester (Versuch 3) in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+||fix_hull:                           False
+||all_edges:                          True
+||fix_edges:                          True
+||run_num:                            0
 ==================================================

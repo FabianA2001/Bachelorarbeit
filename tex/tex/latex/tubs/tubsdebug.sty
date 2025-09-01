@@ -1,0 +1,72 @@
+%%
+%% This is file `tubsdebug.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% ../tubsvers.inc  (with options: `default')
+%% tubsdebug.dtx  (with options: `package,option')
+%% tubsdebug.dtx  (with options: `package,body')
+%% 
+%% This is a generated file.
+%% 
+%% Copyright (C) 2011 by Enrico Jörns
+%% 
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either
+%% version 1.2 of this license or (at your option) any later
+%% version. The latest version of this license is in:
+%% 
+%%   http://www.latex-project.org/lppl.txt
+%% 
+%% and version 1.2 or later is part of all distributions of
+%% LaTeX version 1999/12/01 or later.
+%% 
+\RequirePackage{ifthen}
+\RequirePackage{scrlfile}%TODO: KOMA-Check?
+\RequirePackage{etoolbox}%
+\begingroup
+  \makeatletter
+  \ifx\tubslatexVersion\undefined
+    \newcommand*{\check@tubslatexVersion}[1]{%
+      \gdef\tubslatexVersion{#1}%
+    }%
+  \else
+    \newcommand*{\check@tubslatexVersion}[1]{%
+      \def\@tempa{#1}%
+      \ifx\tubslatexVersion\@tempa\else
+        \@latex@warning@no@line{%
+          \noexpand\tubslatexVersion\space is
+          `\tubslatexVersion',\MessageBreak
+          but `#1' was expected!\MessageBreak
+          You should not use classes, packages or files
+          from\MessageBreak
+          different tubslatex versions%
+        }%
+      \fi
+    }
+  \fi
+  \check@tubslatexVersion{2024/02/22 v1.3.5-r140 tubslatex}%
+\endgroup
+\providecommand{\tubslatex}{tubs\LaTeX}
+\newif\if@tubs@dbg\@tubs@dbgfalse%
+\DeclareOptionX{debug}{%
+  \@tubs@dbgtrue%
+}
+\ProcessOptionsX*\relax
+\if@tubs@dbg
+\newcommand\writetubslog[2][]{%
+  \immediate\write\@dbg@file{#2}%
+}
+\newwrite\@dbg@file
+\immediate\openout\@dbg@file=tubslatex.log
+\AtEndDocument{\immediate\closeout\@dbg@file}
+\writetubslog{Created: \today}
+\writetubslog{Version: \tubslatexVersion}
+\writetubslog{---}
+\else
+\newcommand\writetubslog[2][]{}
+\fi
+\endinput
+%%
+%% End of file `tubsdebug.sty'.

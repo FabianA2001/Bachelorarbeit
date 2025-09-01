@@ -1,113 +1,169 @@
 %!TeX root=../thesis.tex
-\chapter{Introduction}
+\chapter{Einleitung}
 \label{ch:introduction}%
+Triangulierungen stellen einen zentralen Bestandteil der algorithmischen Geometrie dar. 
+Unter einer Triangulierung versteht man die Zerlegung der konvexen Hülle einer gegebenen Knotenmenge in Dreiecke. 
+In dieser Arbeit wird dieses klassische Problem um eine zusätzliche Bedingung erweitert, indem für jeden Knoten ein Sollgrad vorgegeben wird.
 
-You can write an introduction here!
+Die gradbeschränkte Triangulierung (Degree Constrained Triangulations, DCT) untersucht, ob es für eine gegebene Knotenmenge eine Triangulierung gibt, 
+bei der jeder Knoten genau einen vorgegebenen Grad besitzt. 
+Das bedeutet, dass für jeden Knoten eine bestimmte Anzahl inzidenter Kanten festgelegt ist. 
+Diese Erweiterung ist nicht nur aus theoretischer Sicht interessant, sondern eröffnet auch praktische Anwendungsmöglichkeiten. 
+Beispielsweise kann in Sensornetzwerken die Verbindungsdichte zwischen Knoten gezielt gesteuert werden. 
+Auch in logistischen Anwendungen lassen sich so Kapazitätsbeschränkungen an Knoten modellieren.
 
-\section{Results}
-We proof that the \textsc{Traveling Salesmen Problem}(TSP) is NP-complete.
-\begin{verbatim}
-... that the \textsc{Traveling Salesmen Problem}(TSP) is ...
-\end{verbatim}
-You can use abbreviations for your problem names to avoid redundancy.
-Try to use existing abbreviations from related work if possible.
+Das Ziel dieser Arbeit ist die Untersuchung verschiedener Verfahren zur Lösung des DCT. 
+Neben der Formulierung als Entscheidungsproblem, für das Methoden wie Integer Programming, Constraint Programming oder SAT-Solver eingesetzt werden, 
+wird das DCT auch als Optimierungsproblem betrachtet. 
+Ein besonderer Schwerpunkt liegt auf Strategien zum Fixieren und Ausschließen von Kanten, um die Suche nach Lösungen zu beschleunigen. 
+Darüber hinaus werden Verfahren zur systematischen Instanzgenerierung entwickelt und beschrieben.
 
-Formel zwischen lagern:
+Die Arbeit gliedert sich in sechs Kapitel. 
+Zunächst werden im ersten Kapitel das betrachtete Problem sowie verwandte Probleme erklärt.
+Im zweiten Kapitel werden grundlegende Definitionen sowie theoretische Grundlagen vorgestellt. 
+Darauf aufbauend werden unterschiedliche Lösungsansätze präsentiert und ihre jeweilige Implementierung beschrieben. 
+Diese umfassen sowohl ein Kanten- als auch ein Dreiecksmodell, die jeweils in Form mathematischer Modelle sowie in konjunktiver Normalform (KNF) umgesetzt werden. 
+Zusätzlich wird ein SAT-Solver durch geeignete Optimierungen an das Problem angepasst. 
+Mit der Implementierung und den erzeugten Instanzen erfolgt anschließend eine Evaluation der verschiedenen Ansätze. 
+Der Fokus liegt dabei auf der Laufzeitanalyse sowie der Findung des besten Lösungsansatzes. 
+Abschließend werden die generierten Instanzen hinsichtlich ihrer strukturellen Eigenschaften und der damit verbundenen Schwierigkeit untersucht.
 
 
+\section{Das Problem}
+Das in dieser Arbeit betrachtete Problem sind gradbeschränkte Triangulierungen.
+Es wird untersucht, ob für eine gegebene Knotenmenge eine Triangulierung existiert, bei der jeder Knoten einen vorgegebenen Grad besitzt.
+Das Problem wurde erstmalig von Joseph S. B. Mitchell genannt.
+Dieser fragte nach der Komplexität dieses Problems. 
 
-
-
-\section{Related Work}
-In diesem Abschnitt werden verschiedene wissenschaftliche Arbeiten aus diesem Themenbereich betrachtet.
-Dies dient dazu, einen Überblick über den aktuellen Entwicklungsstand zu erhalten.
-Dazu werden drei Bereiche begutachtet.
-Der erste Bereich behandelt die \emph{Delaunay Triangulation}.
-Diese zählt zu den bekanntesten Triangulations und bietet einen grundlegenden Einblick in das Thema Triangulation.
-Der zweite Bereich umfasst \emph{Flips in Triangulations}.
-Hier wird untersucht, wie sich Triangulation durch lokale Änderungen gezielt modifizieren lassen.
-Der dritte und letzte Bereich befasst sich mit dem Problem des \emph{degree constrained minimum spanning tree}.
-Dabei werden insbesondere Ansätze zur Einhaltung von Grad Beschränkungen betrachtet.
-
-Es ist noch zu erwähnen, dass Sharir et. al.~\cite{On_degrees_in_random_triangulations_of_point_setss} den minimalen und maximalen Grad in einer Triangulation untersucht haben.
-Darüber hinaus haben Datta et. al.~\cite{Degree_regular_triangulations_of_surfaces} und Gewali et. al.~\cite{Degree_aware_triangulation_of_annular_regions} sich mit Triangulation beschäftigt, bei denen jeder Knoten einen geraden Grad hat.
-Da diese beiden Themenbereiche keinen direkten Mehrwert für die vorliegende Arbeit bieten, werden sie hier lediglich der Vollständigkeitshalber namentlich erwähnt.
-
-\subsection{Delaunay Triangulations}
-\label{sec:delaunay_triangulation}
-Als Grundlage für den Algorithmus kann die \emph{Delaunay-Triangulation} betrachtet werden.
-Diese liefert eine Triangulation, die möglichst gleichschenklige und gleichwinklige Dreiecke verwendet~\cite{Properties_of_the_Delaunay_triangulation}.
-Dies wird erreicht, indem der minimale Winkel maximiert wird.
-Im Buch von de Berg et al.~\cite{Delaunay_Triangulation} wird diese Variante der Triangulation ausführlich behandelt.
-
-Triangulations eignen sich durch ihre Struktur besonders gut zur Darstellung von Höhendaten im zweidimensionalen Raum (siehe~\cref{fig:terrain}).
-Dabei kann ausgenutzt werden, dass Dreiecke unterschiedliche Innenwinkel und Kantenlängen besitzen.
-
-\begin{figure}[tb]
-	\caption{\emph{A perspective view of a terrain} aus~\cite[p.~183]{Delaunay_Triangulation}}
-	\centering
-	\label{fig:terrain}
-	\includegraphics[scale=0.2]{Delauney_Tarrain.png}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.85\linewidth]{Problem.pdf}
+    \caption[Eine Ja-Instanz und Nein-Instanz.]{Eine Ja-Instanz (oben) und eine Nein-Instanz (unten).
+    Die Zahlen an den Knoten sind die Sollgrade.
+    Bei der Nein-Instanz können die Sollgrade mit einer Triangulierung nicht eingehalten werden.}
+    \label{fig:problem}
 \end{figure}
-Das Grundproblem besteht darin, dass die Höhendaten nur an bestimmten Punkten bekannt sind und die restlichen Werte daher geschätzt werden müssen.
-Dies kann durch die Delaunay-Triangulation gut gelöst werden, da die Dreiecke aufgrund ihrer gleichschenkligen Eigenschaft visuell geeignet sind, die fehlenden Daten zu ergänzen.
 
-Es werden auch Formel für die Anzahl der Kanten und Dreiecke in einer Triangulation angegeben.
-Für eine Punktemenge mit \(n\) Punkten und \(k\) Punkten auf der konvexen Hülle gilt:
-\[
-\text{Anzahl Kanten: } 3 n - 3 - k
-\]
-\[
-\text{Anzahl Dreiecke: }2 n - 2 - k
-\]
+In~\cref{fig:problem} sind zwei Instanzen mit Lösungen dargestellt.
+Eine Instanz ist hierbei eine Knotenmenge mit vorgegebenen Graden.
+Die Zahlen an den Knoten geben deren Grad an. 
+Diese werden als Sollgrad bezeichnet.
+Die obere Instanz ist eine Ja-Instanz, da die Sollgrade mit der Triangulierung eingehalten werden können.
+Bei der unteren Instanz handelt es sich um eine Nein-Instanz, da mit den gegebenen Sollgraden keine Triangulierung möglich ist.
 
-\subsection{Flips in Triangulations}
-Flips sind Möglichkeiten, um Kanten in einer Triangulation auszutauschen.
-Wie oben erwähnt, müssen Triangulation eine feste Anzahl an Kanten besitzen~\cite{Delaunay_Triangulation}.
-Dementsprechend können keine Kanten hinzugefügt oder entfernt werden, um den Grad einer Triangulation zu verändern.
+Eine praktische Anwendung dieses Problems könnte zum Beispiel in der Computergrafik, genauer in der Erzeugung von Netzen, für die Modellierung von Oberflächen genutzt werden.
+Durch den Sollgrad lässt sich die Dichte auf der Oberfläche in bestimmten Bereichen gezielt steuern.
+Analog kann in der Nachrichtentechnik ein DCT verwendet werden, um die Verbindungsdichte zwischen Knoten in einem Sensornetzwerk zu regulieren.
+Auch beim Transport von Gütern kann DCT genutzt werden, wobei der Sollgrad angibt, wie viele Güter an jedem Ort vorhanden sind und weiterbewegt werden sollen.
+
+\section{Ergebnisse dieser Arbeit}
+In dieser Arbeit wurde das DCT praktisch untersucht.  
+Die wichtigsten erzielten Ergebnisse lassen sich wie folgt zusammenfassen:
+
+\begin{itemize}
+    \item Es konnte gezeigt werden das Ja- und Nein-Instanzen des DCT bis zu einer Knotengröße von 220 Gelöst werden konnten.
+    \item Wird das DCT als Optimierungsproblem formuliert, konnte eine  Nein-Instanzen zu 97\,\% gelöst werden.
+    \item Für einen SAT-Solver wurde eine spezielle \emph{Propagation} implementiert, die bei einer Instanz in 3\,\% der Aufrufe erfolgreich eine Kante ausschließen konnte.
+    \item Die Analyse der Instanzen zeigt, dass sowohl die Gradverteilungen als auch die Verteilungen der Kantenlängen Hinweise auf die Schwierigkeit einer Instanz geben können.
+\end{itemize}
+
+
+\section{Verwandte Arbeiten}
+
+In diesem Abschnitt werden verschiedene, wissenschaftliche Arbeiten aus dem Themenbereich betrachtet, um einen Überblick über den aktuellen Entwicklungsstand zu geben.
+Es werden drei Bereiche betrachtet.
+Der erste Bereich behandelt die \emph{Delaunay Triangulierung}.
+Diese zählt zu den bekanntesten Triangulationen und bietet einen grundlegenden Einblick in das Thema.
+Der zweite Bereich umfasst \emph{Flips in Triangulationen}.
+Hier wird untersucht, wie sich Triangulierungen durch lokale Änderungen gezielt modifizieren lassen.
+Der dritte Bereich befasst sich mit dem Problem des \emph{degree constrained minimum spanning tree}.
+Dabei werden insbesondere Ansätze zur Einhaltung von Gradbeschränkungen betrachtet.
+
+Erwähnenswert ist, dass Sharir et al.~\cite{On_degrees_in_random_triangulations_of_point_setss} den minimalen und maximalen Grad in einer Triangulierung untersucht haben.
+Darüber hinaus haben Datta et al.~\cite{Degree_regular_triangulations_of_surfaces} und Gewali et al.~\cite{Degree_aware_triangulation_of_annular_regions} sich mit Triangulierungen beschäftigt, bei denen jeder Knoten einen geraden Grad besitzt.
+Da diese beiden Themenbereiche keinen direkten Mehrwert für die vorliegende Arbeit bieten, werden sie hier lediglich namentlich erwähnt.
+
+\subsection{Delaunay Triangulierung}
+\label{sec:delaunay_triangulation}
+Als Grundlage für den Algorithmus kann die \emph{Delaunay-Triangulierung} betrachtet werden.
+Diese liefert eine Triangulierung, die möglichst gleichschenklige und gleichwinklige Dreiecke verwendet~\cite{Properties_of_the_Delaunay_triangulation}.
+Dies wird erreicht, indem der minimale Winkel maximiert wird.
+Berg et al.~\cite{Delaunay_Triangulation} behandeln diese Variante der Triangulierung ausführlich.
+
+Triangulierungen eignen sich durch ihre Struktur besonders gut zur Darstellung von Höhendaten im zweidimensionalen Raum (siehe~\cref{fig:terrain}).
+Dabei können die unterschiedlichen Innenwinkel und Kantenlängen der verwendeten Dreiecke genutzt werden.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.2]{Delauney_Tarrain.png}
+  \caption[Delauney Beispiel.]{Ein Beispiel für die Darstellung von Höhendaten durch eine Triangulierung aus~\cite[p.~183]{Delaunay_Triangulation}.}.
+  \label{fig:terrain}
+\end{figure}
+Das Grundproblem besteht darin, dass die Höhendaten nur an bestimmten Knoten bekannt sind und die restlichen Werte daher geschätzt werden müssen.
+Dies kann durch die Delaunay-Triangulierung gut gelöst werden, da die Dreiecke aufgrund ihrer Gleichschenkligkeit geeignet sind, die fehlenden Daten zu ergänzen.
+
+Berg et al. geben zudem Formeln für die Anzahl der Kanten \(\left|E\right|\) und Dreiecke \(\left|F\right|\) in einer Triangulierung an.
+Für eine Knotenmenge mit \(n\) Knoten und \(k\) Knoten auf der konvexen Hülle gilt
+\begin{align*}
+    \left|E\right| &= 3 n - 3 - k\\
+    \left|F\right| &= 2 n - 2 - k.
+\end{align*}
+
+% \phillip{Flips in Triangulationen?}
+% \fabian{so verständlicher? könnte sie auch Delauney flips nennen.
+% In der zitierten Arbeit werden sie auch Flips genannt}
+
+\subsection{Kantenflips in Triangulations}
+Kantenflips, kurz Flips genannt, sind Möglichkeiten, um Kanten in einer Triangulierung auszutauschen.
+Triangulierungen besitzen per Definition eine feste Anzahl an Kanten~\cite{Delaunay_Triangulation}.
+Aus diesem Grund können keine Kanten hinzugefügt oder entfernt werden.
 Daraus folgt, dass für jede entfernte Kante eine andere Kante eingefügt werden muss.
-Eine besondere Art dieser Umstrukturierung von Kanten sind sogenannte Flips.
-Hurtado et al.~\cite{Flipping_edges_in_triangulations} zeigten, dass jede Triangulation mindestens
+Eine besondere Art dieser Umstrukturierung von Kanten sind sogenannte Flips, diese werden im folgenden noch genauer erklärt.
+Hurtado et al.~\cite{Flipping_edges_in_triangulations} zeigten, dass jede Triangulierung mindestens
 \[\frac{n-4}{2}\]
 flipbare Kanten besitzt, wobei \( n \) die Anzahl der Knoten bezeichnet.
-Laut der wissenschaftliche Arbeit \emph{Flips in planar graphs}~\cite{Flips_in_planar_graphs} lässt sich jede mögliche Triangulation in jede beliebige andere Triangulation überführen, indem die notwendigen Flips durchgeführt werden.
-Daraus folgt, dass, wenn eine Gradbeschränkte Triangulation möglich ist, diese mit den nötigen Flips konstruiert werden kann.
+Laut der wissenschaftlichen Arbeit \emph{Flips in planar graphs}~\cite{Flips_in_planar_graphs} lässt sich jede mögliche Triangulierung in jede beliebige andere Triangulierung mit Flips überführen.
+Ist somit eine DCT möglich, so kann diese durch Flips konstruiert werden.
+Dieser Ansatz wird in~\cref{sec:flips} nochmal näher betrachtet.
+In Triangulierungen gibt es nur eine Art von Flips, die sogenannten diagonalen Flips.
+Bei diesen wird ein konvexes Viereck betrachtet und die vorhandene Diagonale durch die andere Diagonale ersetzt, indem die beiden nicht verbundenen Knoten nun verbunden werden.
+In~\cref{def:flip} wird genauer auf diesen Prozess eingegangen.
 
-TODO überarbeiten
-\textbf{Sollte ich das später machen, hier die Sektion nennen}
 
-Eine weitere Art von Flips sind sogenannte \( k \)-Flips.
-Diese stellen eine zusätzliche Möglichkeit dar, Kanten innerhalb einer Triangulation zu verschieben.
-Dabei werden \( k \) Kanten entfernt und durch \( k \) neue Kanten ersetzt.
-Normale Flips entsprechen somit \( 1 \)-Flips.
-Der Vorteil von \( k \)-Flips liegt darin, dass mit einem Schritt größere strukturelle Veränderungen möglich sind.
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=\linewidth]{drei_flips.png}
-  \caption{\emph{Examples of edge move, edge rotation, and edge slide} aus~\cite[p.~70]{Flips_in_planar_graphs}}
+  \includegraphics[width=\linewidth]{drei_flips.pdf}
+  \caption{Beispiel für \emph{edge move}, \emph{edge rotation} und \emph{edge slide} aus~\cite[p.~70]{Flips_in_planar_graphs}.}
   \label{fig:drei_flips}
 \end{figure}
 
+
+Wenn man Flips außerhalb von Triangulierungen betrachtet, gibt es verschiedene Arten von Flips.
 Drei beispielhafte Flips sind in~\cref{fig:drei_flips} dargestellt.
 Zum einen der \emph{edge move}, hierbei handelt es sich um das einfache Entfernen und anschließende Einfügen einer Kante.
-Etwas stärker eingeschränkt ist die \emph{edge rotation}, bei der ein Endpunkt der Kante unverändert bleibt.
-Die Rotation erfolgt also nur um einen Knoten.
+Etwas stärker eingeschränkt ist die \emph{edge rotation}, bei der ein Endknoten der Kante unverändert bleibt.
+Es erfolgt eine Rotation um einen Knoten.
 Die dritte Variante, der \emph{edge slide}, schränkt die \emph{edge rotation} weiter ein.
-Hier darf der veränderte Knoten nur ein Nachbar des ursprünglichen Knotens sein.
+Hier darf der veränderte Knoten nur ein Nachbar des ursprünglich veränderten Knotens sein. 
 
-\subsection{degree constrained minimum spanning tree}
+Eine weitere Unterteilung von Flips sind die sog. k-Flips. 
+Diese zeichnen sich durch eine Gruppierung der Anzahl der veränderten Kanten aus. 
+Dabei werden k Kanten entfernt und durch k neue Kanten ersetzt.
+Die bisher genannten Flips entsprechen somit \( 1 \)-Flips.
+
+\subsection{Degree constrained minimum spanning tree}
 Eine Gradbeschränkung gibt es auch beim Minimum Spanning Tree.
 Hier hat jede Kante ein vorgegebenes Gewicht, welches im Spanning Tree minimiert werden soll.
-Das Besondere am \emph{degree constrained minimum spanning tree} ist, dass ein Minimum Spanning Tree erzeugt werden soll, welcher an jedem Knoten einen maximalen Grad von \( d \) hat.
+Das Besondere am \emph{degree constrained minimum spanning tree} ist, dass ein \emph{minimum spanning tree} erzeugt werden soll, welcher an jedem Knoten einen maximalen Grad von \( d \) hat.
 Dabei wird \( d \) global für das Problem vorgegeben.
 
-Es wurden verschiedene Ansätze von Joshua Knowles und David Corne~\cite{A_new_evolutionary_approach_to_the_degree-constrained_minimum_spanning_tree_problem} vorgestellt, welche das Problem lösen sollen.
-Der erste Ansatz ignoriert zu Beginn den Aspekt der Minimalität des Problems.
+Es wurden verschiedene Ansätze von Joshua Knowles und David Corne~\cite{A_new_evolutionary_approach_to_the_degree-constrained_minimum_spanning_tree_problem} vorgestellt, die das Problem lösen sollen.
+Der erste Ansatz ignoriert vorerst den Aspekt der Minimalität des Problems.
 Es werden Kanten hinzugefügt, welche die Gradbeschränkung nicht verletzen.
 Im weiteren Verlauf wird versucht, die Anzahl der Kanten zu minimieren.
 
-Ein anderer Ansatz nutzt aus, dass der minimale Spannbaum ohne Grad Beschränkung in polynomialer Zeit gelöst werden kann.
-Dieser Ansatz erzeugt zuerst einen minimalen Spannbaum, welcher die Gradbeschränkung ignoriert.
+Ein weiterer  Ansatz nutzt aus, dass der minimale Spannbaum ohne Gradbeschränkung in polynomialer Zeit gelöst werden kann.
+Dieser Ansatz erzeugt zunächst einen minimalen Spannbaum, welcher die Gradbeschränkung ignoriert.
 Wenn eine Lösung gefunden wurde, werden den Kanten neue Gewichte zugeteilt.
 Diese neuen Gewichte werden mit folgender Formel berechnet,
 \[
@@ -115,59 +171,59 @@ weight + fault \cdot max \cdot \frac{(weight - min)}{(max - min)}
 \]
 wobei \(weight\) das aktuelle Gewicht der Kante ist.
 Die Variable \(fault\) hat den Wert, \(\{0,1,2\}\) abhängig davon, wie viele Knoten an der Kante gerade die Gradbeschränkung verletzen.
-Die Variablen \(min\) und \(max\) bezeichnen das kleinste beziehungsweise größte Gewicht aller Kanten.
-Danach wird erneut ein minimaler Spannbaum gebildet, wobei durch das neue Gewicht nun Kanten bevorzugt werden, welche keine Gradbeschränkung verletzen.
+Die Variablen \(min\) und \(max\) bezeichnen das kleinste, beziehungsweise größte Gewicht aller Kanten.
+Danach wird erneut ein minimaler Spannbaum gebildet, wobei durch das neue Gewicht nun Kanten bevorzugt werden, die keine Gradbeschränkung verletzen.
 Diese beiden Schritte können so lange wiederholt werden, bis eine valide Lösung gefunden wurde oder eine maximale Anzahl an Iterationen erreicht wurde.
-Das Problem bei diesem Ansatz ist, dass Lösungen fälschlicherweise als \emph{nicht möglich} bewertet werden können aufgrund der maximalen Iterationen.
+Der Nachteil bei diesem Ansatz ist, dass Lösungen aufgrund der maximalen Iterationen fälschlicherweise als \emph{nicht möglich} bewertet werden können .
 
 Ein weiterer Ansatz wird als \emph{Hillclimbing} bezeichnet.
-Dieser löst das Problem des \emph{degree constrained minimum spanning tree} nicht, wird jedoch zur Suche nach neuen Knoten in einem anderen Algorithmus verwendet.
+Dieser löst den Nachteil des \emph{degree constrained minimum spanning tree} nicht, wird jedoch zur Suche nach neuen Knoten in einem anderen Algorithmus verwendet.
 In diesem Ansatz werden lokal neue Knoten gesucht, die bessere Ergebnisse liefern.
-Dies könnte auf die \emph{Degree constrained Triangulation} angewendet werden, um neue Kanten zu finden.
-Der Ansatz erzeugt keine eigene Lösung, sondern verbessert eine bestehende.
-Zunächst wird ein zufälliger Knoten aus einer Lösung ausgewählt.
-Danach werden weitere mögliche Knoten in der Nähe des ursprünglichen Knotens gesucht.
-Bei diesen Knoten wird überprüft, ob sie gleich gute oder bessere Ergebnisse liefern.
+Dies könnte auf DCT angewendet werden, um neue Kanten zu finden.
+Der Ansatz erzeugt keine eigene Lösung, sondern verbessert eine Bestehende.
+Zunächst wird ein zufälliger Knoten aus einer Lösung ausgewählt, woraufhin weitere mögliche Knoten in der Nähe des ursprünglichen Knotens gesucht werden.
+Bei diesen Knoten wird überprüft, ob ein Knotentausch gleich gute oder bessere Ergebnisse liefert.
 Falls dies der Fall ist, wird der Knoten ausgetauscht, andernfalls wird der gefundene Knoten ignoriert.
-Dieser Ansatz soll lokal gute Ergebnisse liefern, bringt jedoch aufgrund seines \emph{greedy}-Verhaltens keine globalen Verbesserungen.
+Dieser Ansatz soll lokal gute Ergebnisse liefern, bringt jedoch aufgrund seines greedy-Verhaltens keine globalen Verbesserungen.
 Eine mögliche Verbesserung der lokalen Problematik stellt \emph{multistart hillclimbing} dar.
-Bei diesem Verfahren wird nur ein Punkt in der Nähe getestet.
-Ist dieser nicht gleich oder besser, wird ein neuer zufälliger Punkt ausgewählt.
+Bei diesem Verfahren wird nur ein Knoten in der Nähe getestet.
+Ist dieser nicht gleich oder besser, wird ein neuer zufälliger Knoten ausgewählt.
 
 Der nächste Ansatz wird \emph{simulated annealing} genannt.
-Auch hier werden nur neue Knoten gesucht, um bestehende Lösungen zu verbessern.
+Auch hier werden neue Knoten gesucht, um bestehende Lösungen zu verbessern.
 Das Ziel des Ansatzes ist es, das Problem mit einer globalen Verbesserung zu lösen, indem zu Beginn viele Veränderungen zugelassen werden und im Verlauf immer genauere Verbesserungen erfolgen.
 Auch hier wird ein zufälliger Knoten ausgewählt und es werden weitere mögliche Knoten in der Nähe gesucht.
 Bei diesem Ansatz werden jedoch neue Knoten gemäß der folgenden Formel übernommen:
 \[
 p\{\textrm{accept }j\} = \left\{
-	\begin{array}{ll}
-	1 & \textrm{if } f(j) \leq f(i) \\
-	\exp{(\frac{f(i) - f(j)}{c})} & \, \textrm{sonst} \\
-	\end{array}
-	\right.
+  \begin{array}{ll}
+  1 & \textrm{if } f(j) \leq f(i) \\
+  \exp{\left(\frac{f(i) - f(j)}{c}\right)} & \, \textrm{sonst} \\
+  \end{array}
+  \right.
 \]
-Dabei ist \( p\{\textrm{accept }j\} \) die Wahrscheinlichkeit, dass ein Knoten übernommen wird.
+Dabei beschreibt \( p\{\textrm{accept }j\} \) die Wahrscheinlichkeit, dass ein Knoten übernommen wird.
 Die aktuelle Lösung ist \(i\) und die mögliche neue Lösung ist \(j\).
 Die Funktion \(f\) gibt hierbei die Kosten der Lösung an.
 Der Parameter \(c\) wird zu Beginn sehr hoch gesetzt und mit der Zeit verringert.
-Die Veränderung von \(c\) bewirkt die gewünschte Änderungsrate.
+Mit \(c\) kann gesteuert werden, wie aggressiv der Ansatz ist.
+Also wie viel Veränderung er erzeugt.
 Der Ansatz endet, wenn ein finales \(c_f\) erreicht wird, also wenn \(c = c_f\).
-
-Der letzte Ansatz wird erst am Ende vorgestellt und beschreibt das übliche Verfahren eines Evolutionsalgorithmus.
+Dieser Ansatz beschreibt das übliche Verfahren eines Evolutionsalgorithmus.
 Dabei werden verschiedene Lösungen erzeugt und bewertet.
 Die besten Lösungen werden ausgewählt und auf Basis dieser Lösungen werden durch Mutation neue Lösungen generiert.
 
-Krishnamoorthy et.al. ~\cite{Comparison_of_Algorithms_for_the_Degree_Constrained_Minimum_Spanning_Tree} hat Evolutionsalgorithmen noch mal genauer betrachtet.
-Der erst Schritt ist es eine Codierung zu wählen, welche nur \emph{richtige} Spannbäume darstellen kann.
-Sonst kann es passieren, dass von den erstellten Lösungen viele nicht genutzt werden können und somit nicht relevant sind.
-Wenn eine passende Codierung gewählt wurde, können dann nur noch der Grad und das Gewicht betrachtet werden.
+Krishnamoorthy et.al. ~\cite{Comparison_of_Algorithms_for_the_Degree_Constrained_Minimum_Spanning_Tree} haben Evolutionsalgorithmen genauer betrachtet.
+Der erste Schritt ist eine Codierung zu wählen, die nur zulässige Spannbäume darstellen kann.
+Andernfalls könnten von den erstellten Lösungen viele nicht genutzt werden und diese wären somit nicht relevant.
+Wenn eine passende Codierung gewählt wurde, müssen dann nur noch der Grad und das Gewicht betrachtet werden.
 
-Eine Möglichkeit wie Mutationen stattfinden können, ist die \emph{Crossover} Methode.
+% \fabian{Sollte ich hier lieber bei Parent und Child bleiben oder das so eingedeutscht nutzen?}
+Eine Möglichkeit wie Mutationen gebildet werden können, ist die \emph{Crossover} Methode.
 Dabei existieren zwei \emph{Eltern} Lösungen \(P_1\) und \(P_2\). Aus diesen werden
-\[
+\(
 2 \cdot (n - 2)
-\]
+\)
 verschiedene \emph{Kinder} erzeugt, da es \(n - 1\) Veränderungsmöglichkeiten gibt.
 Anschließend werden die \emph{Kinder} bewertet und sortiert.
 Das beste \emph{Kind}, das \(P_1\) am ähnlichsten ist, wird ausgewählt.
@@ -181,50 +237,46 @@ Von diesen \emph{Kindern} ersetzt das bessere \emph{Kind} das schlechtere \emph{
 Die Größe des Pools kann so angepasst werden, dass alle möglichen Veränderungen berücksichtigt werden.
 
 Beide Methoden sollen im Durchschnitt alle \(10\) Generationen die beste Lösung mit allen anderen Lösungen verglichen haben.
-Als mögliche Iterationsanzahl wird folgende Formel verwendet,
+Als mögliche Iterationsanzahl wird,
 \[
 \frac{50 \cdot n}{\bar{b}}
 \]
-dabei bezeichnet \(\bar{b}\) die durchschnittliche Gradbeschränkung.
+verwendet, wobei mit \(\bar{b}\) die durchschnittliche Gradbeschränkung bezeichnet wird.
 Diese Formel sorgt dafür, dass große Instanzen mehr Iterationen erhalten, während leichtere Instanzen (mit höherem Grad) schneller bearbeitet werden.
 
 
-Sandor P. Fekete et al~\cite{A_network-flow_technique_for_finding_low-weight_bounded-degree_spanning_trees} betrachten ebenfalls das \emph{degree constrained minimum spanning tree} problem.
+Sandor P. Fekete et al.~\cite{A_network-flow_technique_for_finding_low-weight_bounded-degree_spanning_trees} betrachten ebenfalls das \emph{degree constrained minimum spanning tree} problem.
 Hierbei wird ein \emph{Flow based Algorithmus} verwendet.
-Da dieser Ansatz wahrscheinlich nicht gut auf Triangulations übertragbar ist, wird er hier nur kurz behandelt.
+Da dieser Ansatz nicht gut auf Triangulations übertragbar ist, wird er hier nur kurz behandelt.
 
 Im praktischen Teil des Papers werden zwei Algorithmen vorgestellt.
 Diese erhalten einen minimalen Spannbaum und verändern ihn so, dass er eine Gradbeschränkung einhält.
 Dabei wird darauf geachtet, dass sich das Gewicht des Spannbaums nicht stark verschlechtert.
 Für diese Algorithmen werden Hauptoperationen namens \emph{Adoptions} eingeführt.
-Diese funktionieren ähnlich wie Flips nur für einen Spannbaum.
-Es handelt sich also um Operationen, die eine legale Veränderung bewirken.
+Diese funktionieren ähnlich wie Flips, nur in Spannbäumen.
+Es handelt sich also um Operationen, die eine zulässige Veränderung bewirken.
 Die beiden Algorithmen liefern eine Liste von Adoptionen, welche die gewünschte Änderung erzeugen.
-Der erste Algorithmus nutzt eine fraktionale Lösung und eine Greedy Strategie, um die Adoptionen zu finden.
+Der erste Algorithmus nutzt eine fraktionale Lösung und eine greedy Strategie, um die Adoptionen zu finden.
 Der andere Algorithmus beschränkt die betrachteten Kanten auf jene des gegebenen Spannbaums.
 So können die Algorithmen in polynomialer Zeit eine Lösung finden, die eine Gradbeschränkung einhält.
 
-
+\label{sec:einleitung:min-degree}
 Eine Abwandlung des minimalen Spannbaums mit Gradbeschränkung wurde von Ana Maria de Almeida et al.~\cite{Min-degree_constrained_minimum_spanning_tree_problem:_complexity_properties_and_formulations} untersucht.
 Dabei erweitern sie das Problem um eine Funktion, welche für jeden Knoten einen Mindestgrad vorgibt.
 Dieses Problem wird als \emph{Min-Degree Constrained Minimum Spanning Tree} bezeichnet.
 
-Es wurde das \emph{k-Dimensional Matching Problem} verwendet, um zu zeigen, dass das \emph{Min-Degree Constrained Minimum Spanning Tree} Problem in NP liegt.
-Zu erwähnen ist, dass dies in der dritten Dimension nicht gezeigt wurde.
-Allerdings soll das Problem schwieriger sein als das \emph{Degree Constrained Minimum Spanning Tree}, obwohl auch dieses in NP liegt.
+Das \emph{k-Dimensional Matching Problem} wurde verwendet, um zu zeigen, dass das \emph{Min-Degree Constrained Minimum Spanning Tree} Problem \NP\text{-schwer} ist.
+Es ist zu erwähnen, dass dies in der dritten Dimension von Ana Maria de Almeida et al. nicht gezeigt wurde.
+Allerdings soll das Problem schwieriger sein als das \emph{Degree Constrained Minimum Spanning Tree}, obwohl auch dieses Problem \NP\text{-schwer} ist.
 
 Auch in diesem Fall wird das Problem mit einer \emph{Flow based Formulierung} betrachtet.
 Dabei werden zwei Formulierungen angegeben.
-Eine gerichtete und eine ungerichtete Formulierung.
-Die gerichtete Formulierung soll hierbei effizienter Ergebnisse liefern.
+Eine gerichtete und eine ungerichtete Formulierung, wobei die gerichtete Formulierung hierbei effizientere Ergebnisse liefern soll.
 Die Formulierungen wurden mit einem \emph{Branch and Bound} Algorithmus getestet.
-Dabei wurde festgestellt, dass es bei der gerichteten Formulierung relevant ist, welcher Knoten als Wurzelknoten ausgewählt wird.
+Dabei wurde festgestellt, dass bei der gerichteten Formulierung relevant ist, welcher Knoten als Wurzelknoten ausgewählt wird.
 Es konnte jedoch kein einheitlich optimaler Wurzelknoten für die Formulierungen festgestellt werden.
 Des Weiteren wurde häufig festgestellt, dass die Relaxierung keine guten Schranken lieferte.
-Dies konnte damit erklärt werden, dass die zugehörige Formel für den minimalen Spannbaum ohne Gradbeschränkung gleiche Ergebnisse lieferte.
+Dies konnte damit erklärt werden, dass die zugehörige Formel für den minimalen Spannbaum ohne Gradbeschränkung gleich gute Ergebnisse lieferte.
 
 
 \newpage
-
-\section{Overview}
-If needed, write down where to find everything.

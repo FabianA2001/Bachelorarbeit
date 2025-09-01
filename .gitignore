@@ -1,10 +1,12 @@
 **/__pycache__/
 *pdf
 code/**/*.svg
+*.png
 !**/code/evaluation/**/*.pdf
 !**/thesis.pdf
 !**/TEX/**/*.pdf
-*png
+!**/TEX/**/*.png
+!**/TEX/**/*.jpg
 .vscode/
 **/.degree-constrained-triangulation/
 **/degree_constrained_triangulation.egg-info

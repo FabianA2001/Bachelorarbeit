@@ -14,6 +14,16 @@
 \usepackage{cleveref}
 \usepackage{microtype}
 \usepackage[ngerman]{babel}
+\usepackage{complexity}
+\usepackage{subcaption}
+
+
+\usepackage{todonotes}
+% \newcommand{\michael}[1]{\todo[inline]{MP: #1}}
+% \newcommand{\fabian}[1]{\todo[inline,color=blue!20]{FA: #1}}
+% \newcommand{\phillip}[1]{\todo[inline,color=yellow!20]{PK: #1}}
+% \newcommand{\elisa}[1]{\todo[inline,color=red!20]{ES: #1}}
+% \newcommand{\claudia}[1]{\todo[inline,color=red!20]{CA: #1}}
 
 
 % allows you to skip the `figures/` part of paths in your \includegraphics
@@ -44,13 +54,20 @@
 \crefname{observation}{Beobachtung}{Beobachtungen}
 \crefname{corollary}{Korollar}{Korollare}
 \crefname{section}{Abschnitt}{Abschnitte}
+\crefname{equation}{Formel}{Formeln}
+\crefname{algorithm}{Algorithmus}{Algorithmen}
+\crefname{table}{Tabelle}{Tabellen}
+
 
 \DeclareMathOperator{\degree}{deg}
 \DeclareMathOperator{\degrees}{deg^*}
 \DeclareMathOperator{\flip}{flip}
 \DeclareMathOperator{\flipDiag}{flip^*}
 \DeclareMathOperator{\intersection}{I}
-\DeclareMathOperator{\convexhull}{CH^*}
+% \DeclareMathOperator{\convexhull}{CH^*}
+
+\newcommand{\bigO}[1]{\mathcal{O}\left(#1\right)}
+\newcommand{\myhspace}{\hspace{2cm}}
 
 \begin{document}
 \overfullrule=40pt
@@ -68,31 +85,34 @@
 
 		\centering
 		\vspace{4cm}
-		{\scshape\huge Bachelor Thesis\par}
+		{\scshape\huge Bachelorarbeit\par}
 		\vspace{1.5cm}
-		{\Huge\bfseries Write down your Title right here!\par}
+		{\Huge\bfseries Algorithmische Methoden zu gradbeschränkten Triangulierungen\par}
 		\vspace{2cm}
 		{\huge Fabian Alich\par}
 		{\Large5310894\par}
-		{\Large Algorithmik \par}
+		{\Large Informatik \par}
 
 		\vfill\vfill
-		Institute of Operating Systems and Computer Networks\\
-		Algorithms Division
+		Institut für Betriebssysteme und Rechnerverbund \\
+        Abteilung Algorithmik\
 
 		\vfill
 
-		\textbf{First reviewer}\par
-		(Anon Anonymous, Institute of XY)\par
+		\textbf{Erstprüfer}\par
+		Prof. Dr. Sándor Fekete \\ 
+        Institut für Betriebssysteme und Rechnerverbund \\
+        Abteilung Algorithmik\par
 		\vfill
 
-		\textbf{Second reviewer}\par
-		(Anon Anonymous, Institute of YX)\par
+		\textbf{Zweitprüfer}\par
+		Prof. Dr. rer. nat. Roland Meyer\\
+        Institut für Theoretische Informatik\par
 		\vfill
-
-		\textbf{Supervised by}\par
-		(Anon Anonymous)\par
-		(tba)\par
+        
+		\textbf{Betreuer}\par
+		Dr. Phillip Keldenich\par
+		Michael Perk\par
 		\vfill
 %\begin{description}
 %	\item[Supervisor]
@@ -110,12 +130,17 @@
 	% statement of originality
 	\thispagestyle{plain} % no header
 	\vspace*{7cm}
-	\centerline{\bfseries Statement of Originality}
+	\centerline{\bfseries Eigenständigkeitserklärung}
 	\vspace*{1em}
 	\noindent
-	This thesis has been performed independently with the support of my supervisor/s.
-	To the best of the author's knowledge, this thesis contains no material previously
-	published or written by another person except where due reference is made in the text.
+	Hiermit versichere ich, dass ich die vorliegende Abschlussarbeit
+selbstständig und ohne unzulässige fremde Hilfe erbracht habe. Ich habe
+keine anderen als die angegebenen Quellen und Hilfsmittel benutzt. Die
+wörtliche oder sinngemäße Übernahme von Abschnitten aus Texten
+Dritter sowie aus eigenen vorangegangenen Veröffentlichungen habe ich
+kenntlich gemacht.
+\\ \\Ferner versichere ich, dass es sich hier um eine Originalarbeit handelt,
+die noch nicht in einer anderen Prüfung vorgelegen hat.
 
 	\par
 	\bigskip\noindent Braunschweig, \today \par
@@ -125,8 +150,12 @@
 
 
 	\chapter*{Aufgabenstellung}
-	This is where your ``Aufgabenstellung'' goes.
-	You should get this from your supervisor!
+	Eine Triangulierung einer Punktmenge ist die Zerlegung ihrer konvexen Hülle in nicht überlappende Dreiecke. Triangulierungen spielen eine zentrale Rolle in der algorithmischen Geometrie und finden vielfältige Anwendungen, etwa in der Computergrafik und geografischen Informationssystemen (GIS). Im Rahmen seiner Bachelorarbeit soll Herr Alich das neuartige kombinatorische Optimierungsproblem Degree-Constrained Triangulations (DCT) untersuchen. Bei diesem Problem geht es darum, für eine gegebene Punktmenge eine Triangulierung zu finden, bei der – zusätzlich zu den klassischen Anforderungen – die Knotengrade (also die Anzahl der angrenzenden Dreiecke bzw. Kanten pro Punkt) gewissen Beschränkungen unterliegen. Ziel der Arbeit ist es, geeignete Verfahren zur Lösung dieses Problems zu entwickeln, zu implementieren und zu evaluieren. Dabei können neben exakten Verfahren (z.B. auf Basis von Integer Programming, Constraint Programming oder Branch-and-Bound) auch heuristische Ansätze (z.B. Greedy- oder Metaheuristiken) betrachtet werden. Von besonderem Interesse sind außerdem Methoden zur Fixierung oder zum Ausschluss bestimmter Kanten, um die Lösungsräume gezielt einzuschränken sowie die Generierung von leichten und schweren Instanzen für das Problem.
+    
+    \par
+	\bigskip\noindent Braunschweig, \today \par
+	\vspace*{10mm}
+	\hfill\hrulefill
 
 
 	%---------------------
@@ -140,14 +169,15 @@
 	\listoftables
 
 	\mainmatter
+    % \fabian{Passen die ersten Titel so? Bin sehr unsicher wie ich die zusammenfassen soll.}
 
 	\include{./chapters/01-introduction}
 	\include{./chapters/02-preliminaries}
 	\include{./chapters/03-content}
 	\include{./chapters/04-experiments}
 	\include{./chapters/05-conclusion}
-
 	\bibliographystyle{plainurl}
 	\bibliography{bibliography}
+	\include{./chapters/06-appendix}
 
 \end{document}

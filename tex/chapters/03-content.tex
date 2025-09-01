@@ -1,418 +1,374 @@
-\chapter{Content}
-
-\section{Instanzen Generation}
-\subsection{Ja - Instanzen}
-Bei den Ja-Instanzen handelt es sich um Knotenmengen, bei denen die \(\degrees\)-Funktion Grade liefert, welche eine gradbeschränkte Triangulation ermöglichen.
-Hierbei ist nicht bekannt, wie viele mögliche Lösungen existieren, sondern nur, dass es mindestens eine gibt.
-
-Der generelle Ablauf zur Erzeugung von Ja-Instanzen beginnt mit einer zufälligen Knotenmenge.
-Dabei wird lediglich die Anzahl der Knoten vorgegeben.
-Anschließend wird mit einem klassischen Triangulationsverfahren eine initiale Triangulation erstellt.
-Von dieser werden dann die Grade und die Knotenkoordinaten gespeichert, um sie als Eingabe für die zu testenden Algorithmen zu verwenden.
-
-\subsubsection{Delaunay}
-Das erste klassische Verfahren zur Gradbestimmung verwendet die Delaunay-Triangulation.
-Die Delaunay-Triangulation wurde bereits im Kapitel~\cref{sec:delaunay_triangulation} vorgestellt.
-Für die Erstellung der Delaunay-Triangulation wird die Bibliothek \texttt{scipy} genutzt.
-
-\subsubsection{Delaunay mit zufälligen Flips}
-\label{sec:Delaunay_mit_zufällig_Flips}
-Das zweite Verfahren zur Erzeugung von Ja-Instanzen basiert auf der Delaunay-Triangulation, zusätzlich werden jedoch zufällige Flips durchgeführt.
-Zunächst wird eine Delaunay-Triangulation der Knotenmenge erstellt.
-Auf dieser Triangulation werden anschließend \(k\) zufällige Flips gemäß~\cref{def:flip} durchgeführt.
-Für jeden Flip wird zufällig eine Kante \(e_0\) ausgewählt.
-Für diese Kante werden zunächst alle Dreiecke gesucht, die diese Kante enthalten.
-Dies geschieht, indem für die beiden Knoten \(x_{0,0}\) und \(x_{0,1}\) der Kante \(e_0\) alle ausgehenden Kanten verglichen werden.
-Sollten zwei dieser Kanten den gleichen Knoten \(v\) haben, muss das Tripel (\(x_{0,0}, x_{0,1}, v\)) ein Dreieck bilden, welches die Kante \(e_0\) enthält.
-
-Sollten mehr als zwei Dreiecke gefunden werden, so müssen die beiden Dreiecke ausgewählt werden, welche leer sind (keine weiteren Knoten enthalten).
-Da es in einer Triangulation nicht zu Überschneidungen kommen darf, kann es nur zwei leere Dreiecke geben.
-Aus diesen beiden Dreiecken (\(x_{0,0}, x_{0,1}, v_0\)) und (\(x_{0,0}, x_{0,1}, v_1\)) wird dann die Kante \(e_0\) entfernt und durch die neue Kante, bestehend aus \(v_0\) und \(v_1\), ersetzt.
-
-Dieser Prozess verändert die lokale Struktur der Triangulation und erzeugt so Knotenmengen mit unterschiedlichen Gradverteilungen, behält aber die Triangulationseigenschaft bei.
-
-\subsubsection{Zufällige Kantenerzeugung}
-Das nächste Verfahren basiert auf der zufälligen Auswahl von Kanten.
-Hierbei werden zunächst alle geometrisch möglichen Kanten zwischen den Punkten identifiziert.
-In diesem Schritt werden Kanten ausgeschlossen, welche durch andere Knoten der Knotenmenge verlaufen würden.
-
-Die verbleibenden gültigen Kanten werden dann in einer zufälligen Reihenfolge betrachtet.
-Bei der Auswahl der finalen Kanten wird für jede Kandidatenkante geprüft, ob sie eine der bereits ausgewählten Kanten schneidet.
-Nur wenn keine Schnitte entstehen, wird die Kante der Triangulation hinzugefügt.
-
-Dieses Verfahren ist maximal da alle möglichen Kanten betrachten wurden.
-
-\subsubsection{Iteration}
-Ein weiteres Verfahren zur Erzeugung von Ja-Instanzen basiert auf der Iteration.
-Hierbei werden zunächst alle möglichen Kanten zwischen den Punkten identifiziert.
-Diese werden nun nacheinander betrachtet und wenn sie keine andere Kante schneiden hinzugefügt.
-Diese Verfahren ist ebenfalls maximal, da alle möglichen Kanten betrachtet wurden.
-Beim Iterativen Verfahren ist zu beachten das Triangulationen erzeugt werden welche einen Knoten haben welcher einen sehr hohen Sollgrad hat.
-Dies basiert darauf das die Kanten in der Reinfolge betrachtet werden wie sie erstellt werden. 
-Das hat den Effekt das die alle Kanten des ersten Knoten hinzugefügt werden können da es noch keine anderen Kanten gibt welche diese schneiden könnten.
-
-\subsubsection{Greedy}
-Das letze Verfahren ist das Greedy Verfahren.
-Hierbei werden auch alle möglichen Kanten zwischen den Punkten identifiziert.
-Allerdings werden sie im gegensatz zum Iterativen Verfahren zunächst nach der Länge sortiert.
-Hierbei ist es möglich mit der kürzesten oder der längsten Kante zu beginnen.
-Anschließend wird wie beim Iterativen Verfahren jede Mögliche Kante nacheinander hinzugefügt.
-
-
-\subsection{Nein - Instanzen}
-
-Nein Instanzen sind Knotenmengen, bei denen die \(\degrees\) Funktion Gradwerte liefert, die keine gradbeschränkte Triangulation zulassen.
-Diese Instanzen entstehen nicht direkt, sondern werden aus Ja Instanzen abgeleitet.
-Nach der Generierung muss zusätzlich geprüft werden, ob die Instanz nicht möglich ist.
-Da die beschriebenen Verfahren nur mit hoher Wahrscheinlichkeit Nein Instanzen erzeugen.
-Es ist zu beachten, dass die Summe der Sollgrade mithilfe der Polyederformel einfach berechnet und überprüft werden kann.
-Daher besitzen die abgeleiteten Nein Instanzen insgesamt die gleichen Sollgrade wie die Ja Instanzen.
-Zusätzlich darf kein Sollgrad größer als die Anzahl der Knoten abzüglich eins sein, da sonnst der Sollgrad nicht erfüllt werden kann da nicht genügend Kanten erzeugt werden können.
-
-Bei der ersten Methode werden zwei Knoten ausgewählt.
-Vom ersten Knoten wird ein Wert abgezogen und beim zweiten Knoten derselbe Wert hinzugefügt.
-Zunächst wird eine zufällige Zahl \(r\) zwischen null und \(c\) gewählt.
-Hierbei ist \(c\) ist eine konstante Zahl, die beim Generieren festgelegt wird.
-Anschließend werden zwei Knoten \(v_1\) und \(v_2\) ausgewählt.
-Dabei müssen folgende Bedingungen erfüllt sein
-\begin{align}
-v_1 &\neq v_2 \\
-\degrees(v_1) &< r + 2 \\
-\degrees(v_2) + r &> n - 1
-\end{align}
-wobei \(n\) die Anzahl der Knoten ist.
-Wenn beide Knoten die Bedingungen erfüllen, wird der Sollgrad von \(v_1\) um \(r\) verringert.
-Der Sollgrad von \(v_2\) wird um \(r\) erhöht.
-
-Die zweite Methode besteht darin, zwei Knoten auszuwählen und deren Sollgrade zu tauschen.
-Es muss lediglich beachtet werden, dass es sich um zwei verschiedene Knoten handelt.
-
-Beide Ansätze werden mehrfach angewendet, um die Wahrscheinlichkeit zu erhöhen, dass die Instanzen nicht mehr möglich sind.
-Knoten werden dabei nicht mehrfach betrachtet.
 
 
 
+\chapter{Lösungsansätze}
+\label{chap:theoretischer_hintergrund}
+In diesem Kapitel werden die verschiedenen Ansätze erklärt, mit denen das Problem gelöst werden kann.
+Der erste Abschnitt betrachtet das Problem als Entscheidungsproblem, bei dem entschieden wird, ob es sich um eine Ja- oder Nein-Instanz handelt.
+Im Anschluss daran wird das Problem als Optimierungsproblem betrachtet.
+Das bedeutet, unabhängig von der Instanz, wird versucht eine möglichst gute Lösung zu finden.
+Im letzten Abschnitt wird das Problem während des Lösungsprozesses optimiert.
 
-\section{Solver}
-\subsection{Solver arten}
-\begin{itemize}
-	\item PySat
-	\item OrTools
-	\item Gurobi
-\end{itemize}
-\subsection{Kanten Formulierung}
-Es gibt zwei notwendige Beschränkungen für eine gradbeschränkte Triangulation.
-Die erste Beschränkung ist die Überschneidungsbeschränkung.
-Eine Triangulation darf keine Überschneidungen enthalten.
-Dafür werden alle Kantenpaare berechnet, die sich schneiden.
-Von jedem dieser Paare darf nur eine Kante aktiv sein.
-TODO Algorithmus erklären oder darauf verweisen.
-Die Schnittpaare werden mit dem Algorithmus berechnet.
+\section{Entscheidungsproblem}
+In diesem Abschnitt wird das DCT als Entscheidungsproblem betrachtet.
+Das bedeutet dem Solver wird eine Instanz übergeben und dieser soll entscheiden, ob eine Lösung existiert oder nicht.
 
-Die zweite Beschränkung ist die Gradbeschränkung.
-Für jeden Knoten \(i\) wird die Summe der ausgehenden Kanten auf den Sollgrad \(\degrees(i)\) beschränkt.
+Unabhängig vom Ansatz muss für das DCT überprüft werden, ob die Summe der Sollgrade zur Anzahl der Kanten passt.
+Mithilfe der Gleichung \[
+\left| E \right| = 3 n - 3 - k
+\]
+kann die Anzahl der benötigten Kanten in einer Triangulierung berechnet werden.
+Diese Anzahl kann dann in der Gleichung \[
+\left| E \right| \cdot 2 \overset{!}{=} \sum \degrees(i)
+\] genutzt werden, um zu überprüfen, ob die Sollgrade eine Ja-Instanz ermöglichen.
+Diese Überprüfung hat auch den Vorteil, dass die Maximalität nicht überprüft werden muss.
+So kann angenommen werden, dass wenn der Sollgrad möglich ist, dieser nur mit einem Maximalen Graphen erfüllt werden kann.
+
+Im Folgenden werden zwei verschiedene Ansätze beschrieben.
+Zum einen ein Kantenansatz und zum anderen ein Dreiecksansatz.
+
+\subsection{Kantenansatz}
+Bei diesem Ansatz werden Kanten betrachtet. 
+Das bedeutet die DCT wird erreicht, indem bestimmte Bedingungen an die Kanten gestellt werden.
+Dafür werden zuerst zwei notwendige Bedingungen erklärt und dann weitere optionale, die die Laufzeit verbessern könnten.
+% \michael{Beschränkungen ist ein eher unübliches Wort. Üblicher wäre Bedingung oder Neben/Randbedingung.}
+\subsubsection{Notwendige Bedingungen}
+Die erste Bedingung betrachtet Überschneidungen.
+Da eine Triangulierung keine Über-schneidungen enthalten darf, werden alle sich kreuzenden Kantenpaare berechnet.
+Von jedem dieser Paare darf dann nur eine Kante aktiv sein.
+
+Die zweite Bedingung ist die Gradbeschränkung.
+Für jeden Knoten \(i\) wird die Summe der inzidenten Kanten auf den Sollgrad \(\degrees(i)\) beschränkt.
 Um dies zu erreichen, wird für jeden Knoten festgelegt, dass die Summe der ausgehenden Kanten dem Sollgrad entspricht.
 
-Eine weitere notwendige Bedingung ist, dass die Kantenanzahl maximal ist.
-Dies muss nicht explizit als Beschränkung angegeben werden da es von der Gradbeschränkung impliziert wird.
-Es muss nur geprüft werden, ob die Gradbeschränkung in einer Triangulation erfüllbar ist.
-Dafür kann die Formel
-\[
-\text{Anzahl Kanten} = 3 n - 3 - k
-\]
-aus~\cref{sec:delaunay_triangulation} verwendet werden.
-Die Anzahl der Kanten kann in folgender Formel genutzt werden, um die Gradbeschränkung zu überprüfen.
-\[
-\text{Anzahl Kanten} \cdot 2 \overset{!}{=} \sum \degrees(i)
-\]
-
-Alle weiteren Beschränkungen sind optional.
-Sie sind Möglichkeiten, die Laufzeit des Solvers zu verbessern.
-Die erste und naheliegende Beschränkung ist die \emph{fixierte Hülle} Beschränkung.
+\subsubsection{Kanten fixieren/ausschließen}
+\label{sec:exclude_edges}
+In diesem Abschnitt werden optionale Bedingungen betrachtet, die Kanten fixieren oder ausschließen.
+Die erste und naheliegendste Bedingung ist die \emph{fixierte Hülle}.
 Hierbei werden die Kanten der konvexen Hülle immer hinzugefügt.
 Diese dürfen hinzugefügt werden, da sie keine Schnittkanten besitzen.
-Sie dürfen auch die Gradbeschränkung nicht verletzen.
-Andernfalls wäre der Graph nicht maximal und somit keine Triangulation.
+Würde eine dieser Kanten nicht hinzugefügt werden, wäre der Graph nicht maximal und somit keine Triangulierung.
+Da die Kanten der Hüllen in jeder möglichen Triangulierung vorhanden sind, verletzen sie auch nicht die Gradbeschränkung.
 
-Eine andere mögliche Beschränkung ist die \emph{alternative Kanten} Beschränkung.
-Diese wurde von Sándor P. Fekete et.al.~\cite{Exact_Algorithms_for_Minimum_Dilation_Triangulation} übernommen.
-\begin{figure}[tb]
+\begin{figure}[htb]%Hahaha einfach alles an htb reingehauen. mag ich
 \centering
-\label{fig:allEdges}
-\includegraphics[scale=0.7]{all_edges.pdf}
-\caption{Ein Vollständiger Graph mit allen möglichen Triangulation. Die Kanten \(e_2\) und \(e_3\) sind Schnittkanten von \(e_1\).}
-\end{figure}
-Diese Beschränkung nutzt aus das der Graph maximal sein muss.
-Damit dies der Fall sein kann muss für jede Kante gelten das entweder die Kante aktiv ist oder eine der Schnittkanten aktiv ist.
-Wie man in~\cref{fig:allEdges} sieht, ist \(e_1\) die ausgewählte Kante und \(e_2\) und \(e_3\) die Schnittkanten.
-Weiter unten im Bild ist zu sehen das alle möglichen Triangulation mindestens eine der drei Kanten verwendet.
-Zu beachten ist allerdings das die Anzahl der Schnittkanten nicht gleich eins sein darf.
-Nur mindestens eine sollte die Kante nicht aktiv sein.
-Wie man im Bild sieht können die Kanten \(e_2\) und \(e_3\) gleichzeitig aktiv sein.
-
-Eine weitere optionale Beschränkung ist zuvor berechnete Kanten zu fixieren oder auszuschließen.
-\begin{figure}[tb]
-\centering
+\includegraphics[scale=0.7]{exclude_edges/ecludegrade2.pdf}
+\caption[Gesonderte Betrachtung von Knoten auf der Hülle mit Grad zwei.]{Abhängig von dem Sollgrad von \(v_2\) kann entschieden werden, ob \(e_1\) aktiv oder nicht aktiv sein muss. Sollte \(\degrees(v_2) = 2\) sein, dann muss \(e_1\) aktiv sein damit alle Kanten wie \(e_2\) nicht aktiv sein können. Sollte \(\degrees(v_2) > 2\) sein, dann muss \(e_1\) nicht aktiv sein damit der Sollgrad erreicht werden kann.}
 \label{fig:excludeGrad2}
-\includegraphics[scale=0.7]{ecludegrade2.pdf}
-\caption{Ein Ausschnitt der Hülle}
 \end{figure}
-Eine Möglichkeit um Kanten zu fixieren ist es immer drei aufeinander folgende Knoten der Hülle zu betrachten.
-Ein mögliches Beispiel ist in~\cref{fig:excludeGrad2} zu sehen.
-Sollte \(\degrees(v_2) = 2\) sein muss die Kante \(e_1\) in der Triangulation genutzt werden.
-Dies hat den Grund das alle Schnittkanten von \(e_1\) nicht aktiv sein können.
-Sie würden sonst den Grad von \(v_2\) erhöhen.
-Analog dazu kann die Kante \(e_1\) ausgeschlossen werden sollte \(\degrees(v_2) > 2\).
+
+
+Eine weitere optionale Bedingung ist, zuvor berechnete Kanten zu fixieren oder auszuschließen.
+Eine Möglichkeit um Kanten zu fixieren ist immer drei aufeinander folgende Knoten der Hülle zu betrachten.
+Ein mögliches Beispiel ist in~\cref{fig:excludeGrad2} dargestellt.
+Sollte \(\degrees(v_2) = 2\) sein, muss die Kante \(e_1\) in der Triangulierung genutzt werden.
+Der Grund dafür ist, dass alle Schnittkanten von \(e_1\) nicht aktiv sein dürfen, da sie den Grad von \(v_2\) erhöhen würden.
+Analog dazu kann die Kante \(e_1\) ausgeschlossen werden, sollte \(\degrees(v_2) > 2\) sein.
 Sonst kann der Sollgrad nicht erreicht werden.
+Ein \(\degrees(v_2) < 2\) ist in einer Triangulierung nicht möglich.
 
-TODO genau formal nochmal klären für die Kanten ausschließen.
-
-Die nächste Bedingung ist nur theoretischer Test.
-Mit den bisher genannten Beschränkungen können nicht viele Kanten ausgeschlossen werden.
-Es kann also nicht betrachtet werden welchen Einfluss große Mengen von ausgeschlossenen oder fixierten Kanten auf die Laufzeit haben.
-Daher werden für einzelne Instanzen Kanten berechnet welche sicher ausgeschlossen oder fixiert werden können.
-Die Idee ist es zunächst die Instanz mit einem beliebigen Lösungsansatz zu lösen.
-Von diesen gefundenen Kanten wird jetzt ein Prozentsatz zufällig ausgewählt.
-Diese Kanten können sicher fixiert werden.
-Für ausschließbare Kanten werden alle Kanten betrachtet welche nicht genutzt wurden.
-Von diesen Kanten wird ebenfalls ein zufälliger Prozentsatz ausgewählt.
-Diese ausgewählten Kanten werden nacheinander bei einem Solver verboten.
-Sollte der Solver keine Lösung mehr finden, wird die Kante als ausschließbar markiert.
-
-
-
-
-\begin{itemize}
-	% \item Intersection Konstriend
-	% \begin{itemize}
-	% 	\item Triangulation darf keine Überschneidungen haben
-	% 	\item Alle Kantenpaare max eine aktiv
-	% 	\item algo von Michael mit Orientierung
-	% \end{itemize}
-	% \item Gradbeschränkung
-	% \begin{itemize}
-	% 	\item Knoten müssen Sollgrad erfüllen
-	% 	\item für jeden Knoten Anzahl ausgehender Kanten gleich Sollgrad
-	% \end{itemize}
-	% \item fix hull
-	% \begin{itemize}
-	% 	\item Kanten der konvexen Hülle müssen aktiv sein da keine alternative und maximal
-	% \end{itemize}
-	% \item all Edges
-	% \begin{itemize}
-	% 	\item nicht notwendig aber mehr Einschrängugnen könnten die Laufzeit verbessern
-	% 	\item Alle Kanten und ihre Schnittkanten betrachten
-	% 	\item mindestens eine davon muss aktiv sein
-	% 	\item in~\cref{fig:all_edges} ist \(e_1\) die ausgewählt Kante und die restlichen Kanten sind mögliche Schnittkanten.
-	% 	\item wenn e1 nicht hinzugefügt wird muss mindestens eine andere da sonst nicht Maximal
-	% 	\item darf nicht gleich 1 sein da zwei Schnittkanten können gleichzeitig aktiv sein
-	% 	\item z.B. e4 und e5 können gleichzeitig aktive sein.
-	% 	\item Exact Algorithms for Minimum Dilation Triangulation
-	% \end{itemize}
-	\item Exclude Edges
-	\begin{itemize}
-		% \item wenn auf der äußeren Hülle ein Knoten höher als Grad 2 kann die Kante zwichen den beiden Knoten nicht aktiv sein.
-		\item Knoten mengen halbieren, gucken ob Gradbeschränkung erfüllbar ist
-		\item \url{https://www.notion.so/Fragen-2-20eb105ff608808895e5fd5389915074?source=copy_link#216b105ff60880c1bc3ce905e0bd8d94}
-	\end{itemize}
-	% \item vorab berechnete Kanten ausschließen
-	% \begin{itemize}
-	% 	\item Nur für Theorite testen ob Kanten ausschließen Sinn ergibt
-	% 	\item Instanz berechnen
-	% 	\item Kanten betrachten welche nicht genutzt wurden
-	% 	\item Davon eine Kante zufällig auswählen und bei Solver verbieten
-	% 	\item gucken ob es noch Möglich ist
-	% 	\item wenn nein Kante auswählen
-	% 	\item So lange bis Prozentzahl z.B. 10\% aller Kanten gefunden wurden
-	% \end{itemize}
-	% \item 
-\end{itemize}
-
-
-Für alle Solver wird angenommen das \(E\) die Menge aller möglicher Kanten sei. Also Kanten die keine Punkte schneiden.
-Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
-Diese Variable ist wahr wenn die Kante \(e\) in der Triangulation enthalten ist.
-\subsubsection{OrTools und Gurobi}
-Für ein exaktes Ergebnis kann sowohl OrTools als auch Gurobi verwendet werden.
-Da beide Solver eine ähnliche Art der Formulierung verwenden werden sie hier zusammengefasst.
-TODO Reinfolge geändert
-Die Überschneidungsbeschränkung wird wie in~\cref{sec:ortools_heu} implementiert.
-Gurobi nutzt hier äquivalent:
-
-\[
-	\texttt{model.addConstr(\(x_{e_1} + x_{e_2} \leq 1\))}
-\]
-Für die Gradbeschränkung wird die Summe der booleschen Variablen \(x_e\) für alle ausgehenden Kanten eines Knotens \(i\) auf den Sollgrad \(\degrees(i)\) beschränkt.
-
-Für die Gradbeschränkung werden folgende Bedingungen hinzugefügt:
-TODO anpassen wie zwischen OrTools und Gurobi add/addConstr dargestellt wird
-\[
-	\texttt{model.(add | addConstr)(\(\sum x_{e_i} = \degrees(i)\))}
-\]
-Wobei \(i\) der Knoten ist und \(e_i\) alle Kanten für diesen Knoten.
-
-Für die \emph{all\_edges} Beschränkung werden folgende Bedingungen hinzugefügt:
-\[
-	\texttt{model.(add | addConstr)(\((\sum_{j \in \intersection(e)}{x_{j}}) + x_e \leq 1\))}
-\]
-
-Für die \emph{fix\_hull} Beschränkung werden die Kanten der konvexen Hülle fest gesetzt in dem die dazugehörige Variable auf \emph{eins} gesetzt wird.
-Eqivaltend werden für \emph{exclude\_edges} und die zuvor berechnenten Kanten die Variablen auf \emph{null} gesetzt.
-
-\subsubsection{PySat}
-Da PySat eine SAT Formulierung verwendet müssen die Bedingungen etwas angepasst werden.
-Die Überschneidungsbeschränkung kann sehr ähnlich mit folgender Formel umgesetzt werden:
-\[
-\neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E: e_2 \in \intersection(e_1)
-\]
-Für die Gradbeschränkung ist das Problem das bei PySat für eine Menge von Variablen nicht festgelegt werden kann wie viele von ihnen wahr sein müssen.
-Dies kann allerdings mit folgendem Verfahren gelöst werden.
-TODO rausfinden wie das geht
-
-
-Die Beschränkungen \emph{fix\_hull},\emph{exclude\_edges} und die vorab berechnen Kanten können analog wie in OrTools und Gurobi umgesetzt werden.
-Hierbei werden anstatt die Variablen auf \emph{null} und \emph{eins} zu setzen, die Klausen \((\neg x_e)\) und \((x_e)\) hinzugefügt.
-
-Für die \emph{all\_edges} Beschränkung kann folgende Klauseln genutzt werden:
-\[
-x_e \lor \bigvee_{e_j \in I(e)} x_{e_j} \qquad \forall e \in E
-\]
-
-
-
-\subsection{Dreieck Formulierung}
-\begin{itemize}
-	\item Alle möglichen Dreiecke erstellen
-	\item jedes Dreieck als Bool Variable
-	\item Überschneidung können sich überschneidene Dreiecke verwendet werden
-	\begin{itemize}
-		\item Sehr langam und schwer zu berechnen
-	\end{itemize}
-	\item Für grad können Sollgrad gleich dreieck anzahl und hülle sollgrad mindus eins
-	\begin{itemize}
-		\item vlt zeigen an einem Bild
-	\end{itemize}
-	\item exclude edges dreiecke verbieten welche exclude edges nutzen
-\end{itemize}
-\subsubsection{OrTools/Gurobi}
-\begin{itemize}
-	\item implementiert äguivalten zu Kanten
-	\item TODO kann man genau noch mal erklären gucken ob relevant weil Dreiecke schlecht wirken
-\end{itemize}
-
-% \begin{itemize}
-% 	\item Exakte Ergebnise Liefern die Triangulation und Gradbeschränkung erfüllen
-% 	\item alle Solver desten ob sum(degree) = 2* Kanten für Triangulation
-% \end{itemize}
-% \subsection{SAT mit Kanten}
-% TODO Rausfinden wie SAT degree gemacht wird
-% Zunächst sei \(E\) die Menge aller Kanten und \(E\) die Menge aller möglicher Kanten. Also Kanten die keine Punkte schneiden.
-% Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
-% Diese Variable ist wahr wenn die Kante \(e\) in der Triangulation enthalten ist.
-% Für den Überschneidungs Konstriend werden folgende Klauseln dem OrTools Modeln hinzugefügt.
-% \[
-% \neg x_{e_1} \lor \neg x_{e_2} \hspace{3cm} \forall e_1, e_2 \in E: e_2 \in \intersection(e_1)
-% \]
-% \begin{itemize}
-% 	\item Alle möglichen Kanten als Bool Variable wie OrTools
-% 	\item Intersection Konstriend wie OrTools
-% 	\item Degree sat mit eingebauter Funktion(Infos raussuchen)
-% 	\begin{itemize}
-% 		\item Hilfsveriablen ab max(len(all\_vars), höchste var in solver) + 1
-% 	\end{itemize}
-% 	\item das waren Grundlagen jetzt Verbesserungen
-% 	\item Kanten Anzahl fest setzen
-% 	\item Convexe Hülle festsetzen
-% 	\item Intersection mit Algo Von Michael
-% 	\item Satformel aus Paper von Michael, Fekete und Phillip Alle Edges
-% 	\item Subset degree
-% 	\begin{itemize}
-% 		\item alle Knoten durchgehen
-% 		\item alle Kombinationen der größe len(enges) - (degree -1) bilden
-% 		\item als Klauseln hinzufügen
-% 		\item Als Bild erklären
-% 	\end{itemize}
-% 	\item Bei degree nicht genau degree sondern nur mindestens degree
-% 	\item muss reichen weil sonnst ein anderer Knoten nicht genügend Kanten bekommt
-% 	\item exclude Edges
-% 	\begin{itemize}
-% 		\item alle Kanten betrachten welche die Punkt menge teilen
-% 		\item testen ob anzahl kanten * 2 = sum(degree) 
-% 	\end{itemize}
-% \end{itemize}
-% \subsection{OrTools}
-% % \begin{itemize}
-% % 	\item gleicher Solver jetzt mit Gradbeschränkung
-% % 	\item Kanten Variblen und Intersection Konstriend wie in~\cref{sec:ortools_heu}
-% % 	\item Zwei Grundansätze
-% % 	\begin{itemize}
-% % 		\item Kanten Maximieren und dann nach Lösung abbrechen welche richtige Anzahl Kanten hat
-% % 		\item Kanten Anzahl festsetzen und ohne Zielfunktion lösen
-% % 	\end{itemize}
-% % 	\item Ansatz für die Gradbeschränkung
-% % 	\item für jeden Knoten die summe der x für ausgehende Kanten varibalen gleich dem Sollgrad
-% % \end{itemize}
-
-
-% Eine weitere Möglichkeit besteht darin, als Zielfunktion die Summe der booleschen Variablen \(x_e\) zu maximieren.
-% In diesem Fall wird die Anzahl der Kanten maximiert, die in der Triangulation enthalten sind.
-% Da die Anzahl der Kanten in einer Triangulation allerdings bekannt sind, kann die Lösung abgebrochen werden, sobald die Anzahl der Kanten erreicht wurde.
-% \subsection{SAT/Gurobi mit Dreicken}
-% \begin{itemize}
-% 	\item Alle möglichen Dreiecke erstellen
-% 	\item Spätere Verbesserung nur Leere Dreiecke
-% 	\item jedes Dreieck als Bool Variable
-% 	\item Intersection Konstriend wie bei Kanten
-% 	\item Degree normaler Knoten degree = sum(Dreicke)
-% 	\item Degree auf Convexe Hülle degree - 1 = sum(Dreicke)
-% \end{itemize}
-
-\section{Optimierungsproblem}
-\begin{itemize}
-	\item eine Triangulation erstellen
-	\item den sollGrad möglichst richtig
-	\item Werden mit folgender Formel bewertet
-\end{itemize}
+Zwei weitere Bedingungen, um Kanten auszuschließen, basieren auf der Teilung der Knotenmenge.
+Es werden zunächst alle Kanten betrachtet, bei denen beide Endknoten auf der Hülle liegen.
+Die folgenden beiden Bedingungen können genutzt werden, um diese Kanten auszuschließen.
 
 \begin{align}
+	\left| E \right| \cdot 2 &> \sum_{v \in V} \degrees(v)\label{eq:ausschließen:eins} \\
+	\degrees(v) &> \left| V \right| - 1 \myhspace \forall v \in (V \setminus V_H)\label{eq:ausschließen:zwei}
+\end{align}
+Dabei sei \(V\) die Menge aller Knoten in der betrachteten Hälfte.
+Analog sei \(V_H \subseteq V\) die Menge der Knoten auf der Hülle. 
+Sollte eine der Bedingungen wahr werden, so kann die Kante ausgeschlossen werden.
+Die Bedingungen werden für beide Hälften getestet, die durch die Teilung entstehen.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.35\linewidth]{figures/exclude_edges/exclude_edge_0.pdf}\hfill
+	\includegraphics[width=0.35\linewidth]{figures/exclude_edges/exclude_edge_1.pdf}
+	\caption[Zwei Beispielinstanzen an denen Kanten ausgeschlossen werden können.]{Zwei Teilinstanzen, in denen die rote Kante ausgeschlossen werden kann.
+    Das bedeutet, die Instanz wird an der roten Kante halbiert und auf diesen Hälften werden die Bedingungen überprüft.
+    Links kann aufgrund von~\cref{eq:ausschließen:eins} die Kante ausgeschlossen werden da die Gradsumme die Anzahl der Kanten unterschreitet.
+    Rechts kann aufgrund von~\cref{eq:ausschließen:zwei} die Kante ausgeschlossen werden, weil der mittlere rote Knoten nicht genügend Kanten erzeugen könnte.}
+	\label{fig:exclude_edges_first}
+\end{figure}
+Zwei Beispiele sind in~\cref{fig:exclude_edges_first} abgebildet.
+Dabei ist links eine Teilinstanz, in der die Anzahl der benötigten Kanten (\(28\)) größer als die Summe der Grade (\(27\)) ist
+Und rechts eine Teilinstanz, bei der der rote Knoten mit dem Sollgrad \(5\) nur \(3\) mögliche Kanten erzeugen kann.
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.8]{exclude_edges/exclude_edge_intersection.pdf}
+    \caption[Kantenausschluss durch Schnittkanten.]{In der Abbildung hat der Knoten \(v_1\) einen Sollgrad von 3. Da die Kante \(e_1\) drei von fünf möglichen Kanten blockiert, kann \(v_1\) seinen Sollgrad nicht erreichen. Daher kann \(e_1\) ausgeschlossen werden.}
+    \label{fig:excludeEdgeIntersection}
+\end{figure}
+
+Eine weitere Möglichkeit, Kanten auszuschließen, besteht darin, ihre Schnittkanten zu betrachten.
+Wenn eine Kante \(e_1\) zu viele Kanten eines Knotens \(v_1\) blockiert, sodass dieser seinen Sollgrad nicht mehr erreichen kann, kann \(e_1\) ausgeschlossen werden.
+In~\cref{fig:excludeEdgeIntersection} ist zu erkennen, dass \(e_2\), \(e_3\) und \(e_4\) durch \(e_1\) blockiert werden.
+Da \(v_1\) jedoch einen Sollgrad von 3 besitzt und nur 5 mögliche Kanten existieren, kann \(v_1\) mit der aktiven Kante \(e_1\) seinen Sollgrad nicht erreichen.
+
+
+
+\subsubsection{\emph{Alternative Kantenbeschränkung}}
+Eine andere mögliche Bedingung ist die \emph{alternative Kantenbeschränkung}.
+Diese wurde von Sándor P. Fekete et.al.~\cite{Exact_Algorithms_for_Minimum_Dilation_Triangulation} übernommen.
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{all_edges.pdf}
+\caption[Ein Vollständiger Graph mit allen möglichen Triangulierung.]{Ein Vollständiger Graph mit allen möglichen Triangulierung. Die Kanten \(e_2\) und \(e_3\) sind Schnittkanten von \(e_1\). Es ist zu erkennen, dass entweder \(e_1\) oder eine der Schnittkanten aktiv sein muss, damit eine Triangulierung möglich ist.} 
+\label{fig:allEdges}
+\end{figure}
+
+Der gesuchte Graph muss für diese Bedingung maximal sein.
+Damit dies der Fall sein kann, muss für jede Kante gelten, dass entweder die Kante oder eine der Schnittkanten aktiv ist.
+Wie in~\cref{fig:allEdges} abgebildet, ist \(e_1\) die ausgewählte Kante und \(e_2\) und \(e_3\) die Schnittkanten.
+Weiter unten ist zu sehen, dass alle möglichen Triangulierungen mindestens eine der drei Kanten verwenden.
+Zu beachten ist allerdings, dass die Anzahl der Schnittkanten nicht gleich eins gesetzt werden darf, sondern mindestens auf eins.
+Wie man in~\cref{fig:allEdges} sieht, können die Kanten \(e_2\) und \(e_3\) gleichzeitig aktiv sein.
+
+
+\subsubsection{Formulierungen}
+Im Folgenden werden zwei verschiedene Formulierungen beschrieben, die den Kantenansatz umsetzen.
+Zum einen eine mathematische Formulierung, die Formeln erstellt, und zum anderen eine Formulierung in KNF.
+Für diese Formulierung wird angenommen, dass \(V\) die Menge aller Knoten und \(E\) die Menge aller möglicher Kanten sei.
+\(E\) enthält also die Kanten, die keine Knoten schneiden.
+Für jede Kante \(e \in E\) wird eine Bool Variable \(x_e\) erstellt.
+Diese Variable ist wahr, wenn die Kante \(e\) in der Triangulierung enthalten ist.
+
+
+\subsubsection{Mathematische Formulierung}
+\label{sec:kanten_formulierung:mathematisch}
+Für die Überschneidungsbeschränkung darf für jedes Variablenpaar 
+\[
+	(x_{e_1}, x_{e_2}) \myhspace \forall e_1, e_2 \in E : e_2 \in \intersection(e_1)
+\]nur eine Variable aktiv sein.
+Dies kann mit der Formel 
+\[
+	x_{e_1} + x_{e_2} \leq 1 \myhspace \forall e_1, e_2 \in E : e_2 \in \intersection(e_1)
+\]
+umgesetzt werden. 
+
+Für die Gradbeschränkung wird die Summe der booleschen Variablen \(x_e\) für alle Kanten eines Knotens \(i\) auf den Sollgrad \(\degrees(i)\) beschränkt.
+
+Dafür kann die Formel
+\[
+	\sum x_{e_i} = \degrees(i) \myhspace \forall i \in V
+\]
+genutzt werden, wobei \(e_i\) alle Kanten für den Knoten \(i\) darstellen.
+
+Für die \emph{alternative Kantenbeschränkung} kann die folgende Gleichung 
+\[
+	\sum_{j \in \intersection(e)}{x_{j}} + x_e \geq 1 \myhspace \forall e \in E
+\]
+
+genutzt werden. Für die Fixierung bzw. Ausschließung der Kanten werden die zugehörigen Variablen auf \emph{Wahr} oder \emph{Falsch} gesetzt.
+Dies kann mit \(x = 1\) bzw. \( x=0\) erfolgen.
+
+\subsubsection{KNF Formulierung}
+\label{sec:kanten_formulierung:knf}
+Die Überschneidungen können sehr ähnlich mit der Formel
+\[
+\overline{x_{e_1}} \lor \overline{x_{e_2}} \myhspace \forall e_1, e_2 \in E: e_2 \in \intersection(e_1)
+\]
+ umgesetzt werden.
+ Bei der Gradbeschränkung besteht das Problem, dass in KNF für eine Menge von Variablen nicht direkt festgelegt werden kann, wie viele von ihnen wahr sein müssen.
+Im Folgenden werden zwei verschiedene Ansätze beschrieben, um dies erreichen zu können.
+Der erste Ansatz nutzt Kardinalitätscodierungen aus einer Sammlung von Codierungen.
+Diese Sammlung wird von der Python Bibliothek PySAT bereitgestellt.
+Von diesen Codierungen kommen nur \emph{sequential counters}~\cite{sequential_counters}, \emph{sorting networks}~\cite{sorting_networks}, \emph{cardinality networks}~\cite{cardinality_networks}, \emph{totalizer}~\cite{totalizer}, \emph{modulo totalizer}~\cite{modulo_totalizer}, \emph{modulo totalizer for k-cardinality}~\cite{modulo_totalizer_for_k_cardinality} und eine native Codierung in Frage.
+Die restlichen Codierungen bieten keine Möglichkeit um Kardinalitätsbeschränkungen größer als eins zu erzeugen. 
+
+In~\cref{sec:eval5:sat_degree} wird sich zeigen, dass \emph{sequential counters} am besten geeignet ist.
+Daher wird diese Codierung im Folgenden genauer erläutert.
+Der Ansatz der \emph{sequential counters} wurde von Carsten Sinz~\cite{sequential_counters} entwickelt.
+Er basiert auf einer Idee aus der Computerhardwareentwicklung.
+Zur Berechnung der Kardinalität \(k\) für die Klausel \((x_1 \lor x_2 \lor \ldots \lor x_n)\) werden \(n-1\) Variablen \(s_i\) der Länge \(k\) in der unären Darstellung benötigt.
+Im Folgenden gibt für die Zahl \(s_{x,y}\) das \(y\) die Stelle in \(s_x\) an.
+Zusätzlich werden \(n\) Hilfsvariablen \(v_i\) verwendet.
+Für \(i = 1\) werden \(s_1\) und \(v_1\) wie folgt definiert
+\begin{align*}
+s_{1,1} &\Leftrightarrow x_1 \\
+s_{1,j} &\Leftrightarrow 0 \myhspace &\text{für } 1 < j \leq k \\
+v_{1} &\Leftrightarrow 0.
+\end{align*}
+Für \(i=n\) wird \(v_n\) wie folgt gesetzt
+\[v_n \iff x_n \land s_{n-1,k}.\]
+Iterativ werden dann \(s_i\) und \(v_i\) für \(i \in \{2, \ldots, n-1\}\) wie folgt definiert
+\begin{align*}
+s_{i,1} &\Leftrightarrow x_i \lor s_{i-1,1} \\
+s_{i,j} &\Leftrightarrow x_i \land s_{i-1,j-1} \lor s_{i-1,j} \qquad &\text{für } 1 < j \leq k \\[6pt]
+v_i &\Leftrightarrow x_i \land s_{i-1,k}.
+\end{align*}
+
+Mit diesen Variablen können die folgenden Klauseln erstellt werden
+\begin{align*}
+&\hspace{14pt}(\overline{x_1} \lor s_{1,1})  \\
+&\hspace{14pt}(\overline{s_{1,j}})  \quad \text{für } 1 < j \leq k \\
+\\
+&\left.\begin{array}{l}
+\hspace{6pt}(\overline{x_i} \lor s_{i,1}) \\
+\hspace{6pt}(\overline{s_{i-1,1}} \lor s_{i,1}) \\
+\left.\begin{array}{l}
+	\hspace{0pt}(\overline{x_i} \lor \overline{s_{i-1,j-1}} \hspace{2pt}\lor s_{i,j}) \\
+	(\overline{s_{i-1,j}} \lor s_{i,j}) \\
+\end{array}\right\} \quad \text{für } 1 < j \leq k \\
+\hspace{6pt}(\overline{x_i} \lor \overline{s_{i-1,k}})\\
+\end{array}\right\} \quad \text{für } 1 < i < n \\
+\\
+&\hspace{14pt}(\overline{x_n} \lor \overline{s_{n-1,k}}). 
+\end{align*}
+Diese Klauseln stellen sicher, dass genau \(k\) Variablen von \((x_1 \lor x_2 \lor \ldots \lor x_n)\) wahr sind.
+Alle Literale, die auf \(s_{i,j}\) basieren, müssen mit Hilfsvariablen verknüpft werden.
+
+Bei den Codierungen besteht die Möglichkeit, die Kardinalität auf den exakten Sollgrad oder den mindestens Sollgrad zu setzen.
+Insgesamt erzielen beide Bedingungen denselben Effekt, da der maximale Grad durch die Anzahl der Kanten begrenzt ist.
+Wenn jedoch nur gefordert wird, dass der Knoten mindestens den Sollgrad erreicht, müssen weniger Hilfsvariablen eingeführt werden.
+Bei der exakten Methode könnte der Solver allerdings schneller eine Lösung finden, da diese Bedingung stärker ist, da sie mehr Informationen liefert.
+
+Die andere Methode ist die sogenannte \emph{subset} Methode.
+Bei dieser Methode wird für jeden Knoten \(i\) eine Menge von Klauseln erstellt.
+Diese Klauseln umfassen alle Kombinationen der Kanten \(E_i\) der Größe \[\left|E_i\right| - (\degrees(i) - 1),\]
+wobei \(E_i\) die Menge aller Kanten für den Knoten \(i\) darstellt.
+Angenommen, der Knoten \(v_1\) besitzt die Kanten \(e_1\), \(e_2\), \(e_3\), \(e_4\) und den Sollgrad \(2\), dann werden folgende Klauseln erstellt
+\[
+	(x_1 \lor x_2 \lor x_3) \land (x_1 \lor x_2 \lor x_4) \land (x_1 \lor x_3 \lor x_4) \land (x_2 \lor x_3 \lor x_4)
+\]
+Damit diese vier Klauseln erfüllt sind, müssen mindestens zwei der Variablen wahr sein.
+Die Idee basiert darauf, dass für jede Klausel angenommen wird, dass nur noch eine Kante zum Erreichen des Sollgrads fehlt und die in der Klausel genannten Kanten noch nicht aktiv sind.
+Insgesamt wird so eine Kardinalitäts Codierung erzeugt.
+Diese Methode hat den Vorteil, dass keine Hilfsvariablen benötigt werden.
+Allerdings entstehen pro Knoten \[\binom{\left|E_i\right|}{\left|E_i\right| - (\degrees(i) - 1)}\] Klauseln.
+Das wären in O-Notation \[\bigO{n\cdot \binom{\left|E_{\text{max}}\right|}{\left|E_{\text{max}}\right| - d_{\text{min}}}}\] viele Klauseln.
+ Wobei \(E_{\text{max}}\) die maximale Kantenanzahl pro Knoten und \(d_{\text{min}}\) der minimale Sollgrad ist.
+ Da dies nicht polynomial ist, werden voraussichtlich zu viele Klauseln erzeugt.
+
+Für die \emph{alternative Kantenbeschränkung} können folgende Klauseln genutzt werden:
+\[
+x_e \lor \bigvee_{e_j \in I(e)} x_{e_j} \myhspace \forall e \in E
+\]
+
+Die Fixierung von Kanten kann ähnlich zur mathematischen Formulierung umgesetzt werden.
+Hierbei werden anstatt die Variablen auf \emph{Wahr} und \emph{Falsch} zu setzen, die Klauseln \((x_e)\) und \((\overline{x_e})\) hinzugefügt.
+
+\subsection{Dreiecksansatz}
+Bei dem Dreiecksansatz wird nicht jeder Kante eine Variable zugeordnet. 
+Stattdessen erhält jedes mögliche leere Dreieck eine eigene Variable.
+
+Die Gradbeschränkung kann aus der Kantenformulierung übernommen werden.
+Lediglich die Knoten auf der Hülle müssen gesondert betrachtet werden.
+Für diese Knoten muss der Sollgrad um eins reduziert werden, da ein Dreieck an der Hülle zwei Kanten für den Grad stellt stellt.
+
+Für die Überschneidungsbeschränkung können zwei verschiedene Ansätze genutzt werden.
+Zum einem können sich überschneidende Dreiecke ausgeschlossen werden.
+Die andere Möglichkeit ist es, Kanten zu betrachten.
+Wenn man die Kanten auf der Hülle gegen den Uhrzeigersinn betrachtet, muss auf der linken Seite immer genau ein Dreieck aktiv sein.
+Für alle anderen inneren Kanten müssen auf der linken sowie auf der rechten Seite immer genau gleich viele Dreiecke aktiv sein.
+Da es in einer Triangulierung keine Überschneidungen gibt, bestehen nur zwei Möglichkeiten.
+Entweder ist auf der linken Seite und auf der rechten Seite kein Dreieck aktiv oder auf beiden Seiten genau ein Dreieck aktiv.
+
+
+Für den Dreiecksansatz gibt es als einzige optionale Bedingung das Ausschließen von Dreiecken.
+Dafür können die gleichen Bedingungen wie beim Ausschluss von Kanten verwendet werden.
+Es werden dann alle Dreiecke ausgeschlossen, die eine ausgeschlossene Kante enthalten.
+
+\subsubsection{Formulierungen}
+Für diese Formulierungen wird ebenfalls angenommen, dass \(V\) die Menge aller Knoten und \(E\) die Menge aller möglicher Kanten sei, also der Kanten die keine Knoten schneiden.
+Zusätzlich ist \(F\) die Menge leerer Dreiecke, da nur diese in einer Triangulierung vorkommen können.
+Für jedes Dreieck \(f \in F\) wird eine Boolesche Variable \(x_f\) erstellt.
+Diese Variable ist wahr, wenn das Dreieck \(f\) in der Triangulierung enthalten ist.
+
+\subsubsection{Mathematische Formulierung}
+\label{sec:dreiecks_formulierung:mathematisch}
+Die Gradbeschränkung kann analog zum Kantenansatz übernommen werden.
+Für die Knoten auf der Hülle muss der Sollgrad um eins reduziert werden.
+In Formeln wird dies als
+\begin{align*}
+	\sum x_{f_i} &= \degrees(i) \myhspace \forall i \in V \setminus V_H \\
+	\sum x_{f_i} &= \degrees(i) - 1 \myhspace \forall i \in V_H 
+\end{align*}
+definiert, wobei \(V_H\) die Menge der Knoten auf der Hülle und \(f_i\) alle Dreiecke für den Knoten \(i\) sind.
+
+Der Ansatz ohne die Kantenüberschneidungen eignet sich besser für die mathematische Formulierung.
+Er kann mit den folgenden Formeln umgesetzt werden:
+\begin{align*}
+	\sum x_{f_e} &= 1 \myhspace \forall e \in E_H \\
+	\sum x_{f_{e,l}} &= \sum x_{f_{e,r}} \myhspace \forall e \in E \setminus E_H.
+\end{align*}
+Die Menge der Kanten auf der Hülle wird mit \(E_H\) bezeichnet und \(f_{e,l}\) und \(f_{e,r}\) alle Dreiecke auf der linken und rechten Seite der Kante \(e\).
+Bei der Menge \(E_H\) ist zu beachten, dass die Kanten gegen den Uhrzeigersinn betrachtet werden.
+
+\subsubsection{KNF Formulierung}
+\label{sec:dreiecks_formulierung:knf}
+Für die Gradbeschränkung müssen auch hier die Sollgrade der Knoten auf der Hülle um eins reduziert werden.
+Diese Kardinalitäten können anschließend mit den Codierungen aus~\cref{sec:kanten_formulierung:knf} umgesetzt werden.
+Für die Überschneidungsbeschränkungen werden in diesem Fall sich überschneidende Dreiecke ausgeschlossen.
+Dies kann mit der Formel 
+\[\overline{x_{f_1}} \lor \overline{x_{f_2}} \myhspace \forall f_1, f_2 \in F: f_2 \in \intersection(f_1)\]
+umgesetzt werden.
+Der Ansatz ohne Kantenüberschneidungen eignet sich auf Grund der fehlenden direkten Kardinalitätsunterstützung nicht für die KNF Formulierung.
+
+
+% Die Implementierung der Dreiecke kann in weiten Teilen von der Implementierung der Kanten übernommen werden.
+% Angepasst werden müssen lediglich die Berechnung der Dreiecke, deren Überschneidung sowie die Bestimmung aller Dreiecke für einen gegebenen Knoten.
+
+% Zur Erstellung aller Dreiecke werden zunächst alle möglichen Kanten hinzugefügt. 
+% Es werden also wieder alle Kanten betrachtet, die keinen Knoten schneiden.
+% Anschließend werden alle Knoten nacheinander durchlaufen.
+% Hierbei kann gleichzeitig zum Beispiel ein \emph{Map} genutzt werden um für jeden Knoten die zugehörigen Dreiecke zu speichern.
+% Für jeden Knoten werden alle Nachbarn bestimmt.
+% Mit allen Nachbarknoten werden alle möglichen Zweierkombinationen gebildet.
+% Wenn eine dieser Zweierkombinationen eine Kante besitzt, wird ein Dreieck erstellt.
+% Für eine Triangulierung sind jedoch nur die Dreiecke relevant, die keine weiteren Knoten enthalten.
+% Es werden daher nur die Dreiecke gespeichert, die keine zusätzlichen Knoten enthalten.
+% Dies kann wieder mit \emph{shapley} überprüft werden.
+% Zusätzlich wird darauf geachtet, dass jedes Dreieck nur einmal gespeichert wird, da mit dieser Methode jedes Dreieck theoretisch bis zu drei Mal betrachtet werden kann.
+
+% Die Überschneidung wird mit der \emph{Shapely} Bibliothek berechnet.
+% Dafür werden alle Dreiecke paarweise verglichen.
+% Dabei ist zu beachten das \emph{Shapely} eine Überschneidung schon bei einer Berührung bestätigt.
+% Es muss also zusätzlich getestet werden, ob sie sich nicht nur berühren.
+
+% Die Formulierungen für OR-Tools, Gurobi und PySAT können analog zur Kantenformulierung umgesetzt werden.
+
+
+\section{Optimierungsproblem}
+\label{sec:optimierungsproblem}
+Im Gegensatz zu den vorherigen Ansätzen wird DCT in diesem Abschnitt nicht als Entscheidungsproblem, sondern als Optimierungsproblem betrachtet.
+Dies hat zum einen den Vorteil, dass bei einem \emph{Timeout} des Solvers nicht der gesamte Fortschritt verloren geht.
+Ein weiterer Vorteil ist, dass bei Nein-Instanzen versucht wird, dennoch eine Lösung zu finden.
+Das bedeutet, dass zumindest eine möglichst nahe Triangulierung bestimmt werden kann, sollte es in bestimmten Bereichen nicht möglich sein, eine DCT zu finden.
+
+Für die Bewertung der Lösungen wurde folgende Formel 
+\begin{align}
  \text{diff}_i &= \left| \degrees(i) - \degree(i) \right| \label{eq:difference} \\
-e_i &= \left\{
+q_i &= \left\{
 \begin{array}{ll}
 \frac{\degrees(i) - \text{diff}_i}{\degrees(i)} & \degrees(i) \geq \text{diff}_i \\
 0 & \, \textrm{sonst} \\
 \end{array}
 \right. \label{eq:evaluation}\\
-Q_T &= \sum_{i=0}^{n} \frac{e_i}{n} \label{eq:total_evaluation}
+Q &= \sum_{i \in V} \frac{q_i}{n} \label{eq:total_evaluation}
 \end{align}
+eingeführt. Sie berechnet den Gesamtdurchschnitt aller prozentualen Gradabweichungen und liefert eine Bewertung (\(Q\)) für eine Triangulierung mit \(n\) Knoten.
+In~\cref{eq:difference} wird die Differenz zwischen dem gewünschten und aktuellen Grad berechnet.
+~\cref{eq:evaluation} bewertet diese Abweichung prozentual, woraufhin in~\cref{eq:total_evaluation} ein Durchschnitt über alle prozentualen Werte gebildet wird.
 
-Die Formel liefert eine Evaluation (\(Q_T\)) für einen Triangulation(\(T\)) mit \(n\) Knoten.
-Hierbei gibt \(\degrees(i)\) den gewünschten Grad an der stelle i an.
-Dazu passend gibt \(\degree(i)\) den aktuellen Grad an.
-In der Brechnung~\eqref{eq:difference} wird die Difference zwischen dem gewünschten und aktuellen Grad berechnet.
-In~\eqref{eq:evaluation} wird diese Abweichung Prozentual bewertet.
-Am Ende wird in~\eqref{eq:total_evaluation} ein Durchschnitt über alle Prozentualen Werte gebildet.
+\subsubsection{Ansätze}
+Es werden drei Ansätze vorgestellt.
+Der erste ist ein naiver Ansatz der versucht mit Flips die Gradbeschränkung zu erreichen.
+Die anderen beiden Ansätze verwenden einen mathematischen Ansatz.
+Ein KNF-Ansatz ist nicht möglich, da KNF-Formeln nur für Entscheidungsprobleme geeignet sind.
 
-\subsection{Flips}
+\subsubsection{Flips}
+\label{sec:flips}
 In dieser Heuristik werden die in~\cref{def:flip} definierten Kantenflips verwendet. 
 Ziel ist es, die Gradbeschränkung zu erreichen. 
-Dabei wird ausgenutzt, dass Flips den Grad eines Knotens verändern können die Triangulationseigenschaft dabei aber erhalten bleibt. 
+Dabei wird ausgenutzt, dass Flips den Grad eines Knotens verändern können, die Triangulationseigenschaft dabei aber erhalten bleibt. 
 
-Die Heuristik beginnt mit einer initialen Triangulation.
+Das Verfahren beginnt mit einer initialen Triangulierung.
 Diese wird durch ein klassisches Triangulationsverfahren erzeugt. 
-Anschließend werden maximal \(k\) Flips durchgeführt. 
+Anschließend werden maximal \(k\) viele Flips durchgeführt. 
 Ziel ist es, die Gradbeschränkung zu erfüllen. 
 
-Zunächst wird mit dem Algorithmus~\cref{algo:choose_edge} eine Kante ausgewählt. 
-Diese soll geflippt werden. 
-Der Algorithmus versucht, eine Kante zu finden, deren Knoten nicht den Sollgrad erfüllen. 
-Zusätzlich wird über den Parameter \(p\) eine Wahrscheinlichkeit eingeführt. 
-Dadurch kann auch eine Kante ausgewählt werden, deren Knoten den Sollgrad erfüllen. 
-Dies verhindert, dass die Heuristik in einem lokalen Optimum stecken bleibt. 
-Die ausgewählte Kante wird anschließend wie in~\cref{sec:Delaunay_mit_zufällig_Flips} beschrieben geflippt. 
-Nach jedem Flip wird überprüft, ob die Gradbeschränkung für alle Knoten erfüllt ist. Sollte dies der Fall sein, wird die Heuristik beendet.
-
-
-\begin{algorithm}[H]
+\begin{algorithm}[h]
 	\caption{CHOOSE EDGE(\(v\),\(p\))}
 	\label{algo:choose_edge}
 	\begin{algorithmic}[1]
@@ -430,82 +386,294 @@ Nach jedem Flip wird überprüft, ob die Gradbeschränkung für alle Knoten erf�
 		\RETURN e
 	\end{algorithmic}
 \end{algorithm}
-\subsection{OrTools mit Zielfunktion}
-\label{sec:ortools_heu}
 
-Bei dieser Heuristik wird der OrTools-Solver von Google verwendet.
-Der Vorteil dieses Solvers ist, dass nur wenige Beschränkungen vorgegeben werden müssen. Der Solver sucht dann eigenständig eine Lösung.
-In diesem Fall wird eine Überschneidungsbeschränkung vorgegeben. Zusätzlich wird eine Zielfunktion definiert, welche die Evaluation~\eqref{eq:total_evaluation} maximiert.
+Zunächst wird mit~\cref{algo:choose_edge} eine Kante ausgewählt die geflippt werden soll.
+Der Algorithmus versucht, eine Kante zu finden, bei der die Knoten den Sollgrad nicht erfüllen. 
+Zusätzlich wird über den Parameter \(p\) eine Wahrscheinlichkeit eingeführt. 
+Dadurch kann auch eine Kante ausgewählt werden, deren Knoten den Sollgrad erfüllen. 
+Dies verhindert, dass das Verfahren in einem lokalen Optimum stecken bleibt. 
 
-Im ersten Schritt werden die Kantenvariablen definiert.
-Für jede Kante \(e\) wird eine boolesche Variable \(x_e\) erstellt.
-Für die Überschneidungsbeschränkung wird die Funktion \emph{add\_at\_most\_one} von OrTools verwendet.
-Diese Funktion wird mit den folgenden Variablenpaaren aufgerufen.
+Die ausgewählte Kante \(e_0\) wird anschließend wie folgt geflippt.
+Für die Kante werden zunächst alle Dreiecke gesucht, die diese Kante enthalten.
+Dies geschieht, indem für die beiden Knoten \(x_{0,0}\) und \(x_{0,1}\) der Kante \(e_0\) alle ausgehenden Kanten verglichen werden.
+Sollten zwei dieser Kanten den gleichen Knoten \(v\) haben, muss das Tripel (\(x_{0,0}, x_{0,1}, v\)) ein Dreieck bilden, das die Kante \(e_0\) enthält.
+Sollten mehr als zwei Dreiecke gefunden werden, so müssen die beiden leeren Dreiecke ausgewählt werden.
+% Leer beschreibt, dass diese keine weiteren Knoten enthalten.
+Da es in einer Triangulierung nicht zu Überschneidungen kommen darf, kann es nur zwei leere Dreiecke pro Kante geben.
+Aus diesen beiden Dreiecken (\(x_{0,0}, x_{0,1}, v_0\)) und (\(x_{0,0}, x_{0,1}, v_1\)) wird dann die Kante \(e_0\) entfernt und durch die neue Kante, bestehend aus \(v_0\) und \(v_1\), ersetzt.
+
+Nach jedem Flip wird überprüft, ob die Gradbeschränkung für alle Knoten erfüllt ist. Sollte dies der Fall sein, wird das Verfahren beendet.
+
+
+
+\subsubsection{Mathematische Ansatze}
+\label{sec:OR-Tools_mit_Durchschnitts_Abweichung}
+In diesem Abschnitt werden zwei Zielfunktionen beschrieben, die das DCT als Optimierungsproblem lösen.
+Für beide Ansätze können die Bedingung aus~\cref{sec:kanten_formulierung:mathematisch} übernommen werden.
+Nur die Gradbeschränkung wird durch eine Zielfunktion ersetzt.
+Zum einen wird als Zielfunktion die~\cref{eq:total_evaluation} genutzt.
+Für diese wird eine angepasste Version der~\cref{eq:total_evaluation} maximiert.
+Die Teiler in~\eqref{eq:total_evaluation} und~\eqref{eq:evaluation} werden entfernt. 
+Diese sind für die Maximierung nicht relevant.
+
+Eine Fallunterscheidung für~\eqref{eq:evaluation} ist für eine Zielfunktion nicht sinnvoll.
+Die Variablen \(q_i\) werden daher mit folgender Formel berechnet.
 \[
-	( x_{e_1}, x_{e_2}) \hspace{3cm} \forall e_1, e_2 \in E. e_2 \in \intersection(e_1)
+q_i = \degrees(i) - \min(\text{diff}_i, \degrees(i))
 \]
-
-Für die Zielfunktion wird eine Funktion erstellt, die der Gleichung~\eqref{eq:total_evaluation} ähnelt.
-Die Teiler in~\eqref{eq:total_evaluation} und~\eqref{eq:evaluation} werden entfernt. Diese sind für die Maximierung nicht relevant.
-Da OrTools keine Betragsfunktion in Formeln erlaubt, muss die Funktion \emph{AddAbsEquality} verwendet werden.
-Diese erzeugt den Betrag mit diesen beiden Bedingung
-\begin{align*}
-	abs_i &\geq \degrees(i) - \degree(i) \\
-	abs_i &\geq \degree(i) - \degrees(i) 
-\end{align*}
-Die Variable \(abs_i\) ist hierbei eine Integer-Hilfsvariable, die den Betrag der Differenz erhält.
-Diese Variable kann dann für die Formel~\eqref{eq:difference} genutzt werden.
-
-Eine Fallunterscheidung für~\eqref{eq:evaluation} ist ebenfalls nicht möglich.
-Die Variablen \(e_i\) werden daher mit folgender Formel berechnet.
+Zusammengefasst ergibt das folgende Zielfunktion.
 \[
-e_i = \degrees(i) - \min(\text{diff}_i, \degrees(i))
+\max\left(\sum_{i \in V} q_i\right)
 \]
-OrTools erlaubt allerdings keine \emph{min}-Funktion in Formeln. Deshalb wird die Funktion \emph{AddMinEquality} verwendet.
-Diese nutzt das eine Minimierung mit Folgender Formel in ein Maximierung umgewandelt werden kann.
-\[
-	\min(a,b) = -\max(-a, -b)
-\]
-Und eine Maximierung kann mit folgender Formel erzeugt werden
-\begin{align*}
-	min_i &\geq a \\
-	min_i &\geq b 
-\end{align*}
-
-zusammengefasst bekommen wir folgende Bedingungen
-\begin{align*}
-	abs_i &\geq \degrees(i) - \degree(i) \\
-	abs_i &\geq \degree(i) - \degrees(i) \\
-	min_i &\geq - \text{diff}_i \\
-	min_i &\geq - \degrees(i) \\
-	e_i &= \degrees(i) - ( - min_i) \\
-	Q_T &= \sum e_i 
-\end{align*}
-Als Zielfunktion wird dann \(Q_T\) maximiert.
-
-Theoretische könnte man eine Minimierung auch mit folgenden Bedingungen darstellen
-\begin{align*}
-	min_i &\leq a \\
-	min_i &\leq b	
-\end{align*}
-aber OrTools nutzt den Umweg über die Maximierung.
-
-
-% TODO glaube das ist einfach nur abs das ist glaube nicht gleichwertig.
-% Es gibt auch eine zweite Zielfunktion welche weniger Integer-Hilfsvariablen verwendet.
-% Für jeden Knoten wird bei dieser Zielfunktion nur eine Integer-Hilfsvariable \(j_i\) und keine besonderen Funktionen verwendet.
-% Für jeden Knoten \(i\) muss die Hilfsvariable \(j_i\) nur folgende Bedingung erfüllen:
 % \begin{align*}
-% 	j_i &\geq \degrees(i) - \degree(i) \\
-% 	j_i &\geq \degree(i) - \degrees(i) 
+%  \text{diff}_i &= \left| \degrees(i) - \degree(i) \right|\\
+% Q &= \sum_{i=0}^{n}\degrees(i) - \min(\text{diff}_i, \degrees(i))
 % \end{align*}
-% Die Summe aus \(j_i\) wird dann als Zielfunktion maximiert.
+
+Die andere Zielfunktion minimiert die maximale Gradabweichung.
+Dafür wird eine Hilfsvariable \(max\_min\) eingeführt.
+Mit folgenden Formeln kann die Zielfunktion definiert werden
+\begin{align*}
+	max\_min &\geq \text{diff}_i \myhspace \forall i \in V \\
+	max\_min &\geq 0
+\end{align*}
+Die Variable \(max\_min\) wird als Zielfunktion minimiert.
+
+\section{Conflict-driven clause learning}
+\label{sec:cdcl}
+In diesem Kapitel werden SAT-Solver genauer betrachtet.
+SAT-Solver werden genutzt um KNF-Formulierungen zu lösen.
+In diesem Abschnitt sollen keine weiteren Klauseln gefunden werden, stattdessen wird der Solver während de Lösung optimiert..
+Dafür wird \emph{Conflict-driven clause learning} (CDCL) betrachtet.
+Die in diesem Kapitel vorgestellten Informationen stammen aus dem Buch \emph{The Art of Computer Programming, Volume 4, Fascicle 6: Satisfiability}~\cite{The_Art_of_Computer_Programming_Volume_4_Fascicle_6_Satisfiability}.
+Im Allgemeinen funktionieren SAT-Solver so, dass sie jede Möglichkeit ausprobieren.
+Dabei werden zuerst Möglichkeiten ausgetestet, die aufgrund der aktuellen Belegung und Klauseln relevanter sind.
+Dies lässt sich, wie in ~\cref{fig:sat_tree} gezeigt, als Baum darstellen.
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=1\linewidth]{figures/sat_tree.pdf}
+	\caption[Ein Baum, der die möglichen Entscheidungen eines SAT-Solvers darstellt.]{Ein Baum, der die Möglichen Entscheidungen eines SAT-Solvers darstellt. Jeder Ast entspricht einer Belegung der Literale. Die Blätter sind entweder erfüllende Belegungen oder Konflikte. Wobei eine rote Zahl für eine nicht belegtes Literal steht und eine schwarze Zahl für ein belegtes Literal.}
+	\label{fig:sat_tree}
+\end{figure}
+
+Eine Möglichkeit die relevanten Äste effektiv zu untersuchen, ist der CDCL-Ansatz.
+Das Besondere am CDCL-Ansatz ist, dass es einen Pfad gibt, der eine aktuelle Teilbelegung der Literale speichert.
+Zusätzlich muss für jedes belegte Literal eine Begründung in Form einer Klausel angegeben werden. 
+Diese Begründungen werden bei Konflikten relevant.
+Sollte es dazu kommen das der Solver keine weiteren Literale durch Begründungen setzen kann, wird ein Literal ohne Begründung gesetzt.
+Dieser Schritt wird als neue Entscheidungsebene bezeichnet.
+
+\subsection{Unit-Klauseln}
+Der Grundansatz zur Erweiterung des Pfades besteht darin, \emph{Unit-Klauseln} zu finden.
+Dabei handelt es sich um Klauseln, in denen nur ein Literal noch nicht belegt ist und die Klausel nicht erfüllt ist.
+Zum Beispiel kann durch die Klausel \((\overline{x_1} \lor x_2 \lor \overline{x_3})\) und dem Pfad \((\overline{x_2}, x_3)\) das Literal \(\overline{x_1}\) hinzugefügt werden. Die Klausel dient hierbei als Begründung.
+% TODO eventuell ergänzen, dass immer nur zwei Literale betrachtet werden
+
+Sollten keine weiteren \emph{Unit-Klauseln} existieren, wird basierend auf Heuristiken ein Literal belegt.
+Bei dieser Art der Belegung wird intern vermerkt, dass eine neue Entscheidungsebene erreicht wurde.
+Die sind auch bei Konflikten wichtig.
+Es ist zu beachten, dass jeder Abschnitt des Pfades einer Entscheidungsebene zugeordnet werden kann.
+Ein Literal, das weiter rechts im Pfad steht, wird einer höheren Entscheidungsebene zugeordnet.
+
+\subsection{Konflikte}
+Ein Konflikt tritt auf, wenn ein Literal dem Pfad hinzugefügt werden soll, es aber bereits eine andere Belegung besitzt.
+Hier zeigt sich der besondere Ansatz von CDCL.
+Kommt es zu einem Konflikt, wird nicht einfach zu einer vorherigen Entscheidungsebene zurückgekehrt. 
+Stattdessen werden die Informationen des Konflikts zur Lösung des Problems genutzt.
+Sei
+\[
+c = (\overline{l} \lor \overline{a_1} \lor \ldots \lor \overline{a_k})
+\]
+eine Klausel, die die Begründung für einen Konflikt darstellt. 
+Das bedeutet aufgrund dieser Klausel wurde versucht ein Literal \(l\) zu belegen, das schon eine andere Belegung besitzt.
+Es kann angenommen werden, dass \(l\) und ein weiteres Literal \(a_i\) aus \(c\) auf der höchsten Entscheidungsebene \(d\) liegen.
+Andernfalls wäre \(c\) eine \emph{Unit-Klausel} und somit wäre \(l\) bereits auf \(d-1\) belegt worden.
+Weiterhin kann angenommen werden, dass das Literal \(l\) das aus \(c\) am weitesten rechts im Pfad stehende ist. Also das Literal aus \(c\), das zuletzt belegt wurde.
+Daraus folgt, dass \(l\) keine neue Entscheidungsebene erzeugt hat, da zumindest \(a_i\) vor \(l\) auf der Entscheidungsebene \(d\) belegt wurde.
+
+Es existiert somit eine Begründung
+\[
+(\overline{l} \lor \overline{r_1} \lor \ldots \lor \overline{r_k})
+\]
+für die erste Belegung von \(l\).
+Damit kann die Klausel
+\[
+c' = (\overline{a_1} \lor \ldots \lor \overline{a_k} \lor \overline{r_1} \lor \ldots \lor \overline{r_k})
+\]
+erzeugt werden, wobei \(c'\) mindestens eine Belegung aus der Entscheidungsebene \(d\) enthält.
+Sollte es ein weiteres Literal außer \(a_i\) geben, das auf der Entscheidungsebene \(d\) belegt wurde, ist \(c'\) ebenfalls eine Konfliktklausel.
+In diesem Fall wird \(c'\) so lange rekursiv erzeugt, bis es genau ein Literal \(\overline{x}\) gibt, das auf Entscheidungsebene \(d\) belegt wurde.
+Der rekursive Aufruf fügt dabei die Begründung des zweiten Literals aus Entscheidungsebene \(d\) ohne dieses Literal zu \(c'\) hinzu.
+Von den restlichen Literalen in \(c'\) wird dann die höchste Entscheidungsebene bestimmt und zu dieser zurückgekehrt.
+Anschließend wird \(\overline{x}\) dem aktuellen Pfad hinzugefügt und \(c'\) als Begründung für die Belegung verwendet.
+% TODO als Bild veranschaulichen? keine Idee wie 
 
 
-\section{Theoretische Mehrere Lösungen}
-TODO Wo soll das hin
-\begin{itemize}
-	\item 3 und 4 Knoten ist Gradbeschränkte Triangulation immer eindeutig
-	\item ab 8 bis unentlich gibt es mehrere Lösungen
-	\item instaze zeigen und erklären wie mehr Punkt hinzufügen
-\end{itemize}
+
+\chapter{Instanzgenerierung}
+\label{sec:instanz_generierung}
+In diesem Kapitel werden die verschiedenen Instanzentypen und ihre Generierung dargestellt.
+Auf diesen Instanzen werden im späteren Verlauf die Experimente ausgeführt.
+
+Die Knotenmengen werden hierbei durch die von Python bereit gestellte Funktion \emph{randint} generiert. 
+Mit dieser werden so lange verschiedene Koordinaten berechnet, bis die gewünschte Anzahl erreicht wurde.
+
+\section{Ja - Instanzen}
+Bei den Ja-Instanzen handelt es sich um Knotenmengen, bei denen die \(\degrees\)-Funktion Grade liefert, die DCT ermöglichen.
+Hierbei ist nicht bekannt, wie viele mögliche Lösungen existieren, nur dass mindestens eine vorhanden ist.
+
+Der generelle Ablauf zur Erzeugung von Ja-Instanzen beginnt mit einer zufälligen Knotenmenge.
+Dabei wird lediglich die Anzahl und Position der Knoten vorgegeben.
+Anschließend wird mit einem klassischen Triangulationsverfahren eine initiale Triangulierung erstellt.
+Von dieser werden dann die Grade gespeichert, um sie als Eingabe für die zu testenden Algorithmen zu verwenden.
+
+Alle fünf Verfahren zur Erzeugung von Ja-Instanzen werden in~\cref{fig:all_instance_types} visualisiert.
+
+
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=0.95\linewidth]{example/001_Delaunay_20.json.pdf}
+		\caption{Delaunay}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=0.95\linewidth]{example/000_Delaunay_Flips_20.json.pdf}
+		\caption{Delaunay Flips}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=0.95\linewidth]{example/004_Random_20.json.pdf}
+		\caption{Random}
+	\end{subfigure}
+	\\
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=0.95\linewidth]{example/003_Iterative_20.json.pdf}
+		\caption{Iterativ}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=0.95\linewidth]{example/002_Greedy_20.json.pdf}
+		\caption{Greedy}
+	\end{subfigure}
+	\caption{Visualisierung der fünf verschiedenen Instanztypen.}
+	\label{fig:all_instance_types}
+\end{figure}
+\subsection{Delaunay}
+Das erste klassische Verfahren zur Gradbestimmung verwendet die Delaunay-Triangu-lierung.
+Die Delaunay-Triangulierung wurde bereits im Kapitel~\cref{sec:delaunay_triangulation} vorgestellt.
+Die Besonderheit bei dieser Instanz ist das viele gleichschenklige Dreiecke erstellt werden.
+Dies ergibt viele Kanten der gleichen Länge und gleichmäßiger verteilte Grade.
+Für die Erstellung der Delaunay-Triangulierung wird die Bibliothek \emph{scipy} genutzt.
+
+
+
+\subsection{Delaunay mit zufälligen Flips}
+\label{sec:Delaunay_mit_zufällig_Flips}
+Das zweite Verfahren zur Erzeugung von Ja-Instanzen erweitert das Delaunay Verfahren, indem zufällige Flips durchgeführt werden. 
+Zunächst wird eine Delaunay-Triangulierung der Knotenmenge erstellt.
+Auf dieser Triangulierung werden anschließend \(k\) zufällige Flips gemäß~\cref{def:flip} durchgeführt.
+Das genaue Verfahren wurde in~\cref{sec:flips} schon beschrieben.
+Diese Instanzen haben ähnliche Eigenschaften wie die Delaunay Instanzen.
+Allerdings kann sich die Instanz stark unterscheiden, was abhängig von der Größe von \(k\) ist.
+Generell gibt es höhere Grade und längere Kanten, als bei Delaunay.
+
+
+\subsection{Zufällige Kantenerzeugung}
+Das nächste Verfahren basiert auf der zufälligen Auswahl von Kanten.
+Hierbei werden zunächst alle möglichen Kanten zwischen den Knoten identifiziert.
+Im ersten Schritt werden Kanten ausgeschlossen, die andere Knoten schneiden würden.
+Die verbleibenden gültigen Kanten werden dann in einer zufälligen Reihenfolge betrachtet.
+Für die betrachteten Kanten wird geprüft, ob sie eine der bereits hinzugefügten Kanten schneidet.
+Nur wenn keine Schnittkanten entstehen, wird die Kante der Triangulierung hinzugefügt.
+Dieses Verfahren ist maximal, da alle möglichen Kanten iterativ betrachtet wurden.
+
+Generell kann aufgrund der Zufälligkeit keine Aussage über die Struktur der Instanz getroffen werden.
+Allerdings werden meistens längere Kanten und Knoten mit höheren Graden hinzugefügt.
+
+
+
+\subsection{Iteration}
+Ein weiteres Verfahren zur Erzeugung von Ja-Instanzen basiert auf der Iteration.
+Hierbei werden zunächst alle möglichen Kanten zwischen den Knoten identifiziert.
+Diese werden nun nacheinander betrachtet und wenn sie keine andere Kante schneiden, hinzugefügt.
+Diese Verfahren ist ebenfalls maximal, da alle möglichen Kanten betrachtet wurden.
+Beim iterativen Verfahren ist zu beachten das Triangulationen erzeugt werden, die einen Knoten mit einem sehr hohen Sollgrad sowie langen Kanten haben.
+Dies basiert darauf, dass die Kanten in der Reihenfolge erstellt werden, in der sie betrachtet werden. 
+Dadurch können alle Kanten des ersten Knotens hinzugefügt werden, da es noch keine anderen Kanten gibt, die diese schneiden könnten.
+
+
+
+\subsection{Greedy}
+Das letzte Verfahren ist das Greedy Verfahren.
+Hierbei werden auch alle möglichen Kanten zwischen den Knoten identifiziert.
+Allerdings werden sie im Gegensatz zum iterativen Verfahren zunächst nach der Länge aufsteigend sortiert.
+Anschließend wird wie beim Iterativen Verfahren jede mögliche Kante nacheinander hinzugefügt.
+Aufgrund des Verfahren werden vor allem kurze Kanten hinzugefügt das hat zu folge das es eher kleinere Sollgrade gibt.
+Generell haben diese Instanzen die größte Ähnlichkeit mit den Delaunay Instanzen.
+
+
+\section{Nein-Instanzen}
+Nein-Instanzen sind Knotenmengen, bei denen die \(\degrees\) Funktion Gradwerte liefert, die DCT nicht ermöglichen.
+Diese Instanzen entstehen nicht direkt, sondern werden aus Ja-Instanzen abgeleitet.
+Nach der Generierung muss zusätzlich geprüft werden, ob die Instanz nicht möglich ist.
+Da die beschriebenen Verfahren mit hoher Wahrscheinlichkeit Nein-Instanzen erzeugen, allerdings nicht zu 100 Prozent.
+Es ist zu beachten, dass die Summe der Sollgrade mithilfe der Polyederformel einfach berechnet und überprüft werden kann.
+Daher besitzen die abgeleiteten Nein-Instanzen insgesamt die gleichen Sollgrade wie die Ja-Instanzen.
+Zusätzlich darf kein Sollgrad größer als die Anzahl der Knoten abzüglich eins sein, da sonst der Sollgrad nicht erfüllt werden kann, da nicht genügend Kanten erzeugt werden können.
+
+Bei der ersten Methode werden zwei Knoten ausgewählt.
+Vom ersten Knoten wird ein Wert abgezogen und beim zweiten Knoten derselbe Wert hinzugefügt.
+Zunächst wird eine zufällige Zahl \(r\) zwischen null und \(c\) gewählt.
+Hierbei ist \(c\) ist eine konstante Zahl, die beim Generieren festgelegt wird.
+Anschließend werden zwei Knoten \(v_1\) und \(v_2\) ausgewählt.
+Dabei müssen die Bedingungen
+\begin{align*}
+v_1 &\neq v_2 \\
+\degrees(v_1) &> r + 2 \\
+\degrees(v_2) + r &< n - 1
+\end{align*}
+erfüllt sein, wobei \(n\) die Anzahl der Knoten ist.
+Wenn beide Knoten die Bedingungen erfüllen, wird der Sollgrad von \(v_1\) um \(r\) verringert.
+Der Sollgrad von \(v_2\) wird um \(r\) erhöht.
+
+Die zweite Methode besteht darin, zwei Knoten auszuwählen und deren Sollgrad zu tauschen.
+Hierbei muss lediglich beachtet werden, dass es sich um zwei verschiedene Knoten handeln muss.
+
+Beide Ansätze werden mehrfach angewendet, um die Wahrscheinlichkeit zu erhöhen, dass die Instanzen nicht mehr möglich sind.
+Knoten werden dabei allerdings nicht mehrfach betrachtet.
+
+Die erste Methode wird im Folgenden \emph{move} genannte.
+Die andere Methode wird \emph{change} genannt.
+% \fabian{Ist es sinnvoll hier Namen zu verwenden, und sollte ich diese ins Deutsche übersetzen?}
+
+\section{Theorie mehrerer Lösungen}
+% \michael{Gibt es hierzu noch zitierbare Literatur?}
+% \fabian{Ich habe zur gradbeschränkten Triangulierungen an sich schon keine Literatur gefunden ich wüsste nicht wo ich dazu Lösungen finden könnte.}
+% \fabian{@Michael Als wir darüber gerdet hatten hast du so eine ähnliche instanze an die Tabel und gesagt die ist von irgendwem. Darauf basierend hab ich diehier gemacht. Muss ich da irgendwie zitieren?}
+Bei Ja-Instanzen stellt sich die Frage, ob sie eindeutig sind.
+Das bedeutet, ob es pro Ja-Instanz nur eine Lösung gibt und ob die Instanz nicht mehr erfüllbar ist, sobald eine Kante dieser Lösung verboten wird.
+Es lässt sich zeigen, dass Instanzen existieren, bei denen mehrere Lösungen möglich sind, weshalb Ja-Instanzen nicht eindeutig sein müssen. 
+In \cref{fig:mehrere_Lösungen} ist ein Beispiel für eine solche Instanz zu erkennen, bei der zwei verschiedene Lösungen für die gleiche Ja-Instanz existieren. 
+Die Zahlen an den Knoten geben hierbei den Sollgrad an.
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.7\linewidth]{figures/mehrere_Lösungen.pdf}
+	\caption[Eine Ja-Instanz mit zwei möglichen Lösungen.]{Eine Ja-Instanz mit zwei möglichen Lösungen. Die Zahlen an den Knoten geben hierbei den Sollgrad an. Die roten Kanten sind jene die in den Lösungen unterschiedlich sind.}
+	\label{fig:mehrere_Lösungen}
+\end{figure}
+
+Diese Eigenschaft wird in~\cref{sec:eval8:anzahl_lösungen} zusätzlich im Zusammenhang mit der Schwierigkeit einer Instanz untersucht.
+Diese Art von Konstruktion kann theoretisch unendlich fortgesetzt werden.
+Dies könnte genutzt werden, um auf andere Probleme zu reduzieren.
+Die Anzahl der Lösungen einer Instanz kann somit als eine Eigenschaft dieser betrachtet werden.
+
+
+
+
+
+
+
+

@@ -1,0 +1,102 @@
+%%
+%% This is file `beamerfontthemetubs.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% ../tubsvers.inc  (with options: `default')
+%% beamerfontthemetubs.dtx  (with options: `fonttheme')
+%% 
+%% This is a generated file.
+%% 
+%% Copyright 2003 by Till Tantau <tantau@users.sourceforge.net>.
+%% Copyright (C) 2011 by Enrico Jörns <e.joerns@tu-bs.de> and Martin Bäker
+%% 
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either
+%% version 1.2 of this license or (at your option) any later
+%% version. The latest version of this license is in:
+%% 
+%%   http://www.latex-project.org/lppl.txt
+%% 
+%% and version 1.2 or later is part of all distributions of
+%% LaTeX version 1999/12/01 or later.
+%% 
+\RequirePackage{ifthen}
+\RequirePackage{scrlfile}%TODO: KOMA-Check?
+\RequirePackage{etoolbox}%
+\begingroup
+  \makeatletter
+  \ifx\tubslatexVersion\undefined
+    \newcommand*{\check@tubslatexVersion}[1]{%
+      \gdef\tubslatexVersion{#1}%
+    }%
+  \else
+    \newcommand*{\check@tubslatexVersion}[1]{%
+      \def\@tempa{#1}%
+      \ifx\tubslatexVersion\@tempa\else
+        \@latex@warning@no@line{%
+          \noexpand\tubslatexVersion\space is
+          `\tubslatexVersion',\MessageBreak
+          but `#1' was expected!\MessageBreak
+          You should not use classes, packages or files
+          from\MessageBreak
+          different tubslatex versions%
+        }%
+      \fi
+    }
+  \fi
+  \check@tubslatexVersion{2024/02/22 v1.3.5-r140 tubslatex}%
+\endgroup
+\providecommand{\tubslatex}{tubs\LaTeX}
+\ProvidesPackage{beamerfontthemetubs}[\tubslatexVersion\space TU Braunschweig (beamer) font theme]
+\RequirePackage{ifthen}
+\newboolean{tinytocinheader}\setboolean{tinytocinheader}{false}
+\newboolean{use@nexus}\setboolean{use@nexus}{false}
+\newboolean{use@lnum}\setboolean{use@lnum}{false}
+\DeclareOptionBeamer{tinytocinheader}{\setboolean{tinytocinheader}{true}}
+\DeclareOptionBeamer{nexus}{\setboolean{use@nexus}{true}}
+\DeclareOptionBeamer{arial}{\setboolean{use@nexus}{false}}
+\DeclareOptionBeamer{lnum}{\setboolean{use@lnum}{true}}
+\ProcessOptionsBeamer\relax
+\ifthenelse{\boolean{use@nexus}}{%
+  \PassOptionsToPackage{nexus}{nexus}
+}{%
+  \RequirePackage{type1cm}% prevent OT1 font size warnings
+  \PassOptionsToPackage{arial}{nexus}
+}%
+\ifthenelse{\boolean{use@lnum}}{%
+  \PassOptionsToPackage{lnum}{nexus}
+}{}%
+\RequirePackage{nexus}
+\newcommand\microsize{%
+  \tiny%
+  \@tempdima=\f@size pt%
+  \@tempdima=0.8333333\@tempdima%
+  \@tempdimb=1.2\@tempdima%
+  \@setfontsize\microsize{\the\@tempdima}{\the\@tempdimb}%
+}
+\newcommand\nanosize{%
+  \microsize%
+  \@tempdima=\f@size pt%
+  \@tempdima=0.8333333\@tempdima%
+  \@tempdimb=1.2\@tempdima%
+  \@setfontsize\nanosize{\the\@tempdima}{\the\@tempdimb}%
+}
+\setbeamerfont*{page number in sidebar}{size=\small,series=\bfseries}
+\setbeamerfont*{title}{series=\bfseries,size=\Large}
+\setbeamerfont*{subtitle}{series=\mdseries,size=\normalsize}
+\setbeamerfont*{author}{series=\mdseries,size=\footnotesize}
+\setbeamerfont*{frametitle}{series=\bfseries,size=\Large}
+\setbeamerfont*{footline}{series=\mdseries,size=\microsize}
+\setbeamerfont*{section in toc}{series=\bfseries,size=\large}
+\setbeamerfont*{subsection in toc}{series=\mdseries,size=\normalsize}
+\setbeamerfont{footlinelogo}{size=\tiny}%
+\ifthenelse{\boolean{tinytocinheader}}{%
+  \setbeamerfont*{section in head/foot}{series=\mdseries,size=\nanosize}%
+}{%
+  \setbeamerfont*{section in head/foot}{series=\mdseries,size=\microsize}%
+}
+\endinput
+%%
+%% End of file `beamerfontthemetubs.sty'.
