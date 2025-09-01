@@ -1,46 +1,54 @@
 \chapter{Solver}
-In dieser Arbeit werden drei verschiedene Solver verwendet
-PySAT, OrTools und Gurobi.
-In diesem Kapitel wird eine Übersicht über diese gegeben und eine Implementierung der in~\cref{chap:theoretischer_hintergrund} beschriebenen Ansätze.
+In dieser Arbeit werden vier verschiedene Solver verwendet
+PySAT, OR-Tools, Gurobi und Simplified CDCL Solve.
+Dieses Kapitel liefert eine Übersicht über diese und eine Implementierung der in~\cref{chap:theoretischer_hintergrund} beschriebenen Ansätze.
 
 \section{Generelle Implementierungen}
-Generelle Implementierungen welche in alle Solvern verwendet werden.
-Zum einen wird betrachtet wie der Graph verwaltet wird.
-Danach wird erklärt wie die Schnittkanten bestimmt werden.
+In diesem Kapitel werden generelle Implementierungen gegeben, die in allen Solvern verwendet werden.
+Zum einen wird betrachtet, wie der Graph verwaltet wird.
+Danach wird erklärt, wie die Schnittkanten bestimmt werden.
 Im letzten Abschnitt wird eine Implementierung für das in~\cref{sec:intersection_edges} beschriebene Ausschließen von Kanten anhand von Schnittkanten erläutert.
 
-\subsubsection{Graph operationen}
+\subsubsection{Graphoperationen}
 Alle Kanten werden mit der Bibliothek \emph{Networkx} verwaltet.
-Mit dieser können auch die inzidente Kanten eines Knotens abgefragt werden.
+Mit dieser können auch die inzidenten Kanten eines Knotens abgefragt werden.
 Beim Erstellen der Kanten muss getestet werden, ob die Kanten keinen Knoten schneiden.
 Dies wird mit der Bibliothek \emph{Shapely} getestet.
-Bei er Berechnung der Hülle muss beachtet werden, dass alle Knoten, welche auf der Hülle liegen betrachtet werden.
-Die \emph{convex\_hull} Funktion von Shapely liefert nur die Eckpunkte der Hülle. 
-Damit auch Punkte auf einer Graden zwischen zwei Eckpunkten betrachtet werden, muss nach der Berechnung der Convexen Hülle noch der Schnitt zwischen Convexer Hülle und allen Punkten berechnet werden.
-In diesem Schnitt sind dann alle Punkte enthalten, welche auf der Hülle liegen.
+Bei er Berechnung der Hülle muss beachtet werden, dass alle Knoten, die auf der Hülle liegen, dazu gehören.
+Die \emph{convex\_hull} Funktion von \emph{Shapely} liefert nur die Knoten auf den Ecken der Hülle. 
+Damit auch Knoten auf einer Graden zwischen zwei Knoten an den Ecken betrachtet werden, muss nach der Berechnung der konvexen Hülle noch der Schnitt zwischen konvexer Hülle und allen Knoten berechnet werden.
+In diesem Schnitt sind dann alle Knoten enthalten, die auf der Hülle liegen.
 
 \subsubsection{Schnittkanten}
 \label{sec:intersection_edges}
 Für die Bestimmung der Schnittkanten wird ein Algorithmus verwendet, der auf dem Konzept des \emph{Rechtsknicks} beziehungsweise \emph{Linksknicks} basiert.
 Dafür ist es notwendig, dass ein vollständiger Graph betrachtet wird, da angenommen wird, dass zwischen allen Knoten eine Kante existiert.
+Dementsprechend müssen die Schnittkanten danach auf mögliche Kanten gefiltert werden.
 Es wird jede Kante \(e_i \in E\), bestehend aus den Knoten \(v_{i,1}\) und \(v_{i,2}\), nacheinander betrachtet.
 Anschließend werden zwei Knoten \(v_3\) und \(v_4\) gesucht, die auf unterschiedlichen Seiten der Kante liegen.
-Dabei gilt: Das Tripel \((v_{i,1}, v_{i,2}, v_3)\) bildet einen Rechtsknick und das Tripel \((v_{i,1}, v_{i,2}, v_4)\) einen Linksknick.
+Dabei gilt das Tripel \((v_{i,1}, v_{i,2}, v_3)\) bildet einen Rechtsknick und das Tripel \((v_{i,1}, v_{i,2}, v_4)\) einen Linksknick.
 Danach muss überprüft werden, ob \(v_{i,1}\) und \(v_{i,2}\) auf verschiedenen Seiten der Kante liegen, die durch \(v_3\) und \(v_4\) gebildet wird.
-Sind alle diese Bedingungen erfüllt, so ist die Kante \((v_3, v_4)\) eine Schnittkante von \(e_i\).
+Sind diese Bedingungen erfüllt, so ist die Kante \((v_3, v_4)\) eine Schnittkante von \(e_i\).
 Der Vorteil dieses Algorithmus liegt darin, dass alle vier Knicküberprüfungen notwendige Eigenschaften darstellen.
-In der Praxis werden dadurch viele Knoten bereits ausgeschlossen, da sie die erste Knickbedingung nicht erfüllen.
+In der Praxis werden bereits dadurch viele Knoten ausgeschlossen, da sie die ersten Knickbedingungen nicht erfüllen.
+
+
+
+
 
 \subsubsection{Schnittkanten ausschließen}
-Um die Kanten zu finden, bei denen die Schnittkanten zu viele Kanten ausschließen, wird jede Kante iterativ betrachtet.
+Um die Kanten zu finden, bei denen zu viele Schnittkanten ausgeschlossen werden, wird jede Kante iterativ in einem vollständigen Graphen betrachtet.
 Für jede betrachtete Kante werden zunächst Zähler für jeden Knoten erstellt.
 Danach werden nacheinander alle Schnittkanten der betrachteten Kante aufgerufen.
-Für alle Schnittkanten wird der Zähler der beiden Endknoten der Schnittkanten um eins erhöht.
+Für alle Schnittkanten wird der Zähler der beiden Endknoten der Schnittkante um eins erhöht.
 Am Ende werden alle Knoten überprüft.
-Sollte ein Knoten \(v\) folgende Formel erfüllen wird die Kante ausgeschlossen.
+Sollte ein Knoten \(i\) folgende Formel erfüllen, wird die Kante ausgeschlossen
 \[
-\degree(v) - \text{node\_count}[v] > \degrees(v)
+\degree(i) - \text{node\_count}[i] > \degrees(i).
 \]
+Die Formel basiert darauf, dass wenn der aktuelle Grad ohne die Schnittkanten größer als der Sollgrad ist, der Sollgrad nicht erfüllt werden kann.
+
+
 
 \section{PySAT}
 \label{sec:pysat}
@@ -49,53 +57,57 @@ Diese SAT-Solver entscheiden, ob eine KNF-Formel erfüllbar ist.
 Dementsprechend kann PySAT nur Entscheidungsprobleme, aber keine Optimierungsprobleme lösen.
 Für alle SAT-Solver wird eine einheitliche Schnittstelle in Python bereitgestellt.
 Zusätzlich werden verschiedene Codierungen für Kardinalitäten angeboten.
-Das bedeutet, man gibt für eine Menge von Variablen an, wie viele von ihnen wahr sein sollen und erhält eine KNF-Formel, die diese Bedingung abbildet.
+Das bedeutet, dass für eine Menge von Variablen angegeben wird, wie viele von ihnen wahr sein sollen und erhält eine KNF-Formel, die diese Bedingung abbildet.
 PySAT stellt hierfür verschiedene Codierungen mit Implementierung bereit.
 PySAT ist open source und kostenlos.
 
-Für PySAT wird die KNF-Formulierung verwendete.
-Es wurde alle Bedingungen aus~\cref{sec:kanten_formulierung:knf} und~\cref{sec:dreiecks_formulierung:knf} umgesetzt.
+Für PySAT wird die KNF-Formulierung verwendet.
+Es wurden alle Bedingungen aus~\cref{sec:kanten_formulierung:knf} und~\cref{sec:dreiecks_formulierung:knf} umgesetzt.
 
-\section{OrTools}
-Der zweite Solver ist OrTools (Google Optimization Tools) von Google.
-Dieser unterstützt verschiedene Modellierungsarten wie lineare Programmierung (LP), gemischt-ganzzahlige Programmierung (MIP), Constraint Programming (CP) und Routing-Algorithmen.
-OrTools ist in C++ implementiert und es wird eine Python-Schnittstelle bereitgestellt.
-Mit OrTools können sowohl Entscheidungsprobleme als auch Optimierungsprobleme gelöst werden.
+
+
+
+
+\section{OR-Tools}
+Der zweite Solver ist OR-Tools (Google Optimization Tools) von Google.
+Dieser unterstützt verschiedene Modellierungsarten wie lineare Programmierung (LP), gemischt-ganzzahlige Programmierung (MIP), Constraint Programming (CP) und Routing-Algo-rithmen.
+OR-Tools ist in C++ implementiert und es wird eine Python-Schnittstelle bereitgestellt.
+Mit OR-Tools können sowohl Entscheidungsprobleme als auch Optimierungsprobleme gelöst werden.
 Kardinalitätsbeschränkungen und andere lineare Bedingungen werden direkt unterstützt und müssen nicht codiert werden.
-OrTools ist open source und kostenlos unter der Apache License 2.0.
+OR-Tools ist open source und kostenlos unter der Apache License 2.0.
 
-Für OrTools wird die mathematische Formulierung verwendet.
-OrTools würde auch die KNF-Formulierung unterstützen, allerdings ist die mathematische Formulierung durch die direkte Unterstützung von Kardinalitäten deutlich einfacher umzusetzen.
-Die Dreiecksformulierungen aus~\cref{sec:dreiecks_formulierung:mathematisch} können mit \emph{add} direkt übergeben werden.
+Für OR-Tools wird die mathematische Formulierung verwendet.
+OR-Tools würde auch die KNF-Formulierung unterstützen, jedoch ist die mathematische Formulierung durch die direkte Unterstützung von Kardinalitäten deutlich einfacher umzusetzen.
+Die Dreiecksformulierungen aus~\cref{sec:dreiecks_formulierung:mathematisch} können direkt an den Solver übergeben werden.
 
-Die Kantenformulierung aus~\cref{sec:kanten_formulierung:mathematisch} kann ebenfalls übergeben werden.
-Allerdings können bei den Überschneidungen die Paare auch anders behandelt werden.
-So kann für jedes Paar die Funktion \emph{AddAtMostOne(\(x_{e_1}, x_{e_2}\))} oder \emph{AddBoolOr(\(x_{e_1}\).Not(), \(x_{e_2}\).Not())} verwendet werden.
-\fabian{gucken das hier die Funktion nicht im Absatz unterbrochen werden}
+Die Kantenformulierung aus~\cref{sec:kanten_formulierung:mathematisch} kann ebenfalls direkt übergeben werden.
+Allerdings können die Paare bei den Überschneidungen auch anders behandelt werden.
+So kann für jedes Paar die Funktion \emph{AddAtMostOne(\(x_{e_1}, x_{e_2}\))} oder \emph{AddBoolOr(\(\overline{x_{e_1}}\), \(\overline{x_{e_2}}\))} verwendet werden.
 
-Für OrTools werden zusätzlich die Zielfunktionen aus \cref{sec:optimierungsproblem} implementiert.
+Für OR-Tools werden zusätzlich die Zielfunktionen aus \cref{sec:optimierungsproblem} implementiert.
 Für die Durchschnitts-Zielfunktionen ist folgende Formel gegeben.
 \begin{align}
     &\text{diff}_i = \left| \degrees(i) - \degree(i) \right|\label{eq:difference_second}\\
-    &\max\left(\sum_{i\in V}\degrees(i) - \min(\text{diff}_i, \degrees(i))\right)
+    &\max\left(\sum_{i\in V}\degrees(i) - \min(\text{diff}_i, \degrees(i))\right).
 \end{align}
 
-Da OrTools keine Betragsfunktion in Formeln erlaubt, muss die Funktion \emph{AddAbsEquality} verwendet werden.
-Diese erzeugt den Betrag mit den folgenden Bedingung
+Da OR-Tools keine Betragsfunktion in Formeln erlaubt, muss die Funktion \emph{AddAbsEquality} verwendet werden.
+Diese erzeugt den Betrag mit den folgenden Bedingungen
 \begin{align*}
 	\text{diff}_i &\geq \degrees(i) - \degree(i) \\
 	\text{diff}_i &\geq \degree(i) - \degrees(i) \\
-	\text{diff}_i &= (\degrees(i) - \degree(i)) \lor (\degree(i) - \degrees(i) )
+	\text{diff}_i &= (\degrees(i) - \degree(i)) \lor (\degree(i) - \degrees(i) ).
 \end{align*}
 Die Variable \(\text{diff}_i\) ist hierbei eine Integer-Hilfsvariable, die den Betrag der Differenz erhält.
 Diese Variable kann dann für die Formel~\eqref{eq:difference_second} genutzt werden.
 
-OrTools erlaubt zusätzlich keine \emph{min}-Funktion in Formeln. Deshalb wird die Funktion \emph{AddMinEquality} verwendet.
-Diese nutzt das eine Minimierung mit Folgender Formel in ein Maximierung umgewandelt werden kann.
+OR-Tools erlaubt zusätzlich keine \emph{min}-Funktion in Formeln. Deshalb wird die Funktion \emph{AddMinEquality} verwendet.
+Diese nutzt, dass eine Minimierung der Formel
 \[
 	\min(a,b) = -\max(-a, -b)
 \]
-Eine Betragsfunktions kann auf eine Maximierungfunktions reduziert werden.
+in ein Maximierung umgewandelt werden kann.
+Eine Betragsfunktion kann auf eine Maximierungfunktion reduziert werden.
 Da dies im Beispiel oben der Fall ist, können hier die gleichen angepassten Bedingungen genutzt werden.
 
 Alle angepassten Formeln zusammengefasst sehen wie folgt aus:
@@ -106,30 +118,36 @@ Alle angepassten Formeln zusammengefasst sehen wie folgt aus:
 	min_i &\geq - \text{diff}_i \\
 	min_i &\geq - \degrees(i) \\
 	min_i &= (-\text{diff}_i) \lor (-\degrees(i)) \\
-	e_i &= \degrees(i) - ( - min_i) \\
-	Q_T &= \sum e_i 
+	q_i &= \degrees(i) - ( - min_i) \\
+	Q &= \sum_{i \in V} q_i.
 \end{align*}
-Als Zielfunktion wird dann \(Q_T\) maximiert.
+Als Zielfunktion wird dann \(Q\) maximiert.
+
+Die Max-Min-Zielfunktion kann mit dem angepassten \(\text{diff}_i\) direkt übergeben werden.
+
+
+
+
 
 \section{Gurobi}
-Der letze Solver ist Gurobi.
+Den vorletzte Solver stellt Gurobi dar.
 Es werden ebenfalls Modellierungen wie LP, MIP und quadratische Programmierung (QP) unterstützt.
-Gurobi ist in c implementiert und bietet eine Python-Schnittstelle an.
+Gurobi ist in C implementiert und bietet eine Python-Schnittstelle an.
 Gurobi ist kostenpflichtig, bietet jedoch eine kostenlose Lizenz für die Forschung an.
 
 Für Gurobi kann die mathematische Formulierung genutzt werden.
 Umgesetzt wurde zum einem der Kantenansatz aus \cref{sec:kanten_formulierung:mathematisch} und der Dreiecksansatz aus \cref{sec:dreiecks_formulierung:mathematisch}.
-Gurobi bietet durch die \emph{addConstr} Funktion direkt die Möglichkeit alle Formeln hinzuzufügen.
+Gurobi bietet durch die \emph{addConstr} Funktion direkt die Möglichkeit, alle Formeln hinzuzufügen.
 
 \section{Simplified CDCL Solve}
-\label{sec:cdcl}
-Der CDCL Solver namens \emph{Simplified CDCL Solve (CaDiCaL)}~\cite{cadical} von Armin Biere ermöglicht es, eigene Funktionen in den Lösungsprozess einzubinden.
-Diese Funktion erlaubt es Literale mit Begründung zu setzen.
+\label{sec:cdcl:implementiert}
+Der CDCL-Solver \emph{Simplified CDCL Solve (CaDiCaL)}~\cite{cadical} von Armin Biere ermöglicht es, eigene Funktionen in den Lösungsprozess einzubinden.
+Diese Funktion erlaubt es, Literale mit Begründung zu setzen.
 Im Folgenden wird diese Funktion \emph{Propagation} genannt.
 Die Idee bei dieser \emph{Propagation} ist es, die Bedingungen aus~\cref{sec:exclude_edges} auf Teilinstanzen anzuwenden.
 
 Es wird angenommen, dass die Hülle fixiert wurde und alle Kanten, die die gesamte Instanz halbieren, bereits getestet wurden.
-Der Grund hierfür ist, dass die Hülle eine geeignete Fläche bietet, mit der alle Punkte betrachtet werden können.
+Der Grund hierfür ist, dass die Hülle eine geeignete Fläche bietet, mit der alle Knoten betrachtet werden können.
 % Alle möglichen Kanten werden vor der \emph{Propagation} ausgeschlossen, damit sie durch Konflikte und Backtracking nicht mehrfach ausgeschlossen werden können.
 
 Zur Umsetzung wird mit Hilfe eines Arrangements verfolgt, welche Kanten aktuell aktiv sind.
@@ -138,26 +156,28 @@ Tritt ein Konflikt auf, wird das Arrangement auf die entsprechende Entscheidungs
 
 Wird die \emph{Propagation} aufgerufen, können alle Flächen des Arrangements betrachtet werden.
 Relevant sind dabei nur Flächen, die mehr als drei Kanten besitzen.
-Zusätzlich kann die unbegrenzte Fläche ausgeschlossen werden, da alle Punkte durch die Hülle eingeschlossen sind.
+Zusätzlich kann die unbegrenzte Fläche ausgeschlossen werden, da alle Knoten durch die Hülle eingeschlossen sind.
 Für diese Flächen können dann alle teilenden Kanten erzeugt werden, indem sämtliche Zweierkombinationen der Randknoten betrachtet werden.
-Dadurch wird die Fläche in zwei Hälften geteilt und die Kante kann getestet werden.
+Dadurch wird die Fläche in zwei Hälften geteilt und die Kanten können getestet werden.
 
 Vor dem Testen können alle Kanten übersprungen werden, die bereits festgelegt wurden oder keine gültigen Kanten sind.
-Für die Punktzuordnung kann zu Beginn jeder \emph{Propagation} jeder Punkt einer Fläche zugeordnet werden.
-Sollte dann eine Kante getestet werden, können alle Punkte der zugehörigen Fläche betrachtet und ähnlich wie in~\cref{sec:intersection_edges} mit Hilfe von \emph{Rechtsknicks} und \emph{Linksknicks} einer Teilhälfte zugeordnet werden.
-So können alle Kanten der Hülle der Teilhälfte betrachten werden und der Punkt der Hälfte zugewiesen werden bei der nur \emph{Rechtsknicks} oder nur \emph{Linksknicks} vorhanden sind.
+Für die Knotenzuordnung kann zu Beginn jeder \emph{Propagation} jeder Knoten einer Fläche zugeordnet werden.
+Sollte eine Kante getestet werden, können alle Knoten der zugehörigen Fläche betrachtet und ähnlich wie in~\cref{sec:intersection_edges} mit Hilfe von \emph{Rechtsknicks} und \emph{Linksknicks} einer Teilhälfte zugeordnet werden.
+So können alle Kanten der Hülle der Teilhälfte betrachtet werden und der Knoten der Hälfte zugewiesen werden, bei der nur \emph{Rechts-} oder \emph{Linksknicks} vorhanden sind.
 
-Führt das Testen einer Kante zu einem Konflikt, kann das zugehörige Literal \(l\) auf \emph{falsch} gesetzt werden. Als Begründung kann folgende Klausel verwendet werden
+Führt das Testen einer Kante zu einem Konflikt, kann das zugehörige Literal \(l\) auf \emph{falsch} gesetzt werden. Als Begründung kann die folgende Klausel
 \[
 (\overline{l} \lor \bigvee_{e \in E_A}\overline{x_e})
 \]
-wobei \(E_A\) die Menge der aktiven Kanten bezeichnet.
+verwendet werden, wobei \(E_A\) die Menge der aktiven Kanten bezeichnet.
+
+
 
 \chapter{Auswertung}
 In diesem Kapitel werden die Ansätze aus~\cref{chap:theoretischer_hintergrund} ausgewertet.
 Die ersten beiden Experimente testen, ob die Solver bei gleichen Bedingungen die gleichen Ergebnisse liefern.
 Die beiden folgenden Experimente werden genutzt, um den besten SAT-Solver für DCT aus~\cref{sec:pysat} zu finden.
-Danach folgt in~\cref{sec:eval1:grund_solver} ein Experiment, welches die verschiedenen Solver mit den verschiedenen Beschränkungen vergleicht, um den besten Solver zu bestimmen.
+Danach folgt in~\cref{sec:eval1:grund_solver} ein Experiment, das die verschiedenen Solver mit den verschiedenen Beschränkungen vergleicht, um den besten Solver zu bestimmen.
 Dieser wird genutzt, um in den folgenden Experimenten zum einen die theoretische Ausschließung von Kanten zu testen, möglichst große Instanzen zu lösen und Ja-Instanzen bzw. Nein-Instanzen getrennt voneinander zu betrachten.
 Anschließend werden in~\cref{sec:eval11} die Zielfunktionen betrachtet.
 In dem darauf folgenden Experiment wird der CDCL-Ansatz aus~\cref{sec:cdcl} genauer betrachtet, um während des Lösens Einfluss auf den Solver zu nehmen.
@@ -166,35 +186,34 @@ Zum Abschluss wird in drei verschiedenen Experimenten versucht, die Schwierigkei
 
 \section{Versuchsumgebung}
 In diesem Abschnitt werden die Bedingungen für die Experimente beschrieben.
-Alle Experimente welche eine Laufzeit beinhalten wurden entweder auf \emph{AMD Ryzen 7 5800X @ 8x 3.8GHz-4.7GHz} mit \emph{128GB} Arbeitsspeicher oder auf \emph{AMD Ryzen 9 7900 @ 12x 3.7GHz-5.4GHz} mit \emph{96GB} Arbeitsspeicher durchgeführt.
-Im Folgenden werden in den Experiment zwischen \emph{Ryzen} 7 und 9 unterschieden.
-Gespeichert werden die Ergebnisse mit der Python-Bibliothek \emph{Algbench}.
+Alle Experimente, die eine Laufzeit beinhalten, wurden entweder auf \emph{AMD Ryzen 7 5800X @ 8x 3.8GHz-4.7GHz} mit \emph{128GB} Arbeitsspeicher oder auf \emph{AMD Ryzen 9 7900 @ 12x 3.7GHz-5.4GHz} mit \emph{96GB} Arbeitsspeicher durchgeführt.
+Im Folgenden werden in dem Experiment zwischen \emph{Ryzen 7} und \emph{9} unterschieden.
+Die Ergebnisse werden mit der Python-Bibliothek \emph{Algbench} gespeichert.
 Dabei wurden für alle Experimente mit Ausnahme von~\cref{sec:großer_timeout} ein Timeout von 5 Minuten (300 Sekunden) gesetzt.
 % Alle Laufzeiten sind dabei die Vorbereitungszeit plus die Laufzeit des Solvers. 
 % Diese komplette Laufzeit musste in den 5 Minuten liegen.
-Diese komplette Laufzeit also inklusive Vorbereitungszeit musste in der Timeoutzeit liegen.
+Die komplette Laufzeit inklusive der Vorbereitungszeit musste in der Timeoutzeit liegen.
 
 Für die Instanzgenerierung wurden die in~\cref{sec:instanz_generierung} beschriebenen Methoden verwendet.
-Es wurden Instanzen mit 30 bis 200 Knoten in 10er Schritten generiert.
-Wobei immer zwei Ja-Instanzen und zwei Nein-Instanzen pro Knotengröße generiert wurden.
+Es wurden Instanzen mit 30 bis 230 Knoten in 10er Schritten generiert, wobei immer zwei Ja- und zwei Nein-Instanzen pro Knotengröße generiert wurden.
 Bei den Nein-Instanzen wurde jeweils eine \emph{move} und eine \emph{change} Instanz generiert.
-Im folgenden werden alle Instanzen nach der Knotengröße aufsteigend sortiert.   
+Im Folgenden werden alle Instanzen nach der Knotengröße aufsteigend sortiert.   
 
 Alle Experimente wurden in Python 3.13.5 durchgeführt.
-Der Algorithmus zum Finden von Überschneidungen wurde in c++ implementiert und mit \emph{pybind11} in Python eingebunden.
-Ebenso wurde der CDCL-Ansatz in c++ implementiert.
+Der Algorithmus zum Finden von Überschneidungen wurde in C++ implementiert und mit \emph{pybind11} in Python eingebunden.
+Ebenso wurde der CDCL-Ansatz in C++ implementiert.
 
 In vielen Experimenten werden sogenannte Kaktus-Diagramme verwendet.
 Bei diesen wird auf der X-Achse die Zeit und auf der Y-Achse die Anzahl der gelösten Instanzen angezeigt.
 Bei diesen Diagrammen werden alle Solver mit allen Instanzen \emph{gleichzeitig} gestartet.
-Sollte ein Solver dann eine Instanz lösen, wird die Linie vertikal um eine Einheit nach oben versetzt. 
+Wenn ein Solver eine Instanz löst, wird die Linie vertikal um eine Einheit nach oben versetzt. 
 So ergibt sich eine Treppenlinie.
 Bei diesen Diagrammen zeigt die Höhe die Anzahl der gelösten Instanzen an.
 Analog die Breite die benötigte Zeit.
-Dementsprechend ist es Positiv wenn eine Linie höher und weiter links ist.
-Wenn im folgenden keine Kaktus-Diagramme verwendet werden, werden die genutzen Diagramme genauer erklärt.
+Dementsprechend ist es positiv, wenn eine Linie höher und weiter links ist.
+Wenn im Folgenden keine Kaktus-Diagramme verwendet werden, werden die genutzten Diagramme genauer erklärt.
 
-Zur Verbesserung der Lesbarkeit, sind einige Diagramme nur im Anhang enthalten.
+Für eine bessere Lesbarkeit sind einige Diagramme nur im Anhang enthalten.
 Diese sind am Buchstaben im Namen zu erkennen.
 
 
@@ -202,197 +221,206 @@ Diese sind am Buchstaben im Namen zu erkennen.
 
 \section{Permutation}
 \label{sec:eval2:permuation}
-\fabian{Diagramme alt anpassen}
 % (Eval2)
-In diesem Experiment wird untersucht, ob es einen Einfluss hat, in welcher Reihenfolge die Knoten den Solvern übergeben werden.
-Es wurden Instanzen mit 30 bis 50 Knoten betrachtet und auf dem Ryzen 7 getestet.
-Als Beschränkungen kamen die Überschneidungsbeschränkung und die Gradbeschränkung zum Einsatz.
-Wie in~\cref{fig:eval2:gurobi},~\cref{fig:eval2:ortools} und~\cref{fig:eval2:sat} zu erkennen ist, unterscheiden sich die Laufzeiten bei jedem Solver in mindestens einer Instanz.
-% Bei allen Solvern war das Ergebnis das die Laufzeiten bei den verschiedenen Permutationen unterschiedlich sind.
+In diesem Experiment wird untersucht, ob die Reihenfolge einen Einfluss hat, in der die Knoten den Solvern übergeben werden.
+Es wurden Instanzen mit 30 bis 100 Knoten betrachtet und auf dem Ryzen 7 getestet.
+Als Beschränkungen kamen die Überschneidungs-beschränkung und die Gradbeschränkung zum Einsatz.
+Wie in~\cref{fig:eval2:gurobi},~\cref{fig:eval2:OR-Tools} und~\cref{fig:eval2:sat} zu erkennen ist, unterscheiden sich die Laufzeiten bei jedem Solver in mindestens einer Instanz.
+% Bei allen Solvern war das Ergebnis, dass die Laufzeiten bei den verschiedenen Permutationen unterschiedlich sind.
 Daraus folgt, dass die Permutation der Knotenmenge einen Einfluss auf die Laufzeit hat.
-In den folgenden Experimenten wird für jeden Lauf die Knotenmenge fünfmal in unterschiedlichen Permutationen übergeben und der Durchschnitt berechnet.
+In den folgenden Experimenten wird für jeden Durchlauf die Knotenmenge fünfmal in unterschiedlichen Permutationen übergeben und der Durchschnitt berechnet.
 
 \section{Mehrmalige Durchläufe}
 % (Eval7) 
-\fabian{Diagramme alt anpassen}
-In diesem Experiment wird untersucht, ob sich bei mehrfachen Durchläufen mit den selben Instanz, mit dem selben Solver und gleichen Parametern die Laufzeit verändert.
-Auch hier wurden Instanzen mit 30 bis 50 Knoten betrachtet und auf dem Ryzen 7 getestet.
+In diesem Experiment wird untersucht, ob sich bei mehrfachen Durchläufen mit den selben Instanzen, mit dem selben Solver und gleichen Parametern die Laufzeit verändert.
+Auch hier wurden Instanzen mit 30 bis 100 Knoten betrachtet.
+Allerdings wird auf dem Ryzen 9 getestet.
 Als Beschränkungen kamen die Überschneidungsbeschränkung und die Gradbeschränkung zum Einsatz.
-Gurobi und SAT hatten bei allen Instanzen die gleichen Laufzeiten.
-Bei OrTools hingegen variieren die Laufzeiten bei den meisten Durchläufen.
-In~\cref{fig:eval7:gurobi} und~\cref{fig:eval7:sat} ist zu erkennen, dass bei PySAT und Gurobi alle Durchläufe die gleichen Laufzeiten aufweisen.
-Nur bei OrTools ist in~\cref{fig:eval7:ortools} zu sehen, dass die Laufzeiten unterschiedlich sind.
-Da in~\cref{sec:eval2:permuation} bereits mehrere Durchläufe mit unterschiedlichen Permutationen durchgeführt wurden, werden die OrTools-Durchläufe nicht zusätzlich mehrfach ausgeführt.
+Bei allen Solvern variieren die Laufzeiten bei den meisten Durchläufen.
+Dies ist in~\cref{fig:eval7:gurobi},~\cref{fig:eval7:OR-Tools} und~\cref{fig:eval7:sat} zu erkennen.
+Da aufgrund von~\cref{sec:eval2:permuation} schon mehrere Durchläufe durchgeführt wurden, werden die Experimente nicht angepasst.
 
 \section{SAT Gradbeschränkung}
 \label{sec:eval5:sat_degree}
 % (Eval5)
-In diesem Experiment werden verschiedene Methoden der Gradbeschränkung in einem SAT Solver vergleichen.
-Hierbei wurden für alle drei Methoden, also \emph{subset}, Kardinalität mit Exaktem-Sollgrad und Kardinalität mit Mindest-Sollgrad, die Laufzeiten gemessen.
-Bei den Kardinalitäts Codierugen von PySat wurden auch alle möglichen Codierungen getestet.
-Das Ziel dieser Optimierung ist es die Gradbeschränkung mit der besten Laufzeit zu finden, welche dann in den folgenden Experimenten verwendet wird.
-Für die Knotengröße wurden Instanzen der Größe 30 bis 90 verwendet.
+In diesem Experiment werden verschiedene Methoden der Gradbeschränkung in einem SAT-Solver verglichen.
+Hierbei wurden für alle drei Methoden \emph{subset}, Kardinalität mit Exaktem-Sollgrad und Kardinalität mit Mindest-Sollgrad die Laufzeiten gemessen.
+Bei den Kardinalitätscodierungen von PySat wurden auch alle möglichen Codierungen getestet.
+Das Ziel dieser Optimierung ist es die Codierung mit der besten Laufzeit zu finden, die dann in den folgenden Experimenten verwendet wird.
+Für die Knotengröße wurden Instanzen der Größe 30 bis 90 verwendet und auf dem Ryzen 7 getestet.
 Bei der \emph{subset} Methode wurde nur die Instanz mit 30 Knoten verwendet, da bei größeren Knotenmengen der zur Verfügung stehende Arbeitsspeicher zu klein war.
 Als zusätzliche Bedingung wurde die Überschneidungsbeschränkung verwendet.
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{eval5/gesamt.pdf}
-    \caption[Vergleich von Kardinalitätscodierungen für SAT-Solver]{In der Abbildung werden für alle Instanzen Arten die drei Kardinalitätsbeschränungen verglichen. Dabei werden für die Exakte-Methode und die Mindest-Methode \emph{sequential counters} und \emph{totalizer} genutzt. Die \emph{subset} Methode ist die schlechteste, da sie nur für kleine Instanzen funktioniert.Es zeigt sich das die Exakte-Methode sowie die Mindest-Methode bei \emph{sequential counters} und \emph{totalizer} sehr ähnliche Ergebnisse erziehlen.
+    \caption[Vergleich von Kardinalitätscodierungen für SAT-Solver.]{In der Abbildung werden für alle Instanzenarten die drei Ansätze verglichen. Dabei werden für die Exakte-Methode und die Mindest-Methode \emph{sequential counters} und \emph{totalizer} genutzt. Die \emph{subset} Methode ist die schlechteste, da sie nur für kleine Instanzen funktioniert. Es zeigt sich, dass die Exakte-Methode sowie die Mindest-Methode bei \emph{sequential counters} und \emph{totalizer} sehr ähnliche Ergebnisse erzielen.
     \emph{Sequential counters} ist dabei eindeutig schneller als \emph{totalizer}.
     Im Gesamtüberblick lässt sich erkennen,  dass die Mindest-Methode mit \emph{sequential counters} minimal schneller ist als die Exakte-Methode mit \emph{sequential counters}.
     }
-
     \label{fig:eval5_gesamt}
 \end{figure}
 
 In~\cref{fig:eval5:subfigures} ist zu erkennen, dass \emph{sequential counters} und \emph{totalizer} bei der Exakten-Methode  sowie bei der Mindest-Methode die besten Ergebnisse erzielen.
-Diese werden in~\cref{fig:eval5_gesamt} noch mal vergleichen.
+Diese werden in~\cref{fig:eval5_gesamt} erneut vergleichen.
 Hier ist zu sehen das \emph{sequential counters} die besten Ergebnisse erzielt.
-Da die Exakte-methode leicht besser ist wird dieser in den folgenden Experimenten verwendet.
+Da die Exakte-Methode etwas besser ist, wird diese in den folgenden Experimenten verwendet.
 
-\section{SAT Solver Vergleich}
+\section{SAT-Solver Vergleich}
 % (Eval3)
-In diesem Experiment werden die verschiedenen SAT Solver verglichen, die von PySat bereitgestellt werden.
+In diesem Experiment werden die verschiedenen SAT-Solver verglichen, die von PySat bereitgestellt werden.
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\linewidth]{eval3/cactus_total_runtime.pdf}
-    \caption[Vergleich verschiedener SAT-Solver]{In dieser Abbildung sind die Laufzeiten der verschiedenen SAT-Solver aus PySAT zu sehen. Hierbei ist klar erkennbar das \emph{Gluecard4} und \emph{Glucose42} die besten Ergebnisse erzielen. Dass diese beiden Solver ähnliche Ergebnisse liefern ist nicht verwunderlich, da sie beide auf dem Glucose-Algorithmus basieren.
+    \includegraphics[width=1\linewidth]{figures/eval3/eval3.pdf}
+    \caption[Vergleich verschiedener SAT-Solver.]{In dieser Abbildung sind die Laufzeiten der verschiedenen SAT-Solver aus PySAT zu sehen. 
+    Hierbei ist klar erkennbar, dass \emph{Gluecard4} und \emph{Glucose42} die besten Ergebnisse erzielen. 
+    Dass diese beiden Solver ähnliche Ergebnisse liefern ist nicht verwunderlich, da sie beide auf dem Glucose-Algorithmus basieren.
     Es zeigt sich aber, dass bei diesem Problem weder der native noch der \emph{sequential counters} Ansatz einen signifikanten Unterschied machen.
-    Es ist aber zu erkennen, dass \emph{Glucose42} bei Greedy eine Instanze in guter Zeit geschafft hat welche \emph{Gluecard4} nicht lösen konnte.
+    Jedoch ist zu erkennen, dass \emph{Glucose42} bei Greedy eine Instanz in guter Zeit lösen konnte, was \emph{Gluecard4} nicht geschafft hat.
     }
-
     \label{fig:eval3:gesamt}
 \end{figure}
+
 PySat stellt \emph{Cadical195}, \emph{Gluecard4}, \emph{Glucose42}, \emph{Lingeling}, \emph{MapleChrono}, \emph{MapleCM}, \emph{Maplesat}, \emph{Mergesat3}, \emph{Minicard} und \emph{Minisat22} zur Verfügung. 
 Von diesen wurden jeweils die neuesten verfügbaren Versionen verwendet.
-Alle Solver nutzen die \emph{sequential counters} Codierung sowie die Überschneidungsbeschränkung. 
+Fast alle Solver nutzen die \emph{sequential counters} Codierung, sowie die Überschneidungsbeschränkung. 
 Bei \emph{Gluecard4} und \emph{Minicard} kam anstelle von \emph{sequential counters} eine native Codierung der Gradbeschränkung zum Einsatz.
 Diese wird nur für diese beiden Solver angeboten und bietet eine direkte Codierung ohne zusätzliche Variablen.
-Der \emph{Lingeling} Solver wurde in großen Experimenten nicht berücksichtigt, da er kein Timeout unterstützt.
-Er wurde aber zusätzlich mit dem besten Solver vergleichen und hat schlechtere Ergebnisse erzielt.
-\emph{CryptoMinisat} wurde nicht verwendet, da dieser Solver speziell für XOR-Probleme optimiert ist.
-Für die Instanzengröße wurden 60 bis 90 Knoten gewählt und es wurde auf dem Ryzen 9 getestet.
+Für die Instanzgröße wurden 60 bis 90 Knoten gewählt, die auf dem Ryzen 9 getestet wurde.
 Das Ziel besteht darin, den Solver zu identifizieren, der die besten Ergebnisse liefert, um diesen in zukünftigen Experimenten einzusetzen.
-
 In~\cref{fig:eval3:gesamt} ist zu erkennen, dass \emph{Gluecard4} und \emph{Glucose42} die besten Ergebnisse erzielen.
 Für den weiteren Verlauf wird \emph{Glucose42} verwendet, da dieser bei Greedy etwas besser war.
+Der \emph{Lingeling}-Solver wurde in großen Experimenten nicht berücksichtigt, da er kein Timeout unterstützt.
+Er erzielt jedoch schlechtere Ergebnisse als \emph{Glucose42}.
 
 \section{Vergleich der Modellierungstechniken}
 % (Eval1)
 \label{sec:eval1:grund_solver}
 In diesem Experiment werden alle möglichen Bedingungen an die Solver übergeben und einzeln getestet.
-Untersucht werden die Solver PySAT, OrTools und Gurobi jeweils mit dem Kantenansatz sowie dem Dreiecksansatz.
-Für alle Durchläufe wurden die Überschneidungsbeschränkung und die Gradbeschränkung genutzt.
-Bei dem Kantenansatz wurden das Fixieren und Ausschließen von Kanten sowie die \emph{alternative Kantenformulierung} getestet.
-Bei dem Dreiecksansatz wurde nur das Ausschließen von Kanten getestet.
-Die Instanzengröße liegt bei 30 bis 120 Knoten und es wurde auf dem Ryzen 7 getestet.
-
-\begin{figure}[h]
+Das Ziel ist es, den besten Solver zu finden.
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{figures/eval1/gesamt.pdf}
-    \caption[Vergleich aller Solver]{In dieser Abbildung werden für die sechs verschiedenen Ansätze die besten Solver vergleichen. Für PySAT und Gurobi ist die beste Methode das Fixieren der Kanten bei der Kantenformulierung. Bei OrTools hingegen ist die beste Methode die alternative Kantenformulierung bei der Kantenformulierung. Insgesamt erzielt OrTools die besten Ergebnisse, gefolgt von PySAT. Gurobi ist in allen Fällen mit Abstand schlechter als PySAT und OrTools. PySAT ist in leichten Instanzen wie Iterativ und Random allerdings besser als OrTools. Es ist auch klar zu erkennen, dass die Dreiecksformulierung bei allen Solvern schlechtere Ergebnisse erzielt als die Kantenformulierung.}
+ \caption[Vergleich aller Solver.]{In dieser Abbildung werden für die vier verschiedenen Ansätze die besten Solver verglichen. 
+ Für PySAT und Gurobi ist die beste Methode das Fixieren der Kanten bei der Kantenformulierung. Bei OR-Tools hingegen ist für die Kantenformulierung das fixieren der Kanten und der Hülle sowie die alternative Kanten Bedingung am besten. Für die Dreicksformulierung wurde OR-Tools (tri) ohne weiteren Bedingungen ausgewählt. Insgesamt erzielt OR-Tools die besten Ergebnisse, gefolgt von PySAT. Gurobi ist in allen Fällen mit Abstand am schlechtesten. OR-Tools (tri) ist besser als Gurobi aber schlechter als die andern beiden. PySAT ist in Instanzen wie Iterativ allerdings teilweise besser als OR-Tools. Auch erkennbar ist das OR-Tools (tri) in allen Instanzen ähnliche Werte erzielt. Generell lässt sich sagen das OR-Tools die besten Ergebnise erzielt. Allerdings sind bei kleineren Knotengrößeren SAT und OR-Tools (tri) besser.}
     \label{fig:eval1:gesamt}
 \end{figure}
+Untersucht werden die Solver PySAT, OR-Tools und Gurobi jeweils mit dem Kantenansatz sowie dem Dreiecksansatz.
+Im Folgenden werden Solver mit dem Dreiecksansatz ein (tri) hinter dem Namen haben.
+Für alle Durchläufe wurden die Überschneidungs-beschränkung und die Gradbeschränkung genutzt.
+Bei dem Kantenansatz wurden das Fixieren und Ausschließen von Kanten, sowie die alternative Kantenformulierung getestet.
+Bei dem Dreiecksansatz wurde nur das Ausschließen von Kanten getestet.
+Die Instanzgröße liegt bei 30 bis 120 Knoten. Diese wurde auf dem Ryzen 7 getestet.
 
-In~\cref{fig:eval1:gurobi} und~\cref{fig:eval1:sat} ist zu erkennen, dass Gurobi und PySAT am besten mit dem fixieren der Hülle optimiert werden.
-Bei OrTools hingegen erzielt die alternative Kantenformulierung die besten Ergebnisse, wie in~\cref{fig:eval1:ortools} zu sehen ist.
+In~\cref{fig:eval1:gurobi} und~\cref{fig:eval1:sat} ist zu erkennen, dass Gurobi und PySAT am besten mit dem Fixieren der Kanten optimiert werden.
+Bei OR-Tools hingegen erzielt die alternative Kantenformulierung im Zusammenhang mit dem Fixieren der Kanten und der Hülle die besten Ergebnisse, wie in~\cref{fig:eval1:OR-Tools} zu sehen ist.
+Interessant hierbei ist, dass bei OR-Tools die Kombination aus drei Bedingungen am besten ist und bei PySAT und Gurobi die gleiche Kombination schlechter ist, als nur das Fixieren der Kanten.
 
-In~\cref{fig:eval1:gesamt} ist zu sehen das OrTools die besten Ergebnisse erzielt, gefolgt von PySAT.
-In folgenden Experimenten wird OrTools zusammen mit der alternativen Kantenformulierung  und der fixierung der Hülle verwendet.
+In~\cref{fig:eval1:tri} ist zu sehen, dass OR-Tools (tri) ohne weitere Bedingungen die besten Ergebnisse erzielt.
+Auch lässt sich erkennen, dass bei OR-Tools (tri) bzw. Gurobi (tri) alle Instanzen gleich schwierig wirken.
+So sind alle Instanzen bis ca. 75\,\% bzw. 65\,\% relativ schnell gelöst, aber danach werden nicht mehr viele Instanzen gelöst.
 
-
-\fabian{Dreiecke sind noch nicht final da gen3 blockiert ist}
-\fabian{Kanten fixieren hatte einene Feheler und muss neu gestetet werden. Sollte aber keine Relevanz haben und am Text nichts ändern.}
+In~\cref{fig:eval1:gesamt} ist zu sehen das OR-Tools die besten Ergebnisse erzielt, gefolgt von PySAT.
+Nur bei Iterative ist PySAT besser.
+Interessant bei der Dreicksformulierung ist, dass bei allen Instanzarten die gleichen Knotenmengen in der gleichen Zeit geschafft werden.
+Dies könnte daran liegen, dass die Vorbereitungszeit ab einer bestimmten Knotengröße zu lange dauert.
+Um dies genauer zu untersuchen, wurden für die besten Solver nur die Solverzeiten ohne die Vorbereitungszeiten betrachtet. 
+In~\cref{fig:eval1:solvetime} ist erkennen, dass die gleichen Ergebnisse erzielt werden.
+Dementsprechend hat die Vorbereitungszeit keinen Einfluss auf das Ergebnis.
+Im Folgenden wird OR-Tools mit fixierten Kanten, sowie Hülle und der alternativen Kanten Bedingung als bester Solver verwendet.
 
 \section{Kanten vorab berechnen}
 % (Eval6)
+\label{sec:kanten_vorab_berechnen}
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{eval6/nein.pdf}
-    \caption[In diesem Experiment wird die theoretische Fixierung von Kanten untersucht.]{
+    \caption[Theoretische Ausschließung von Kanten.]{
     In diesem Experiment wird die theoretische Ausschließung von Kanten untersucht. 
-    Für das Experiment wurde OrTools mit Grad und Überschneidungsbeschränkung als Referenz und zusätzlich OrTools mit 10, 50 und 80 Prozent der benötigten Kanten ausgeschlossen verwendet. 
-    In dem Diagramm wurde der betrachtete Zeitraum auf 60 Sekunden begrenzt da hier alle relevanten Informationen zu sehen sind. 
+    Für das Experiment wurde OR-Tools mit Grad- und Überschneidungsbeschränkung als Referenz und zusätzlich OR-Tools mit 10\,\%, 50\,\% und 80\,\% der benötigten Kanten ausgeschlossen verwendet. 
+    In dem Diagramm wurde der betrachtete Zeitraum auf 60 Sekunden begrenzt, da hier alle relevanten Informationen zu sehen sind. 
     Es ist klar zu erkennen, dass der Referenz-Solver die schlechtesten Ergebnisse erzielt.
-    Auch die anderen Solver sind in der erwarteten Reihenfolge.
-    Nur 50 Prozent und 80 Prozent sind deutlich besser als die andern Ansätze.
+    Auch die anderen Solver sind in der erwarteten Reihenfolge, also nach der Menge der ausgeschlossenen Kanten sortiert.
+    Nur 50\,\% und 80\,\% sind deutlich besser als die anderen beiden Ansätze.
     }
     \label{fig:eval6:nein}
 \end{figure}
-In~\cref{sec:eval1:grund_solver} wurde festgestellt, dass das Ausschließen und Fixieren von Kanten nur schlecht Ergebnis liefert.
-Die Hypotese dazu ist, dass zu wenig Kanten ausgeschlossen bzw. fixiert wurden.
-Um das zu überprüfen wird vor dem Experiment eine Menge von Kanten bestimmt, die sicher ausgeschlossen oder fixiert werden können.
+In~\cref{sec:eval1:grund_solver} wurde festgestellt, dass das Ausschließen und Fixieren von Kanten nur schlechte Ergebnis liefert.
+Die Hypothese dazu ist, dass zu wenig Kanten ausgeschlossen bzw. fixiert wurden.
+Um dies zu überprüfen, wird vor dem Experiment eine Menge von Kanten bestimmt, die sicher ausgeschlossen oder fixiert werden können.
 Somit können während des Lösungsprozess beliebig viele Kanten ausgeschlossen oder fixiert werden.
-In diesem Experiment wurde OrTools mit der Überschneidungsbeschränkung und Gradbeschränkung ausgewählt.
+In diesem Experiment wurde OR-Tools mit der Überschneidungsbeschränkung und Gradbeschränkung ausgewählt.
 Für die Knotengröße wurden Instanzen mit 30 bis 80 Knoten gewählt und das Experiment wurden auf dem Ryzen 9 durchgeführt.
-Um das Experiment zu vereinfachen wurden nur Instanzen betrachtet, die genau eine Lösung besitzen.
-Somit konnte eine beliebige Lösung der Instanze genommen und mit dieser die Kanten bestimmt werden, welche fixiert oder ausgeschlossen werden soll.
-Anhand von~\cref{fig:eval6:ja} und~\cref{fig:eval6:nein} lässt sich bestätigt, dass das Ausschließen und Fixieren der Kanten in~\cref{sec:eval1:grund_solver} schlecht war, weil zu wenig Kanten ausgeschlossen bzw. fixiert wurden.
-Es ist überraschend, dass es beim Fixieren keinen unterschied macht, ob 50 oder 80 Prozent der Kanten fixiert wurden.
-Dass dies beim Ausschließen nicht das Fall ist, lässt sich damit erklären, dass zum einem mehr Kanten theoretisch ausgeschlossen werden können und somit der absolute Unterschied größer ist. 
-Zum andern, dass beim Fixieren so viele Kanten durch den Solver indirekt durch andere Bedingungen ausgeschlossen werden können, dass ab einer bestimmten Menge an fixierten Kanten die resultierenden Teilinstanz gleich groß sind.
+Um das Experiment zu vereinfachen, wurden nur Instanzen betrachtet, die genau eine Lösung besitzen.
+Somit konnte eine Lösung der Instanz genommen und mit dieser die Kanten bestimmt werden, die fixiert oder ausgeschlossen werden sollen.
+Anhand von~\cref{fig:eval6:ja} und~\cref{fig:eval6:nein} lässt sich bestätigen, dass das Ausschließen und Fixieren der Kanten in~\cref{sec:eval1:grund_solver} schlechter war, weil zu wenig Kanten ausgeschlossen bzw. fixiert wurden.
+Es ist überraschend, dass es beim Fixieren keinen Unterschied macht, ob 50 oder 80\,\% der Kanten fixiert wurden.
+Dass dies beim Ausschließen nicht der Fall ist, lässt sich damit erklären, dass zum einen mehr Kanten theoretisch ausgeschlossen werden können und somit der absolute Unterschied größer ist. 
+Zum anderen, dass beim Fixieren so viele Kanten durch den Solver indirekt durch andere Bedingungen ausgeschlossen werden können, dass ab einer bestimmten Menge an fixierten Kanten die resultierenden Teilinstanzen gleich groß sind.
 
 \section{Größerer Timeout}
 % (Eval15)
 \label{sec:großer_timeout}
 In diesem Experiment wird geprüft, welche Instanzen der Solver lösen kann, wenn das Zeitlimit von 5 Minuten auf 30 Minuten erhöht wird.
 Dafür wurden Instanzen mit zunehmender Größe generiert, bis der Solver diese nicht mehr lösen konnte.
-Die Knotenzahl lag am Ende zwischen 130 und \textbf{\textcolor{red}{200}} und es wurden auf dem Ryzen 9 getestet.
+Die Knotenzahl der Instanz lag am Ende zwischen 80 und 230 und wurde auf dem Ryzen 9 getestet.
 Es wird erneut der beste Solver aus~\cref{sec:eval1:grund_solver} verwendet.
-In~\cref{fig:eval15:timeout} ist zu erkennen, dass der Solver Instanzen mit bis zu \textbf{\textcolor{red}{170}} Knoten lösen konnte.
+In~\cref{fig:eval15:timeout} ist zu erkennen, dass der Solver Instanzen mit bis zu 220 Knoten lösen konnte.
+Allerdings handelt es sich hierbei um iterative Instanzen.
+Alle Instanzen konnten bis mindestens 170 Knoten gelöst werden.
+Zusätzlich ist interessant, dass die meisten großen Instanzen nicht wegen eines Timeouts fehlgeschlagen sind, sondern wegen fehlendem Arbeitsspeicher.
+
 
 
 \section{Ja/Nein getrennt}
 % Eval13
-In diesem Experiment wird untersucht, ob der SAT Solver bei Ja-Instanzen oder bei Nein-Instanzen schneller ist.
+In diesem Experiment wird untersucht, ob der Solver bei Ja-Instanzen oder bei Nein-Instanzen schneller ist.
 Dafür werden die Daten aus~\cref{sec:großer_timeout} wiederverwendet.
-In~\cref{fig:eval15:ja_nein} ist zu erkennen, dass der Solver bei Nein-Instanzen schneller ist und auch größere Instanzen lösen kann.
-Insgesamt konnte der Nein-Instanzen bis zu \textbf{\textcolor{red}{170}} Knoten lösen, während Ja-Instanzen nur bis zu \textbf{\textcolor{red}{160}} Knoten gelöst werden konnten.
-
+In~\cref{fig:eval15:ja_nein} ist zu erkennen, das beide Instanzenarten bis zur Knotengröße 220 gelöst werden konnten.
+Allerdings werden die Nein-Instanzen generell schneller als die Ja-Instanzen gelöst.
+Interessant ist das Nein-Instanzen bis 220 Knoten gelöst wurden, aber für 200 Knoten keine Lösung gefunden wurde.
 
 
 \section{Zielfunktion}
 \label{sec:eval11}
-% (Eval11)
-% \fabian{@Michael du meintest ich soll hier die Bound mit im Diagramm anzeigen. Ich weiß grade nicht wie ich das machen soll da er auf einer Achse mit Prozent nicht sinnvoll angezeigt werden kann}
-% \fabian{Wie soll ich die Diagramme aufbauen? Ich habe akutell Nur Greedy 120 Knoten instanzen und dann jetzt alle vier als eigene Diagramme.}
-% \fabian{Ich finde es komisch das der Durchscnitts ansatz immer am ende erst eine bessere Lösung findet kann aber keinen Fehler in der Implemntierung finden. Sollte ich dazu noch irgenendwas schreiben, oder habt ihr eine Idee woran das liegen könnte?}
-In diesem Experiment werden die beiden Zielfunktion aus~\cref{sec:optimierungsproblem} vergleichen.
+In diesem Experiment werden die beiden Zielfunktionen aus~\cref{sec:optimierungsproblem} verglichen.
+Zusätzlich wird ein Referenz Solver verwendet, mit diesem kann verglichen werden, ob die Zielfunktionen schneller eine Entscheidung treffen können.
 Es sei noch zu erwähnen, dass der Flips-Ansatz vorab getestet wurde.
-Dieser Ansatz hat im Maximalfall 8 Knoten geschafft.
+Die größte Instanz, die dieser Ansatz lösen konnte, bestand aus maximal 8 Knoten.
 Da die andern beiden Zielfunktionen auf Instanzen mit 120 Knoten getestet werden, ist der Flips Ansatz nicht mehr relevant.
 Das Experiment wurde auf dem Ryzen 9 durchgeführt.
 
-Im folgenden werden Ja-Instanzen und Nein-Instanzen getrennt betrachtet.
+Im Folgenden werden Ja-Instanzen und Nein-Instanzen getrennt betrachtet.
 Bei Ja-Instanzen ist interessant, wie schnell die Instanz gelöst werden kann und ab wann gute Ergebnisse erzielt werden.
-Bei den Nein-Instanzen ist hingegen interessanter wie nah der Solver an eine Lösung kommt.
-Bei beiden Instanzen wird ein Referenz-Solver verwendet.
-Dieser betrachtet das Problem weiterhin als Entscheidungsproblem.
-Ausgewählt wurde der OrTools Solver mit den in~\cref{sec:eval1:grund_solver} gefundenen Bedingungen.
-Die Zielfunktionen nutzen ebenfalls diese Bedingungen, nur die Gradbeschränkung wird durch die Zielfunktion ersetzt.
+Bei Nein-Instanzen ist hingegen interessant wie nah der Solver an eine gültige Lösung kommen kann.
+Für dieses Experiment wurde OR-Tools mit den in~\cref{sec:eval1:grund_solver} gefundenen Bedingungen ausgewählt.
+Der Referenz Solver wird hierbei komplett aus~\cref{sec:eval1:grund_solver} übernommen.
+Für die Zielfunktionen wird die Gradbeschränkung durch die Zielfunktion ersetzt.
 
-\begin{figure}[htb]
+In~\cref{fig:eval11sdfsdf:36} zeigt sich, dass bei Ja-Instanzen der Min-Max-Ansatz besser abschneidet.
+Bei Nein-Instanzen erzielt der Durchschnittsansatz die besseren Ergebnisse, was in~\cref{fig:eval11:move} dargestellt ist.
+Es ist nicht erkennbar, dass die Zielfunktionen oder der Referenz-Solver in einer der Instanzen eindeutig besser sind.
+Es ist auch anzumerken, dass nur auf zwei ausgewählten Instanzen getestet wurde und die Unterschiede nicht sehr groß sind.
+Abschließend lässt sich festhalten, dass die Zielfunktionen keine schnelleren Entscheidungen treffen als der Referenz Solver.
+Für die beiden Zielfunktionen lässt sich festhalten, dass für Ja-Instanzen der Min-Max-Ansatz besser ist.
+Für Nein-Instanzen schafft der Durchschnittsansatz bei Greedy 97\,\% zu erreichen und ist auch generell besser.
+
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{eval11/eval_progression_39.pdf}
-    \caption[Zielfunktion mit Nein-Instanz]{Eine Nein-Instanz mit 120 Knoten. Hier werden zwei verschiedene Zielfunktionen mit einem Referenzsolver aus~\cref{sec:eval1:grund_solver} verglichen. Es ist zu erkennen das der Durchschnittsansatz in den meisten Fällen bessere Ergebnisse liefert als der Min-Max-Ansatz. Oft findet er erst beim Timeout eine Verbesserung, diese ist jedoch besser als die des Min-Max-Ansatzes.
-    In den meisten Fällen stagniert der Min-Max-Ansatz bei etwas über 80 Prozent.
+    \caption[Eine Nein-Instanz als Optimierungsproblem betrachten.]{Eine Nein-Instanz mit 120 Knoten. Hier werden zwei verschiedene Zielfunktionen mit einem Referenzsolver aus~\cref{sec:eval1:grund_solver} verglichen. Es ist zu erkennen, dass der Durchschnittsansatz in den meisten Fällen bessere Ergebnisse liefert, als der Min-Max-Ansatz. Oft findet er erst beim Timeout eine Verbesserung, diese ist jedoch besser als die des Min-Max-Ansatzes.
+    In den meisten Fällen stagniert der Min-Max-Ansatz bei etwas über 80\,\%.
     Der Min-Max-Ansatz bricht vermutlich früher ab, da er aus seiner Sicht ein Optimum gefunden hat.
-    Der Referenzsolver erkennt nur bei Greedy und Iterative früher, dass es sich um eine Nein-Instanz handelt.
+    Der Referenzsolver erkennt nur bei Greedy und Iterativ früher, dass es sich um eine Nein-Instanz handelt.
     In allen anderen Fällen benötigt er mindestens genauso lange wie der Min-Max-Ansatz.
+    Abschließend lässt sich festhalten, dass der Durchschnittsansatz bei Greedy eine Lösung mit einer Bewertung von 97\,\% schafft.
     }
     \label{fig:eval11:move}
 \end{figure}
 
-In~\cref{fig:eval11sdfsdf:36} zeigt sich das bei Ja-Instanzen der Min-Max-Ansatz besser abschneidet.
-Bei Nein-Instanzen erzielt der Durchschnittsansatz die besseren Ergebnisse, dies ist in~\cref{fig:eval11:move} zusehen.
-Generell lässt sich aber sagen, dass beide Zielfunktionen bei Ja- und Nein-Instanzen gute Egebnisse erzielen.
-Es ist nicht erkennbar, dass die Zielfunktionen oder der Referenz-Solver eindeutig besser sind.
-Es lässt sich sagen, dass jeder der drei Ansätze stärken hat.
-Es ist auch anzumerken, dass nur auf zwei ausgewählten Instanzen getestet wurde und die Unterschiede nicht sehr groß sind.
 
 \section{\emph{Propagation} CDCL}
-In diesem Experiemnt wird der CDCL Ansatz genauer betrachtet.
-Dafür wird zum einem die Belegungen der Literale bei den \emph{Propagation} Aufrufen visualisiert.
+In diesem Experiment wird der CDCL Ansatz genauer betrachtet.
+Dafür wird zum einen die Belegung der Literale bei den \emph{Propagation} Aufrufen visualisiert.
 Zum anderen werden die Ansätze aus~\cref{sec:cdcl} genauer betrachtet.
 
 \subsection{Visualisierung}
@@ -400,54 +428,69 @@ Zum anderen werden die Ansätze aus~\cref{sec:cdcl} genauer betrachtet.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\linewidth]{cdcl/propergation.pdf}
-    \caption[Eine Teilinstanze in einem CDCL Solver]{Eine Teilinstanz bei einem \emph{Propagation} Aufruf. Blaue Kanten wurden auf False gesetzt grüne Kanten auf True. Die Zahlen in den Knoten geben den Sollgrad an. Sollte ein Knoten grün sein hat er seinene Sollgrad erreicht, bei rot nicht. Es ist zu erkennen das sich ein Konstrukt von oben Links noch unten vorarbeitet. Hier ist schon ein Teil fertig Trianguliert und viele Kanten wurden ausgeschlossen.} 
+    \caption[Eine Teilinstanz in einem CDCL Solver.]{Eine Teilinstanz bei einem \emph{Propagation} Aufruf. Blaue Kanten wurden auf \emph{False} gesetzt, grüne Kanten auf \emph{True}. Die Zahlen in den Knoten geben den Sollgrad an. Sollte ein Knoten grün sein, hat er seinen Sollgrad erreicht, bei rot noch nicht. Es ist zu erkennen, dass sich ein Konstrukt von oben links nach unten rechts vorarbeitet. Hier ist der grüne Teil bereits fertig trianguliert und viele Kanten wurden ausgeschlossen.} 
     \label{fig:cdcl:propagation}
 \end{figure}
+
 Der erste Schritt war es, die Teilinstanzen, mit denen die \emph{Propagation} aufgerufen wird, zu visualisieren.
 In~\cref{fig:cdcl:propagation} ist eine beispielhafte Teilinstanz dargestellt.
 Bei der Visualisierung wurde festgestellt, dass es häufig zwei Arten von Teilinstanzen gibt.
 Die erste Variante bildet ein Konstrukt, das eine Verbindung zum Rand besitzt.
 In diesem Konstrukt ist meist eine gültige DCT vorhanden.
 Die zweite Variante besteht aus einzelnen Kanten, die isoliert in einer Fläche liegen.
+Es lässt sich also sagen, dass der Ansatz aus~\cref{fig:cdcl:propagation} besser für Variante eins ist.
+Hier kann ausgenutzt werden, dass durch das Konstrukt, das in die Mitte der Instanz hineinragt, die Instanz leicht geteilt werden kann.
+Für die zweite Variante müsste der Ansatz erweitert werden, sodass zwei Kanten eingefügt werden, damit die Instanzen halbiert werden können.
 
-
-\subsection{Relative Anzahl Erfolgreicher \emph{Propagation}}
+\subsection{Relative Anzahl erfolgreicher \emph{Propagation}}
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{cdcl/counter_vs_first_node_operation_by_instance.pdf}
-    \caption[Anzahl Erfolgreichen \emph{Propagation}]{In der Abbildung sind die Relativen Anzahlen der Erfolgreichen \emph{Propagation} zu sehen. Dafür wird auf der Y-Achse die Anzahl der Erfolgreichen \emph{Propagation} geteilt durch die Anzahl der \emph{Propagation} Aufrufe dagestellt.
-    Auf der X-Achse sind die Knotengrößen aufsteigend dagestellt.
+    \caption[Anzahl erfolgreicher \emph{Propagations}.]{In der Abbildung ist die relative Anzahl der erfolgreichen \emph{Propagations} dargestellt. Dafür wird auf der Y-Achse die Anzahl der erfolgreichen \emph{Propagations} geteilt durch die Anzahl der \emph{Propagation} Aufrufe mal 100 dargestellt.
+    Auf der X-Achse sind die Knotengrößen aufsteigend dargestellt.
     Dabei gibt es immer zwei Ja-Instanzen und zwei Nein-Instanzen pro Knotengröße.
     Bei den Nein-Instanzen wurde jeweils eine \emph{move} und eine \emph{change} Instanz genutzt.
-    Es fällt auf das vorallem Random Instanzen sehr viele Erfolgreiche \emph{Propagation} haben.
-    Greedy und Delaunay hingegen haben nur wenige Erfolgreiche \emph{Propagation}.
-    Iterativ hatte anscheinend keine Erfolgreichen \emph{Propagation} da die Instanzen zu einfach sind.
-    Nicht ganz deutlich aber zu erkennen ist das Nein-Instanzen mehr Erfolgreiche \emph{Propagation} haben als Ja-Instanzen.
+    Es fällt auf, dass vor allem Random Instanzen sehr viele erfolgreiche \emph{Propagations} haben.
+    Greedy und Delaunay hingegen haben nur wenige erfolgreiche \emph{Propagations}.
+    Iterativ hatte keine erfolgreichen \emph{Propagations}, da die Instanzen anscheinend zu einfach sind.
+    Delaunay-Flips ist zwischen Random und den anderen beiden einzuordnen.
+    Es fällt auf, dass vor allem bei den kleinen Instanzen erfolgreiche \emph{Propagations} stattfinden.
+    Die beste Erfolgsrate hat mit etwa 3\,\% Random bei einer Nein-Instanz mit 60 Knoten.
     }
     \label{fig:cdcl:anzahl}
 \end{figure}
-\fabian{Größere Insanzen laufen lassen, warscheinlich nicht viel größere da es keinen Timeout gibt und das dass Testen schwierig macht}
-In diesem Experiment wird betrachtet wie viele Erfolgreiche \emph{Propagation} also jene, welche eine Kante ausschließen können, in einer Instanz möglich sind.
-Dafür werden alle Erfolgreichen Aufrufe gezählt und diese Zahl durch die Anzahl der \emph{Propagation} Aufrufe geteilt.
-Dabei wird in diesem Experiment nicht die Laufzeit gemässen da durch die vielen Kanten welche Getestet werden die Laufzeit stark beeinflusst wird.
-Eine \emph{Propagation} soll im normalfall sehr schnell entscheiden welche Literale mit der aktuellen belegung noch gesetzt werden können. 
-In diesem Experiment geht es nur darum zu bestimmen ob es sinnvoll ist eine \emph{Propagation} mit diesem Ansatz zu nutzen.
-Bei diesem Experiment wurden Instanzen der größe 30 bis 60 Knoten betrachtet.
+% \fabian{Größere Insanzen laufen lassen, warscheinlich nicht viel größere da es keinen Timeout gibt und das dass Testen schwierig macht}
+In diesem Experiment wird betrachtet, wie viele erfolgreiche \emph{Propagations}, also die, die eine Kante ausschließen können, in einer Instanz möglich sind.
+Dafür werden alle erfolgreichen Aufrufe gezählt und diese Zahl durch die Anzahl der \emph{Propagation} Aufrufe geteilt.
+Dabei wird in diesem Experiment nicht die Laufzeit gemessen, da durch die vielen getesteten Kanten, die Laufzeit stark negativ beeinflusst wird.
+Eine \emph{Propagation} soll im Normalfall sehr schnell entscheiden, welche Literale mit der aktuellen Belegung noch gesetzt werden können. 
+In diesem Experiment geht es nur darum zu bestimmen, ob es sinnvoll scheint, eine \emph{Propagation} mit diesem Ansatz zu nutzen.
+Bei diesem Experiment wurden Instanzen der Größe 30 bis 80 Knoten betrachtet.
 Das Experiment wurde auf dem Ryzen 9 durchgeführt.
 
-In~\cref{fig:cdcl:anzahl} sind diese Relativen Anzahlen pro Instanz zu sehen.
-Dabei fällt auf das vorallem Random Instanzen sehr viele Erfolgreiche \emph{Propagation} haben.
-Es lässt sich vermuten das Nein-Instanzen mehr Erfolgreiche \emph{Propagation} haben als Ja-Instanzen.
-Dabei kann es sich aber auch um einen Zufall handeln da nur wenige verschiedene Instanzen betrachtet wurden.
+In~\cref{fig:cdcl:anzahl} ist die relative Anzahl pro Instanz zu sehen.
+Dabei fällt auf, dass vor allem Random Instanzen sehr viele erfolgreiche \emph{Propagations} haben.
+Delunay-Flips liegt in der Mitte vor Greedy und Delaunay.
+Iterativ hat keine erfolgreiche \emph{Propagation}.
+Abschließend kann keine feste Aussage getroffen werden, wie sinnvoll die \emph{Propagation} ist.
+Dafür müsste ein laufzeitenbasiertes Experiment genutzt werden.
+Dies ist aber aufgrund der langsamen \emph{Propagation} nicht sinnvoll.
+Es lässt sich festhalten, dass Kanten damit ausgeschlossen werden können und vor allem für Random der Ansatz Erfolge erzielt.
 
-\section{Schwierigkeit der Insanzen}
-In diesem Abschnitt wird Probiert die Schwierigkeit der Instanzen zu bestimmen.
-Aus den vorigen Experimenten ist bekannt das \emph{Delaunay} und \emph{Greedy} die schwereren Instanzen sind,\emph{Delaunay Flips} im Mittelfeld und \emph{Iterativ} nach \emph{Random}  die einfachsten Instanzen sind.
-Im ersten Teil wird geschaut ob die Anzahl der Lösungen pro Instanz einen Einfluss auf die Schwierigkeit hat. 
-Danach im zweiten Teil wird geschaut wie der Grad verteilt ist.
-Also wie oft jeder Grad vertreten wird.
-Im Letzen Teil wird geschaut ob ein Zusammenhang zu den Kantenlängen besteht.
-Für alle drei Teile werden Instanzen der größe 30 bis 120 Knoten betrachtet.
+
+
+
+\section{Schwierigkeit der Instanzen}
+In diesem Abschnitt wird versucht die Schwierigkeit der Instanzen zu bestimmen.
+Aus den vorherigen Experimenten ist bekannt, dass für die Kantenformulierung \emph{Delaunay} und \emph{Greedy} die schwierigeren Instanzen, \emph{Delaunay Flips} mittlere und \emph{Iterativ} nach \emph{Random}  die einfachsten Instanzen sind.
+Im ersten Teil wird untersucht, ob die Anzahl der Lösungen pro Instanz einen Einfluss auf die Schwierigkeit hat. 
+Danach wird im zweiten Teil bewertet, wie der Grad verteilt ist, was bedeutet, wie oft jeder Grad vertreten wird.
+Im letzten Teil wird untersucht, ob ein Zusammenhang zu den Kantenlängen besteht.
+Für alle drei Teile werden Instanzen der Größe 30 bis 120 Knoten betrachtet.
+
+
+
+
 \subsection{Anzahl Lösungen}
 \label{sec:eval8:anzahl_lösungen}
 % (Eval8)
@@ -455,62 +498,60 @@ Für alle drei Teile werden Instanzen der größe 30 bis 120 Knoten betrachtet.
     \centering
     \includegraphics[width=0.48\linewidth]{eval8/delaunay_008_delaunay_50_0.pdf}\hfill
     \includegraphics[width=0.48\linewidth]{eval8/delaunay_008_delaunay_50_1.pdf}
-    \caption[zwei verschiedene Lösungen für eine Instanz]{In dem Bild sind zwei verschiedene Lösungen für eine Instanz zu sehen. In Grün sind die Kanten zu sehen welche in der Instanz unterschiedlich sind. In Blau die gleichen Kanten. Die Zahlen in den Knoten geben den Sollgrad an. }
+    \caption[Zwei verschiedene Lösungen für eine Instanz.]{In dem Bild sind zwei verschiedene Lösungen für eine Instanz dargestellt. In grün sind die Kanten zu sehen, die in der Instanz unterschiedlich sind. In blau die gleichen Kanten. Die Zahlen in den Knoten geben den Sollgrad an.}
     \label{fig:eval8:left}
 \end{figure}
-In~\cref{tab:triangulation_results} ist zu sehen das fast alle Instanzen nur eine Lösungen haben.
-Vorallem ist aber zu sehen das es keinen Zusammenhang zwischen der Anzahl der Lösungen und der Instanze Art gibt.
-Es kann also davon ausgegangen werden das die Anzahl der Lösungen keinen Einfluss auf die Schwierigkeit der Instanzen hat.
-Interesannter weiße ist zu sehen das die Kanten welche in einer Instanze unterschiedliche sind klar einem Bereich zugeordnet werden könne.
-Wie man in~\cref{fig:eval8:left} sieht, sind die Kanten in der linken Hälfte der Instanz unterschiedlich, während die rechte Hälfte keine Unterschiede aufweist.
-% Man könnte also die Grade welche mehrere Lösungen zulassen einem Lokalen Bereich zuordnen.
+In~\cref{tab:triangulation_results} ist zu sehen, dass fast alle Instanzen nur eine Lösung haben.
+Vor allem ist aber zu sehen, dass es keinen Zusammenhang zwischen der Anzahl der Lösungen und der Instanzart gibt.
+Es kann also davon ausgegangen werden, dass die Anzahl der Lösungen keinen Einfluss auf die Schwierigkeit der Instanzen hat.
+Interessant ist dabei, dass die Kanten, die in einer Instanz unterschiedlich sind, klar einem Bereich zugeordnet werden können.
+Wie in~\cref{fig:eval8:left} zu erkennen ist, sind die Kanten in der linken Hälfte der Instanz unterschiedlich, während die rechte Hälfte gleich bleibt.
+% Man könnte also die Grade, die mehrere Lösungen zulassen einem Lokalen Bereich zuordnen.
 
 \subsection{Gradverteilung}
-In diesem Experiment wird Probiert anhand der Gradverteilung der Knoten zu erkennen ob es einen Zusammenhang zwischen der Schwierigkeit und dem Grad gibt.
+In diesem Experiment wird anhand der Gradverteilung der Knoten untersucht, ob es einen Zusammenhang zwischen der Schwierigkeit und dem Grad gibt.
 Dafür werden die Ja-Instanzen der Größe 30 bis 120 Knoten betrachtet.
 % (Eval9)
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{gradverteilung.pdf}
-    \caption{In dieser Abbildung ist die Gradverteilung der Knoten pro Instanz zu sehen.
-    Dabei wird auf der X-Achse der Grad und auf der Y-Achse die Häufikeit der Knoten mit diesem Grad dargestellt.}
+    \caption[Gradverteilung der Knoten pro Instanz.]{In dieser Abbildung ist die Gradverteilung der Knoten pro Instanz zu sehen.
+    Dabei wird auf der X-Achse der Grad und auf der Y-Achse die Häufigkeit der Knoten mit diesem Grad dargestellt.}
     \label{fig:eval9:gradverteilung}
 \end{figure}
 In~\cref{fig:eval9:gradverteilung} ist die Gradverteilung der Knoten zu sehen.
-Es lässt sich vermuten das es einen Zusammenhang zwischen der Schwierigkeit und dem Grad gibt.
-Es ist zu erkennen das Vorallem Random und Iterativ eine Rechtsschiefe Verteilung haben.
+Es lässt sich vermuten, dass es einen Zusammenhang zwischen der Schwierigkeit und dem Grad gibt.
+Es ist zu erkennen, dass vor allem Random und Iterativ eine rechtsschiefe Verteilung haben.
 Dazu passend haben Delaunay und Greedy eher eine zentrierte Verteilung. 
-Auch das Delaunay-Flips Rechtsschiefer als Delaunay und Greedy ist würde passen, da Delaunay-Flips einfacher als Delaunay ist.
-Es lässt sich also Anhand dieser Beispiel vermuten das einfachere Instanzen eher kleinere Grade haben und schwierigere Instanzen mehr Verteile mittlere Grade.
+Auch das Delaunay-Flips rechtsschiefer ist, als Delaunay und Greedy ist würde passen, da Delaunay-Flips einfacher als Delaunay ist.
+Es lässt sich also anhand dieser Beispiele vermuten, dass einfachere Instanzen eher kleinere Grade und schwierigere Instanzen mittlere Grade haben.
 
 
 \subsection{Verteilung der Kantenlängen}
 % (Eval10)
-In diesem Experiment wird ebenfalls probiert einen Zusammenhang zwischen der Schwierigkeit und einer Eigenschaft zu finden.
+In diesem Experiment soll ein Zusammenhang zwischen der Schwierigkeit und einer Eigenschaft gefunden werden.
 In diesem Fall werden die Kantenlängen betrachtet.
-Allerdings müssen diese Normiert werden da sonst durch weit auseinander liegende Knoten die Verteilung verzerren würden.
+Allerdings müssen diese normiert werden, da sonst weit auseinander liegende Knoten die Verteilung verzerren würden.
 Die Normierung erfolgt durch das Teilen durch die maximale Kantenlänge.
-Das heißt für jede Instanze wird die maximale Kantenlänge bestimmt und alle Kantenlängen durch diese geteilt.
-Für dieses Experiment wurden nur Ja-Instanzen der größe 30 bis 80 Knoten betrachtet.
+Das heißt, dass für jede Instanz die maximale Kantenlänge bestimmt und alle Kantenlängen durch diese geteilt werden.
+Für dieses Experiment wurden nur Ja-Instanzen der Größe 30 bis 80 Knoten betrachtet.
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1\linewidth]{edge_length_distribution_plots.pdf}
-    \caption[In dieser Abbildung ist die Verteilung der Kantenlängen pro Instanz zu sehen.]{In dieser Abbildung ist die Verteilung der Kantenlängen pro Instanz zu sehen. Dabei sind die Kantenlängen normiert, sodass sie zwischen 0 und 1 liegen. Dafür wurde alle Kantenlängen durch die maximale Kantenlänge geteilt.
+    \caption[Verteilung der Kantenlängen pro Instanz.]{In dieser Abbildung ist die Verteilung der Kantenlängen pro Instanz zu sehen. Dabei sind die Kantenlängen normiert, sodass sie zwischen 0 und 1 liegen.
     Auf der X-Achse ist die normierte Kantenlänge und auf der Y-Achse die Häufigkeit der Kanten mit dieser Länge zu sehen.}
     \label{fig:eval10:kantenverteilung}
 \end{figure}
-
-Auch hier lässt sich eine Verbindung zwischen der Schwierigkeit und der Verteilung erkennen.
-Leichtere Instanzen haben eher lange Kanten als schwere Instanzen.
-So sind bei schweren Instanzen wie Greedy und Delaunay die Kantenlängen eher links also bei den kurzen Kanten angesiedelt.
-Leichte Instanzen wie Iterativ hingegen haben deutlich weniger kurze Kante und dafür mehr längere Kanten.
+Auch hier lässt sich eine Verbindung zwischen der Schwierigkeit und der Verteilung in~\cref{fig:eval10:kantenverteilung} erkennen.
+Leichte Instanzen weisen eher lange Kanten auf, als schwere Instanzen.
+So sind bei schweren Instanzen wie Greedy und Delaunay die Kantenlängen eher links, was bedeutet, dass diese eher kurze Kanten besitzen.
+Leichte Instanzen wie Iterativ hingegen haben deutlich weniger kurze Kanten und dafür mehr längere Kanten.
 
 \subsection{Zusammenfassung}
-In diesm Abschnitt wurde festgestellt das die Anzahl der Lösungen keinen Einfluss auf die Schwierigkeit hat.
-Die Gradverteilung und die Kantenlängenverteilung hingegen scheinen einen Einfluss auf die Schwierigkeit zu haben.
-Hierbei deuten viele kurze Kanten und verteile Grade auf eine schwere Instanz hin.
-Hingegen verteilte längere Kanten und wenige hohe Grade auf eine leichte Instanz.
-
+In diesem Abschnitt wurde festgestellt, dass die Anzahl der Lösungen keinen Einfluss auf die Schwierigkeit hat.
+Die Gradverteilung und die Kantenlängenverteilung hingegen scheinen einen Einfluss auf die Schwierigkeit für die Kantenformulierung zu haben.
+Hierbei deuten viele kurze Kanten und breit verteilte Grade auf eine schwere Instanz hin.
+Wohingegen verteilte längere Kanten und wenige hohe Grade auf eine leichte Instanz hinweisen.
 
 
 

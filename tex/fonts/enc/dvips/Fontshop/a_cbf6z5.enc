@@ -1,0 +1,62 @@
+% THIS FILE WAS AUTOMATICALLY GENERATED -- DO NOT EDIT
+
+%%AutoEnc_cbf6z52ohs6ap24ig6z6ob6nsd
+% Encoding created by otftotfm on Thu Feb 22 20:15:39 2024
+% Command line follows encoding
+/AutoEnc_cbf6z52ohs6ap24ig6z6ob6nsd [
+%00
+  /.notdef /Euro.lf /.notdef /.notdef /fraction /dotaccent /hungarumlaut /ogonek
+  /fl /.notdef /.notdef /uniFB00 /fi /.notdef /uniFB03 /uniFB04
+%10
+  /dotlessi /dotlessj /grave /acute /caron /breve /macron /ring
+  /cedilla /germandbls /ae /oe /oslash /AE /OE /Oslash
+%20
+  /space /exclam /quotedbl /numbersign.lf /dollar.lf /percent /ampersand /quoteright
+  /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash
+%30
+  /zero.lf /one.lf /two.lf /three.lf /four.lf /five.lf /six.lf /seven.lf
+  /eight.lf /nine.lf /colon /semicolon /less /equal /greater /question
+%40
+  /at /A /B /C /D /E /F /G
+  /H /I /J /K /L /M /N /O
+%50
+  /P /Q /R /S /T /U /V /W
+  /X /Y /Z /bracketleft /backslash /bracketright /circumflex /underscore
+%60
+  /quoteleft /a /b /c /d /e /f /g
+  /h /i /j /k /l /m /n /o
+%70
+  /p /q /r /s /t /u /v /w
+  /x /y /z /braceleft /bar /braceright /tilde /dieresis
+%80
+  /Lslash /quotesingle /quotesinglbase /florin /quotedblbase /ellipsis /dagger /daggerdbl
+  /.notdef /perthousand /Scaron /guilsinglleft /.notdef /Zcaron /asciicircum /minus.lf
+%90
+  /lslash /.notdef /.notdef /quotedblleft /quotedblright /bullet /endash /emdash
+  /.notdef /trademark /scaron /guilsinglright /.notdef /zcaron /asciitilde /Ydieresis
+%A0
+  /uni00A0 /exclamdown /cent.lf /sterling.lf /currency.lf /yen.lf /brokenbar /section
+  /.notdef /copyright /ordfeminine /guillemotleft /logicalnot /uni00AD /registered /.notdef
+%B0
+  /degree /plusminus /twosuperior /threesuperior /.notdef /mu /paragraph /periodcentered
+  /.notdef /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown
+%C0
+  /Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /.notdef /Ccedilla
+  /Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis
+%D0
+  /Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply.lf
+  /.notdef /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /.notdef
+%E0
+  /agrave /aacute /acircumflex /atilde /adieresis /aring /.notdef /ccedilla
+  /egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis
+%F0
+  /eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide
+  /.notdef /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis
+] def
+% Command line: 'otftotfm --no-updmap --vendor=Fontshop
+% --name=NexusProSerif-Italic-lnum --warn-missing --encoding=texnansx
+% --feature=kern --feature=liga --force --tfm-directory=fonts/tfm/Nexus/
+% --vf-directory=fonts/vf/Nexus/ --type1-directory=fonts/type1/Nexus/
+% --encoding-directory=fonts/enc/dvips/Fontshop/ --feature=lnum
+% --map-file=fonts/map/dvips/NexusProSerif.map
+% otf-src/NexusSerifPro-Italic.otf'

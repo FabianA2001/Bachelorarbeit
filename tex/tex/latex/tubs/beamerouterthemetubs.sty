@@ -1,0 +1,334 @@
+%%
+%% This is file `beamerouterthemetubs.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% ../tubsvers.inc  (with options: `default')
+%% beamerouterthemetubs.dtx  (with options: `outertheme')
+%% 
+%% This is a generated file.
+%% 
+%% Copyright 2003 by Till Tantau <tantau@users.sourceforge.net>.
+%% Copyright (C) 2011 by Enrico Jörns <e.joerns@tu-bs.de> and Martin Bäker
+%% 
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either
+%% version 1.2 of this license or (at your option) any later
+%% version. The latest version of this license is in:
+%% 
+%%   http://www.latex-project.org/lppl.txt
+%% 
+%% and version 1.2 or later is part of all distributions of
+%% LaTeX version 1999/12/01 or later.
+%% 
+\RequirePackage{ifthen}
+\RequirePackage{scrlfile}%TODO: KOMA-Check?
+\RequirePackage{etoolbox}%
+\begingroup
+  \makeatletter
+  \ifx\tubslatexVersion\undefined
+    \newcommand*{\check@tubslatexVersion}[1]{%
+      \gdef\tubslatexVersion{#1}%
+    }%
+  \else
+    \newcommand*{\check@tubslatexVersion}[1]{%
+      \def\@tempa{#1}%
+      \ifx\tubslatexVersion\@tempa\else
+        \@latex@warning@no@line{%
+          \noexpand\tubslatexVersion\space is
+          `\tubslatexVersion',\MessageBreak
+          but `#1' was expected!\MessageBreak
+          You should not use classes, packages or files
+          from\MessageBreak
+          different tubslatex versions%
+        }%
+      \fi
+    }
+  \fi
+  \check@tubslatexVersion{2024/02/22 v1.3.5-r140 tubslatex}%
+\endgroup
+\providecommand{\tubslatex}{tubs\LaTeX}
+\ProvidesPackage{beamerouterthemetubs}[\tubslatexVersion\space TU Braunschweig (beamer) outer theme]
+\RequirePackage{ifthen}
+\RequirePackage{calc}
+\RequirePackage{tubslogo}
+\PassOptionsToPackage{ngerman}{babel}
+\RequirePackage{babel}
+\RequirePackage{tubsbeamersizes}
+\newdimen\beamer@tochorizontalspace
+\beamer@tochorizontalspace=0.15em
+\newboolean{tubs@nopagenum}\setboolean{tubs@nopagenum}{false}
+\newboolean{tubs@nodate}\setboolean{tubs@nodate}{false}
+\newboolean{tubs@noauthor}\setboolean{tubs@noauthor}{false}
+\newboolean{tubs@totalpages}\setboolean{tubs@totalpages}{false}
+\newboolean{tocinheader}\setboolean{tocinheader}{false}
+\newboolean{nosubsectionsinheader}\setboolean{nosubsectionsinheader}{false}
+\newboolean{nologoinfoot}\setboolean{nologoinfoot}{false}
+\newboolean{colorhead}\setboolean{colorhead}{false}
+\newboolean{colorfoot}\setboolean{colorfoot}{false}
+\DeclareOptionBeamer{nopagenum}{\setboolean{tubs@nopagenum}{true}}
+\DeclareOptionBeamer{nodate}{\setboolean{tubs@nodate}{true}}
+\DeclareOptionBeamer{noauthor}{\setboolean{tubs@noauthor}{true}}
+\DeclareOptionBeamer{totalpages}{\setboolean{tubs@totalpages}{true}}
+\DeclareOptionBeamer{tocinheader}{\setboolean{tocinheader}{true}}
+\DeclareOptionBeamer{tinytocinheader}{\setboolean{tocinheader}{true}}
+\DeclareOptionBeamer{nosubsectionsintoc}{%
+  \setboolean{nosubsectionsinheader}{true}%
+}
+\DeclareOptionBeamer{nosubsectionsinheader}{%
+  \setboolean{nosubsectionsinheader}{true}%
+}
+\DeclareOptionBeamer{nologoinfoot}{\setboolean{nologoinfoot}{true}}
+\DeclareOptionBeamer{widetoc}{\beamer@tochorizontalspace=0.3em}
+\DeclareOptionBeamer{narrowtoc}{\beamer@tochorizontalspace=0.em}
+\DeclareOptionBeamer{colorhead}{
+  \setbeamercolor{palette primary}{use=palette secondary,bg=palette secondary.bg!40}
+}
+\DeclareOptionBeamer{colorfoot}{\setboolean{colorfoot}{true}}
+\ProcessOptionsBeamer\relax
+\setcounter{tocdepth}{2}% TODO: check
+\newboolean{highlighttitle}\setboolean{highlighttitle}{false}
+\newboolean{notitle}\setboolean{notitle}{false}
+\setbeamersize{text margin left=\beamer@leftmarginwidth}
+\setbeamersize{text margin right=\beamer@leftmarginwidth}
+\reset@font% TODO
+\mode<presentation>
+\setbeamercolor{titlepage}{use={palette secondary}, parent=palette secondary}
+\setbeamercolor{titlebarfirst}{use={titlepage}, parent=titlepage, bg=titlepage.bg!80}
+\setbeamercolor{titlebarsecond}{use={titlepage}, parent=titlepage, bg=titlepage.bg!40}
+\ifthenelse{\boolean{colorfoot}}{%
+  \setbeamercolor{titlebarlow}{use={titlepage}, parent=titlepage, bg=titlepage.bg!80}
+}{%
+  \setbeamercolor{titlebarlow}{parent=separation line}
+}
+\setbeamercolor{titlehead}{parent=palette primary}
+\setbeamercolor{titlelike}{parent=titlehead}
+\setbeamercolor{section in head/foot}{parent=titlehead,fg=alerted text.fg}
+\setbeamercolor{section in head/foot shaded}{parent=titlehead}
+\setbeamercolor{subsection in head/foot}{parent=section in head/foot}
+\setbeamercolor{subsection in head/foot shaded}{use=titlehead,parent=titlehead,fg=titlehead.fg!80}
+\setbeamercolor{title in head/foot}{parent=palette tertiary}
+\setbeamercolor{date in head/foot}{parent=title in head/foot}
+\setbeamercolor{author in head/foot}{parent=title in head/foot}
+\setbeamercolor{pagenum in head/foot}{parent=title in head/foot}
+\defbeamertemplate*{sidebar right}{tubs}{}
+\ifthenelse{\boolean{tocinheader}}{%
+  \defbeamertemplate*{headline}{tubs}{%
+    % toc-Text-Farben für highlighttitle ändern
+    \ifthenelse{\boolean{highlighttitle}}{%
+      \setbeamercolor*{section in head/foot}{parent=highlight}
+      \setbeamercolor{palette tertiary}{fg=white}% TODO: use from another
+    }{}
+    \begin{beamercolorbox}[dp=0mm, ht=0.45\beamer@headheight]{section in head/foot}%
+        \parbox[b][0.45\beamer@headheight-\depth-.05\beamer@headheight]{\textwidth}{%
+        \ifthenelse{\boolean{tocinheader}}{%
+          {\usebeamerfont{section in head/foot}%
+          \insertsectionnavigationhorizontal{\textwidth}%
+                  {\hskip20pt plus1filll}{\quad}%
+          \ifthenelse{\boolean{nosubsectionsinheader}}{}{%
+            \vspace*{-0.5mm}%
+            \insertsubsectionnavigationhorizontal{\textwidth}%
+                    {\hskip20pt plus1filll}{\quad}%
+          }}%
+        }{}%
+        \vfill%
+      }%
+    \end{beamercolorbox}%
+  }%
+}{%
+  \defbeamertemplate*{headline}{tubs}{}%
+}
+\defbeamertemplate*{frametitle}{tubs}{%
+  % Breite und hoehe berechnen
+  \setlength{\tubs@outer@tempwidtha}{\textwidth+2\beamer@leftmarginwidth}
+  \ifthenelse{\boolean{tocinheader}}{%
+    \setlength{\tubs@outer@tempwidthb}{0.55\beamer@headheight}%
+  }{%
+    \setlength{\tubs@outer@tempwidthb}{\beamer@headheight}%
+  }%
+  \vskip-1.5pt% TODO: check why needed...
+  \ifthenelse{\boolean{highlighttitle}}{%
+    \addtolength{\tubs@outer@tempwidthb}{0.5\beamer@headheight}%
+    \begin{beamercolorbox}[%
+            wd=\tubs@outer@tempwidtha,%
+            dp=0mm,%
+            ht=\tubs@outer@tempwidthb]{highlight}%
+      \vspace*{1em}\par%
+      \hspace*{\beamer@leftmarginwidth}\parbox{\tubs@outer@tempwidtha-2\beamer@leftmarginwidth}{\strut\insertframetitle}%
+      \vspace*{0.5em}%
+    \end{beamercolorbox}%
+  }{%
+    \begin{beamercolorbox}[%
+            wd=\tubs@outer@tempwidtha,%
+            dp=0mm,%
+            ht=\tubs@outer@tempwidthb]{titlelike}%
+        \hspace*{\beamer@leftmarginwidth}\parbox{\tubs@outer@tempwidtha-2\beamer@leftmarginwidth}{\strut\insertframetitle}%
+        \vfill%
+    \end{beamercolorbox}%
+  }
+}%
+\defbeamertemplate*{section in head/foot}{tubs}{%
+  \usebeamercolor[fg]{section in head/foot}%
+  {\insertsectionhead}\hspace{\beamer@tochorizontalspace}%
+}
+\defbeamertemplate*{section in head/foot shaded}{tubs}{%
+  \usebeamercolor[fg]{section in head/foot shaded}%
+  {\insertsectionhead}\hspace{\beamer@tochorizontalspace}%
+}
+\defbeamertemplate*{subsection in head/foot}{tubs}{%
+  \usebeamercolor[fg]{subsection in head/foot}%
+  {\insertsubsectionhead}\hspace{\beamer@tochorizontalspace}%
+}
+\defbeamertemplate*{subsection in head/foot shaded}{tubs}{%
+  \usebeamercolor[fg]{subsection in head/foot shaded}%
+  {\insertsubsectionhead}\hspace{\beamer@tochorizontalspace}%
+}
+\defbeamertemplate*{section in sidebar}{tubs}{}
+\defbeamertemplate*{section in sidebar shaded}{tubs}{}
+\defbeamertemplate*{subsection in sidebar}{tubs}{}
+\defbeamertemplate*{subsection in sidebar shaded}{tubs}{}
+\defbeamertemplate*{subsubsection in sidebar}{tubs}{}
+\defbeamertemplate*{subsubsection in sidebar shaded}{tubs}{}
+\newlength{\tubs@outer@tempwidtha}% used for settowidth
+\newlength{\tubs@outer@tempwidthb}% used for settowidth
+\defbeamertemplate*{footline}{tubs}{%
+  % Kommandos deklarieren
+  \def\@footsepline{\rule[-0.1em]{0.09em}{1em}}%
+  % Trennwort zwischen Seitenzahl und Gesamtseitenzahl
+  \def\pageof{%
+    \iflanguage{ngerman}{von}{of}%
+  }%
+  % Datum + Trennstrich einfügen, Optionen beachten
+  \def\tubs@insertdate{%
+    \ifthenelse{\boolean{tubs@nodate}}{}{%
+      \usebeamerfont{date in head/foot}%
+      \usebeamercolor{date in head/foot}%
+      \textcolor{fg}{\insertdate}%
+    }%
+  }%
+  % Trennstrich + Seite einfügen, Optionen beachten
+  \def\tubs@insertpage{%
+    \ifthenelse{\boolean{tubs@nopagenum}}{}{%
+      \usebeamerfont{page in head/foot}%
+      \usebeamercolor{page in head/foot}%
+      \ifthenelse{\boolean{tubs@totalpages}}{%
+        ~\@footsepline~\textcolor{fg}{\pagename~\insertframenumber~\pageof~\inserttotalframenumber}%
+      }{%
+        ~\@footsepline~\textcolor{fg}{\pagename~\insertframenumber}%
+      }%
+    }%
+  }%
+  %
+  \def\tubs@insertauthor{%
+    \ifthenelse{\boolean{tubs@noauthor}}{}{%
+      \usebeamerfont{author in head/foot}%
+      \usebeamercolor{author in head/foot}%
+      \textcolor{fg}{\insertshortauthor}%
+    }%
+  }%
+  %
+  \newcommand\tubs@inserttitle[1][]{%
+    {%
+    \usebeamerfont{title in head/foot}%
+    \usebeamercolor[fg]{title in head/foot}%
+    \insertshorttitle[####1]%
+    }%
+  }%
+  %% Additional space needed to increase the calculated height of the footline
+  \vspace*{0.25cm}
+  % TU-Logo und Sekundärlogo
+  \begin{minipage}{\paperwidth}
+    \logoheight=20.7pt% Höhe des Logos in Fußzeile
+    %Linie zeichnen
+    {\usebeamercolor[bg]{separation line}\rule{\paperwidth}{0.4pt}}%
+    % Logo-Dimensionen (manuell)
+    \newdimen\beamer@CDlogowidth%
+    \newdimen\beamer@CDlogoheight%
+    \newdimen\@footline@textwidth%
+    \beamer@CDlogowidth=24.7mm%
+    \beamer@CDlogoheight=9.17mm%
+    % Wieder auf Zeilenanfang
+    \hspace*{-\paperwidth}%
+    % Siegelbandlogo
+    \raisebox{-0.75\beamer@CDlogoheight}{%
+      \tubslogoAbs{\beamer@CDlogowidth}%
+    }%
+    %
+    \hspace*{5pt}% Abstand Logo<->Text
+    %
+    \raisebox{-9pt}{% Abstand Linie/Text
+    % Breite von Textbereich (abhängig von Option 'nologoinfoot') berechnen
+      \setlength\@footline@textwidth{%
+        \paperwidth-5pt-\beamer@CDlogowidth-\beamer@CDborderwidth}%
+      \ifthenelse{\boolean{nologoinfoot}}{}{%
+        \addtolength\@footline@textwidth{-3.5\logoheight}% Logo-Breite abziehen
+      }%
+      % Textbereich setzen
+      \parbox[t][26pt]{\@footline@textwidth}{% Höhe und Breite Textbereich
+        % Prüfe, ob Inhalt in einzelne Zeile passt
+        \settowidth{\tubs@outer@tempwidtha}{%
+          \tubs@insertdate\tubs@insertauthor~\@footsepline~\tubs@inserttitle\tubs@insertpage}%
+        \ifthenelse{\lengthtest{\tubs@outer@tempwidtha<\@footline@textwidth}}{% passt...
+          \strut\tubs@insertdate
+          \ifthenelse{\boolean{tubs@nodate}}{}{~\@footsepline~}%
+          \tubs@insertauthor%
+          \ifthenelse{\boolean{tubs@noauthor}}{}{~\@footsepline~}%
+          \tubs@inserttitle%
+          \tubs@insertpage%
+        }{% passt nicht...
+          \strut\tubs@insertdate%
+          \ifthenelse{\boolean{tubs@nodate}}{}{%
+            \ifthenelse{\boolean{tubs@noauthor}}{}{%
+              ~\@footsepline~}}%
+          \tubs@insertauthor\tubs@insertpage\hfill\\%
+          \tubs@inserttitle[width=\@footline@textwidth]%
+        }%
+      }%
+    }%
+    %
+    \hspace*{0.5\beamer@CDborderwidth}% Abstand Text<->Logo
+    %
+    \raisebox{-\logoheight-4pt}{%
+      \parbox[t]{3.5\logoheight}{%
+        \vbox to\logoheight{%
+          \vfill%
+          % Logo einfügen, wenn nicht 'nologoinfoot'-Option gewählt wurde
+          \ifthenelse{\boolean{nologoinfoot}}{}{%
+            \usebeamerfont{footlinelogo}%
+            \raggedleft\insertlogo%
+          }%
+          \vfill%
+        }%
+      }%
+    }%
+  \end{minipage}
+}
+\setbeamertemplate{navigation symbols}{}
+\define@boolkey{beamerframe}{notitle}[true]{%
+}
+\define@boolkey{beamerframe}{highlight}[true]{%
+  \ifKV@beamerframe@highlight
+    \setboolean{highlighttitle}{true}
+  \else
+    \setboolean{highlighttitle}{false}
+  \fi
+}
+\presetkeys{beamerframe}{notitle=false, highlight=false}{}
+\newenvironment{highlightframe}[1]{%
+  \begin{frame}[highlight]{#1}%
+}{%
+  \end{frame}%
+}
+\newenvironment{notitleframe}[1]{%
+  \setboolean{notitle}{true}%
+  \begin{frame}{#1}%
+}{%
+  \end{frame}%
+  \setboolean{notitle}{false}%
+}
+\mode
+<all>
+\endinput
+%%
+%% End of file `beamerouterthemetubs.sty'.

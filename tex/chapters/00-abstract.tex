@@ -1,30 +1,26 @@
-\chapter*{Abstract}
+\section*{Abstract}
 This thesis examines the problem of degree constrained triangulations (DCT) where each vertex in a triangulation must have a given degree. 
-Several exact and heuristic approaches were developed and implemented. 
+Several exact and approximate approaches were developed and implemented. 
 These include edge based and triangle based encodings. 
 In addition, strategies for fixing and excluding edges and systematic methods for generating instances for feasible and infeasible cases were introduced.
 
 The experimental evaluation presents a comparison of different solvers such as PySAT, CaDiCaL, OR-Tools and Gurobi as well as various modeling techniques with respect to runtime and success rate. 
 The results show that OR-Tools achieves the best results overall. 
-All methods are only able to solve instances with a relatively small number of vertices. 
 Optimization based formulations provide approximate solutions in infeasible or more complex cases.
 
 The thesis shows that degree constrained triangulations can be effectively modeled and solved for small input sizes.
-OR-Tools proves to be the most effective solver. 
-The results provide a foundation for further research on scaling to larger instances and developing improved heuristics.
+OR-Tool with an edge based encodings proves to be the most effective solver. 
 
-\fabian{ Ka wie ich das hier formatieren soll.}
-\section{Deutsch}
+% so wäre mein Vorschlag
+\section*{Zusammenfassung}
 Diese Arbeit behandelt das Problem der gradbeschränkten Triangulationen (Degree Constrained Triangulations, DCT), bei denen jedem Knoten einer Triangulation ein vorgegebener Grad zugeordnet wird. 
-Hierfür wurden exakte und heuristische Lösungsansätze entwickelt und implementiert.
-Dazu zählen kantenbasierte und dreiecksbasierte Kodierungen. 
+Hierfür wurden exakte und approximative Lösungsansätze entwickelt und implementiert.
+Dazu gehören kantenbasierte und dreiecksbasierte Codierungen. 
 Zusätzlich wurden Strategien zum Fixieren und Ausschließen von Kanten sowie systematische Verfahren zur Instanzgenerierung für lösbare und unlösbare Fälle entworfen.
 
 Die experimentelle Untersuchung umfasst einen Vergleich verschiedener Solver wie PySAT, CaDiCaL, OR-Tools und Gurobi sowie unterschiedlicher Modellierungstechniken im Hinblick auf Laufzeit und Erfolgsquote. 
 Die Ergebnisse zeigen, dass OR-Tools insgesamt die besten Resultate liefert. 
-Alle Ansätze können jedoch nur Instanzen mit einer geringen Anzahl an Knoten lösen. 
 Optimierungsbasierte Formulierungen liefern in unlösbaren oder komplexeren Fällen approximative Lösungen.
 
 Die Arbeit zeigt, dass gradbeschränkte Triangulationen für kleine Eingabegrößen effizient modelliert und gelöst werden können. 
-OR-Tools erweist sich dabei als leistungsfähigster Ansatz. 
-Die Ergebnisse bilden eine Grundlage für weitere Forschung, insbesondere zur Skalierung auf größere Instanzen und zur Entwicklung verbesserter Heuristiken.
+OR-Tools mit der kantenbasierten Codierungen erweist sich dabei als leistungsfähigster Ansatz. 

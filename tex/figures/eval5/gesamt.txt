@@ -3,7 +3,7 @@ Args Legend Mapping (by Solver):
 ==================================================
 
 SAT:
-|#exakt-counters in 300s: 
+|#Exakt-counters in 300s: 
 ||solver_name:                        Glucose42
 ||add_allEdges_or_exclude_edges:      True
 ||number_edges:                       False
@@ -19,7 +19,7 @@ SAT:
 ||fix_edges:                          False
 ||run_num:                            0
 
-|#exakt-totalizer in 300s: 
+|#Exakt-totalizer in 300s: 
 ||solver_name:                        Glucose42
 ||add_allEdges_or_exclude_edges:      True
 ||number_edges:                       False
@@ -35,7 +35,7 @@ SAT:
 ||fix_edges:                          False
 ||run_num:                            0
 
-|#mindestens-counters in 300s: 
+|#Mindest-counters in 300s: 
 ||solver_name:                        Glucose42
 ||add_allEdges_or_exclude_edges:      True
 ||number_edges:                       False
@@ -51,7 +51,7 @@ SAT:
 ||fix_edges:                          False
 ||run_num:                            0
 
-|#mindestens-totalizer in 300s: 
+|#Mindest-totalizer in 300s: 
 ||solver_name:                        Glucose42
 ||add_allEdges_or_exclude_edges:      True
 ||number_edges:                       False

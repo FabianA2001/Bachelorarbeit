@@ -1,0 +1,307 @@
+%%
+%% This is file `beamerinnerthemetubs.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% ../tubsvers.inc  (with options: `default')
+%% beamerinnerthemetubs.dtx  (with options: `innertheme')
+%% 
+%% This is a generated file.
+%% 
+%% Copyright 2003 by Till Tantau <tantau@users.sourceforge.net>.
+%% Copyright (C) 2011 by Enrico Jörns <e.joerns@tu-bs.de> and Martin Bäker
+%% 
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either
+%% version 1.2 of this license or (at your option) any later
+%% version. The latest version of this license is in:
+%% 
+%%   http://www.latex-project.org/lppl.txt
+%% 
+%% and version 1.2 or later is part of all distributions of
+%% LaTeX version 1999/12/01 or later.
+%% 
+\RequirePackage{ifthen}
+\RequirePackage{scrlfile}%TODO: KOMA-Check?
+\RequirePackage{etoolbox}%
+\begingroup
+  \makeatletter
+  \ifx\tubslatexVersion\undefined
+    \newcommand*{\check@tubslatexVersion}[1]{%
+      \gdef\tubslatexVersion{#1}%
+    }%
+  \else
+    \newcommand*{\check@tubslatexVersion}[1]{%
+      \def\@tempa{#1}%
+      \ifx\tubslatexVersion\@tempa\else
+        \@latex@warning@no@line{%
+          \noexpand\tubslatexVersion\space is
+          `\tubslatexVersion',\MessageBreak
+          but `#1' was expected!\MessageBreak
+          You should not use classes, packages or files
+          from\MessageBreak
+          different tubslatex versions%
+        }%
+      \fi
+    }
+  \fi
+  \check@tubslatexVersion{2024/02/22 v1.3.5-r140 tubslatex}%
+\endgroup
+\providecommand{\tubslatex}{tubs\LaTeX}
+\ProvidesPackage{beamerinnerthemetubs}[\tubslatexVersion\space TU Braunschweig (beamer) inner theme]
+\RequirePackage{ifthen}
+\RequirePackage{relsize}[1999/11/01]
+\RequirePackage{printlen}
+\RequirePackage{tubsbeamersizes}
+\RequirePackage{tubslogo}
+\DeclareOptionBeamer{shadow}[true]{\def\beamer@themerounded@shadow{#1}}
+\ExecuteOptionsBeamer{shadow=false}
+\ProcessOptionsBeamer\relax
+\newcommand{\tuDefaultTitlegraphic}{%
+\includegraphics[width=\titlegraphicswidth]{defaulttitlepicture}}
+\newcommand\tubs@imagefit{cropped}
+\newcommand\@img@scale@param{}%
+\newcommand\tubs@calc@autoscale[1]{%
+  \newdimen\@image@xorig%
+  \newdimen\@image@xcalc%
+  \newdimen\@image@yorig%
+  \newdimen\@image@ycalc%
+  \ifthenelse{\equal{\tubs@imagefit}{scaled}}{%
+    \renewcommand\@img@scale@param{clip,%
+        height=\titlegraphicsheight,
+        width=\titlegraphicswidth}
+  }{\ifthenelse{\equal{\tubs@imagefit}{cropped}}{%
+      % Ermittelt, ob das Bild an den Seiten oder oben und unten beschnitten
+      % werden muss, um in den Darstellungsbereich zu passen
+      % Dazu wird die Höhe des auf korrekte Breite skalierten Bildes
+      % mit der Höhe des Darstellungsbereichs verglichen und entsprechend
+      % eine crop-Option gesetzt.
+      \settoheight{\@image@ycalc}{%
+        \includegraphics[clip,width=\titlegraphicswidth]{#1}}
+      \ifthenelse{\lengthtest{\@image@ycalc>\titlegraphicsheight}}{%
+        \renewcommand{\tubs@imagefit}{cropy}
+      }{%
+        \renewcommand{\tubs@imagefit}{cropx}
+      }
+    }{}
+    \ifthenelse{\equal{\tubs@imagefit}{cropy}}{%
+      % Berechne abzuschneidende Ränder (oben+unten)
+      % Dazu wird die Differenz zwischen Darstellungsbereich und Höhe des
+      % korrekt auf die Breite skalierten Bildes berechnet und mit dem
+      % ermittelten Skalierungsfaktor multipliziert, sowie durch 2 geteilt.
+      % Das Ergebnis wir dann einmal am oberen und einmal am unteren Teil
+      % des (Original-)Bildes mit Hilfe der 'trim'-Option abgeschnitten.
+      \settoheight{\@image@yorig}{%
+        \includegraphics[clip]{#1}}%
+      \settoheight{\@image@ycalc}{%
+        \includegraphics[clip,width=\titlegraphicswidth]{#1}}%
+      \setlength{\@image@ycalc}{(\@image@ycalc-\titlegraphicsheight)*\ratio{\@image@yorig}{\@image@ycalc}}
+      \setlength{\@image@ycalc}{0.5\@image@ycalc}%
+      \renewcommand\@img@scale@param{clip,%
+          width=\titlegraphicswidth,
+          trim=0pt {\@image@ycalc} 0pt {\@image@ycalc}}%
+    }{\ifthenelse{\equal{\tubs@imagefit}{cropx}}{%
+      \settowidth{\@image@xorig}{%
+        \includegraphics[clip]{#1}}%
+      \settowidth{\@image@xcalc}{%
+        \includegraphics[clip,height=\titlegraphicsheight]{#1}}%
+      \setlength{\@image@xcalc}{(\@image@xcalc-(\titlegraphicswidth))*\ratio{\@image@xorig}{\@image@xcalc}}
+      \setlength{\@image@xcalc}{0.5\@image@xcalc}%
+      \renewcommand\@img@scale@param{clip,%
+          height=\titlegraphicsheight,
+          trim={\@image@xcalc} 0pt {\@image@xcalc} 0pt}%
+    }{\ifthenelse{\equal{\tubs@imagefit}{keepsize}}{%
+      \renewcommand\@img@scale@param{}%
+    }{}}}%
+  }%
+}
+\define@key{tubs@titlegraphic}{scaled}[true]{
+  \renewcommand\tubs@imagefit{scaled}
+}
+\define@key{tubs@titlegraphic}{hclip}[true]{
+  \renewcommand\tubs@imagefit{cropx}
+}
+\define@key{tubs@titlegraphic}{fitheight}[true]{
+  \renewcommand\tubs@imagefit{cropx}
+}
+\define@key{tubs@titlegraphic}{clipx}[true]{% obsolete
+  \renewcommand\tubs@imagefit{cropx}
+}
+\define@key{tubs@titlegraphic}{cropx}[true]{% obsolete
+  \renewcommand\tubs@imagefit{cropx}
+}
+\define@key{tubs@titlegraphic}{vclip}[true]{
+  \renewcommand\tubs@imagefit{cropy}
+}
+\define@key{tubs@titlegraphic}{fitwidth}[true]{
+  \renewcommand\tubs@imagefit{cropy}
+}
+\define@key{tubs@titlegraphic}{clipy}[true]{% obsolete
+  \renewcommand\tubs@imagefit{cropy}
+}
+\define@key{tubs@titlegraphic}{cropy}[true]{% obsolete
+  \renewcommand\tubs@imagefit{cropy}
+}
+\define@key{tubs@titlegraphic}{clipped}[true]{
+  \renewcommand\tubs@imagefit{cropped}
+}
+\define@key{tubs@titlegraphic}{cropped}[true]{
+  \renewcommand\tubs@imagefit{cropped}
+}
+\define@key{tubs@titlegraphic}{keepsize}[true]{
+  \renewcommand\tubs@imagefit{keepsize}
+}
+\let\@orig@titlegpraphic\titlegraphic
+\newsavebox{\@test@box}
+\renewcommand{\titlegraphic}[2][]{%
+  \@orig@titlegpraphic{
+    \setkeys{tubs@titlegraphic}{cropped,#1}%
+    % redefine includegraphics to store information
+    \newif\if@incgraphused\@incgraphusedfalse%
+    \let\@orig@includegraphics\includegraphics%
+    \renewcommand{\includegraphics}[2][\relax]{%
+      \@incgraphusedtrue%
+      \def\@incgraph@optparam{####1}%
+      \def\@incgraph@param{####2}%
+      \ifthenelse{\equal{\@incgraph@optparam}{\relax}}{%
+        \let\@manipulated@includegraphics\includegraphics
+        \let\includegraphics\@orig@includegraphics
+        \tubs@calc@autoscale{\@incgraph@param}%
+        \let\includegraphics\@manipulated@includegraphics
+        \expandafter\@orig@includegraphics\expandafter[\@img@scale@param]{%
+                \@incgraph@param}%
+      }{%
+        \expandafter\@orig@includegraphics\expandafter[\@incgraph@optparam]{%
+                \@incgraph@param}%
+      }
+  }%
+  #2}
+}
+\renewcommand{\logo}[1]{%
+  \setbeamertemplate{logo}{%
+    \begingroup%
+    \presetkeys{Gin}{height=\logoheight,width=3.5\logoheight,keepaspectratio}{}%
+    #1%
+    \endgroup%
+  }%
+}
+\mode<presentation>% TODO: Hier ???
+\setbeamertemplate{blocks}[rounded][shadow=\beamer@themerounded@shadow]
+%% Trick: To re-define a template from scratch, give it a new name as
+%% second argument.
+\defbeamertemplate*{title page}{tubs}[1][]{%
+  \vspace*{-5.5pt} % korrigierte Nulllinie
+  \vspace*{\beamer@CDsenderheight}
+  \begin{beamercolorbox}[
+      wd=\beamer@CDcommunicationwidth,
+      ht=11\beamer@CDgaussunit]
+      {titlebarfirst}
+    \usebeamerfont{title}\centering\inserttitlegraphic%
+  \end{beamercolorbox}%
+  \vskip-1pt
+
+  \begin{beamercolorbox}[wd=\beamer@CDcommunicationwidth,
+      ht=9\beamer@CDgaussunit]
+      {titlebarsecond}
+    \hspace*{\beamer@leftmarginwidth}
+    \parbox[b][9\beamer@CDgaussunit]{\beamer@titlepagetextwidth}{%
+      \vskip0.5\beamer@CDborderwidth%
+      \vfil%
+      {\raggedright\usebeamerfont{title}\inserttitle\par}%
+      \vfil%
+      {\raggedright\usebeamerfont{subtitle}\insertsubtitle\par}%
+      \vskip 0.5ex%
+      \vfil%
+      \raggedright%
+      \usebeamerfont{author}\insertauthor%
+      \ifx\insertauthor\@empty\else%
+      \ifx\insertdate\@empty\else%
+      , %
+      \fi%
+      \fi%
+      \mbox{\insertdate}\par%
+      \vfil%
+      \usebeamerfont{institute}\insertinstitute%
+      \vfil%
+    }
+  \end{beamercolorbox}%
+  \vskip-1pt
+
+  {\tiny
+  \begin{beamercolorbox}[wd=\beamer@CDcommunicationwidth,
+      ht=\beamer@CDgaussunit]
+      {titlebarlow}
+  \end{beamercolorbox}}%
+  \vspace*{-24.1\beamer@CDgaussunit}
+
+  \begin{beamercolorbox}[wd=\beamer@CDcommunicationwidth,
+      ht=4\beamer@CDgaussunit]
+      {structure}
+    \hspace*{-\beamer@CDborderwidth}\tubslogoAbs{37mm}
+  \end{beamercolorbox}
+  \vspace*{-20mm}
+
+  \begin{beamercolorbox}[
+      wd=\beamer@CDcommunicationwidth,ht=4\beamer@CDgaussunit]
+      {structure}
+    \vbox to 4\beamer@CDgaussunit{%
+    \vfill
+    \parbox{\beamer@CDcommunicationwidth}{%
+      \usebeamerfont{author}\raggedleft\insertlogo}
+    \vfill}
+  \end{beamercolorbox}
+  \vspace*{22\beamer@CDgaussunit}
+}
+\defbeamertemplate*{part page}{tubs}[1][]{%
+  \begin{centering}
+    {\usebeamerfont{part name}\usebeamercolor[fg]{part name}\partname~\insertromanpartnumber}
+    \vskip1em\par
+    \begin{beamercolorbox}[sep=8pt,center,#1]{part title}
+      \usebeamerfont{part title}\insertpart\par
+    \end{beamercolorbox}
+  \end{centering}
+}
+\newenvironment{narrowitemize}{%
+  \begin{itemize}%
+    \setlength{\itemsep}{0pt}%
+}{%
+  \end{itemize}%
+}
+\newenvironment{emptyitemize}{%
+  \setbeamertemplate{itemize item}{\ }
+  \setbeamertemplate{itemize subitem}{\rule[0.17em]{0.25em}{0.25em}}
+  \begin{itemize}%
+    \setlength{\itemsep}{0pt}%
+}{%
+  \end{itemize}%
+}
+\defbeamertemplate*{itemize item}{tubs}{\rule[0.15em]{0.3em}{0.3em}}
+\defbeamertemplate*{itemize subitem}{tubs}{\rule[0.17em]{0.25em}{0.25em}}
+\defbeamertemplate*{itemize subsubitem}{tubs}{\textbf{\textendash}}
+\defbeamertemplate*{itemize subsubsubitem}{tubs}{\textperiodcentered}
+\defbeamertemplate{section in toc}{tubs}{%
+  \leavevmode\normalsize\raise-1.5pt\hbox{\rule[0.15em]{0.3em}{0.3em}}\kern1.25ex
+  \inserttocsection\par
+}
+\defbeamertemplate{subsection in toc}{tubs}{%
+  \leavevmode\leftskip=1.5em\hbox{\rule[0.17em]{0.25em}{0.25em}}%
+  \kern1ex\inserttocsubsection\par
+}
+\defbeamertemplate{subsubsection in toc}{tubs}{%
+  \leavevmode\normalsize\usebeamerfont{subsection in
+    toc}\leftskip=3em\usebeamerfont{subsubsection in toc}%
+  \hbox{\textasteriskcentered}%
+  \kern0.75ex\inserttocsubsubsection\par
+}
+\setbeamertemplate{items}[tubs]
+\setbeamertemplate{sections/subsections in toc}[tubs]
+\setlength{\leftmargini}{1.3em}
+\setlength{\leftmarginii}{1.3em}
+\setlength{\leftmarginiii}{1.3em}
+\setlength{\leftmarginiv}{1.3em}
+\setbeamertemplate{caption}[numbered]
+\mode<all>
+\endinput
+%%
+%% End of file `beamerinnerthemetubs.sty'.

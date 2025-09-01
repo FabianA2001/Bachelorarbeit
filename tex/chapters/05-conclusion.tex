@@ -1,24 +1,29 @@
-\chapter{Conclusion (and Future Work)}
-% \begin{itemize}
-%     \item meine Random instanzen waren nicht normalverteilt
-%     \item Könnte man in zukunft anschauen
-%     \item gibt Paper mit einfachen Polygone mit normalverteilter Triangulierung
-% \end{itemize}
-In dieser Arbeit wurde das neuartige Problem der gradbeschränkten Triangulierungen (Degree Constrained Triangulations, DCT) untersucht.
-Dabei wurde es als Entscheidungsproblem sowie als Optimierungsproblem betrachtet.
-Für das Entscheidungsproblem wurde eine Kanten basierte und eine dreiecksbasierte Kodierung entwickelt.
-Hierbei wurde ein Fokus auf das fixieren und ausschließen von Kanten gelegt.
-Beide wurden als Mathematische und KNF Formulierungen umgesetzt.
-Diese Formulierungen wurden mit PySAT, Gurobi und OR-Tools implementiert.
-Diese Implementierungen wurden an zuvor generierten Instanzen getestet.
-Es wurden fünf verschiedene Instanztypen entwickelt, um sowohl lösbare als auch unlösbare Fälle zu erzeugen.
-Die experimentelle Evaluation zeigte, dass insbesondere OR-Tools die besten Ergebnisse liefern konnte und Instanzen bis zu einer Größe von 170 Knoten löst.
-Zuästzlich wurde mit dem CDCL Ansatz eine Theoretische möglichkeit gefunden den Lösungsprozess zu optimieren.
-Dennoch bleibt die Skalierbarkeit auf große Instanzen eine Herausforderung, da die vorgestellten Verfahren vor allem für kleinere Punktmengen praktikabel sind.
-Darüber hinaus wurde festgestellt, dass die Struktur der Instanzen, insbesondere die Verteilung der Kantenlängen und Knotengrade, einen erheblichen Einfluss auf die Schwierigkeit der Instanz hat.
+\chapter{Fazit und Ausblick}
+In dieser Arbeit wurde das neuartige Problem DCT untersucht. 
+Dabei erfolgte die Betrachtung sowohl als Entscheidungsproblem als auch Optimierungsproblem. 
+Für das Entscheidungsproblem wurden zwei Modellierungen entwickelt, eine kantenbasierte und eine dreiecksbasierte Formulierung. 
+Darüber hinaus wurden fünf verschiedene Instanztypen konstruiert, um sowohl lösbare als auch unlösbare Fälle zu erzeugen.
+Bei der kantenbasierten Modellierung zeigte sich, dass OR-Tools in Kombination mit der Fixierung der Hülle sowie ausgewählter möglicher Kanten und unter Einbezug der alternativen Kantenbeschränkung die besten Ergebnisse erzielte. 
+Mit diesem Ansatz konnten Instanzen mit einer Knotenanzahl von bis zu 220 gelöst werden. 
+Für jede getestete Instanzart konnten mindestens 170 Knoten erfolgreich gelöst werden. 
 
-Ein vielversprechender Ausblick besteht darin, die vorgestellten Verfahren hinsichtlich ihrer Skalierbarkeit zu verbessern, etwa durch leistungsfähigere Heuristiken oder hybride Ansätze, die exakte und heuristische Methoden kombinieren.
-Zudem wäre es interesannt bei der Instanzengenerierung auf normalverteilte Triangulierungen zu achten, um einheitliche Szenarien abzubilden.
+Auch bei der dreiecksbasierenden Modellierung lieferte OR-Tools die besten Resultate. 
+Es konnte festgestellt werden, dass diese Modellierung für alle Instanztypen, unabhängig von ihrer vermeintlichen Schwierigkeit, vergleichbare Ergebnisse erzielte. 
+Zusätzlich wurde mit dem CDCL-Ansatz eine theoretische Möglichkeit aufgezeigt, den Lösungsprozess weiter zu optimieren. 
+Dennoch bleibt die Skalierbarkeit auf große Instanzen eine zentrale Herausforderung, da die vorgestellten Verfahren insbesondere für kleinere Knotenmengen praktikabel sind. 
+Darüber hinaus zeigte sich, dass die Struktur der Instanzen, insbesondere die Verteilung der Kantenlängen und Knotengrade, bei der kantenbasierten Formulierung einen erheblichen Einfluss auf die Schwierigkeit der Instanz hat.
 
-\fabian{Dreicke mehr nennen}
-\fabian{@Michael oder Phillip: Habt ihr noch Ideen was in den Schluss muss?}
+Ein vielversprechender Ausblick besteht darin, die vorgestellten Verfahren im Hinblick auf ihre Skalierbarkeit zu verbessern. 
+Eine interessante Möglichkeit wäre, den Arbeitsspeicherverbrauch der Ansätze systematisch zu vergleichen, da dieser insbesondere bei großen Instanzen zu Problemen geführt hat. 
+Ebenso könnte die dreiecksbasierte Modellierung genauer untersucht werden, um zu verstehen, weshalb alle Instanztypen als ähnlich schwierig erschienen. 
+Genauso interessant wäre es zu untersuchen, warum bei der Kantenbedingung die Optimierungen bei OR-Tools in Kombination geholfen haben und bei PySAT und Gurobi nur einzeln.
+Darüber hinaus bietet der \emph{Propagation}-Ansatz weiteres Potenzial, da hierbei die Eigenschaft genutzt werden könnte, dass Kanten isoliert in Teilinstanzen auftreten. 
+So können diese Kanten genutzt werden, um mit zwei weiteren die Instanz zu halbieren.
+Schließlich wäre es interessant, bei der Instanzgenerierung normalverteilte Triangulierungen zu berücksichtigen, um einheitlichere und realistischere Szenarien abzubilden.
+
+Ein interessante Abwandlung des Problems wäre es, wenn in der Triangulierung Kanten vorgegeben sind, die immer genutzt werden müssen.
+Dies wurde in~\cref{sec:kanten_vorab_berechnen} teilweise betrachtet, aber nicht als eigenes Problem.
+Dieses Problem könnte man noch weiter abwandeln, indem man keine Knotenmengen, sondern Polygone mit und ohne Löcher nutzt.
+Auch könnte man das in~\cref{sec:einleitung:min-degree} genannte \emph{Min-Degree Constrained Minimum Spanning Tree} abwandeln, sodass der Sollgrad exakt und nicht als Mindestgrad betrachtet wird.
+
+

@@ -6,9 +6,11 @@ ZIEL="/Users/fabian/uni/Bachelorarbeit/tex/bachelorarbeit-fabian-alich/tex"
 
 git -C "$QUELLE/." pull
 
+cp "$QUELLE/beamer.tex" $ZIEL
 cp "$QUELLE/thesis.tex" $ZIEL
-cp "$QUELLE/chapters"/*.tex "$ZIEL/chapters"
-cp "$QUELLE/figures"/* "$ZIEL/figures"
+cp -r "$QUELLE/beamer_chapters"/*.tex "$ZIEL/beamer_chapters"
+cp -r "$QUELLE/chapters"/*.tex "$ZIEL/chapters"
+cp -r "$QUELLE/figures"/* "$ZIEL/figures"
 cp "$QUELLE/bibliography.bib" "$ZIEL/bibliography.bib"
 
 echo "Alle .tex-Dateien wurden von $QUELLE nach $ZIEL kopiert."
