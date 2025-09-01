@@ -34,7 +34,6 @@ profile.json
 *.fls
 *.out
 *.toc
-*.fmt
 *.fot
 *.cb
 *.cb2
@@ -116,7 +115,6 @@ acs-*.bib
 *.mp
 *.t[1-9]
 *.t[1-9][0-9]
-*.tfm
 
 #(r)(e)ledmac/(r)(e)ledpar
 *.end
