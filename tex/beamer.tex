@@ -1,11 +1,11 @@
 % Offizielle Beispieldatei für beamer-Vorlage aus tubslatex Version 0.3beta2
 
 % Folien
-% \documentclass[fleqn,11pt,aspectratio=43]{beamer}
+\documentclass[fleqn,11pt,aspectratio=43]{beamer}
 % Notizen
 % \documentclass[notes=only,aspectratio=169]{beamer}
 % Folien + Notizen
-\documentclass[fleqn,11pt,aspectratio=169, notes]{beamer}
+% \documentclass[fleqn,11pt,aspectratio=169, notes]{beamer}
 
 
 \usetheme[%
@@ -68,8 +68,13 @@
 
 % \end{minipage}
 
-\newcommand{\e}[2]{\textbf{#1} -> #2}
+\usepackage{todonotes}
+\newcommand{\fabian}[1]{\todo[inline,color=blue!20]{FA: #1}}
+
 \newcommand{\gleicheSeite}[0]{\bigskip\bigskip \item \textcolor{red}{\textbf{gleiche Seite!!!}}}
+\newcommand{\pageText}[1]{\centering \LARGE #1}
+
+\DeclareMathOperator{\degrees}{deg^*}
 
 \begin{document}
 \begin{frame}[plain]
