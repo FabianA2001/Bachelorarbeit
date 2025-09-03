@@ -2,7 +2,7 @@
 \begin{frame}
     \partpage
 \end{frame}
-
+\section{Vorbereitung PySAT}
 \begin{frame}{Solver}
     \begin{columns}
         \begin{column}{0.33\textwidth}
@@ -23,6 +23,148 @@
     \end{columns}
 \end{frame}
 
-\begin{frame}{Permuation}
-    
+\begin{frame}{Grad Codierung}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{eval5/gesamt.pdf}
+\end{figure}  
 \end{frame}
+
+\begin{frame}{PySAT Solver}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=0.95\linewidth]{eval3/eval3.pdf}
+\end{figure}  
+\end{frame}
+
+\section{Entscheidungsproblem}
+
+\begin{frame}{Dreiecke Bedingungen}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{eval1/tri.pdf}
+\end{figure}  
+\end{frame}
+
+\begin{frame}{PySAT Bedingungen}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{eval1/sat.pdf}
+\end{figure}  
+\end{frame}
+
+\begin{frame}{Gurobi Bedingungen}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{eval1/gurobi.pdf}
+\end{figure}  
+\end{frame}
+
+\begin{frame}{OR-Tools Bedingungen}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{eval1/ortools.pdf}
+\end{figure}  
+\end{frame}
+
+
+
+\begin{frame}{Solver Vergleich}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{eval1/gesamt.pdf}
+\end{figure}  
+\end{frame}
+
+\begin{frame}{Größerer Timeout}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{eval15/punkte_eval15.pdf}
+\end{figure}  
+\end{frame}
+
+\begin{frame}{Ja Nein getrennt}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{eval15/ja_nein_eval15.pdf}
+\end{figure}  
+\end{frame}
+
+\section{Optimierungsproblem}
+
+\begin{frame}{Ja Instanz}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{eval11/eval_progression_36.pdf}
+\end{figure}  
+\end{frame}
+
+\begin{frame}{Nein Instanz}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{eval11/eval_progression_39.pdf}
+\end{figure}  
+\end{frame}
+
+\section{Schwierigkeit}
+\begin{frame}{Anzahl Lösungen}
+\begin{minipage}{0.5\textwidth}
+    \begin{figure}[h]
+     \centering
+     \includegraphics[width=1\linewidth]{eval8/delaunay_008_delaunay_50_0.pdf} 
+    \end{figure}
+\end{minipage}
+\hfill %wichtig, hier keine leerzeile im code
+\begin{minipage}{0.49\textwidth}
+    \begin{figure}[h]
+     \centering
+     \includegraphics[width=1\linewidth]{eval8/delaunay_008_delaunay_50_1.pdf} 
+    \end{figure}
+\end{minipage}
+\end{frame}
+
+\begin{frame}{Gradverteilung}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\linewidth]{gradverteilung.pdf}
+\end{figure}  
+\end{frame}
+
+\begin{frame}{Kantenlängen}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\linewidth]{edge_length_distribution_plots.pdf}
+\end{figure}  
+\end{frame}
+
+\section{CDCL}
+
+\begin{frame}{CaDiCaL}
+    \pageText{CaDiCaL Simplified Satisfiability Solver}
+\end{frame}
+
+\begin{frame}{Teilinstanz}
+%    \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.9\linewidth]{cdcl/propergation.pdf}
+% \end{figure}  
+\pageText{Isolierte Kante Teilinstanz einfügen}
+\end{frame}
+
+\begin{frame}{Teilinstanz}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\linewidth]{cdcl/propergation.pdf}
+\end{figure}  
+\end{frame}
+
+\begin{frame}{Propagation}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{cdcl/counter_vs_first_node_operation_by_instance.pdf}
+\end{figure}  
+\end{frame}
+
+
+
+

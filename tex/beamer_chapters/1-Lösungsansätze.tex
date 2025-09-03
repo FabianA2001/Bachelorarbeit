@@ -10,12 +10,28 @@
 \end{figure}  
 \end{frame}
 
+\note[itemize]{
+    \item vollständiger Graph erstellt
+    \item Kanten kein Knoten schneiden
+    \item jede Kante Variable
+    \item _
+    \item notwendige Bedingungen
+    \item optionale Bedingungen
+    \item 
+}
+
 \begin{frame}{Überschneidungsbedingung}
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.6\linewidth]{beamer/Überschneidung.pdf}
 \end{figure}  
 \end{frame}
+
+\note[itemize]{
+    \item Kanten dürfen sich nicht schneiden
+    \item Kreuzende Paare finden
+    \item nur eine Kante pro Paar
+}
 
 \begin{frame}{Gradbeschränkung}
 \begin{figure}[h]
@@ -24,24 +40,72 @@
 \end{figure}  
 \end{frame}
 
-\begin{frame}{Gradbeschränkung}
-   \pageText{Durchschnitt} 
-\end{frame}
-\begin{frame}{Gradbeschränkung}
-    \pageText{Max min}
-\end{frame}
+\note[itemize]{
+    \item inzidente Kanten gleich Sollgrad
+    \item Sollgrad 3
+    \item 3 von 6 aktiv
+}
+
 \begin{frame}{Maximale Kanten}
     \fabian{Formal raus?}
     % \pageText{\(6 n - 6 - 2k \overset{!}{=} \sum \degrees(i)\)}
     \pageText{\(\text{Anzahl Kanten} \cdot 2 \overset{!}{=} \sum \text{Sollgrad}\)}
 \end{frame}
 
+\note[itemize]{
+    \item Validieren das Sollgrade möglich
+    \item Anzahl Kanten: \(3n - 3 - k\)
+    \begin{itemize}
+        \item n: alle Knoten
+        \item k: Knoten auf Hülle
+    \end{itemize}
+    \item wenn nicht stimmt keine Lösung möglich
+    \item testet indirekt Kanten maximal
+}
+
+\begin{frame}{Gradbeschränkung}
+    \fabian{Durchschnitt}
+\end{frame}
+
+\note[itemize]{
+    \item Zielfunktion kein Gradbeschränkung
+    \item Maximal zusätzlich Prüfen
+    \item _
+    \item Differenz zwischen Soll und Istgrad
+    \item Differenz durch Sollgrad für Prozentuale abweichung
+    \item Summe durch Anzahl
+    \item Durchschnitt der Prozentualen Abbildung
+}
+
+
+\begin{frame}{Gradbeschränkung}
+    \fabian{Max min}
+\end{frame}
+
+\note[itemize]{
+    \item Maximale Abweichung Minimieren
+    \item var mindestens groß wie jede abweichung
+    \item diese var minimieren
+}
+
 \begin{frame}{alternative Kantenbedingung}
+    \fabian{sollte ich hier eine Refernz auf euer Paper machen?}
     \begin{figure}[h]
     \centering
     \includegraphics[width=0.7\linewidth]{all_edges.pdf}
 \end{figure}  
 \end{frame}
+
+\note[itemize]{
+    \item maximiert Kanten
+    \item für jede Kante gild
+    \begin{itemize}
+        \item Kante ist aktiv
+        \item oder Schnittkante aktive
+    \end{itemize}
+    \item für gegebenen Graphen alle Triangulierungen
+    \item immer e1 aktiv oder schnittkante
+}
 
 \begin{frame}{Hülle Fixieren}
     \begin{figure}[h]
@@ -120,6 +184,6 @@
 \end{frame}
 
 \begin{frame}{Subset}
-    \pageText{Soll ich subset erklären oder weglassen?} 
+    \fabian{ich habe jetzt subset in den Diagrammen drin, ist aber schlecht. Soll ich das dann hier erklären oder wie mache ich das am besten? Einfach nur auf die Arbeit verweisen?}
 \end{frame}
 
