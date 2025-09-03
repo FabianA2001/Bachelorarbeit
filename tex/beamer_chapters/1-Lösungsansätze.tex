@@ -14,7 +14,7 @@
     \item vollständiger Graph erstellt
     \item Kanten kein Knoten schneiden
     \item jede Kante Variable
-    \item _
+    \item 
     \item notwendige Bedingungen
     \item optionale Bedingungen
     \item 
@@ -68,15 +68,14 @@
 \end{frame}
 
 \note[itemize]{
-    \item Zielfunktion kein Gradbeschränkung
+    \item Zielfunktion keine Gradbeschränkung
     \item Maximal zusätzlich Prüfen
-    \item _
+    \item .
     \item Differenz zwischen Soll und Istgrad
     \item Differenz durch Sollgrad für Prozentuale abweichung
     \item Summe durch Anzahl
     \item Durchschnitt der Prozentualen Abbildung
 }
-
 
 \begin{frame}{Gradbeschränkung}
     \fabian{Max min}
@@ -114,7 +113,11 @@
 \end{figure}  
 \end{frame}
 
-
+\note[itemize]{
+    \item Hülle immer fixieren
+    \item keine Schnittkanten -> für maximal
+    \item Grad muss damit erfüllbar sein
+}
 
 \begin{frame}{Kanten Fixieren / Ausschließen}
     \begin{figure}[h]
@@ -122,6 +125,27 @@
     \includegraphics[width=0.8\linewidth]{exclude_edges/ecludegrade2.pdf}
 \end{figure}  
 \end{frame}
+
+\note[itemize]{
+    \item Sei Hüllen abschnitt
+    \item betrachte immer drei Knoten in Reinfolge
+    \item Beispiel v1,v2,v3
+    \item wenn v2 grad 2
+    \begin{itemize}
+        \item e1 aktiv
+        \item sonnst muss Kante wie e2 aktiv
+        \item sollgrad von v2 zu hoch
+    \end{itemize}
+    \item wenn v2 größer 2
+    \begin{itemize}
+        \item e1 nicht aktiv
+        \item sollgrad von v2 sonnst nicht erfüllbar
+    \end{itemize}
+    \item v2 kleiner 2 nicht möglich
+    \begin{itemize}
+        \item in Triangulierung
+    \end{itemize}
+}
 
 \begin{frame}{Kanten Ausschließen}
     \begin{minipage}{0.48\textwidth}
@@ -135,12 +159,36 @@
     \end{minipage}
 \end{frame}
 
+\note[itemize]{
+    \item Links
+    \begin{itemize}
+        \item \(\left| E \right| \cdot 2 > \sum_{v \in V} \degrees(v)\)
+        \item benötiget 14 Kanten und somit Summengrad von 28
+        \item können nur 27 erreichen
+    \end{itemize}
+    \item rechts
+    \begin{itemize}
+        \item \(\degrees(v) > \left| V \right| - 1 \quad \forall v \in (V \setminus V_H)\)
+        \item können 3 hinzufügen
+        \item Sollgrad von 5
+    \end{itemize}
+}
+
 \begin{frame}{Kanten Ausschließen}
     \begin{figure}[h]
     \centering
     \includegraphics[width=0.7\linewidth]{exclude_edges/exclude_edge_intersection.pdf}
 \end{figure}  
 \end{frame}
+
+\note[itemize]{
+    \item Kante ausschließen weil Schnittkanten
+    \item e1 kante zum ausschließen
+    \item v1 hat Sollgrad 3
+    \item v1 hat 5 mögliche Kanten
+    \item e1 schneidet drei
+    \item wenn e1 aktiv Sollgrad nicht möglich
+}
 
 \section{Dreiecksansatz}
 \begin{frame}{Dreiecksansatz}
@@ -149,6 +197,11 @@
     \includegraphics[width=0.6\linewidth]{beamer/Dreieck_erklärung.pdf}
 \end{figure}  
 \end{frame}
+
+\note[itemize]{
+    \item alle leeren dreiecke erstellen
+    \item jedes Dreieck Variable
+}
 
 \begin{frame}{Gradbeschränkung}
     \begin{minipage}{0.56\textwidth}
@@ -162,12 +215,26 @@
     \end{minipage}
 \end{frame}
 
+\note[itemize]{
+    \item keine Zielfunktion nur Entscheidungsproblem
+    \item Sollgrad gleich Anzahl Dreiecke
+    \item Hülle gesondert betrachten
+}
+
 \begin{frame}{Überschneidungsbedingung}
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.7\linewidth]{beamer/Überschneidung_tri.pdf}
 \end{figure} 
 \end{frame}
+
+\note[itemize]{
+    \item überschneidene Dreiecke verbieten
+    \item .
+    \item für jede kante links gleich rechts
+    \item beide aktiv
+    \item keins aktiv
+}
 
 \begin{frame}{Überschneidungsbedingung}
 \begin{figure}[h]
@@ -176,12 +243,24 @@
 \end{figure} 
 \end{frame}
 
+\note[itemize]{
+    \item Hüllenknoten gesondert
+    \item links immer aktiv
+    \item dabei Gegenden Uhrzeiger sinn betrachten
+    \item somit links innere
+}
+
 \begin{frame}{Dreiecks Ausschließen}
     \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\linewidth]{beamer/Dreieck_ausschließen.pdf}
 \end{figure} 
 \end{frame}
+
+\note[itemize]{
+    \item einzige optionale Bedingung
+    \item wenn Kante ausgeschlossen alle zugehörigen dreiecke ausschließen
+}
 
 \begin{frame}{Subset}
     \fabian{ich habe jetzt subset in den Diagrammen drin, ist aber schlecht. Soll ich das dann hier erklären oder wie mache ich das am besten? Einfach nur auf die Arbeit verweisen?}
