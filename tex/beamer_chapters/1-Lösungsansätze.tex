@@ -6,10 +6,9 @@
 \begin{frame}{Kantenansatz}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\linewidth]{beamer/Kanten_erklärung.pdf}
+    \includegraphics[width=0.5\linewidth]{beamer/Kanten_erklärung.pdf}
 \end{figure}  
 \end{frame}
-
 \note[itemize]{
     \item vollständiger Graph erstellt
     \item Kanten kein Knoten schneiden
@@ -23,7 +22,7 @@
 \begin{frame}{Überschneidungsbedingung}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.6\linewidth]{beamer/Überschneidung.pdf}
+    \includegraphics[width=0.45\linewidth]{beamer/Überschneidung.pdf}
 \end{figure}  
 \end{frame}
 
@@ -33,20 +32,22 @@
     \item nur eine Kante pro Paar
 }
 
-\begin{frame}{Gradbeschränkung}
+\begin{frame}{Gradbeschränkung (Entscheidungsproblem)}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.6\linewidth]{beamer/Gradbeschränkung.pdf}
+    \includegraphics[width=0.47\linewidth]{beamer/Gradbeschränkung.pdf}
 \end{figure}  
 \end{frame}
 
 \note[itemize]{
+    \item entscheiden 
+    \item ja nein
     \item inzidente Kanten gleich Sollgrad
     \item Sollgrad 3
     \item 3 von 6 aktiv
 }
 
-\begin{frame}{Maximale Kanten}
+\begin{frame}{Maximale Kanten (Entscheidungsproblem)}
     \fabian{Formal raus?}
     % \pageText{\(6 n - 6 - 2k \overset{!}{=} \sum \degrees(i)\)}
     \pageText{\(\text{Anzahl Kanten} \cdot 2 \overset{!}{=} \sum \text{Sollgrad}\)}
@@ -63,12 +64,16 @@
     \item testet indirekt Kanten maximal
 }
 
-\begin{frame}{Gradbeschränkung}
-    \fabian{Durchschnitt}
+\begin{frame}{Gradbeschränkung (Optimierungsproblem)}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\linewidth]{beamer/Durchschnitt.pdf}
+\end{figure}
 \end{frame}
 
 \note[itemize]{
     \item Zielfunktion keine Gradbeschränkung
+    \item immer so nah wie möglich
     \item Maximal zusätzlich Prüfen
     \item .
     \item Differenz zwischen Soll und Istgrad
@@ -77,8 +82,11 @@
     \item Durchschnitt der Prozentualen Abbildung
 }
 
-\begin{frame}{Gradbeschränkung}
-    \fabian{Max min}
+\begin{frame}{Gradbeschränkung (Optimierungsproblem)}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\linewidth]{beamer/Min_Max.pdf}
+\end{figure}
 \end{frame}
 
 \note[itemize]{
@@ -91,7 +99,7 @@
     \fabian{sollte ich hier eine Refernz auf euer Paper machen?}
     \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\linewidth]{all_edges.pdf}
+    \includegraphics[width=0.5\linewidth]{all_edges.pdf}
 \end{figure}  
 \end{frame}
 
@@ -109,7 +117,7 @@
 \begin{frame}{Hülle Fixieren}
     \begin{figure}[h]
     \centering
-    \includegraphics[width=0.6\linewidth]{beamer/Hülle.pdf}
+    \includegraphics[width=0.45\linewidth]{beamer/Hülle.pdf}
 \end{figure}  
 \end{frame}
 
@@ -122,7 +130,7 @@
 \begin{frame}{Kanten Fixieren / Ausschließen}
     \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\linewidth]{exclude_edges/ecludegrade2.pdf}
+    \includegraphics[width=0.7\linewidth]{exclude_edges/ecludegrade2.pdf}
 \end{figure}  
 \end{frame}
 
@@ -150,12 +158,12 @@
 \begin{frame}{Kanten Ausschließen}
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{exclude_edges/exclude_edge_0.pdf}
+        \includegraphics[width=0.75\textwidth]{exclude_edges/exclude_edge_0.pdf}
     \end{minipage}
     \hfill
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{exclude_edges/exclude_edge_1.pdf}
+        \includegraphics[width=0.7\textwidth]{exclude_edges/exclude_edge_1.pdf}
     \end{minipage}
 \end{frame}
 
@@ -177,7 +185,7 @@
 \begin{frame}{Kanten Ausschließen}
     \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\linewidth]{exclude_edges/exclude_edge_intersection.pdf}
+    \includegraphics[width=0.5\linewidth]{exclude_edges/exclude_edge_intersection.pdf}
 \end{figure}  
 \end{frame}
 
@@ -194,7 +202,7 @@
 \begin{frame}{Dreiecksansatz}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.6\linewidth]{beamer/Dreieck_erklärung.pdf}
+    \includegraphics[width=0.4\linewidth]{beamer/Dreieck_erklärung.pdf}
 \end{figure}  
 \end{frame}
 
@@ -206,12 +214,12 @@
 \begin{frame}{Gradbeschränkung}
     \begin{minipage}{0.56\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{beamer/Gradbeschränkung_tri.pdf}
+        \includegraphics[width=0.7\textwidth]{beamer/Gradbeschränkung_tri.pdf}
     \end{minipage}
     \hfill
     \begin{minipage}{0.40\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{beamer/Gradbeschränkung_tri_edge.pdf}
+        \includegraphics[width=0.7\textwidth]{beamer/Gradbeschränkung_tri_edge.pdf}
     \end{minipage}
 \end{frame}
 
@@ -242,7 +250,7 @@
 \begin{frame}{Überschneidungsbedingung}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.6\linewidth]{beamer/Überschneidung_tri_edge.pdf}
+    \includegraphics[width=0.45\linewidth]{beamer/Überschneidung_tri_edge.pdf}
 \end{figure} 
 \end{frame}
 
