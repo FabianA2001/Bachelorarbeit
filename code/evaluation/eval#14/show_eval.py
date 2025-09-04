@@ -45,7 +45,7 @@ RI = Run_Algbench(
 )
 
 
-def draw(table):
+def draw(table, legend_position="bottom"):
     # Vorbereitung der Daten für das Diagramm
     plot_data = []
 
@@ -157,12 +157,20 @@ def draw(table):
     plt.xticks(
         range(len(unique_x_labels)), unique_display_labels, rotation=90, ha="center"
     )
-    plt.legend(
-        bbox_to_anchor=(0.5, -0.43),
-        loc="upper center",
-        fontsize=LEGENDE_FONT_SIZE,
-        ncol=4,
-    )
+
+    if legend_position == "right":
+        plt.legend(
+            bbox_to_anchor=(1.05, 0.5),
+            loc="center left",
+            fontsize=LEGENDE_FONT_SIZE,
+        )
+    else:  # bottom (default)
+        plt.legend(
+            bbox_to_anchor=(0.5, -0.43),
+            loc="upper center",
+            fontsize=LEGENDE_FONT_SIZE,
+            ncol=4,
+        )
 
     # Achsen-Tick-Größen anpassen
     plt.gca().tick_params(axis="both", which="major", labelsize=ACHSEN_FONT_SIZE)
@@ -193,4 +201,5 @@ if __name__ == "__main__":
     #         " find_counter:",
     #         row["solution"]["counter"],
     #     )
-    draw(table)
+    # Standardmäßig Legende unten, kann geändert werden zu "right"
+    draw(table, legend_position="right")
