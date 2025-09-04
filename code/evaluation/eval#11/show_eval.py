@@ -192,11 +192,18 @@ def eval_table(ri: Run_Algbench):
     return table
 
 
-def draw_all_instances(table: pd.DataFrame, table_border: pd.DataFrame) -> None:
+def draw_all_instances(
+    table: pd.DataFrame, table_border: pd.DataFrame, legend_position: str = "right"
+) -> None:
     """
     Erstellt Diagramme für jede Instanzen in der Tabelle, gruppiert nach Dateinummer.
     Erstellt für jede Zahl im Dateinamen (z.B. 36, 37, 38, 39) eine separate PDF-Datei
     mit Subplots für jede Instanz.
+
+    Args:
+        table: DataFrame mit den Hauptdaten
+        table_border: DataFrame mit den Referenzdaten
+        legend_position: Position der Legende ("bottom", "right", oder "bottom_right")
     """
     import seaborn as sns
 
@@ -423,17 +430,41 @@ def draw_all_instances(table: pd.DataFrame, table_border: pd.DataFrame) -> None:
                 for label in labels:
                     updated_labels.append(handel_names.get(label, label))
 
-                fig.legend(
-                    handles,
-                    updated_labels,
-                    loc="upper center",
-                    bbox_to_anchor=(0.5, 0.0),
-                    ncol=min(3, len(handles)),  # Maximal 3 Einträge pro Zeile
-                    fontsize=LEGENDE_FONT_SIZE,
-                    frameon=True,
-                    fancybox=True,
-                    shadow=True,
-                )
+                if legend_position == "right":
+                    fig.legend(
+                        handles,
+                        updated_labels,
+                        loc="center left",
+                        bbox_to_anchor=(1.0, 0.5),
+                        fontsize=LEGENDE_FONT_SIZE,
+                        frameon=True,
+                        fancybox=True,
+                        shadow=True,
+                    )
+                elif legend_position == "bottom_right":
+                    fig.legend(
+                        handles,
+                        updated_labels,
+                        loc="lower right",
+                        bbox_to_anchor=(0.935, 0.11),
+                        fontsize=LEGENDE_FONT_SIZE,
+                        frameon=True,
+                        fancybox=True,
+                        shadow=True,
+                        bbox_transform=fig.transFigure,
+                    )
+                else:  # bottom (default)
+                    fig.legend(
+                        handles,
+                        updated_labels,
+                        loc="upper center",
+                        bbox_to_anchor=(0.5, 0.0),
+                        ncol=min(3, len(handles)),  # Maximal 3 Einträge pro Zeile
+                        fontsize=LEGENDE_FONT_SIZE,
+                        frameon=True,
+                        fancybox=True,
+                        shadow=True,
+                    )
 
         # Layout optimieren
         fig.tight_layout()
@@ -526,4 +557,5 @@ def border():
 if __name__ == "__main__":
     table = gesamt()
     table_2 = border()
-    draw_all_instances(table, table_2)
+    # Standardmäßig Legende unten, aber kann geändert werden zu "right"
+    draw_all_instances(table, table_2, legend_position="bottom_right")

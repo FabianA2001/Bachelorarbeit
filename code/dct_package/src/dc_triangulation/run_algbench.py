@@ -400,7 +400,10 @@ class Run_Algbench:
         block: bool = False,
         timelimit: int = 300,
         view_line: int = 325,
+        legend_position: str = "right",  # "bottom", "right", "none"
     ):
+        LEGENDE_BOTTOM = legend_position == "bottom"
+        LEGENDE_RIGHT = legend_position == "right"
         """
         Erstellt einen Cactus Plot für die Benchmark-Daten.
         In einem Cactus Plot wird die Zeit (y-Achse) gegen die Anzahl der gelösten
@@ -636,41 +639,83 @@ class Run_Algbench:
             if ax.get_legend():
                 ax.get_legend().remove()
 
-        # Eine gemeinsame Legende für die gesamte Figur - unter allen Plots über die komplette Breite
-        handles, labels = axes[0].get_legend_handles_labels()
-        if handles:
-            replace = {
-                "gurobi": "Gurobi",
-                "Ortools": "OR-Tools",
-                "OrTools_tri-Kanten ausschließen": "OR-Tools (Tri) Kanten ausschließen",
-                "OrTools_tri-normal": "OR-Tools (tri) normal",
-                "SAT_TRI-Kanten ausschließen": "SAT (tri) Kanten ausschließen",
-                "SAT_TRI-normal": "SAT (tri) normal",
-                "gurobi_tri-Kanten ausschließen": "Gurobi (tri) Kanten ausschließen",
-                "gurobi_tri-normal": "Gurobi (tri) normal",
-                "OrTools_tri": "OR-Tools (tri)",
-            }
-            label_names = []
-            for label in labels:
-                if label in replace:
-                    label_names.append(
-                        replace[label].replace("SAT", "PySAT").replace("Sat", "PySAT")
-                    )
-                else:
-                    label_names.append(
-                        label.replace("SAT", "PySAT").replace("Sat", "PySAT")
-                    )
-            fig.legend(
-                handles,
-                label_names,
-                loc="upper center",
-                bbox_to_anchor=(0.5, 0.0),
-                ncol=min(3, len(handles)),  # Maximal 3 Einträge pro Zeile
-                fontsize=LEGENDE_FONT_SIZE,
-                frameon=True,
-                fancybox=True,
-                shadow=True,
-            )
+        if LEGENDE_BOTTOM:
+            # Eine gemeinsame Legende für die gesamte Figur - unter allen Plots über die komplette Breite
+            handles, labels = axes[0].get_legend_handles_labels()
+            if handles:
+                replace = {
+                    "gurobi": "Gurobi",
+                    "Ortools": "OR-Tools",
+                    "OrTools_tri-Kanten ausschließen": "OR-Tools (Tri) Kanten ausschließen",
+                    "OrTools_tri-normal": "OR-Tools (tri) normal",
+                    "SAT_TRI-Kanten ausschließen": "SAT (tri) Kanten ausschließen",
+                    "SAT_TRI-normal": "SAT (tri) normal",
+                    "gurobi_tri-Kanten ausschließen": "Gurobi (tri) Kanten ausschließen",
+                    "gurobi_tri-normal": "Gurobi (tri) normal",
+                    "OrTools_tri": "OR-Tools (tri)",
+                }
+                label_names = []
+                for label in labels:
+                    if label in replace:
+                        label_names.append(
+                            replace[label]
+                            .replace("SAT", "PySAT")
+                            .replace("Sat", "PySAT")
+                        )
+                    else:
+                        label_names.append(
+                            label.replace("SAT", "PySAT").replace("Sat", "PySAT")
+                        )
+                fig.legend(
+                    handles,
+                    label_names,
+                    loc="upper center",
+                    bbox_to_anchor=(0.5, 0.0),
+                    ncol=min(3, len(handles)),  # Maximal 3 Einträge pro Zeile
+                    fontsize=LEGENDE_FONT_SIZE,
+                    frameon=True,
+                    fancybox=True,
+                    shadow=True,
+                )
+        elif LEGENDE_RIGHT:
+            # Eine gemeinsame Legende rechts von allen Plots
+            handles, labels = axes[0].get_legend_handles_labels()
+            if handles:
+                replace = {
+                    "gurobi": "Gurobi",
+                    "Ortools": "OR-Tools",
+                    "OrTools_tri-Kanten ausschließen": "OR-Tools (Tri) Kanten ausschließen",
+                    "OrTools_tri-normal": "OR-Tools (tri) normal",
+                    "SAT_TRI-Kanten ausschließen": "SAT (tri) Kanten ausschließen",
+                    "SAT_TRI-normal": "SAT (tri) normal",
+                    "gurobi_tri-Kanten ausschließen": "Gurobi (tri) Kanten ausschließen",
+                    "gurobi_tri-normal": "Gurobi (tri) normal",
+                    "OrTools_tri": "OR-Tools (tri)",
+                }
+                label_names = []
+                for label in labels:
+                    if label in replace:
+                        label_names.append(
+                            replace[label]
+                            .replace("SAT", "PySAT")
+                            .replace("Sat", "PySAT")
+                        )
+                    else:
+                        label_names.append(
+                            label.replace("SAT", "PySAT").replace("Sat", "PySAT")
+                        )
+                fig.legend(
+                    handles,
+                    label_names,
+                    loc="center left",
+                    bbox_to_anchor=(1.0, 0.5),
+                    fontsize=LEGENDE_FONT_SIZE,
+                    frameon=True,
+                    fancybox=True,
+                    shadow=True,
+                )
+        else:
+            pass
 
         # Layout optimieren
         fig.tight_layout()
