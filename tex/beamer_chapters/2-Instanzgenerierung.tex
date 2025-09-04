@@ -20,11 +20,22 @@
 }
 
 \begin{frame}{Flip}
+    \fabian{Soll ich das als Animation }
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.6\linewidth]{Flip.pdf}
 \end{figure}   
 \end{frame}
+
+\note[itemize]{
+    \item Graphoperation
+    \item Kanten verändern
+    \item Anzahl begrenzt
+    \item können nicht nur hinzufügen
+    \item oder löschen
+    \item Triangulierung nur diagonale Flips
+    \item konvexes Viereck andere Kante
+}
 
 \begin{frame}{Delaunay-Flips}
 \begin{figure}[h]
@@ -32,19 +43,10 @@
     \includegraphics[width=0.6\linewidth]{example/000_Delaunay_Flips_20.json.pdf}
 \end{figure}   
 \end{frame}
-
-\begin{frame}{Greedy}
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.6\linewidth]{example/002_Greedy_20.json.pdf}
-\end{figure}   
-\end{frame}
-\begin{frame}{Random}
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.6\linewidth]{example/004_Random_20.json.pdf}
-\end{figure}   
-\end{frame}
+\note[itemize]{
+    \item k viele Flips
+    \item mehr längere Kanten und hohe grade als Delaunay
+}
 
 \begin{frame}{Iterativ}
 \begin{figure}[h]
@@ -53,21 +55,76 @@
 \end{figure}   
 \end{frame}
 
+\note[itemize]{
+    \item alle Möglichen Kanten bestimmen
+    \item schneiden keinen Knoten
+    \item erstellreinfolge einfügen, kein Schnitt
+    \item erster hoher grad, kein Schnitt
+    \item lange Kanten
+}
+
+\begin{frame}{Greedy}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\linewidth]{example/002_Greedy_20.json.pdf}
+\end{figure}   
+\end{frame}
+
+\note[itemize]{
+    \item wie iterativ kanten erstellen
+    \item größe aufsteigend sortieren
+    \item einfügen wenn kein Schnitt
+    \item ähnelich zu Delaunay
+    \item also kürer verteile Grade
+}
+
+\begin{frame}{Random}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\linewidth]{example/004_Random_20.json.pdf}
+\end{figure}   
+\end{frame}
+\note[itemize]{
+    \item auch Kanten erstellen
+    \item zufällige Reihenfolge betrachten
+    \item einfügen wenn kein Schnitt
+    \item keine generell Bild
+    \item eher Lang und hoher grad
+    \item weniger als Iterativ
+}
+
 \section{Nein-Instanz}
 
 \begin{frame}{Move}
-    \fabian{Bild erstellen}
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=0.6\linewidth]{example/003_Iterative_20.json.pdf}
-% \end{figure}   
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\linewidth]{beamer/move.pdf}
+\end{figure}   
 \end{frame}
 
+\note[itemize]{
+    \item Gradsumme wird überprüft
+    \item Gradsumme muss gleich
+    \item .
+    \item wert abziehen und draufaddieren
+    \item Bereich festlegen
+    \item mehrmals zahl aus bereich auswählen
+    \item zwei verschiedene Kntoen auswählen
+    \item hier 2 und (rote Knoten)
+    \item knoten eins danach mindests 2
+    \item knoten zwei danach kleiner als gesamt - 1
+}
+
 \begin{frame}{Change}
-    \fabian{Bild erstellen}
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=0.6\linewidth]{example/003_Iterative_20.json.pdf}
-% \end{figure}   
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\linewidth]{beamer/change.pdf}
+\end{figure}   
 \end{frame}
+
+\note[itemize]{
+    \item zwei verschiedene knoten auswählen
+    \item Sollgrad tauschen
+}
+
 
