@@ -71,7 +71,6 @@
 
 \begin{frame}{Maximale Kanten (Entscheidungsproblem)}
     \fabian{Formal raus?}
-    % \pageText{\(6 n - 6 - 2k \overset{!}{=} \sum \degrees(i)\)}
     \pageText{\(\text{Anzahl Kanten} \cdot 2 \overset{!}{=} \sum \text{Sollgrad}\)}
 \end{frame}
 
@@ -185,19 +184,22 @@
     \end{itemize}
 }
 
-%Zahlen ausschließen
 \begin{frame}{Kanten Ausschließen}
     \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.75\textwidth]{exclude_edges/exclude_edge_0.pdf}
+        \pageText{
+            \begin{tabular}{l@{\quad}l}
+                \onslide<2->{\large Anzahl Kanten} & \onslide<2->{14}\\
+                \onslide<3->{\large Benötigte Sollgrade } & \onslide<3->{28}\\
+                \onslide<4->{\large Summe Sollgrade} & \onslide<4->{27}
+            \end{tabular}
+        }
     \end{minipage}
     \hfill
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=0.7\textwidth]{exclude_edges/exclude_edge_1.pdf}
+        \includegraphics[width=0.75\textwidth]{exclude_edges/exclude_edge_0.pdf}
     \end{minipage}
 \end{frame}
-
 \note[itemize]{
     \item alle Kanten testen die Teilen
     \item Kntoen auf Hülle
@@ -207,13 +209,20 @@
         \item benötiget 14 Kanten und somit Summengrad von 28
         \item können nur 27 erreichen (mit A und B)
     \end{itemize}
-    \item rechts
-    \begin{itemize}
-        \item \(\degrees(v) > \left| V \right| - 1 \quad \forall v \in (V \setminus V_H)\)
-        \item können 3 hinzufügen
-        \item Sollgrad von 5
-        \item alle testen außer A und B
-    \end{itemize}
+}
+
+
+\begin{frame}{Kanten Ausschließen}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\linewidth]{exclude_edges/exclude_edge_1.pdf}
+\end{figure}  
+\end{frame}
+\note[itemize]{
+    \item \(\degrees(v) > \left| V \right| - 1 \quad \forall v \in (V \setminus V_H)\)
+    \item können 3 hinzufügen
+    \item Sollgrad von 5
+    \item alle testen außer A und B
 }
 
 \begin{frame}{Kanten Ausschließen}
@@ -232,7 +241,6 @@
     \item e1 schneidet drei
     \item wenn e1 aktiv Sollgrad nicht möglich
 }
-%Ersten Abschnitt Vorher zusammenfassen
 \section{Dreiecksansatz}
 \begin{frame}{Dreiecksansatz}
 \begin{figure}[h]
@@ -309,7 +317,4 @@
     \item wenn Kante ausgeschlossen alle zugehörigen dreiecke ausschließen
 }
 
-% \begin{frame}{Subset}
-%     \fabian{ich habe jetzt subset in den Diagrammen drin, ist aber schlecht. Soll ich das dann hier erklären oder wie mache ich das am besten? Einfach nur auf die Arbeit verweisen?}
-% \end{frame}
 
