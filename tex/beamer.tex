@@ -73,6 +73,16 @@
 \newcommand{\nachsteSeite}[0]{\textcolor{red}{\textbf{nächste Seite!}}}
 \newcommand{\pageText}[1]{\centering \LARGE #1}
 
+\newcommand{\pageOverlay}[1]{
+\only<2->{
+        \tikz[remember picture,overlay] {
+            \node[draw=black, fill=yellow!20, thick, rounded corners=3pt, 
+                  font=\bfseries, inner sep=10pt, inner xsep=2cm] 
+                  at ([yshift=-2cm]current page.center) {#1};
+        }
+    }
+}
+
 \DeclareMathOperator{\degrees}{deg^*}
 
 \begin{document}
