@@ -80,7 +80,6 @@
 % }
 
 \section{Entscheidungsproblem}
-%Erklären
 \begin{frame}{Dreiecke Bedingungen}
    \begin{figure}[h]
     \centering
@@ -96,7 +95,6 @@
     \item bei allen ausschließen schlechter
 }
 
-% Versuche aufschreiben
 \begin{frame}{PySAT Bedingungen}
    \begin{figure}[h]
     \centering
@@ -151,7 +149,6 @@
     \item bester Kombination
 }
 
-%PySAT am anfang besser
 \begin{frame}{Solver Vergleich}
    \begin{figure}[h]
     \centering
@@ -163,10 +160,10 @@
     \item Gurobi schlechtesten
     \item PySAT ähnlich zu Dreieck, Iterativ am besten
     \item OR-Tools (tri) überall gleich 
-    \item OR-Tools sonnst am besten
+    \item PySAT Iterativ am anfang besser
+    \item OR-Tools überholt größere Instanzen 
 }
 
-%Solver drauf schreiben
 \begin{frame}{Größerer Timeout}
    \begin{figure}[h]
     \centering
@@ -183,7 +180,6 @@
     \item größte Problem war Arbeitsspeicher
 }
 
-% Warum nein schneller
 \begin{frame}{Ja Nein getrennt}
    \begin{figure}[h]
     \centering
@@ -215,9 +211,6 @@
     \item Min Max findet Optimum schneller
     \item schlechteres Ergebniss
 }
-%Plot erklären
-% Ziel einblenden
-%Referenz gestrichtelt runter
 \begin{frame}{Ja Instanz}
    \begin{figure}[h]
     \centering
@@ -261,8 +254,14 @@
    \item bei Kantenformulierung
 }
 
-%Theoretische Lösung zeigen
-% nur max 2
+\begin{frame}{Anzahl Lösungen}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{mehrere_Lösungen.pdf}
+\end{figure}  
+\end{frame}
+\note[itemize]{}
+
 \begin{frame}{Anzahl Lösungen}
 \begin{minipage}{0.5\textwidth}
     \begin{figure}[h]
@@ -281,6 +280,7 @@
 \note[itemize]{
    \item aus allen getesteten Instanzgenerierung
    \item einzige mit zwei Lösungen
+   \item 2 auch max
    \item 50 Knoten Delaunay
    \item kein Zusammenhang
 }
@@ -318,8 +318,6 @@
 }
 
 \section{CDCL}
-%Generuer Erklärungen
-%sagen nur Thoretisch am ende
 \begin{frame}{CaDiCaL}
     \pageText{Conflict-driven clause learning \\ CaDiCaL Simplified Satisfiability Solver}
 \end{frame}
@@ -335,8 +333,10 @@
     \begin{itemize}
         \item Armin Biere
         \item erlaubt eigene propergation
-        \item kann literale mit Begründung setzen
-        \item eigene propergation
+        \item bekommt Teilinstanz
+        \item probiert literale zusetzen
+        \item nur Theoretische
+        \item ob mögliche Kanten
     \end{itemize}
     \item 
 }
@@ -360,12 +360,21 @@
 \begin{frame}{Teilinstanz}
    \begin{figure}[h]
     \centering
-    \includegraphics[width=0.6\linewidth]{figures/beamer/propergationMitLine.pdf}
+    \includegraphics[width=0.6\linewidth]{cdcl/propergation.pdf}
 \end{figure}  
 \end{frame}
 \note[itemize]{
     \item Konstrukt von Rand
     \item gültige gradbeschränkte Triangulierung
+}
+
+\begin{frame}{Teilinstanz}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\linewidth]{figures/beamer/propergationMitLine.pdf}
+\end{figure}  
+\end{frame}
+\note[itemize]{
     \item auf Teilinstanzen konzentrien
     \item Kanten ausschließen anwenden
     \item können größte Fläche Teilen
