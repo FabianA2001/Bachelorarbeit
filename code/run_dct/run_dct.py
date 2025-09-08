@@ -147,14 +147,15 @@ def ortools_algorithm(graph):
         intersection=True,
         degree=True,
         # fix_edges=True,
-        # fix_hull=True,
-        # all_edges=True,
+        fix_hull=True,
+        all_edges=True,
+        fix_edges=True,
         # min_max_direction=True,
         # evaluation_direction=True,
         # exclude_edges=True,
         # save_state_after_solution=True,
     )
-    solution = solver.solve({"timeout": 300, "args": asdict(para)})
+    solution = solver.solve({"timeout": -1, "args": asdict(para)})
     logging.info(f"solution found: {solution}")
 
     # Save solution as JSON
@@ -332,8 +333,8 @@ def run_algo():
     PATH = os.path.join(
         os.path.dirname(__file__),
         "eval_instance",
-        "delaunay",
-        "008_delaunay_50.json",
+        "iterative",
+        "076_iterative_220.json",
     )
 
     logging.info(f"Loading nodes from {PATH}")
@@ -352,17 +353,17 @@ def run_algo():
     # cadical_algorithm(graph, nodes)
     # count_algorithm(graph)
     # sat_Tri_algorithm(graph)
-    # ortools_algorithm(graph)
+    ortools_algorithm(graph)
     # for edge in graph.fix_edges:
     #     print(edge)
     # ortools_tri_algorithm(graph)
-    gurobi_tri_algorithm(graph)
+    # gurobi_tri_algorithm(graph)
     # gurobi_algorithm(graph)
     # raw_flips_algorithm(graph)
 
     # graph.add_all_possible_edges(True)
     # logging.info(f"evluation: {graph.evaluate()}")
-    graph.show_and_save()
+    graph.show_and_save(save=".")
 
 
 def permute_instance():
@@ -499,9 +500,9 @@ def draw_example():
 
 
 if __name__ == "__main__":
-    # run_algo()
+    run_algo()
     # show_all_instanzes()
-    create_instance()
+    # create_instance()
     # permute_instance()
     # generate_example()
     # draw_example()

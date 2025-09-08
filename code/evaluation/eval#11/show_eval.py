@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import random
 from collections import defaultdict
 from dataclasses import asdict
 
@@ -554,8 +555,57 @@ def border():
     return table
 
 
+def print_inst():
+    outer_parameter = {
+        Ortools: [
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    Ortools_Parameter(
+                        intersection=True,
+                        all_edges=True,
+                        fix_hull=True,
+                        evaluation_direction=True,
+                        save_state_after_solution=True,
+                    )
+                ),
+            },
+        ]
+    }
+    ri = Run_Algbench(
+        inst_path=path,
+        outer_parameter=outer_parameter,
+        figure_path=figure_path,
+        host=HOST,
+        ignore_correct=True,
+        name="gesamt",
+    )
+    table = ri.get_table()
+    table = ri.apply_instance(table)
+    table = ri.apply_args(table)
+    table = table.iloc[0]
+
+    stats: None | list[dict[str, float | list[tuple[int, int]]]] = table[
+        "solution"
+    ].get("stats", None)
+    assert stats is not None, "stats fehlen in der Lösung."
+    assert table["run_seed"] != 0, "run_seed fehlt in der Lösung."
+    seed = table["run_seed"]
+    stat = stats[-1]
+    nodes = load_nodes_from_json(
+        os.path.join(path, table["instance"], f"{table['file']}.json")
+    )
+    random.seed(seed)
+    random.shuffle(nodes)
+    graph = Graph_Wrapper(nodes)
+    for edge in stat["active_edges"]:
+        graph.add_edge(edge[0], edge[1])
+    graph.show_and_save(save=".", draw_name=False)
+
+
 if __name__ == "__main__":
-    table = gesamt()
-    table_2 = border()
-    # Standardmäßig Legende unten, aber kann geändert werden zu "right"
-    draw_all_instances(table, table_2, legend_position="bottom_right")
+    # table = gesamt()
+    # table_2 = border()
+    # # # Standardmäßig Legende unten, aber kann geändert werden zu "right"
+    # draw_all_instances(table, table_2, legend_position="bottom_right")
+    print_inst()

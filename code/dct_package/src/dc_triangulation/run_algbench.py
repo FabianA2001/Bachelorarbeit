@@ -198,6 +198,8 @@ class Run_Algbench:
                 "env_runtime": result["runtime"],
                 "solution": result["result"].get("solution", None),
                 "run_number": result["parameters"]["args"].get("run_number", -1),
+                "run_seed": result["result"].get("run_seed", 0),
+                "triangulation": result["result"].get("triangulation", None),
             },
         )
         # Filter nach Host, falls host angegeben ist
