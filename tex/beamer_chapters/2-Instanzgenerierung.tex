@@ -16,7 +16,7 @@
     \item Delaunay Triangulierungen
     \item möglichst gleichschenklige Dreiecke
     \item viele Kanten gleicher Länge
-    \item verteile eher kleine grade
+    \item eher kleine Sollgrade
 }
 
 \begin{frame}{Flip}
@@ -28,13 +28,18 @@
 \end{frame}
 
 \note[itemize]{
-    \item Graphoperation
-    \item Kanten verändern
-    \item Anzahl begrenzt
-    \item können nicht nur hinzufügen
-    \item oder löschen
-    \item Triangulierung nur diagonale Flips
-    \item konvexes Viereck andere Kante
+    % \item Graphoperation
+    % \item Kanten verändern
+    % \item Anzahl begrenzt
+    % \item können nicht nur hinzufügen
+    % \item oder löschen
+    % \item Triangulierung nur diagonale Flips
+    % \item konvexes Viereck andere Kante
+    \item Grphoperation
+    \item Anzahl Kanten nicht verändert
+    \item Istgrad verändern
+    \item Konvexes Viereck
+    \item Kante wie im Bild
 }
 
 \begin{frame}{Delaunay-Flips}
@@ -45,7 +50,7 @@
 \end{frame}
 \note[itemize]{
     \item k viele Flips
-    \item mehr längere Kanten und hohe grade als Delaunay
+    \item mehr längere Kanten und hohe Sollgrad als Delaunay
 }
 
 \begin{frame}{Iterativ}
@@ -59,7 +64,7 @@
     \item alle Möglichen Kanten bestimmen
     \item schneiden keinen Knoten
     \item erstellreinfolge einfügen, kein Schnitt
-    \item erster hoher grad, kein Schnitt
+    \item erster hoher Sollgard (kein Schnitt)
     \item lange Kanten
 }
 
@@ -72,10 +77,11 @@
 
 \note[itemize]{
     \item wie iterativ kanten erstellen
-    \item größe aufsteigend sortieren
+    \item Kantenlängen größe aufsteigend sortieren
     \item einfügen wenn kein Schnitt
     \item ähnelich zu Delaunay
-    \item also kürer verteile Grade
+    \item kleine Sollgrade
+    \item kürzere Kanten
 }
 
 \begin{frame}{Random}
@@ -89,7 +95,7 @@
     \item zufällige Reihenfolge betrachten
     \item einfügen wenn kein Schnitt
     \item keine generell Bild
-    \item eher Lang und hoher grad
+    \item eher Lang und hoher Sollgrad
     \item weniger als Iterativ
 }
 
@@ -103,8 +109,8 @@
 \end{frame}
 
 \note[itemize]{
-    \item Gradsumme wird überprüft
-    \item Gradsumme muss gleich
+    \item Sollgradsumme wird überprüft
+    \item Sollgradsumme muss gleich
     \item .
     \item wert abziehen und draufaddieren
     \item Bereich festlegen

@@ -25,7 +25,6 @@
 \usepackage[utf8]{inputenc}
 \usepackage[backend=biber]{biblatex}
 
-
 \lstset{frame=tb,
   language=C,
   aboveskip=3mm,
@@ -46,7 +45,6 @@
 \graphicspath{{./figures/}}%
 \renewcommand\lstlistingname{Code}
 \renewcommand\lstlistlistingname{Code}
-%kein Abbildung vor Bildern
 \setbeamertemplate{caption}{\raggedright\insertcaption\par}
 
 \addbibresource{bibliography.bib}
@@ -72,6 +70,7 @@
 \newcommand{\fabian}[1]{\todo[inline,color=blue!20]{FA: #1}}
 
 \newcommand{\gleicheSeite}[0]{\bigskip\bigskip \item \textcolor{red}{\textbf{gleiche Seite!!!}}}
+\newcommand{\nachsteSeite}[0]{\textcolor{red}{\textbf{nächste Seite!}}}
 \newcommand{\pageText}[1]{\centering \LARGE #1}
 
 \DeclareMathOperator{\degrees}{deg^*}

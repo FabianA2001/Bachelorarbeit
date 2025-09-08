@@ -2,7 +2,7 @@
 \begin{frame}
     \partpage
 \end{frame}
-\section{Vorbereitung PySAT}
+% \section{Vorbereitung PySAT}
 \begin{frame}{Solver}
     \begin{columns}
         \begin{column}{0.33\textwidth}
@@ -23,9 +23,9 @@
     \end{columns}
 \end{frame}
 \note[itemize]{
-    \item PySAT KNF also konjunktiver Normalform 
-    \item OR-Tools und Gurobi mathematische Formulierung
-    \item Permutation verschieden
+    \item Gurobi und OR-Tools für mathematische Formulierung
+    \item PySAT Formeln in KNF also konjunktiver Normalform 
+    \item Permutation Knoten verschieden
     \begin{itemize}
         \item alles was Laufzeit beeinflusst
         \item 5 durchläufe
@@ -33,53 +33,54 @@
     \end{itemize}
 }
 
-\begin{frame}{Grad Codierung}
-    \fabian{soll ich hier immer sagen welche Knotengrößen?}
-   \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.6\linewidth]{beamer/eval5/gesamt.pdf}
-\end{figure}  
-\end{frame}
+% \begin{frame}{Grad Codierung}
+%     \fabian{soll ich hier immer sagen welche Knotengrößen?}
+%    \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.6\linewidth]{beamer/eval5/gesamt.pdf}
+% \end{figure}  
+% \end{frame}
 
-\note[itemize]{
-    \item KNF keine unterstützung für Kadinalitäten
-    \item ersetzen durch Codierung von PySAT 
-    \item und eigene subset
-    \item subset schlecht deswegen nur in Arbeit
-    \item mindestens Sollgrad oder exakt sollgrad
-    \item mindest
-    \begin{itemize}
-        \item da gesamt sollgrad begrenzt gleich
-        \item mindest weniger vars
-    \end{itemize}
-    \item exakten Sollgrad 
-    \begin{itemize}
-        \item mehr einschränkung
-        \item vlt schnelleres ergebniss
-    \end{itemize}
-    \item sequential counters vor totalizer
-    \item mindest bisschen schnelleres
-    \item zukunft mindest
-}
+% \note[itemize]{
+%     \item KNF keine unterstützung für Kadinalitäten
+%     \item ersetzen durch Codierung von PySAT 
+%     \item und eigene subset
+%     \item subset schlecht deswegen nur in Arbeit
+%     \item mindestens Codierung oder exakt Codierung
+%     \item mindest
+%     \begin{itemize}
+%         \item da gesamt sollgrad begrenzt gleich
+%         \item mindest weniger vars
+%     \end{itemize}
+%     \item exakten
+%     \begin{itemize}
+%         \item mehr einschränkung
+%         \item vlt schnelleres ergebniss
+%     \end{itemize}
+%     \item andere Experimente sequential counters und totalizer besten
+%     \item sequential counters vor totalizer
+%     \item mindest und axakt ähnlich
+%     \item zukunft mindest mit sequential counters
+% }
 
-\begin{frame}{PySAT Solver}
-   \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.7\linewidth]{beamer/eval3/cactus_total_runtime.pdf}
-\end{figure}  
-\end{frame}
+% \begin{frame}{PySAT Solver}
+%    \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.7\linewidth]{beamer/eval3/cactus_total_runtime.pdf}
+% \end{figure}  
+% \end{frame}
 
-\note[itemize]{
-    \item alle Solver sequential counters
-    \item Gluecard4 und Minicard Native Codierung ohne extra Vars
-    \item Glucose42 und Gluecard4 gleichgut
-    \item beide Glucose Algorithmus
-    \item Kardinalitäts codierung kein unterschied
-    \item Glucose42 minimal besser
-}
+% \note[itemize]{
+%     \item alle Solver sequential counters
+%     \item Gluecard4 und Minicard Native Codierung ohne extra Vars
+%     \item Glucose42 und Gluecard4 gleichgut
+%     \item beide Glucose Algorithmus
+%     \item Kardinalitäts codierung kein unterschied
+%     \item Glucose42 minimal besser Greedy
+% }
 
 \section{Entscheidungsproblem}
-
+%Erklären
 \begin{frame}{Dreiecke Bedingungen}
    \begin{figure}[h]
     \centering
@@ -90,12 +91,12 @@
     \item alle solver mit Dreiecksansatz
     \item PySAT nutzt überschneidene Dreiecke
     \item Gurobi und OR-Tools nutzen anderen
-    \item KNF ander ansatz nicht gut möglich, keine kardinalitäten
     \item klar erkennbar überschneidung schlechter
     \item OR-Tools vor Gurobi
     \item bei allen ausschließen schlechter
 }
 
+% Versuche aufschreiben
 \begin{frame}{PySAT Bedingungen}
    \begin{figure}[h]
     \centering
@@ -109,6 +110,7 @@
     \item versuch beide
     \item nur Kanten fixieren besser
     \item bei Random normal und versuch besser irgendwann
+    \item beste Kanten Fixieren
 }
 
 \begin{frame}{Gurobi Bedingungen}
@@ -130,7 +132,7 @@
     \end{itemize}
     \item 1 bisschen besser als normal
     \item 2 und 3 bei normal
-    \item fixieren alleine besser
+    \item fixieren Kanten alleine besser
 }
 
 \begin{frame}{OR-Tools Bedingungen}
@@ -146,8 +148,10 @@
     \item bester Kombination
     \item am besten
     \item Iterativ normal besser
+    \item bester Kombination
 }
 
+%PySAT am anfang besser
 \begin{frame}{Solver Vergleich}
    \begin{figure}[h]
     \centering
@@ -157,12 +161,12 @@
 \note[itemize]{
     \item vier besten von vorigen
     \item Gurobi schlechtesten
-    \item OR-Tools (tri) überall gleich 
     \item PySAT ähnlich zu Dreieck, Iterativ am besten
+    \item OR-Tools (tri) überall gleich 
     \item OR-Tools sonnst am besten
 }
 
-
+%Solver drauf schreiben
 \begin{frame}{Größerer Timeout}
    \begin{figure}[h]
     \centering
@@ -170,8 +174,8 @@
 \end{figure}  
 \end{frame}
 \note[itemize]{
-    \item X-Achse Knotengrößen 
     \item Timeout bei 30min
+    \item Y-Achse Knotengrößen 
     \item 2 ja 2 nein, müssen nur eine schaffen
     \item Iterativ mit 220 besten
     \item danach Random mit 180
@@ -179,10 +183,7 @@
     \item größte Problem war Arbeitsspeicher
 }
 
-\note[itemize]{
-    \item Timeout nach 30 min
-}
-
+% Warum nein schneller
 \begin{frame}{Ja Nein getrennt}
    \begin{figure}[h]
     \centering
@@ -202,25 +203,25 @@
 \begin{frame}{Nein Instanz}
    \begin{figure}[h]
     \centering
-    \includegraphics[width=1\linewidth]{beamer/eval11/eval_progression_39.pdf}
+    \includegraphics[width=0.8\linewidth]{beamer/eval11/eval_progression_39.pdf}
 \end{figure}  
 \end{frame}
 \note[itemize]{
     \item Nein Instanz Greedy mit 120 Knoten
     \item Beide Zielfunktionen 
     \item Refernz solver bester von vorher 
-    \item Wann entschieden für nein
     \item Durchscnitt beste ergebniss
     \item Immer erst am Ende
     \item Min Max findet Optimum schneller
     \item schlechteres Ergebniss
 }
-
-
+%Plot erklären
+% Ziel einblenden
+%Referenz gestrichtelt runter
 \begin{frame}{Ja Instanz}
    \begin{figure}[h]
     \centering
-    \includegraphics[width=1\linewidth]{beamer/eval11/eval_progression_36.pdf}
+    \includegraphics[width=0.8\linewidth]{beamer/eval11/eval_progression_36.pdf}
 \end{figure}  
 \end{frame}
 \note[itemize]{
@@ -240,81 +241,85 @@
 }
 
 
-% \section{Schwierigkeit}
-% \begin{frame}{Einordnung}
-%     \centering
-%     \begin{minipage}{0.3\textwidth}
-%     \begin{LARGE}
-%     \begin{enumerate}
-%         \item Iterativ
-%         \item Random
-%         \item Delaunay-Flips
-%         \item Greedy
-%         \item Delaunay
-%     \end{enumerate} 
-%     \end{LARGE}
-%     \end{minipage}
-% \end{frame}
-% \note[itemize]{
-%    \item aus vorigen Experimenten absehebar
-%    \item bei Kantenformulierung
-% }
+\section{Schwierigkeit}
+\begin{frame}{Einordnung}
+    \centering
+    \begin{minipage}{0.3\textwidth}
+    \begin{LARGE}
+    \begin{enumerate}
+        \item Iterativ
+        \item Random
+        \item Delaunay-Flips
+        \item Greedy
+        \item Delaunay
+    \end{enumerate} 
+    \end{LARGE}
+    \end{minipage}
+\end{frame}
+\note[itemize]{
+   \item aus vorigen Experimenten absehebar
+   \item bei Kantenformulierung
+}
 
-% \begin{frame}{Anzahl Lösungen}
-% \begin{minipage}{0.5\textwidth}
-%     \begin{figure}[h]
-%      \centering
-%      \includegraphics[width=1\linewidth]{eval8/delaunay_008_delaunay_50_0.pdf} 
-%     \end{figure}
-% \end{minipage}
-% \hfill %wichtig, hier keine leerzeile im code
-% \begin{minipage}{0.49\textwidth}
-%     \begin{figure}[h]
-%      \centering
-%      \includegraphics[width=1\linewidth]{eval8/delaunay_008_delaunay_50_1.pdf} 
-%     \end{figure}
-% \end{minipage}
-% \end{frame}
-% \note[itemize]{
-%    \item aus allen getesteten Instanzgenerierung
-%    \item einzige mit zwei Lösungen
-%    \item 50 Knoten Delaunay
-% }
+%Theoretische Lösung zeigen
+% nur max 2
+\begin{frame}{Anzahl Lösungen}
+\begin{minipage}{0.5\textwidth}
+    \begin{figure}[h]
+     \centering
+     \includegraphics[width=1\linewidth]{eval8/delaunay_008_delaunay_50_0.pdf} 
+    \end{figure}
+\end{minipage}
+\hfill %wichtig, hier keine leerzeile im code
+\begin{minipage}{0.49\textwidth}
+    \begin{figure}[h]
+     \centering
+     \includegraphics[width=1\linewidth]{eval8/delaunay_008_delaunay_50_1.pdf} 
+    \end{figure}
+\end{minipage}
+\end{frame}
+\note[itemize]{
+   \item aus allen getesteten Instanzgenerierung
+   \item einzige mit zwei Lösungen
+   \item 50 Knoten Delaunay
+   \item kein Zusammenhang
+}
 
-% \begin{frame}{Gradverteilung}
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=0.65\linewidth]{gradverteilung.pdf}
-% \end{figure}  
-% \end{frame}
-% \note[itemize]{
-%     \item X-Achse Knotengraden
-%     \item Y-Achse Häufigkeit 
-%     \item über alle Instanzen
-%     \item leicht linksschief
-%     \item schwierig verteilter
-% }
+\begin{frame}{Gradverteilung}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.65\linewidth]{gradverteilung.pdf}
+\end{figure}  
+\end{frame}
+\note[itemize]{
+    \item X-Achse Knotengraden
+    \item Y-Achse Häufigkeit 
+    \item über alle Instanzen
+    \item leicht linksschief
+    \item schwierig verteilter
+}
 
-% \begin{frame}{Kantenlängen}
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=0.65\linewidth]{edge_length_distribution_plots.pdf}
-% \end{figure}  
-% \end{frame}
-% \note[itemize]{
-%     \item X-Achse Kantenlänge
-%     \item normiert, durch längste Kante geteilt
-%     \item Y-Achse Häufigkeit 
-%     \item über alle Instanzen
-%     \item leicht linksschief
-%     \item schwierig verteilter
-%     \item .
-%     \item leicht kleine Grade / kurze Kanten  
-%     \item schwerer höhere Grade / längere Kanten
-% }
+\begin{frame}{Kantenlängen}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.65\linewidth]{edge_length_distribution_plots.pdf}
+\end{figure}  
+\end{frame}
+\note[itemize]{
+    \item X-Achse Kantenlänge
+    \item normiert, durch längste Kante geteilt
+    \item Y-Achse Häufigkeit 
+    \item über alle Instanzen
+    \item leicht linksschief
+    \item schwierig verteilter
+    \item .
+    \item leichtere einen hohen Grade / längere Kanten
+    \item schwerer kleine Grade / kurze Kanten  
+}
 
 \section{CDCL}
-
+%Generuer Erklärungen
+%sagen nur Thoretisch am ende
 \begin{frame}{CaDiCaL}
     \pageText{Conflict-driven clause learning \\ CaDiCaL Simplified Satisfiability Solver}
 \end{frame}
@@ -324,7 +329,7 @@
         \item SAT-Solver Art
         \item Probiert aktuelle Belegung und Klausel
         \item Literale setzen, mit Begründung
-        \item Begründung bei Konflikt nutzen
+        \item Konfikt -> Begründung nutzen
     \end{itemize}
     \item CaDiCaL Simplified Satisfiability Solver
     \begin{itemize}
@@ -338,11 +343,10 @@
 
 
 \begin{frame}{Teilinstanz}
-%    \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=0.9\linewidth]{cdcl/propergation.pdf}
-% \end{figure}  
-\fabian{Isolierte Kante Teilinstanz einfügen}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\linewidth]{figures/beamer/cdcl/line.pdf}
+\end{figure}  
 \end{frame}
 \note[itemize]{
     \item Klauseln von PySAT übergeben
@@ -356,12 +360,13 @@
 \begin{frame}{Teilinstanz}
    \begin{figure}[h]
     \centering
-    \includegraphics[width=0.6\linewidth]{cdcl/propergation.pdf}
+    \includegraphics[width=0.6\linewidth]{figures/beamer/propergationMitLine.pdf}
 \end{figure}  
 \end{frame}
 \note[itemize]{
     \item Konstrukt von Rand
     \item gültige gradbeschränkte Triangulierung
+    \item auf Teilinstanzen konzentrien
     \item Kanten ausschließen anwenden
     \item können größte Fläche Teilen
     \item alle Randpunkte verbinden
@@ -384,7 +389,7 @@
     \item Relevants schwer zu sagen
     \item Laufzeit Propergation zu langsam
 }
-
+% Erfolgsrate erklären
 
 
 
