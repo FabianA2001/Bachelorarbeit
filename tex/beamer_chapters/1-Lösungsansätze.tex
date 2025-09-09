@@ -2,22 +2,45 @@
 \begin{frame}
     \partpage
 \end{frame}
+
+\note[itemize]{
+    \item Kantenansatz
+    \item Dreiecksansatz
+}
+
 \section{Kantenansatz}
 \begin{frame}{Kantenansatz}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.5\linewidth]{beamer/Kanten_erklärung.pdf}
+    \includegraphics[width=0.5\linewidth]{figures/beamer/KantenErklärung1.pdf}
 \end{figure}  
 \end{frame}
 \note[itemize]{
     \item vollständiger Graph erstellt
+    \item \nachsteSeite
+    \item 3 Knoten Kollinear
     \item Kanten kein Knoten schneiden
+    \item \nachsteSeite
     \item jede Kante Variable
     \item 
-    \item notwendige Bedingungen
-    \item optionale Bedingungen
-    \item 
+    \item Bedingungen an Kanten
+    \item erst notwendige
+    \item dann optionale
 }
+
+\begin{frame}{Kantenansatz}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{figures/beamer/KantenErklärung2.pdf}
+\end{figure}  
+\end{frame}
+
+\begin{frame}{Kantenansatz}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{figures/beamer/KantenErklärung3.pdf}
+\end{figure}  
+\end{frame}
 
 \begin{frame}{Überschneidungsbedingung}
 \begin{figure}[h]
@@ -35,13 +58,12 @@
 \begin{frame}{Gradbeschränkung (Entscheidungsproblem)}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.47\linewidth]{beamer/Gradbeschränkung.pdf}
+    \includegraphics[width=0.47\linewidth]{beamer/Gradbeschraenkung.pdf}
 \end{figure}  
 \end{frame}
 
 \note[itemize]{
-    \item entscheiden 
-    \item ja nein
+    \item Entscheidungsproblem
     \item inzidente Kanten gleich Sollgrad
     \item Sollgrad 3
     \item 3 von 6 aktiv
@@ -49,7 +71,6 @@
 
 \begin{frame}{Maximale Kanten (Entscheidungsproblem)}
     \fabian{Formal raus?}
-    % \pageText{\(6 n - 6 - 2k \overset{!}{=} \sum \degrees(i)\)}
     \pageText{\(\text{Anzahl Kanten} \cdot 2 \overset{!}{=} \sum \text{Sollgrad}\)}
 \end{frame}
 
@@ -73,13 +94,20 @@
 
 \note[itemize]{
     \item Zielfunktion keine Gradbeschränkung
-    \item immer so nah wie möglich
     \item Maximal zusätzlich Prüfen
     \item .
-    \item Differenz zwischen Soll und Istgrad
+    \item Durchschnittliche Prozentuale Abweichung
+    \item zur Bewertung genutzt
+    \item Prozentuale Differenz zwischen Soll und Istgrad
     \item Differenz durch Sollgrad für Prozentuale abweichung
     \item Summe durch Anzahl
-    \item Durchschnitt der Prozentualen Abbildung
+    \item Maximeren
+    \item \(q_i = \left\{
+\begin{array}{ll}
+\frac{\degrees(i) - \text{diff}_i}{\degrees(i)} & \degrees(i) \geq \text{diff}_i \\
+0 & \, \textrm{sonst} \\
+\end{array}
+\right.\)
 }
 
 \begin{frame}{Gradbeschränkung (Optimierungsproblem)}
@@ -95,8 +123,7 @@
     \item diese var minimieren
 }
 
-\begin{frame}{alternative Kantenbedingung}
-    \fabian{sollte ich hier eine Refernz auf euer Paper machen?}
+\begin{frame}{Alternative Kantenbedingung}
     \begin{figure}[h]
     \centering
     \includegraphics[width=0.5\linewidth]{all_edges.pdf}
@@ -104,7 +131,9 @@
 \end{frame}
 
 \note[itemize]{
-    \item maximiert Kanten
+    \item Optinoal
+    \item Laufzeit verbessern
+    \item nutzt maximiert Kanten
     \item für jede Kante gild
     \begin{itemize}
         \item Kante ist aktiv
@@ -124,7 +153,7 @@
 \note[itemize]{
     \item Hülle immer fixieren
     \item keine Schnittkanten -> für maximal
-    \item Grad muss damit erfüllbar sein
+    \item Sollgrad muss damit erfüllbar sein
 }
 
 \begin{frame}{Kanten Fixieren / Ausschließen}
@@ -138,18 +167,18 @@
     \item Sei Hüllen abschnitt
     \item betrachte immer drei Knoten in Reinfolge
     \item Beispiel v1,v2,v3
-    \item wenn v2 grad 2
+    \item wenn v2 Sollgrad 2
     \begin{itemize}
         \item e1 aktiv
         \item sonnst muss Kante wie e2 aktiv
         \item sollgrad von v2 zu hoch
     \end{itemize}
-    \item wenn v2 größer 2
+    \item wenn v2 Sollgrad größer 2
     \begin{itemize}
         \item e1 nicht aktiv
         \item sollgrad von v2 sonnst nicht erfüllbar
     \end{itemize}
-    \item v2 kleiner 2 nicht möglich
+    \item v2 Sollgrad kleiner 2 nicht möglich
     \begin{itemize}
         \item in Triangulierung
     \end{itemize}
@@ -157,29 +186,43 @@
 
 \begin{frame}{Kanten Ausschließen}
     \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.75\textwidth]{exclude_edges/exclude_edge_0.pdf}
+        \pageText{
+            \begin{tabular}{l@{\quad}l}
+                \onslide<2->{\large Anzahl Kanten} & \onslide<2->{14}\\
+                \onslide<3->{\large Benötigte Sollgrade } & \onslide<3->{28}\\
+                \onslide<4->{\large Summe Sollgrade} & \onslide<4->{27}
+            \end{tabular}
+        }
     \end{minipage}
     \hfill
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=0.7\textwidth]{exclude_edges/exclude_edge_1.pdf}
+        \includegraphics[width=0.75\textwidth]{exclude_edges/exclude_edge_0.pdf}
     \end{minipage}
 \end{frame}
-
 \note[itemize]{
+    \item alle Kanten testen die Teilen
+    \item Kntoen auf Hülle
     \item Links
     \begin{itemize}
         \item \(\left| E \right| \cdot 2 > \sum_{v \in V} \degrees(v)\)
         \item benötiget 14 Kanten und somit Summengrad von 28
-        \item können nur 27 erreichen
+        \item können nur 27 erreichen (mit A und B)
     \end{itemize}
-    \item rechts
-    \begin{itemize}
-        \item \(\degrees(v) > \left| V \right| - 1 \quad \forall v \in (V \setminus V_H)\)
-        \item können 3 hinzufügen
-        \item Sollgrad von 5
-    \end{itemize}
+}
+
+
+\begin{frame}{Kanten Ausschließen}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\linewidth]{exclude_edges/exclude_edge_1.pdf}
+\end{figure}  
+\end{frame}
+\note[itemize]{
+    \item \(\degrees(v) > \left| V \right| - 1 \quad \forall v \in (V \setminus V_H)\)
+    \item können 3 hinzufügen
+    \item Sollgrad von 5
+    \item alle testen außer A und B
 }
 
 \begin{frame}{Kanten Ausschließen}
@@ -190,6 +233,7 @@
 \end{frame}
 
 \note[itemize]{
+    \item (letzte)
     \item Kante ausschließen weil Schnittkanten
     \item e1 kante zum ausschließen
     \item v1 hat Sollgrad 3
@@ -197,7 +241,6 @@
     \item e1 schneidet drei
     \item wenn e1 aktiv Sollgrad nicht möglich
 }
-
 \section{Dreiecksansatz}
 \begin{frame}{Dreiecksansatz}
 \begin{figure}[h]
@@ -209,17 +252,18 @@
 \note[itemize]{
     \item alle leeren dreiecke erstellen
     \item jedes Dreieck Variable
+    \item Kanten ausschießen welche Knoten Schneiden
 }
 
 \begin{frame}{Gradbeschränkung}
     \begin{minipage}{0.56\textwidth}
         \centering
-        \includegraphics[width=0.7\textwidth]{beamer/Gradbeschränkung_tri.pdf}
+        \includegraphics[width=0.7\textwidth]{beamer/Gradbeschraenkung_tri.pdf}
     \end{minipage}
     \hfill
     \begin{minipage}{0.40\textwidth}
         \centering
-        \includegraphics[width=0.7\textwidth]{beamer/Gradbeschränkung_tri_edge.pdf}
+        \includegraphics[width=0.7\textwidth]{beamer/Gradbeschraenkungtriedge.pdf}
     \end{minipage}
 \end{frame}
 
@@ -235,7 +279,7 @@
 \begin{frame}{Überschneidungsbedingung}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\linewidth]{beamer/Überschneidung_tri.pdf}
+    \includegraphics[width=0.7\linewidth]{figures/beamer/Uberschneidungtri.pdf}
 \end{figure} 
 \end{frame}
 
@@ -250,18 +294,18 @@
 \begin{frame}{Überschneidungsbedingung}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.45\linewidth]{beamer/Überschneidung_tri_edge.pdf}
+    \includegraphics[width=0.45\linewidth]{figures/beamer/Uberschneidungtriedge.pdf}
 \end{figure} 
 \end{frame}
 
 \note[itemize]{
-    \item Hüllenknoten gesondert
+    \item Hüllenkanten gesondert
     \item links immer aktiv
     \item dabei Gegenden Uhrzeiger sinn betrachten
     \item somit links innere
 }
 
-\begin{frame}{Dreiecks Ausschließen}
+\begin{frame}{Dreiecke ausschließen}
     \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\linewidth]{beamer/Dreieck_ausschließen.pdf}
@@ -273,7 +317,4 @@
     \item wenn Kante ausgeschlossen alle zugehörigen dreiecke ausschließen
 }
 
-\begin{frame}{Subset}
-    \fabian{ich habe jetzt subset in den Diagrammen drin, ist aber schlecht. Soll ich das dann hier erklären oder wie mache ich das am besten? Einfach nur auf die Arbeit verweisen?}
-\end{frame}
 

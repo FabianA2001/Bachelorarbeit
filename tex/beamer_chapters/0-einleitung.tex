@@ -1,29 +1,26 @@
-\begin{frame}{Triangulierung}
-    \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.6\linewidth]{beamer/praxis/Triangulirung_Punkte.pdf}
-\end{figure}
-\end{frame}
-\note[itemize]{
-    \item Triangulierung
-    \begin{itemize}
-        \item 2 Demensionaler Raum
-        \item Knoten
-    \end{itemize}
-} 
-\begin{frame}{Triangulierung}
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.6\linewidth]{beamer/praxis/Triangulation_Kanten.pdf}
-\end{figure}
-\end{frame}
-\note[itemize]{
-    \item Triangulierung
-    \begin{itemize}
-        \item keine Überschneidung
-        \item maximal
-    \end{itemize}
-} 
+% \begin{frame}{Triangulierung}
+%     \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.6\linewidth]{beamer/praxis/Triangulirung_Punkte.pdf}
+% \end{figure}
+% \end{frame}
+% \note[itemize]{
+%     \item Triangulierung
+%     \begin{itemize}
+%         \item Knotenmenge
+%         \item 2 Demensionaler Raum
+%         \item keine Überschneidung
+%         \item Maximal
+%     \end{itemize}
+% } 
+% \begin{frame}{Triangulierung}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.6\linewidth]{beamer/praxis/Triangulation_Kanten.pdf}
+% \end{figure}
+% \end{frame}
+
+
 
 \begin{frame}{Praktische Relevanz}
 \begin{figure}[h]
@@ -33,9 +30,13 @@
 \end{frame}
 \note[itemize]{
     \item Server
-    \item Nutzer
-    \item wollen Netzwerk 
-    \item soll Triangulierung
+    \item Kameras
+    \item Triangulierung weil:
+    \begin{itemize}
+        \item Kabel keine Überschneidung
+        \item Maximal -> ausfallsicherheit
+    \end{itemize}
+    \item Kabel Anzahl Fest
 } 
 
 % \begin{frame}{Praktische Relevanz}
@@ -57,7 +58,9 @@
 \end{figure}
 \end{frame}
 \note[itemize]{
-    \item soll auch verbindungs anzahl vorgegeben
+    \item Bild erklären
+    \item Triangulierung möglich
+    \item Inzidente Kanten
 } 
 
 \begin{frame}{Praktische Relevanz}
@@ -68,22 +71,35 @@
 \end{frame}
 \note[itemize]{
     \item Solver liefert
+    \item diese Instanz möglich
 } 
+
+
 
 \begin{frame}{Das Problem}
    \begin{figure}[h]
     \centering
-    \includegraphics[width=0.6\linewidth]{Problem.pdf}
+    \includegraphics[width=0.7\linewidth]{figures/beamer/ProblemJa.pdf}
 \end{figure} 
 \end{frame}
 
 \note[itemize]{
     \item das Problem
-    \item Input Knoten mit vorgegebenen Grad
-    \item oben Ja-Instanz kann gelöst werden
-    \item unten Nein-Instanz kann nicht gelöst werden
-    \begin{itemize}
-        \item drei roten Zahlen nicht erfüllbar
-    \end{itemize}
-    \item 
+    \item Input Knoten mit vorgegebenen Sollgrad
+    \item Ja-Instanz kann gelöst werden
+}
+
+\begin{frame}{Das Problem}
+   \begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/beamer/ProblemNein.pdf}
+\end{figure} 
+\end{frame}
+
+\note[itemize]{
+    \item Nein-Instanz kann nicht gelöst werden
+    \item unbekanntes Problem schwierigkeit nicht bekannt
+    \item Convexe Punktemengen und einfache Polygone geht linear Zeit
+    \item Entscheidungsproblem
+    \item Optimierungsproblem
 }

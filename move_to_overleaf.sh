@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Quell- und Zielordner definieren
-QUELLE="/Users/fabian/uni/Bachelorarbeit/tex/bachelorarbeit-fabian-alich/tex"
+QUELLE="/Users/fabian/uni/Bachelorarbeit/bachelorarbeit-fabian-alich/tex"
 ZIEL="/Users/fabian/uni/Bachelorarbeit/682487b555c0d63c84fc8118"
 
 cp "$QUELLE/beamer.tex" $ZIEL
