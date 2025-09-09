@@ -107,15 +107,15 @@ outer_parameter = {
 
 arg_names = {
     "SAT": [
-        "Cadical195",
+        "Glucose42",
         "Gluecard4",
-        "MapleChrono",
         "MapleCM",
         "Maplesat",
         "Mergesat3",
         "Minicard",
         "Minisat22",
-        "Glucose42",
+        "Cadical195",
+        "MapleChrono",
     ]
 }
 

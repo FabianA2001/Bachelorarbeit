@@ -267,7 +267,23 @@ def show_gesamt():
                 "timeout": TIMEOUT,
                 "args": asdict(
                     SAT_Parameter(
+                        intersection=True, degree_exact=True, degree_encoding=6
+                    )
+                ),
+            },
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    SAT_Parameter(
                         intersection=True, degree_atleast=True, degree_encoding=1
+                    )
+                ),
+            },
+            {
+                "timeout": TIMEOUT,
+                "args": asdict(
+                    SAT_Parameter(
+                        intersection=True, degree_atleast=True, degree_encoding=6
                     )
                 ),
             },
@@ -275,8 +291,10 @@ def show_gesamt():
     }
     arg_names = {
         "SAT": [
-            "exakt",
-            "mindest",
+            "Exakt-counters",
+            "Exakt-totalizer",
+            "Mindest-counters",
+            "Mindest-totalizer",
             "subset",
         ]
     }
@@ -294,7 +312,7 @@ def show_gesamt():
 
 
 if __name__ == "__main__":
-    show_exact()
-    show_atleast()
+    # show_exact()
+    # show_atleast()
     # show_subset()
     show_gesamt()

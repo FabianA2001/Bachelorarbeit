@@ -1,0 +1,55 @@
+
+Args Legend Mapping (by Solver):
+==================================================
+
+SAT:
+|#1 in 300s: 
+||solver_name:                        Glucose42
+||add_allEdges_or_exclude_edges:      True
+||number_edges:                       False
+||intersection:                       True
+||all_edges:                          False
+||degree_exact:                       False
+||degree_atleast:                     True
+||degree_encoding:                    1
+||degree_subset:                      False
+||fix_hull:                           False
+||exclude_edges:                      False
+||hack_eval6:                         False
+||fix_edges:                          True
+||run_num:                            0
+
+
+gurobi:
+|#1 in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+||fix_hull:                           False
+||all_edges:                          False
+||fix_edges:                          True
+||run_num:                            0
+
+
+Ortools:
+|#1 in 300s: 
+||intersection:                       True
+||all_edges:                          True
+||degree:                             True
+||fix_hull:                           True
+||number_edges:                       False
+||evaluation_direction:               False
+||save_state_after_solution:          False
+||min_max_direction:                  False
+||maximize_edges:                     False
+||exclude_edges:                      False
+||fix_edges:                          True
+||run_num:                            0
+
+
+OrTools_tri:
+|#1 in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+==================================================

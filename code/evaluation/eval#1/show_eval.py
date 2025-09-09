@@ -400,8 +400,8 @@ def gesamt():
 
 
 if __name__ == "__main__":
-    show_sat()
-    show_gurobi()
-    show_ortools()
+    # show_sat()
+    # show_gurobi()
+    # show_ortools()
     show_tri()
-    gesamt()
+    # gesamt()

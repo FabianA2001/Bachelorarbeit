@@ -1,0 +1,45 @@
+
+Args Legend Mapping (by Solver):
+==================================================
+
+gurobi_tri:
+|#normal in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+
+|#Kanten ausschließen in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      True
+
+
+OrTools_tri:
+|#normal in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+
+|#Kanten ausschließen in 300s: 
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      True
+
+
+SAT_TRI:
+|#normal in 300s: 
+||solver_name:                        glucose3
+||add_allEdges_or_exlucde_edges:      True
+||number_tri:                         False
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      False
+
+|#Kanten ausschließen in 300s: 
+||solver_name:                        glucose3
+||add_allEdges_or_exlucde_edges:      True
+||number_tri:                         False
+||intersection:                       True
+||degree:                             True
+||exclude_edges:                      True
+==================================================

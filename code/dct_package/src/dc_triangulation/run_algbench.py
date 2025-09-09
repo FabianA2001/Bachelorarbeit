@@ -648,7 +648,7 @@ class Run_Algbench:
                 replace = {
                     "gurobi": "Gurobi",
                     "Ortools": "OR-Tools",
-                    "OrTools_tri-Kanten ausschließen": "OR-Tools (Tri) Kanten ausschließen",
+                    "OrTools_tri-Kanten ausschließen": "OR-Tools (tri) Kanten ausschließen",
                     "OrTools_tri-normal": "OR-Tools (tri) normal",
                     "SAT_TRI-Kanten ausschließen": "SAT (tri) Kanten ausschließen",
                     "SAT_TRI-normal": "SAT (tri) normal",
@@ -686,7 +686,7 @@ class Run_Algbench:
                 replace = {
                     "gurobi": "Gurobi",
                     "Ortools": "OR-Tools",
-                    "OrTools_tri-Kanten ausschließen": "OR-Tools (Tri) Kanten ausschließen",
+                    "OrTools_tri-Kanten ausschließen": "OR-Tools (tri) Kanten ausschließen",
                     "OrTools_tri-normal": "OR-Tools (tri) normal",
                     "SAT_TRI-Kanten ausschließen": "SAT (tri) Kanten ausschließen",
                     "SAT_TRI-normal": "SAT (tri) normal",
