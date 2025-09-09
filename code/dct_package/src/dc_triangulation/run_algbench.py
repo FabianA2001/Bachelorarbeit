@@ -715,6 +715,7 @@ class Run_Algbench:
                     frameon=True,
                     fancybox=True,
                     shadow=True,
+                    labelspacing=1.3,
                 )
         else:
             pass

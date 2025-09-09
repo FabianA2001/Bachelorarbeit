@@ -263,32 +263,42 @@ def draw_all_instances(
                     border_row = border_row.iloc[0]
                     border_timestamp = border_row["runtime"] + border_row["pre_time"]
 
-                    # Füge Referenz-Solver hinzu (von (0,0) zu (border_timestamp, 100) zu (timeout, 100))
-                    reference_timestamps = [
-                        0,
-                        border_timestamp,
-                        border_timestamp,
-                        TIMEOUT,
-                    ]
-                    reference_evals = [
-                        0,
-                        0,
-                        100,
-                        100,
-                    ]  # Multipliziert mit 100 für Prozent
-            if not found:
-                reference_timestamps = [0, TIMEOUT]
-                reference_evals = [0, 0]  # Multipliziert mit 100 für Prozent
+                    # Vertikale Linie bei Timeout hinzufügen
+                    ax.axvline(
+                        x=border_timestamp,
+                        color="green",
+                        linestyle="--",
+                        alpha=0.7,
+                        linewidth=1.5,
+                        label="Referenz",
+                    )
 
-            ax.plot(
-                reference_timestamps,
-                reference_evals,
-                label="Referenz",
-                color="green",
-                linestyle="-",
-                linewidth=2,
-                alpha=0.8,
-            )
+            #         # Füge Referenz-Solver hinzu (von (0,0) zu (border_timestamp, 100) zu (timeout, 100))
+            #         reference_timestamps = [
+            #             0,
+            #             border_timestamp,
+            #             border_timestamp,
+            #             TIMEOUT,
+            #         ]
+            #         reference_evals = [
+            #             0,
+            #             0,
+            #             100,
+            #             100,
+            #         ]  # Multipliziert mit 100 für Prozent
+            # if not found:
+            #     reference_timestamps = [0, TIMEOUT]
+            #     reference_evals = [0, 0]  # Multipliziert mit 100 für Prozent
+
+            # ax.plot(
+            #     reference_timestamps,
+            #     reference_evals,
+            #     label="Referenz",
+            #     color="green",
+            #     linestyle="-",
+            #     linewidth=2,
+            #     alpha=0.8,
+            # )
 
             # Gruppiere nach solver_args und plotte
             for solver_args, group_df in instance_data.groupby("solver_args"):
@@ -604,8 +614,8 @@ def print_inst():
 
 
 if __name__ == "__main__":
-    # table = gesamt()
-    # table_2 = border()
-    # # # Standardmäßig Legende unten, aber kann geändert werden zu "right"
-    # draw_all_instances(table, table_2, legend_position="bottom_right")
-    print_inst()
+    table = gesamt()
+    table_2 = border()
+    # # Standardmäßig Legende unten, aber kann geändert werden zu "right"
+    draw_all_instances(table, table_2, legend_position="bottom_right")
+    # print_inst()

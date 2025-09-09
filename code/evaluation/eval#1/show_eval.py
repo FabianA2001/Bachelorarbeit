@@ -145,10 +145,10 @@ def show_sat():
         "SAT": [
             "alternative Kanten",
             "normal",
-            "Hülle fixieren",
+            "Konvexe Hülle fixieren",
             "Kanten ausschließen",
             "Kanten fixieren",
-            "bester (Versuch)",
+            "Konvexe Hülle fixieren &\nKanten fixieren",
         ]
     }
 
@@ -235,12 +235,12 @@ def show_gurobi():
         "gurobi": [
             "Kanten fixieren",
             "normal",
-            "Hülle fixieren",
+            "Konvexe Hülle fixieren",
             "alternative Kanten",
             "Kanten ausschließen",
-            "bester (Versuch 1)",
-            "bester (Versuch 2)",
-            "bester (Versuch 3)",
+            "Konvexe Hülle fixieren &\nKanten fixieren &\nalternative Kanten",
+            "Konvexe Hülle fixieren &\nKanten fixieren",
+            "Kanten fixieren &\nalternative Kanten",
         ]
     }
     ri = Run_Algbench(
@@ -308,11 +308,11 @@ def show_ortools():
     arg_names = {
         "Ortools": [
             "normal",
-            "Hülle fixieren",
+            "Konvexe Hülle fixieren",
             "alternative Kanten",
             "Kanten ausschließen",
             "Kanten fixieren",
-            "bester",
+            "Konvexe Hülle fixieren &\nKanten fixieren &\nalternative Kanten",
         ]
     }
 
@@ -400,8 +400,8 @@ def gesamt():
 
 
 if __name__ == "__main__":
-    # show_sat()
-    # show_gurobi()
-    # show_ortools()
+    show_sat()
+    show_gurobi()
+    show_ortools()
     show_tri()
-    # gesamt()
+    gesamt()

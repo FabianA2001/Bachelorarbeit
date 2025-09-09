@@ -17,7 +17,7 @@ Ortools:
 ||fix_edges:                          False
 ||run_num:                            0
 
-|#Hülle fixieren in 300s: 
+|#Konvexe Hülle fixieren in 300s: 
 ||intersection:                       True
 ||all_edges:                          False
 ||degree:                             True
@@ -73,7 +73,9 @@ Ortools:
 ||fix_edges:                          True
 ||run_num:                            0
 
-|#bester in 300s: 
+|#Konvexe Hülle fixieren &
+Kanten fixieren &
+alternative Kanten in 300s: 
 ||intersection:                       True
 ||all_edges:                          True
 ||degree:                             True

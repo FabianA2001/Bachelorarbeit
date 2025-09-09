@@ -21,7 +21,7 @@ gurobi:
 ||fix_edges:                          False
 ||run_num:                            0
 
-|#Hülle fixieren in 300s: 
+|#Konvexe Hülle fixieren in 300s: 
 ||intersection:                       True
 ||degree:                             True
 ||exclude_edges:                      False
@@ -48,7 +48,9 @@ gurobi:
 ||fix_edges:                          False
 ||run_num:                            0
 
-|#bester (Versuch 1) in 300s: 
+|#Konvexe Hülle fixieren &
+Kanten fixieren &
+alternative Kanten in 300s: 
 ||intersection:                       True
 ||degree:                             True
 ||exclude_edges:                      False
@@ -57,7 +59,8 @@ gurobi:
 ||fix_edges:                          True
 ||run_num:                            0
 
-|#bester (Versuch 2) in 300s: 
+|#Konvexe Hülle fixieren &
+Kanten fixieren in 300s: 
 ||intersection:                       True
 ||degree:                             True
 ||exclude_edges:                      False
@@ -66,7 +69,8 @@ gurobi:
 ||fix_edges:                          True
 ||run_num:                            0
 
-|#bester (Versuch 3) in 300s: 
+|#Kanten fixieren &
+alternative Kanten in 300s: 
 ||intersection:                       True
 ||degree:                             True
 ||exclude_edges:                      False

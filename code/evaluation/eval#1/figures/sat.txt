@@ -35,7 +35,7 @@ SAT:
 ||fix_edges:                          False
 ||run_num:                            0
 
-|#Hülle fixieren in 300s: 
+|#Konvexe Hülle fixieren in 300s: 
 ||solver_name:                        Glucose42
 ||add_allEdges_or_exclude_edges:      True
 ||number_edges:                       False
@@ -83,7 +83,8 @@ SAT:
 ||fix_edges:                          True
 ||run_num:                            0
 
-|#bester (Versuch) in 300s: 
+|#Konvexe Hülle fixieren &
+Kanten fixieren in 300s: 
 ||solver_name:                        Glucose42
 ||add_allEdges_or_exclude_edges:      True
 ||number_edges:                       False
