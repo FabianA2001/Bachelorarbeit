@@ -6,6 +6,7 @@ code/**/*.svg
 !**/thesis.pdf
 !**/TEX/**/*.pdf
 !**/TEX/**/*.png
+!**/readme_data/**/*.png
 !**/TEX/**/*.jpg
 .vscode/
 **/.degree-constrained-triangulation/
